@@ -18,5 +18,11 @@ Route::post('/login', 'UserController@login')->name('dologin');
 
 Route::group(['middleware' => ['auth']], function () {
     Route::get('/', 'DashboardController@index')->name('home');
+    Route::group(['prefix' => '/tags'], function () {
+        Route::get('/', 'TagController@index')->name('tags');
+        Route::any('/create', 'TagController@create')->name('tag_create');
+        Route::any('/edit/{id}', 'TagController@edit')->name('tag_edit');
+        Route::get('/delete/{id}', 'TagController@delete')->name('tag_delete');
+    });
 });
 
