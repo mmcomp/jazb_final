@@ -40,6 +40,7 @@
                     <th>نام</th>
                     <th>والد</th>
                     <th>ثبت کننده</th>
+                    <th>#</th>
                   </tr>
                   </thead>
                   <tbody>
@@ -50,6 +51,14 @@
                         <td>{{ $item->name }}</td>
                         <td>{{ ($item->parent)?$item->parent->name:'-' }}</td>
                         <td>{{ ($item->user)?$item->user->first_name . ' ' . $item->user->last_name:'-' }}</td>
+                        <td>
+                            <a class="btn btn-primary" href="{{ route('tag_edit', $item->id) }}">
+                                ویرایش
+                            </a>
+                            <a class="btn btn-danger" href="{{ route('tag_delete', $item->id) }}">
+                                حذف
+                            </a>
+                        </td>
                       </tr>
                       @endforeach
                   </tbody>
@@ -100,6 +109,12 @@
             "emptyTable":     "داده ای برای نمایش وجود ندارد",
             "info":           "نمایش _START_ تا _END_ از _TOTAL_ داده"
         }
+      });
+
+      $(".btn-danger").click(function(e){
+          if(!confirm('آیا مطمئنید؟')){
+            e.preventDefault();
+          }
       });
     });
   </script>

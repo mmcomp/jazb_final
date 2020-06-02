@@ -670,6 +670,24 @@
         <!-- /.card-body -->
     </div>
     @endif
+    @if (isset($msg_error))
+    <div class="card card-danger" style="width: 400px;position: fixed;left: 10px;bottom: 10px;">
+        <div class="card-header">
+            <h3 class="card-title">خطا</h3>
+
+            <div class="card-tools">
+            <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i>
+            </button>
+            </div>
+            <!-- /.card-tools -->
+        </div>
+        <!-- /.card-header -->
+        <div class="card-body">
+            {{ $msg_error }}
+        </div>
+        <!-- /.card-body -->
+    </div>
+    @endif
   </div>
   <!-- /.content-wrapper -->
   <footer class="main-footer">

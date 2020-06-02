@@ -39,7 +39,11 @@
                     <div class="col">
                         <div class="form-group">
                             <label for="name">نام</label>
-                            <input type="text" class="form-control" id="name" name="name" placeholder="نام">
+                            @if (isset($tag) && isset($tag->id))
+                            <input type="text" class="form-control" id="name" name="name" placeholder="نام" value="{{ $tag->name }}" />
+                            @else
+                            <input type="text" class="form-control" id="name" name="name" placeholder="نام"  />
+                            @endif
                         </div>
                     </div>
                     <div class="col">
@@ -48,7 +52,11 @@
                             <select class="form-control select2" id="parent_id" name="parent_id" >
                                 <option value="0"> - </option>
                                 @foreach ($tags as $item)
+                                    @if (isset($tag) && isset($tag->id) && $tag->parent_id == $item->id)
+                                    <option value="{{ $item->id }}" selected>{{ $item->name }}</option>
+                                    @else
                                     <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                    @endif
                                 @endforeach
                             </select>
                         </div>
