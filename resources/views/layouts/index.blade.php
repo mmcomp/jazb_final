@@ -193,7 +193,11 @@
           <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
           <li class="nav-header">تعاریف پایه</li>
+          @if(strpos(\Request::route()->getName(), 'tag')===0)
+          <li class="nav-item has-treeview menu-open">
+          @else
           <li class="nav-item has-treeview">
+          @endif
             <a href="#" class="nav-link">
               <i class="nav-icon fas fa-bookmark"></i>
               <p>
@@ -204,7 +208,11 @@
             </a>
             <ul class="nav nav-treeview">
               <li class="nav-item">
+                @if(strpos(\Request::route()->getName(), 'tag')===0)
+                <a href="{{ route('tags') }}" class="nav-link active">
+                @else
                 <a href="{{ route('tags') }}" class="nav-link">
+                @endif
                   <i class="far fa-circle nav-icon"></i>
                   <p>اخلاقی</p>
                 </a>

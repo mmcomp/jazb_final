@@ -55,8 +55,22 @@ class TagController extends Controller
             ]);
         }
 
+        $parent_id = (int)$request->input('parent_id', 0);
+        if($parent_id>0){
+            $parent = Tag::where('id', $parent_id)->where('is_deleted', false)->first();
+            if($parent==null){
+                $request->session()->flash("msg_error", "والد نا معتبر است!");
+                return redirect()->route('tags');
+            }
+
+            if($parent->parent_id == $tag->id){
+                $request->session()->flash("msg_error", "برچسب نمی تواند با این والد ثبت شود!");
+                return redirect()->route('tags');
+            }
+        }
+
         $tag->name = $request->input('name', '');
-        $tag->parent_id = (int)$request->input('parent_id', 0);
+        $tag->parent_id = $parent_id;
         $tag->users_id = Auth::user()->id;
         $tag->save();
 
