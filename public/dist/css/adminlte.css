@@ -37,8 +37,6 @@
   --breakpoint-md: 768px;
   --breakpoint-lg: 992px;
   --breakpoint-xl: 1200px;
-  --font-family-sans-serif: "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-  --font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
 *,
@@ -46,9 +44,48 @@
 *::after {
   box-sizing: border-box;
 }
-
+/* fontface */
+@font-face {
+	font-family: 'VazirFarsiNumbers';
+	src: url('fonts/vazir-thin.eot');
+	src: url('fonts/vazir-thin.eot?#iefix') format('embedded-opentype'), url('fonts/vazir-thin.woff') format('woff'), url('fonts/vazir-thin-fd.woff2') format('woff2'), url('fonts/vazir-thin.ttf') format('truetype');
+	font-weight: 100;
+}
+@font-face {
+	font-family: 'VazirFarsiNumbers';
+	src: url('fonts/vazir-light.eot');
+	src: url('fonts/vazir-light.eot?#iefix') format('embedded-opentype'), url('fonts/vazir-light.woff') format('woff'), url('fonts/vazir-light.woff2') format('woff2'), url('fonts/vazir-light.ttf') format('truetype');
+	font-weight: 300;
+}
+@font-face {
+	font-family: 'VazirFarsiNumbers';
+	src: url('fonts/vazir.eot');
+	src: url('fonts/vazir.eot?#iefix') format('embedded-opentype'), url('fonts/vazir.woff') format('woff'), url('fonts/vazir.woff2') format('woff2'), url('fonts/vazir.ttf') format('truetype');
+	font-weight: normal;
+}
+@font-face {
+	font-family: 'VazirFarsiNumbers';
+	src: url('fonts/vazir-medium.eot');
+	src: url('fonts/vazir-medium.eot?#iefix') format('embedded-opentype'), url('fonts/vazir-medium.woff') format('woff'), url('fonts/vazir-medium.woff2') format('woff2'), url('fonts/vazir-medium.ttf') format('truetype');
+	font-weight: 500;
+}
+@font-face {
+	font-family: 'VazirFarsiNumbers';
+	src: url('fonts/vazir-bold.eot');
+	src: url('fonts/vazir-bold.eot?#iefix') format('embedded-opentype'), url('fonts/vazir-bold.woff') format('woff2'), url('fonts/vazir-bold.woff') format('woff2'), url('fonts/vazir-bold.ttf') format('truetype');
+	font-weight: bold;
+}
+@font-face {
+	font-family: 'VazirFarsiNumbers';
+	src: url('fonts/vazir-black.eot');
+	src: url('fonts/vazir-black.eot?#iefix') format('embedded-opentype'), url('fonts/vazir-black.woff') format('woff2'), url('fonts/vazir-black.woff') format('woff2'), url('fonts/vazir-black.ttf') format('truetype');
+	font-weight: 900;
+}
+* {
+  font-family:'VazirFarsiNumbers';
+}
 html {
-  font-family: sans-serif;
+  font-family: 'VazirFarsiNumbers';
   line-height: 1.15;
   -webkit-text-size-adjust: 100%;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
@@ -60,7 +97,7 @@ article, aside, figcaption, figure, footer, header, hgroup, main, nav, section {
 
 body {
   margin: 0;
-  font-family: "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  font-family:'VazirFarsiNumbers', "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   font-size: 1rem;
   font-weight: 400;
   line-height: 1.5;
@@ -5998,7 +6035,6 @@ a.close.disabled, a.disabled.mailbox-attachment-close {
   z-index: 1070;
   display: block;
   margin: 0;
-  font-family: "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   font-style: normal;
   font-weight: 400;
   line-height: 1.5;
@@ -6111,7 +6147,6 @@ a.close.disabled, a.disabled.mailbox-attachment-close {
   z-index: 1060;
   display: block;
   max-width: 276px;
-  font-family: "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   font-style: normal;
   font-weight: 400;
   line-height: 1.5;
@@ -9801,9 +9836,6 @@ button.bg-dark:focus {
   }
 }
 
-.text-monospace {
-  font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !important;
-}
 
 .text-justify {
   text-align: justify !important;
@@ -21676,7 +21708,6 @@ html.maximized-card {
 }
 
 .mapael .mapTooltip {
-  font-family: "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   font-style: normal;
   font-weight: 400;
   line-height: 1.5;
