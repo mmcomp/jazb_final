@@ -193,7 +193,7 @@
           <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
           <li class="nav-header">تعاریف پایه</li>
-          @if(strpos(\Request::route()->getName(), 'tag')===0)
+          @if(strpos(\Request::route()->getName(), 'tag')===0 || strpos(\Request::route()->getName(), 'need_tag')===0)
           <li class="nav-item has-treeview menu-open">
           @else
           <li class="nav-item has-treeview">
@@ -215,6 +215,16 @@
                 @endif
                   <i class="far fa-circle nav-icon"></i>
                   <p>اخلاقی</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                @if(strpos(\Request::route()->getName(), 'need_tag')===0)
+                <a href="{{ route('need_tags') }}" class="nav-link active">
+                @else
+                <a href="{{ route('need_tags') }}" class="nav-link">
+                @endif
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>نیازسنجی</p>
                 </a>
               </li>
             </ul>

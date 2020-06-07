@@ -6,7 +6,7 @@
         <div class="container-fluid">
           <div class="row mb-2">
             <div class="col-sm-6">
-              <h1>برچسب های اخلاقی</h1>
+              <h1>برچسب های نیازسنجی</h1>
             </div>
             <div class="col-sm-6">
               <!--
@@ -27,7 +27,7 @@
             <div class="card">
               <div class="card-header">
                 <h3 class="card-title">
-                    <a class="btn btn-success" href="{{ route('tag_create') }}">برچسب جدید</a>
+                    <a class="btn btn-success" href="{{ route('need_tag_create') }}">برچسب جدید</a>
                 </h3>
               </div>
               <!-- /.card-header -->

@@ -24,5 +24,12 @@ Route::group(['middleware' => ['auth']], function () {
         Route::any('/edit/{id}', 'TagController@edit')->name('tag_edit');
         Route::get('/delete/{id}', 'TagController@delete')->name('tag_delete');
     });
+
+    Route::group(['prefix' => '/need_tags'], function () {
+        Route::get('/', 'NeedTagController@index')->name('need_tags');
+        Route::any('/create', 'NeedTagController@create')->name('need_tag_create');
+        Route::any('/edit/{id}', 'NeedTagController@edit')->name('need_tag_edit');
+        Route::get('/delete/{id}', 'NeedTagController@delete')->name('need_tag_delete');
+    });
 });
 
