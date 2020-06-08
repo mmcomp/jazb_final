@@ -38,9 +38,6 @@ class NeedTagController extends Controller
             $tag->save();
         }catch(Exception $error)
         {
-            // if()
-            // dd($error);
-
             $request->session()->flash("msg_error", "برچسب با موفقیت افزوده نشد.");
             return redirect()->route('need_tags');
         }
@@ -51,7 +48,7 @@ class NeedTagController extends Controller
 
     public function edit(Request $request, $id)
     {
-        $tags = Tag::where('type', 'need')->with('user')->with('parent')->orderBy('name')->get();
+        $tags = Tag::where('type', 'need')->where('id', '!=', $id)->with('user')->with('parent')->orderBy('name')->get();
         $tag = Tag::where('id', $id)->where('is_deleted', false)->first();
         if($tag==null){
             $request->session()->flash("msg_error", "برچسب مورد نظر پیدا نشد!");

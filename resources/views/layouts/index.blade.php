@@ -42,19 +42,19 @@
   <!-- Navbar -->
   <nav class="main-header navbar navbar-expand navbar-white navbar-light">
     <!-- Left navbar links -->
-    <!--
+
     <ul class="navbar-nav">
       <li class="nav-item">
         <a class="nav-link" data-widget="pushmenu" href="#"><i class="fas fa-bars"></i></a>
       </li>
-      <li class="nav-item d-none d-sm-inline-block">
+      <!--<li class="nav-item d-none d-sm-inline-block">
         <a href="index3.html" class="nav-link">Home</a>
       </li>
       <li class="nav-item d-none d-sm-inline-block">
         <a href="#" class="nav-link">Contact</a>
-      </li>
+      </li>-->
     </ul>
-    -->
+
 
     <!-- SEARCH FORM -->
     <!--
@@ -183,7 +183,11 @@
           <img src="/dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
         </div>
         <div class="info">
-        <a href="#" class="d-block">{{ Auth::user()->first_name }} {{ Auth::user()->last_name }}</a>
+            <a href="/login"  class="d-block">
+                {{ Auth::user()->first_name }} {{ Auth::user()->last_name }}
+
+                <i class="fa fa-window-close"></i>
+            </a>
         </div>
       </div>
 
@@ -225,6 +229,42 @@
                 @endif
                   <i class="far fa-circle nav-icon"></i>
                   <p>نیازسنجی</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+          @if(strpos(\Request::route()->getName(), 'collection')===0 || strpos(\Request::route()->getName(), 'product')===0)
+          <li class="nav-item has-treeview menu-open">
+          @else
+          <li class="nav-item has-treeview">
+          @endif
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-bookmark"></i>
+              <p>
+                محصولات
+                <i class="fas fa-angle-left right"></i>
+                <!--<span class="badge badge-info right">6</span>-->
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                @if(strpos(\Request::route()->getName(), 'collection')===0)
+                <a href="{{ route('collections') }}" class="nav-link active">
+                @else
+                <a href="{{ route('collections') }}" class="nav-link">
+                @endif
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>دسته</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                @if(strpos(\Request::route()->getName(), 'product')===0)
+                <a href="{{ route('products') }}" class="nav-link active">
+                @else
+                <a href="{{ route('products') }}" class="nav-link">
+                @endif
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>محصول</p>
                 </a>
               </li>
             </ul>

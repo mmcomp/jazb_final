@@ -31,5 +31,19 @@ Route::group(['middleware' => ['auth']], function () {
         Route::any('/edit/{id}', 'NeedTagController@edit')->name('need_tag_edit');
         Route::get('/delete/{id}', 'NeedTagController@delete')->name('need_tag_delete');
     });
+
+    Route::group(['prefix' => '/collections'], function () {
+        Route::get('/', 'CollectionController@index')->name('collections');
+        Route::any('/create', 'CollectionController@create')->name('collection_create');
+        Route::any('/edit/{id}', 'CollectionController@edit')->name('collection_edit');
+        Route::get('/delete/{id}', 'CollectionController@delete')->name('collection_delete');
+    });
+
+    Route::group(['prefix' => '/products'], function () {
+        Route::get('/', 'ProductController@index')->name('products');
+        Route::any('/create', 'ProductController@create')->name('product_create');
+        Route::any('/edit/{id}', 'ProductController@edit')->name('product_edit');
+        Route::get('/delete/{id}', 'ProductController@delete')->name('product_delete');
+    });
 });
 
