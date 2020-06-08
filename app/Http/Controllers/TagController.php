@@ -5,11 +5,15 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Tag;
+use App\TagParentOne;
+use App\TagParentTwo;
+use App\TagParentThree;
+use App\TagParentFour;
 
 class TagController extends Controller
 {
     public function index(){
-        $tags = Tag::where('type', 'moral')->where('is_deleted', false)->with('user')->with('parent')->orderBy('name')->get();
+        $tags = Tag::where('type', 'moral')->where('is_deleted', false)->with('user')->with('parent_one')->with('parent_two')->with('parent_three')->with('parent_four')->orderBy('name')->get();
 
         return view('tags.index',[
             'tags' => $tags,
@@ -21,10 +25,18 @@ class TagController extends Controller
     public function create(Request $request)
     {
         $tags = Tag::where('type', 'moral')->where('is_deleted', false)->with('user')->with('parent')->orderBy('name')->get();
+        $tagParentOnes = TagParentOne::where('is_deleted', false)->orderBy('name')->get();
+        $tagParentTwos = TagParentTwo::where('is_deleted', false)->orderBy('name')->get();
+        $tagParentThrees = TagParentThree::where('is_deleted', false)->orderBy('name')->get();
+        $tagParentFours = TagParentFour::where('is_deleted', false)->orderBy('name')->get();
         $tag = new Tag;
         if($request->getMethod()=='GET'){
             return view('tags.create', [
                 "tags"=>$tags,
+                "tagParentOnes"=>$tagParentOnes,
+                "tagParentTwos"=>$tagParentTwos,
+                "tagParentThrees"=>$tagParentThrees,
+                "tagParentFours"=>$tagParentFours,
                 "tag"=>$tag
             ]);
         }

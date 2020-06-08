@@ -38,7 +38,10 @@
                     <th>ردیف</th>
                     <th>کد</th>
                     <th>نام</th>
-                    <th>والد</th>
+                    <th>برچسب اصلی</th>
+                    <th>برچسب فرعی 1</th>
+                    <th>برچسب فرعی 2</th>
+                    <th>برچسب فرعی 3</th>
                     <th>ثبت کننده</th>
                     <th>#</th>
                   </tr>
@@ -49,7 +52,10 @@
                         <td>{{ $index + 1 }}</td>
                         <td>{{ $item->id }}</td>
                         <td>{{ $item->name }}</td>
-                        <td>{{ ($item->parent)?$item->parent->name:'-' }}</td>
+                        <td>{{ ($item->parent_one)?$item->parent_one->name:'-' }}</td>
+                        <td>{{ ($item->parent_two)?$item->parent_two->name:'-' }}</td>
+                        <td>{{ ($item->parent_three)?$item->parent_three->name:'-' }}</td>
+                        <td>{{ ($item->parent_four)?$item->parent_four->name:'-' }}</td>
                         <td>{{ ($item->user)?$item->user->first_name . ' ' . $item->user->last_name:'-' }}</td>
                         <td>
                             <a class="btn btn-primary" href="{{ route('tag_edit', $item->id) }}">
