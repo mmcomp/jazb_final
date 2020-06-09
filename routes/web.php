@@ -18,6 +18,35 @@ Route::post('/login', 'UserController@login')->name('dologin');
 
 Route::group(['middleware' => ['auth']], function () {
     Route::get('/', 'DashboardController@index')->name('home');
+
+    Route::group(['prefix' => '/parent_tag_ones'], function () {
+        Route::get('/', 'ParentTagOneController@index')->name('parent_tag_ones');
+        Route::any('/create', 'ParentTagOneController@create')->name('parent_tag_one_create');
+        Route::any('/edit/{id}', 'ParentTagOneController@edit')->name('parent_tag_one_edit');
+        Route::get('/delete/{id}', 'ParentTagOneController@delete')->name('parent_tag_one_delete');
+    });
+
+    Route::group(['prefix' => '/parent_tag_twos'], function () {
+        Route::get('/', 'ParentTagTwoController@index')->name('parent_tag_twos');
+        Route::any('/create', 'ParentTagTwoController@create')->name('parent_tag_two_create');
+        Route::any('/edit/{id}', 'ParentTagTwoController@edit')->name('parent_tag_two_edit');
+        Route::get('/delete/{id}', 'ParentTagTwoController@delete')->name('parent_tag_two_delete');
+    });
+
+    Route::group(['prefix' => '/parent_tag_threes'], function () {
+        Route::get('/', 'ParentTagThreeController@index')->name('parent_tag_threes');
+        Route::any('/create', 'ParentTagThreeController@create')->name('parent_tag_three_create');
+        Route::any('/edit/{id}', 'ParentTagThreeController@edit')->name('parent_tag_three_edit');
+        Route::get('/delete/{id}', 'ParentTagThreeController@delete')->name('parent_tag_three_delete');
+    });
+
+    Route::group(['prefix' => '/parent_tag_fours'], function () {
+        Route::get('/', 'ParentTagFourController@index')->name('parent_tag_fours');
+        Route::any('/create', 'ParentTagFourController@create')->name('parent_tag_four_create');
+        Route::any('/edit/{id}', 'ParentTagFourController@edit')->name('parent_tag_four_edit');
+        Route::get('/delete/{id}', 'ParentTagFourController@delete')->name('parent_tag_four_delete');
+    });
+
     Route::group(['prefix' => '/tags'], function () {
         Route::get('/', 'TagController@index')->name('tags');
         Route::any('/create', 'TagController@create')->name('tag_create');

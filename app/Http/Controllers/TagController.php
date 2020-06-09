@@ -42,7 +42,10 @@ class TagController extends Controller
         }
 
         $tag->name = $request->input('name', '');
-        $tag->parent_id = (int)$request->input('parent_id', 0);
+        $tag->parent1 = (int)$request->input('parent1', 0);
+        $tag->parent2 = (int)$request->input('parent2', 0);
+        $tag->parent3 = (int)$request->input('parent3', 0);
+        $tag->parent4 = (int)$request->input('parent4', 0);
         $tag->users_id = Auth::user()->id;
         $tag->save();
 
@@ -53,6 +56,10 @@ class TagController extends Controller
     public function edit(Request $request, $id)
     {
         $tags = Tag::where('type', 'moral')->where('is_deleted', false)->where('id', '!=', $id)->with('user')->with('parent')->orderBy('name')->get();
+        $tagParentOnes = TagParentOne::where('is_deleted', false)->orderBy('name')->get();
+        $tagParentTwos = TagParentTwo::where('is_deleted', false)->orderBy('name')->get();
+        $tagParentThrees = TagParentThree::where('is_deleted', false)->orderBy('name')->get();
+        $tagParentFours = TagParentFour::where('is_deleted', false)->orderBy('name')->get();
         $tag = Tag::where('id', $id)->where('is_deleted', false)->first();
         if($tag==null){
             $request->session()->flash("msg_error", "برچسب مورد نظر پیدا نشد!");
@@ -61,26 +68,19 @@ class TagController extends Controller
         if($request->getMethod()=='GET'){
             return view('tags.create', [
                 "tags"=>$tags,
+                "tagParentOnes"=>$tagParentOnes,
+                "tagParentTwos"=>$tagParentTwos,
+                "tagParentThrees"=>$tagParentThrees,
+                "tagParentFours"=>$tagParentFours,
                 "tag"=>$tag
             ]);
         }
 
-        $parent_id = (int)$request->input('parent_id', 0);
-        if($parent_id>0){
-            $parent = Tag::where('id', $parent_id)->where('is_deleted', false)->first();
-            if($parent==null){
-                $request->session()->flash("msg_error", "والد نا معتبر است!");
-                return redirect()->route('tags');
-            }
-
-            if($parent->parent_id == $tag->id){
-                $request->session()->flash("msg_error", "برچسب نمی تواند با این والد ثبت شود!");
-                return redirect()->route('tags');
-            }
-        }
-
         $tag->name = $request->input('name', '');
-        $tag->parent_id = $parent_id;
+        $tag->parent1 = (int)$request->input('parent1', 0);
+        $tag->parent2 = (int)$request->input('parent2', 0);
+        $tag->parent3 = (int)$request->input('parent3', 0);
+        $tag->parent4 = (int)$request->input('parent4', 0);
         $tag->users_id = Auth::user()->id;
         $tag->save();
 
