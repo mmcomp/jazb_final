@@ -28,46 +28,90 @@
     <div class="register-logo">
       <a> {{ env('APP_NAME') }}</a>
     </div>
-
-    <div class="register-box-body card p-3">
-      <p class="login-box-msg">ثبت نام نماینده</p>
-      <form action="../../index.html" method="post">
-        <div class="input-group mb-3">
-          <div class="input-group-append">
-            <div class="input-group-text">
-              <span class="fas fa-user"></span>
-            </div>
-          </div>
-          <input type="text" class="form-control" placeholder="نام" id="fname" name="fname" >
-          
+    @auth
+      <div class="card p-3" >
+        <div class="alert alert-danger">
+          قبلا ثبت نام انجام شده است
         </div>
-        <div class="input-group mb-3">
-          <div class="input-group-append">
-            <div class="input-group-text">
-              <span class="fas fa-envelope"></span>
-            </div>
-          </div>
-          <input type="text" class="form-control" placeholder="نام خانوادگی" id="lname" name="lname" >
-        </div>
-        <div class="input-group mb-3">
-          <div class="input-group-append">
-            <div class="input-group-text">
-              <span class="fas fa-lock"></span>
-            </div>
-          </div>
-          <input type="text" class="form-control" placeholder="تلفن همراه" id="mobile" name="mobile" >
-        </div>
-        
-      </form>
-      <div class="row" >
-        <div class="col-md-4 col-sm-6 col-xs-12" >
-          <button class="btn btn-primary btn-block btn-flat"> ادامه </button>
-        </div>
-        <div class="col-md-8 col-sm-6 col-xs-12 mt-2" >
-          <a href="login" class="text-center">قبلا عضو شده ام</a>
-        </div>
+        <a href="/" class="btn btn-block btn-success" > بازگشت</a>
+      </div>  
+    @endauth
+    @guest
+      @if ($errors->any())
+      <div class="alert alert-danger">
+          <ul>
+              @foreach ($errors->all() as $error)
+                  <li>{{ $error }}</li>
+              @endforeach
+          </ul>
       </div>
-    </div><!-- /.form-box -->
+      @endif
+      @isset($smsMessage)
+        {{ smsMessage }}
+      @endisset  
+      <div class="register-box-body card p-3" @isset($smsMessage)
+          style="display: none"
+      @endisset >
+        <p class="login-box-msg">ثبت نام نماینده</p>
+        <form action="{{ route('sendsms') }}" method="post">
+          @csrf
+          <div class="input-group mb-3">
+            <div class="input-group-append">
+              <div class="input-group-text">
+                <span class="fas fa-user"></span>
+              </div>
+            </div>
+            <input type="text" class="form-control" placeholder="نام" id="fname" name="fname" >
+            
+          </div>
+          <div class="input-group mb-3">
+            <div class="input-group-append">
+              <div class="input-group-text">
+                <span class="fas fa-envelope"></span>
+              </div>
+            </div>
+            <input type="text" class="form-control" placeholder="نام خانوادگی" id="lname" name="lname" >
+          </div>
+          <div class="input-group mb-3">
+            <div class="input-group-append">
+              <div class="input-group-text">
+                <span class="fas fa-lock"></span>
+              </div>
+            </div>
+            <input type="text" class="form-control" placeholder="تلفن همراه" id="mobile" name="mobile" >
+          </div>
+          <div class="input-group mb-3">
+            <div class="input-group-append">
+              <div class="input-group-text">
+                <span class="fas fa-city"></span>
+              </div>
+            </div>
+            <select name="ostan" id="ostan" class="form-control" >
+              <option value="" >استان</option>
+              <option value="" >تهران</option>
+              <option value="" >مشهد</option>
+            </select>
+          </div>
+          <div class="input-group mb-3">
+            <div class="input-group-append">
+              <div class="input-group-text">
+                <span class="fas fa-city"></span>
+              </div>
+            </div>
+            <input type="text" class="form-control" placeholder="شهر" id="city" name="city" >
+          </div>
+          <div class="row" >
+            <div class="col-md-4 col-sm-6 col-xs-12" >
+              <button class="btn btn-primary btn-block btn-flat"> ادامه </button>
+            </div>
+            <div class="col-md-8 col-sm-6 col-xs-12 mt-2" >
+              <a href="login" class="text-center">قبلا عضو شده ام</a>
+            </div>
+          </div>
+        </form>
+        
+      </div><!-- /.form-box -->
+    @endguest
   </div><!-- /.register-box -->
 <!-- jQuery -->
 <script src="plugins/jquery/jquery.min.js"></script>
