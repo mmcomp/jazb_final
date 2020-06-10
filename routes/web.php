@@ -17,6 +17,7 @@ Route::get('/login', 'UserController@login')->name('login');
 Route::post('/login', 'UserController@login')->name('dologin');
 Route::get('/register', 'RegisterController@index');
 Route::post('/register', 'RegisterController@sendsms')->name('sendsms');
+Route::post('/register/checksms', 'RegisterController@checksms')->name('checksms');
 Route::group(['middleware' => ['auth']], function () {
     Route::get('/', 'DashboardController@index')->name('home');
 
