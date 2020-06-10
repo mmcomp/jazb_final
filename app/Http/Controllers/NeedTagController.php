@@ -5,12 +5,16 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Tag;
+use App\NeedTagParentOne;
+use App\NeedTagParentTwo;
+use App\NeedTagParentThree;
+use App\NeedTagParentFour;
 use Exception;
 
 class NeedTagController extends Controller
 {
     public function index(){
-        $tags = Tag::where('type', 'need')->where('is_deleted', false)->with('user')->with('parent')->orderBy('name')->get();
+        $tags = Tag::where('type', 'need')->where('is_deleted', false)->with('user')->with('user')->with('need_parent_one')->with('need_parent_two')->with('need_parent_three')->with('need_parent_four')->orderBy('name')->get();
 
         return view('need_tags.index',[
             'tags' => $tags,
@@ -22,22 +26,38 @@ class NeedTagController extends Controller
     public function create(Request $request)
     {
         $tags = Tag::where('type', 'need')->where('is_deleted', false)->with('user')->with('parent')->orderBy('name')->get();
+        $tagParentOnes = NeedTagParentOne::where('is_deleted', false)->orderBy('name')->get();
+        $tagParentTwos = NeedTagParentTwo::where('is_deleted', false)->orderBy('name')->get();
+        $tagParentThrees = NeedTagParentThree::where('is_deleted', false)->orderBy('name')->get();
+        $tagParentFours = NeedTagParentFour::where('is_deleted', false)->orderBy('name')->get();
         $tag = new Tag;
         if($request->getMethod()=='GET'){
             return view('need_tags.create', [
                 "tags"=>$tags,
+                "tagParentOnes"=>$tagParentOnes,
+                "tagParentTwos"=>$tagParentTwos,
+                "tagParentThrees"=>$tagParentThrees,
+                "tagParentFours"=>$tagParentFours,
                 "tag"=>$tag
             ]);
         }
 
         $tag->name = $request->input('name', '');
-        $tag->parent_id = (int)$request->input('parent_id', 0);
+        $tag->need_parent1 = (int)$request->input('need_parent1', 0);
+        $tag->need_parent2 = (int)$request->input('need_parent2', 0);
+        $tag->need_parent3 = (int)$request->input('need_parent3', 0);
+        $tag->need_parent4 = (int)$request->input('need_parent4', 0);
+        $tag->parent1 = 0;
+        $tag->parent2 = 0;
+        $tag->parent3 = 0;
+        $tag->parent4 = 0;
         $tag->users_id = Auth::user()->id;
         $tag->type = 'need';
         try{
             $tag->save();
         }catch(Exception $error)
         {
+            // dd($error);
             $request->session()->flash("msg_error", "برچسب با موفقیت افزوده نشد.");
             return redirect()->route('need_tags');
         }
@@ -49,6 +69,10 @@ class NeedTagController extends Controller
     public function edit(Request $request, $id)
     {
         $tags = Tag::where('type', 'need')->where('id', '!=', $id)->with('user')->with('parent')->orderBy('name')->get();
+        $tagParentOnes = NeedTagParentOne::where('is_deleted', false)->orderBy('name')->get();
+        $tagParentTwos = NeedTagParentTwo::where('is_deleted', false)->orderBy('name')->get();
+        $tagParentThrees = NeedTagParentThree::where('is_deleted', false)->orderBy('name')->get();
+        $tagParentFours = NeedTagParentFour::where('is_deleted', false)->orderBy('name')->get();
         $tag = Tag::where('id', $id)->where('is_deleted', false)->first();
         if($tag==null){
             $request->session()->flash("msg_error", "برچسب مورد نظر پیدا نشد!");
@@ -57,26 +81,24 @@ class NeedTagController extends Controller
         if($request->getMethod()=='GET'){
             return view('need_tags.create', [
                 "tags"=>$tags,
+                "tagParentOnes"=>$tagParentOnes,
+                "tagParentTwos"=>$tagParentTwos,
+                "tagParentThrees"=>$tagParentThrees,
+                "tagParentFours"=>$tagParentFours,
                 "tag"=>$tag
             ]);
         }
 
-        $parent_id = (int)$request->input('parent_id', 0);
-        if($parent_id>0){
-            $parent = Tag::where('id', $parent_id)->where('is_deleted', false)->first();
-            if($parent==null){
-                $request->session()->flash("msg_error", "والد نا معتبر است!");
-                return redirect()->route('need_tags');
-            }
-
-            if($parent->parent_id == $tag->id){
-                $request->session()->flash("msg_error", "برچسب نمی تواند با این والد ثبت شود!");
-                return redirect()->route('need_tags');
-            }
-        }
 
         $tag->name = $request->input('name', '');
-        $tag->parent_id = $parent_id;
+        $tag->need_parent1 = (int)$request->input('need_parent1', 0);
+        $tag->need_parent2 = (int)$request->input('need_parent2', 0);
+        $tag->need_parent3 = (int)$request->input('need_parent3', 0);
+        $tag->need_parent4 = (int)$request->input('need_parent4', 0);
+        $tag->parent1 = 0;
+        $tag->parent2 = 0;
+        $tag->parent3 = 0;
+        $tag->parent4 = 0;
         $tag->users_id = Auth::user()->id;
         $tag->save();
 

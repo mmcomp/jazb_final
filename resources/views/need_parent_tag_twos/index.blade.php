@@ -6,7 +6,7 @@
         <div class="container-fluid">
           <div class="row mb-2">
             <div class="col-sm-6">
-              <h1>برچسب های نیازسنجی</h1>
+              <h1>برچسب های فرعی 1 نیازسنجی</h1>
             </div>
             <div class="col-sm-6">
               <!--
@@ -27,7 +27,7 @@
             <div class="card">
               <div class="card-header">
                 <h3 class="card-title">
-                    <a class="btn btn-success" href="{{ route('need_tag_create') }}">برچسب جدید</a>
+                    <a class="btn btn-success" href="{{ route('need_parent_tag_two_create') }}">برچسب نیازسنجی فرعی 1 جدید</a>
                 </h3>
               </div>
               <!-- /.card-header -->
@@ -38,30 +38,20 @@
                     <th>ردیف</th>
                     <th>کد</th>
                     <th>نام</th>
-                    <th>برچسب اصلی</th>
-                    <th>برچسب فرعی 1</th>
-                    <th>برچسب فرعی 2</th>
-                    <th>برچسب فرعی 3</th>
-                    <th>ثبت کننده</th>
                     <th>#</th>
                   </tr>
                   </thead>
                   <tbody>
-                      @foreach ($tags as $index => $item)
+                      @foreach ($needParentTagTwos as $index => $item)
                       <tr>
                         <td>{{ $index + 1 }}</td>
                         <td>{{ $item->id }}</td>
                         <td>{{ $item->name }}</td>
-                        <td>{{ ($item->need_parent_one)?$item->need_parent_one->name:'-' }}</td>
-                        <td>{{ ($item->need_parent_two)?$item->need_parent_two->name:'-' }}</td>
-                        <td>{{ ($item->need_parent_three)?$item->need_parent_three->name:'-' }}</td>
-                        <td>{{ ($item->need_parent_four)?$item->need_parent_four->name:'-' }}</td>
-                        <td>{{ ($item->user)?$item->user->first_name . ' ' . $item->user->last_name:'-' }}</td>
                         <td>
-                            <a class="btn btn-primary" href="{{ route('need_tag_edit', $item->id) }}">
+                            <a class="btn btn-primary" href="{{ route('need_parent_tag_two_edit', $item->id) }}">
                                 ویرایش
                             </a>
-                            <a class="btn btn-danger" href="{{ route('need_tag_delete', $item->id) }}">
+                            <a class="btn btn-danger" href="{{ route('need_parent_tag_two_delete', $item->id) }}">
                                 حذف
                             </a>
                         </td>

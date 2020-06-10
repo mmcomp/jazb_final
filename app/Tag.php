@@ -30,4 +30,20 @@ class Tag extends Model
     public function parent_four(){
         return $this->hasOne('App\TagParentFour', 'id', 'parent4');
     }
+
+    public function need_parent_one(){
+        return $this->hasOne('App\NeedTagParentOne', 'id', 'need_parent1');
+    }
+
+    public function need_parent_two(){
+        return $this->hasOne('App\NeedTagParentTwo', 'id', 'need_parent2');
+    }
+
+    public function need_parent_three(){
+        return $this->hasOne('App\NeedTagParentThree', 'id', 'need_parent3');
+    }
+
+    public function need_parent_four(){
+        return $this->hasOne('App\NeedTagParentFour', 'id', 'need_parent4');
+    }
 }

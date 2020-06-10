@@ -20,6 +20,34 @@ Route::post('/register', 'RegisterController@sendsms')->name('sendsms');
 Route::group(['middleware' => ['auth']], function () {
     Route::get('/', 'DashboardController@index')->name('home');
 
+    Route::group(['prefix' => '/need_parent_tag_ones'], function () {
+        Route::get('/', 'NeedParentTagOneController@index')->name('need_parent_tag_ones');
+        Route::any('/create', 'NeedParentTagOneController@create')->name('need_parent_tag_one_create');
+        Route::any('/edit/{id}', 'NeedParentTagOneController@edit')->name('need_parent_tag_one_edit');
+        Route::get('/delete/{id}', 'NeedParentTagOneController@delete')->name('need_parent_tag_one_delete');
+    });
+
+    Route::group(['prefix' => '/need_parent_tag_twos'], function () {
+        Route::get('/', 'NeedParentTagTwoController@index')->name('need_parent_tag_twos');
+        Route::any('/create', 'NeedParentTagTwoController@create')->name('need_parent_tag_two_create');
+        Route::any('/edit/{id}', 'NeedParentTagTwoController@edit')->name('need_parent_tag_two_edit');
+        Route::get('/delete/{id}', 'NeedParentTagTwoController@delete')->name('need_parent_tag_two_delete');
+    });
+
+    Route::group(['prefix' => '/need_parent_tag_threes'], function () {
+        Route::get('/', 'NeedParentTagThreeController@index')->name('need_parent_tag_threes');
+        Route::any('/create', 'NeedParentTagThreeController@create')->name('need_parent_tag_three_create');
+        Route::any('/edit/{id}', 'NeedParentTagThreeController@edit')->name('need_parent_tag_three_edit');
+        Route::get('/delete/{id}', 'NeedParentTagThreeController@delete')->name('need_parent_tag_three_delete');
+    });
+
+    Route::group(['prefix' => '/need_parent_tag_fours'], function () {
+        Route::get('/', 'NeedParentTagFourController@index')->name('need_parent_tag_fours');
+        Route::any('/create', 'NeedParentTagFourController@create')->name('need_parent_tag_four_create');
+        Route::any('/edit/{id}', 'NeedParentTagFourController@edit')->name('need_parent_tag_four_edit');
+        Route::get('/delete/{id}', 'NeedParentTagFourController@delete')->name('need_parent_tag_four_delete');
+    });
+
     Route::group(['prefix' => '/parent_tag_ones'], function () {
         Route::get('/', 'ParentTagOneController@index')->name('parent_tag_ones');
         Route::any('/create', 'ParentTagOneController@create')->name('parent_tag_one_create');
