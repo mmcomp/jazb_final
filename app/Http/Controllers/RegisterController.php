@@ -125,7 +125,7 @@ class RegisterController extends Controller
         $user->password = Hash::make($request->input('password'));
         $user->first_name = $userInfo->fname;
         $user->last_name = $userInfo->lname;
-        $group = Group::select('id')->where('name','Agent')->first();
+        $group = Group::select('id')->where('name','Marketer')->first();
         $user->groups_id = $group->id;
         $user->save();
         $marketer  = new Marketer;
