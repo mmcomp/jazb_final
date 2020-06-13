@@ -111,7 +111,7 @@
                 <button type="button" id="first_step" class="btn btn-primary btn-block btn-flat" value="1"> ادامه </button>
               </div>
               <div class="col-md-8 col-sm-6 col-xs-12 mt-2" >
-                <a href="login" class="text-center">قبلا عضو شده ام</a>
+                <a href="{{ route('login') }}" class="text-center">قبلا عضو شده ام</a>
               </div>
             </div>
           </form>
@@ -248,6 +248,15 @@
       });
     }); 
   </script>
+@endisset
+@isset($final_step)
+  <script>
+    $(document).ready(()=>{
+      setTimeout(()=>{
+        window.location = "{{ route('login') }}";
+      },4000);
+    });
+  </script>    
 @endisset
 </body>
 </html>
