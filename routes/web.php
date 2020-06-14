@@ -119,5 +119,12 @@ Route::group(['middleware' => ['auth']], function () {
         Route::any('/edit/{id}', 'StudentController@edit')->name('student_edit');
         Route::get('/delete/{id}', 'StudentController@delete')->name('student_delete');
     });
+
+    Route::group(['prefix' => '/sources'], function () {
+        Route::get('/', 'SourceController@index')->name('sources');
+        Route::any('/create', 'SourceController@create')->name('source_create');
+        Route::any('/edit/{id}', 'SourceController@edit')->name('source_edit');
+        Route::get('/delete/{id}', 'SourceController@delete')->name('source_delete');
+    });
 });
 
