@@ -25,6 +25,10 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        //
+        Gate::define('parameters', function ($user) {
+            $group = $user->group()->first();
+            $gates = $group->gates()->where('key', 'parameters')->get();
+            return count($gates)>0;
+        });
     }
 }

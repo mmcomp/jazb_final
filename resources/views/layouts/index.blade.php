@@ -193,6 +193,8 @@
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
           <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
+
+          @if (Gate::allows('parameters'))
           <li class="nav-header">تعاریف پایه</li>
           @if(strpos(\Request::route()->getName(), 'tag')===0 || strpos(\Request::route()->getName(), 'need_tag')===0 || strpos(\Request::route()->getName(), 'parent_tag')===0 || strpos(\Request::route()->getName(), 'need_parent_tag')===0 || strpos(\Request::route()->getName(), 'temperature')===0)
           <li class="nav-item has-treeview menu-open">
@@ -356,6 +358,8 @@
               </li>
             </ul>
           </li>
+          @endif
+
           <!--
           <li class="nav-item has-treeview menu-open">
             <a href="#" class="nav-link active">
