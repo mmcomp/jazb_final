@@ -60,7 +60,7 @@ class RegisterController extends Controller
         Sms_validation::where('mobile', $sms->mobile)->delete();
         $sms->save();
         $smsMessage = "لطفا کد پیامک شده را وارد نمایید";
-        return view('layouts.register', 
+        return view('layouts.register',
             [
             'smsMessage'=>$smsMessage ,
             'provinces'=>[] ,
@@ -80,7 +80,7 @@ class RegisterController extends Controller
         ]);
         $res = Sms_validation::where('mobile',$request->input('mobile'))->where('sms_code',$request->input('sms_code'))->count();
         if($res<=0){
-            return view('layouts.register', 
+            return view('layouts.register',
             [
                 'smsMessage'=>'کد وارد شده صحیح نیست' ,
                 'provinces'=>[] ,
@@ -89,7 +89,7 @@ class RegisterController extends Controller
             ]);
         }
         $smsMessage = "جهت ورود به سیستم در آینده لطفا رمز عبور خود را تعیین کنید ";
-        return view('layouts.register', 
+        return view('layouts.register',
             [
                 'smsMessage'=>$smsMessage ,
                 'provinces'=>[] ,
@@ -106,7 +106,7 @@ class RegisterController extends Controller
                 'first_step'=>1
             ]);
         }
-        
+
         $userCount = User::where('email', $request->input('mobile'))->count();
         if ($userCount > 0) {
             $provinces = Province::pluck('name', 'id');
@@ -120,7 +120,7 @@ class RegisterController extends Controller
         $user = new User;
         $userInfo = json_decode($res->user_info);
         $user->email = $userInfo->mobile;
-        $user->password = Hash::make($request->input('pawssword'));
+        $user->password = Hash::make($request->input('password'));
         $user->first_name = $userInfo->fname;
         $user->last_name = $userInfo->lname;
         $user->save();

@@ -105,5 +105,19 @@ Route::group(['middleware' => ['auth']], function () {
         Route::any('/edit/{id}', 'ProductController@edit')->name('product_edit');
         Route::get('/delete/{id}', 'ProductController@delete')->name('product_delete');
     });
+
+    Route::group(['prefix' => '/temperatures'], function () {
+        Route::get('/', 'TemperatureController@index')->name('temperatures');
+        Route::any('/create', 'TemperatureController@create')->name('temperature_create');
+        Route::any('/edit/{id}', 'TemperatureController@edit')->name('temperature_edit');
+        Route::get('/delete/{id}', 'TemperatureController@delete')->name('temperature_delete');
+    });
+
+    Route::group(['prefix' => '/students'], function () {
+        Route::get('/', 'StudentController@index')->name('students');
+        Route::any('/create', 'StudentController@create')->name('student_create');
+        Route::any('/edit/{id}', 'StudentController@edit')->name('student_edit');
+        Route::get('/delete/{id}', 'StudentController@delete')->name('student_delete');
+    });
 });
 
