@@ -10,7 +10,7 @@
         <div class="container-fluid">
           <div class="row mb-2">
             <div class="col-sm-6">
-              <h1>برچسب اخلاقی</h1>
+              <h1>دانش آموز</h1>
             </div>
             <div class="col-sm-6">
               <!--
@@ -38,69 +38,22 @@
                 <div class="row">
                     <div class="col">
                         <div class="form-group">
-                            <label for="name">نام</label>
-                            @if (isset($tag) && isset($tag->id))
-                            <input type="text" class="form-control" id="name" name="name" placeholder="نام" value="{{ $tag->name }}" />
+                            <label for="first_name">نام</label>
+                            @if (isset($student) && isset($student->id))
+                            <input type="text" class="form-control" id="first_name" name="first_name" placeholder="نام" value="{{ $student->first_name }}" />
                             @else
-                            <input type="text" class="form-control" id="name" name="name" placeholder="نام"  />
+                            <input type="text" class="form-control" id="first_name" name="first_name" placeholder="نام"  />
                             @endif
-                        </div>
-
-                        <div class="form-group">
-                            <label for="parent1">برچسب فرعی 1</label>
-                            <select class="form-control select2" id="parent2" name="parent2" >
-                                <option value="0"> - </option>
-                                @foreach ($tagParentTwos as $item)
-                                    @if (isset($tag) && isset($tag->id) && $tag->parent2 == $item->id)
-                                    <option value="{{ $item->id }}" selected>{{ $item->name }}</option>
-                                    @else
-                                    <option value="{{ $item->id }}">{{ $item->name }}</option>
-                                    @endif
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="parent1">برچسب فرعی 3</label>
-                            <select class="form-control select2" id="parent4" name="parent4" >
-                                <option value="0"> - </option>
-                                @foreach ($tagParentFours as $item)
-                                    @if (isset($tag) && isset($tag->id) && $tag->parent4 == $item->id)
-                                    <option value="{{ $item->id }}" selected>{{ $item->name }}</option>
-                                    @else
-                                    <option value="{{ $item->id }}">{{ $item->name }}</option>
-                                    @endif
-                                @endforeach
-                            </select>
                         </div>
                     </div>
                     <div class="col">
                         <div class="form-group">
-                            <label for="parent1">برچسب اصلی</label>
-                            <select class="form-control select2" id="parent1" name="parent1" >
-                                <option value="0"> - </option>
-                                @foreach ($tagParentOnes as $item)
-                                    @if (isset($tag) && isset($tag->id) && $tag->parent1 == $item->id)
-                                    <option value="{{ $item->id }}" selected>{{ $item->name }}</option>
-                                    @else
-                                    <option value="{{ $item->id }}">{{ $item->name }}</option>
-                                    @endif
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="parent1">برچسب فرعی 2</label>
-                            <select class="form-control select2" id="parent3" name="parent3" >
-                                <option value="0"> - </option>
-                                @foreach ($tagParentThrees as $item)
-                                    @if (isset($tag) && isset($tag->id) && $tag->parent3 == $item->id)
-                                    <option value="{{ $item->id }}" selected>{{ $item->name }}</option>
-                                    @else
-                                    <option value="{{ $item->id }}">{{ $item->name }}</option>
-                                    @endif
-                                @endforeach
-                            </select>
+                            <label for="last_name">نام خانوادگی</label>
+                            @if (isset($student) && isset($student->id))
+                            <input type="text" class="form-control" id="last_name" name="last_name" placeholder="نام خانوادگی" value="{{ $student->last_name }}" />
+                            @else
+                            <input type="text" class="form-control" id="last_name" name="last_name" placeholder="نام خانوادگی"  />
+                            @endif
                         </div>
                     </div>
                 </div>

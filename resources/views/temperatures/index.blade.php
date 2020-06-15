@@ -38,6 +38,7 @@
                     <th>ردیف</th>
                     <th>کد</th>
                     <th>نام</th>
+                    <th>داغ/سرد</th>
                     <th>#</th>
                   </tr>
                   </thead>
@@ -47,6 +48,7 @@
                         <td>{{ $index + 1 }}</td>
                         <td>{{ $item->id }}</td>
                         <td>{{ $item->name }}</td>
+                        <td>{{ $item->status=='hot'?'داغ':'سرد' }}</td>
                         <td>
                             <a class="btn btn-primary" href="{{ route('temperature_edit', $item->id) }}">
                                 ویرایش

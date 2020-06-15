@@ -15,9 +15,11 @@ class StudentController extends Controller
             ->with('studenttags.tag')
             ->with('studenttemperatures.temperature')
             ->with('source')
+            ->with('consultant')
+            ->with('supporter')
             ->orderBy('created_at', 'desc')->get();
 
-        dd($students);
+        // dd($students);
         return view('students.index',[
             'students' => $students,
             'msg_success' => request()->session()->get('msg_success'),

@@ -21,4 +21,12 @@ class Student extends Model
     public function studenttemperatures(){
         return $this->hasMany('App\StudentTemperature', 'students_id', 'id');
     }
+
+    public function consultant(){
+        return $this->hasOne('App\User', 'id', 'consultants_id');
+    }
+
+    public function supporter(){
+        return $this->hasOne('App\User', 'id', 'supporters_id');
+    }
 }
