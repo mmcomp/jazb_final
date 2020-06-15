@@ -359,7 +359,32 @@
             </ul>
           </li>
           @endif
-
+          @if(strpos(\Request::route()->getName(), 'source')===0)
+          <li class="nav-item has-treeview menu-open">
+          @else
+          <li class="nav-item has-treeview">
+          @endif
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-bookmark"></i>
+              <p>
+                منابع
+                <i class="fas fa-angle-left right"></i>
+                <!--<span class="badge badge-info right">6</span>-->
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                @if(strpos(\Request::route()->getName(), 'source')===0)
+                <a href="{{ route('sources') }}" class="nav-link active">
+                @else
+                <a href="{{ route('sources') }}" class="nav-link">
+                @endif
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>منبع</p>
+                </a>
+              </li>
+            </ul>
+          </li>
           <!--
           <li class="nav-item has-treeview menu-open">
             <a href="#" class="nav-link active">

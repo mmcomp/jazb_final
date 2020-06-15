@@ -121,5 +121,12 @@ Route::group(['middleware' => ['auth']], function () {
     });
 
     Route::get('marketerprofile','MarketerController@profile')->name('marketerprofile');
+    
+    Route::group(['prefix' => '/sources'], function () {
+        Route::get('/', 'SourceController@index')->name('sources');
+        Route::any('/create', 'SourceController@create')->name('source_create');
+        Route::any('/edit/{id}', 'SourceController@edit')->name('source_edit');
+        Route::get('/delete/{id}', 'SourceController@delete')->name('source_delete');
+    });
 });
 
