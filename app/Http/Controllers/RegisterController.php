@@ -9,7 +9,7 @@ use App\Sms_validation;
 use App\Province;
 use App\User;
 use App\Marketer;
-
+use App\Group;
 use Illuminate\Support\Facades\Hash;
 
 class RegisterController extends Controller
@@ -48,7 +48,8 @@ class RegisterController extends Controller
         }
         $sms = new Sms_validation;
         $sms->mobile = $request->input('mobile');
-        $sms->sms_code = rand(1000, 9999);
+        $sms_code = rand(1000, 9999);
+        $sms->sms_code = $sms_code;
         $user_info = [
             'fname' => $request->input('fname'),
             'lname' => $request->input('lname'),
@@ -59,6 +60,7 @@ class RegisterController extends Controller
         $sms->user_info = json_encode($user_info, JSON_UNESCAPED_UNICODE);
         Sms_validation::where('mobile', $sms->mobile)->delete();
         $sms->save();
+        $this->sendSmsCode($sms->mobile,$sms_code);
         $smsMessage = "لطفا کد پیامک شده را وارد نمایید";
         return view('layouts.register',
             [
@@ -123,6 +125,8 @@ class RegisterController extends Controller
         $user->password = Hash::make($request->input('password'));
         $user->first_name = $userInfo->fname;
         $user->last_name = $userInfo->lname;
+        $group = Group::select('id')->where('name','Marketer')->first();
+        $user->groups_id = $group->id;
         $user->save();
         $marketer  = new Marketer;
         $marketer->users_id = $user->id;
@@ -132,13 +136,26 @@ class RegisterController extends Controller
         $marketer->provinces_id = $userInfo->province;
         $marketer->city = $userInfo->city;
         $marketer->save();
+        Sms_validation::where('mobile',$userInfo->mobile)->delete();
         return view(
             'layouts.register',
             [
-                'smsMessage' => 'ثبت نام با موفقیت انجام شد',
+                'smsMessage' => 'ثبت نام با موفقیت انجام شد لطفا کمی صبر کنید',
                 'provinces'=>[],
                 'final_step' => 1
             ]
         );
+    }
+    public function sendSmsCode($receptor,$token){
+        $api_key = "553133726A6962423652346246504B544C72766668784A6E384C61682B4D565349756B2B374D374C4A6D553D";
+        $url = "https://api.kavenegar.com/v1/$api_key/verify/lookup.json";
+        $ch = curl_init();
+        $url = $url."?receptor=$receptor&token=$token&template=aref";
+        curl_setopt($ch, CURLOPT_URL,$url);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $result = curl_exec($ch);
+        curl_close($ch);
+        return json_decode($result);
     }
 }

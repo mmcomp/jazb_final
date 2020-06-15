@@ -14,7 +14,10 @@
   <link rel="stylesheet" href="plugins/icheck-bootstrap/icheck-bootstrap.min.css">
   <!-- Theme style -->
   <link rel="stylesheet" href="dist/css/adminlte.min.css">
-
+  <!-- Bootstrap 4 RTL -->
+  <link rel="stylesheet" href="/dist/css/bootstrap.min.css">
+  <!-- Custom style for RTL -->
+  <link rel="stylesheet" href="/dist/css/custom.css">
 </head>
 <body class="hold-transition login-page" style="background-image: url('/dist/img/photo2.png');background-size: cover;">
 <div class="login-box">
@@ -33,29 +36,28 @@
       <form action="{{ route('dologin') }}" method="post">
         @csrf
         <div class="input-group mb-3">
-          <input type="text" name="email" class="form-control" placeholder="ایمیل">
           <div class="input-group-append">
             <div class="input-group-text">
               <span class="fas fa-envelope"></span>
             </div>
           </div>
+          <input type="text" name="email" class="form-control" placeholder="تلفن همراه">
         </div>
         <div class="input-group mb-3">
-          <input type="password" name="password" class="form-control" placeholder="رمزعبور">
           <div class="input-group-append">
             <div class="input-group-text">
               <span class="fas fa-lock"></span>
             </div>
           </div>
+          <input type="password" name="password" class="form-control" placeholder="رمزعبور">
         </div>
         <div class="row">
           <div class="col-8">
-            <!--<div class="icheck-primary">
-              <input type="checkbox" id="remember">
-              <label for="remember">
-                Remember Me
-              </label>
-            </div>-->
+            <div class="icheck-primary">
+              <a href="{{ route('register') }}" >
+              ثبت نام نمایند‌گان
+              </a>
+            </div>
           </div>
           <!-- /.col -->
           <div class="col-4">

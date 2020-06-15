@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/login', 'UserController@login')->name('login');
 Route::post('/login', 'UserController@login')->name('dologin');
-Route::get('/register', 'RegisterController@index');
+Route::get('/register', 'RegisterController@index')->name('register');
 Route::post('/register', 'RegisterController@sendsms')->name('sendsms');
 Route::post('/register/checksms', 'RegisterController@checksms')->name('checksms');
 Route::post('/register/createuser', 'RegisterController@createuser')->name('createuser');
@@ -120,6 +120,8 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/delete/{id}', 'StudentController@delete')->name('student_delete');
     });
 
+    Route::get('marketerprofile','MarketerController@profile')->name('marketerprofile');
+    
     Route::group(['prefix' => '/sources'], function () {
         Route::get('/', 'SourceController@index')->name('sources');
         Route::any('/create', 'SourceController@create')->name('source_create');
