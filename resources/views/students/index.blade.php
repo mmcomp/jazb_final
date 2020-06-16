@@ -46,7 +46,7 @@
                     <th>ردیف</th>
                     <th>کد</th>
                     <th>نام</th>
-                    <th>نام خاانوادگی</th>
+                    <th>نام خانوادگی</th>
                     <th>کاربر ثبت کننده</th>
                     <th>منبع ورودی شماره</th>
                     <th>برچسب</th>
@@ -57,15 +57,15 @@
                   </thead>
                   <tbody>
                       @foreach ($students as $index => $item)
-                      <tr onclick="$('#morepanel-{{ $index }}').toggle();">
-                        <td>{{ $index + 1 }}</td>
-                        <td>{{ $item->id }}</td>
-                        <td>{{ $item->first_name }}</td>
-                        <td>{{ $item->last_name }}</td>
-                        <td>{{ ($item->user)?$item->user->first_name . ' ' . $item->user->last_name:'-' }}</td>
-                        <td>{{ ($item->source)?$item->source->name:'-' }}</td>
+                      <tr>
+                        <td onclick="$('#morepanel-{{ $index }}').toggle();">{{ $index + 1 }}</td>
+                        <td onclick="$('#morepanel-{{ $index }}').toggle();">{{ $item->id }}</td>
+                        <td onclick="$('#morepanel-{{ $index }}').toggle();">{{ $item->first_name }}</td>
+                        <td onclick="$('#morepanel-{{ $index }}').toggle();">{{ $item->last_name }}</td>
+                        <td onclick="$('#morepanel-{{ $index }}').toggle();">{{ ($item->user)?$item->user->first_name . ' ' . $item->user->last_name:'-' }}</td>
+                        <td onclick="$('#morepanel-{{ $index }}').toggle();">{{ ($item->source)?$item->source->name:'-' }}</td>
                         @if($item->studenttags && count($item->studenttags)>0)
-                        <td>
+                        <td onclick="$('#morepanel-{{ $index }}').toggle();">
                             @for($i = 0; $i < count($item->studenttags);$i++)
                             <span class="alert alert-info p-1">
                                 {{ $item->studenttags[$i]->tag->name }}
@@ -73,10 +73,10 @@
                             @endfor
                         </td>
                         @else
-                        <td></td>
+                        <td onclick="$('#morepanel-{{ $index }}').toggle();"></td>
                         @endif
                         @if($item->studenttemperatures && count($item->studenttemperatures)>0)
-                        <td>
+                        <td onclick="$('#morepanel-{{ $index }}').toggle();">
                             @foreach ($item->studenttemperatures as $sitem)
                             @if($sitem->temperature->status=='hot')
                             <span class="alert alert-danger p-1">
@@ -88,9 +88,9 @@
                             @endforeach
                         </td>
                         @else
-                        <td></td>
+                        <td onclick="$('#morepanel-{{ $index }}').toggle();"></td>
                         @endif
-                        <td>{{ ($item->supporter)?$item->supporter->first_name . ' ' . $item->supporter->last_name:'-' }}</td>
+                        <td onclick="$('#morepanel-{{ $index }}').toggle();">{{ ($item->supporter)?$item->supporter->first_name . ' ' . $item->supporter->last_name:'-' }}</td>
                         <td>
                             <a class="btn btn-primary" href="{{ route('student_edit', $item->id) }}">
                                 ویرایش
@@ -238,6 +238,9 @@
           if(!confirm('آیا مطمئنید؟')){
             e.preventDefault();
           }
+      });
+      $('a').click(function(event){
+        event.stopPropagation();
       });
     });
   </script>
