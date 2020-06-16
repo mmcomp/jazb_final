@@ -385,7 +385,7 @@
             </ul>
           </li>
           @endif
-          @if (Gate::allows('parameters'))
+          @if (Gate::allows('students'))
           <li class="nav-header">دانش آموز</li>
           </li>
           @if(strpos(\Request::route()->getName(), 'student')===0)
