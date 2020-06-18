@@ -415,6 +415,36 @@
             </ul>
           </li>
           @endif
+          @if (Gate::allows('users'))
+          <li class="nav-header">کاربران</li>
+          </li>
+          @if(strpos(\Request::route()->getName(), 'user')===0)
+          <li class="nav-item has-treeview menu-open">
+          @else
+          <li class="nav-item has-treeview">
+          @endif
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-bookmark"></i>
+              <p>
+                کاربر
+                <i class="fas fa-angle-left right"></i>
+                <!--<span class="badge badge-info right">6</span>-->
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                @if(strpos(\Request::route()->getName(), 'user')===0)
+                <a href="{{ route('users') }}" class="nav-link active">
+                @else
+                <a href="{{ route('users') }}" class="nav-link">
+                @endif
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>لیست</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+          @endif
           <!--
           <li class="nav-item has-treeview menu-open">
             <a href="#" class="nav-link active">

@@ -121,12 +121,19 @@ Route::group(['middleware' => ['auth']], function () {
     });
 
     Route::get('marketerprofile','MarketerController@profile')->name('marketerprofile');
-    
+
     Route::group(['prefix' => '/sources'], function () {
         Route::get('/', 'SourceController@index')->name('sources');
         Route::any('/create', 'SourceController@create')->name('source_create');
         Route::any('/edit/{id}', 'SourceController@edit')->name('source_edit');
         Route::get('/delete/{id}', 'SourceController@delete')->name('source_delete');
+    });
+
+    Route::group(['prefix' => '/users'], function () {
+        Route::get('/', 'UserController@index')->name('users');
+        Route::any('/create', 'UserController@create')->name('user_create');
+        Route::any('/edit/{id}', 'UserController@edit')->name('user_edit');
+        Route::get('/delete/{id}', 'UserController@delete')->name('user_delete');
     });
 });
 

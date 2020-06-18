@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Group;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -32,11 +33,19 @@ class StudentController extends Controller
     public function create(Request $request)
     {
         $student = new Student();
-        $users = User::where('is_deleted', false)->get();
+        $supportGroupId = Group::getSupport();
+        if($supportGroupId)
+            $supportGroupId = $supportGroupId->id;
+        $consultantGroupId = Group::getConsultant();
+        if($consultantGroupId)
+            $consultantGroupId = $consultantGroupId->id;
+        $supports = User::where('is_deleted', false)->where('groups_id', $supportGroupId)->get();
+        $consultants = User::where('is_deleted', false)->where('groups_id', $consultantGroupId)->get();
         $sources = Source::where('is_deleted', false)->get();
         if($request->getMethod()=='GET'){
             return view('students.create', [
-                "users"=>$users,
+                "supports"=>$supports,
+                "consultants"=>$consultants,
                 "sources"=>$sources,
                 "student"=>$student
             ]);
@@ -73,11 +82,19 @@ class StudentController extends Controller
             $request->session()->flash("msg_error", "دانش آموز مورد نظر پیدا نشد!");
             return redirect()->route('students');
         }
-        $users = User::where('is_deleted', false)->get();
+        $supportGroupId = Group::getSupport();
+        if($supportGroupId)
+            $supportGroupId = $supportGroupId->id;
+        $consultantGroupId = Group::getConsultant();
+        if($consultantGroupId)
+            $consultantGroupId = $consultantGroupId->id;
+        $supports = User::where('is_deleted', false)->where('groups_id', $supportGroupId)->get();
+        $consultants = User::where('is_deleted', false)->where('groups_id', $consultantGroupId)->get();
         $sources = Source::where('is_deleted', false)->get();
         if($request->getMethod()=='GET'){
             return view('students.create', [
-                "users"=>$users,
+                "supports"=>$supports,
+                "consultants"=>$consultants,
                 "sources"=>$sources,
                 "student"=>$student
             ]);

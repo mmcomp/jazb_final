@@ -175,7 +175,7 @@
                             <label for="consultants_id">مشاور</label>
                             <select  id="consultants_id" name="consultants_id" class="form-control">
                                 <option value="0"></option>
-                                @foreach ($users as $item)
+                                @foreach ($consultants as $item)
                                     @if (isset($student) && isset($student->id) && $student->consultants_id == $item->id)
                                     <option value="{{ $item->id }}" selected>
                                     @else
@@ -236,7 +236,7 @@
                             <label for="supporters_id">پشتیبان</label>
                             <select  id="supporters_id" name="supporters_id" class="form-control">
                                 <option value="0"></option>
-                                @foreach ($users as $item)
+                                @foreach ($supports as $item)
                                     @if (isset($student) && isset($student->id) && $student->supporters_id == $item->id)
                                     <option value="{{ $item->id }}" selected>
                                     @else
