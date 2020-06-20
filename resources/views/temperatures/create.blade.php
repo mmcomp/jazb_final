@@ -45,6 +45,22 @@
                             <input type="text" class="form-control" id="name" name="name" placeholder="نام"  />
                             @endif
                         </div>
+
+                        <div class="form-group">
+                            <label for="status">داغ/سرد</label>
+                            <select class="form-control" id="status" name="status">
+                                @if ($temperature->status=='hot')
+                                <option value="hot" selected>داغ</option>
+                                @else
+                                <option value="hot">داغ</option>
+                                @endif
+                                @if ($temperature->type=='cold')
+                                <option value="cold" selected>سرد</option>
+                                @else
+                                <option value="cold">سرد</option>
+                                @endif
+                            </select>
+                        </div>
                     </div>
                     <div class="col">
                         <div class="form-group">

@@ -29,6 +29,7 @@ class TemperatureController extends Controller
 
         $temperature->name = $request->input('name', '');
         $temperature->type = $request->input('type', 'global');
+        $temperature->status = $request->input('status', 'hot');
         $temperature->users_id = Auth::user()->id;
         $temperature->save();
 
@@ -50,6 +51,7 @@ class TemperatureController extends Controller
         }
         $temperature->name = $request->input('name', '');
         $temperature->type = $request->input('type', 'global');
+        $temperature->status = $request->input('status', 'hot');
         $temperature->users_id = Auth::user()->id;
         $temperature->save();
 

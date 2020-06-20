@@ -6,7 +6,7 @@
         <div class="container-fluid">
           <div class="row mb-2">
             <div class="col-sm-6">
-              <h1>داغ و سرد ها</h1>
+              <h1>کاربران</h1>
             </div>
             <div class="col-sm-6">
               <!--
@@ -27,7 +27,7 @@
             <div class="card">
               <div class="card-header">
                 <h3 class="card-title">
-                    <a class="btn btn-success" href="{{ route('temperature_create') }}">داغ و سرد جدید</a>
+                    <a class="btn btn-success" href="{{ route('user_create') }}">کاربر جدید</a>
                 </h3>
               </div>
               <!-- /.card-header -->
@@ -37,40 +37,33 @@
                   <tr>
                     <th>ردیف</th>
                     <th>کد</th>
+                    <th>نام کاربری</th>
                     <th>نام</th>
-                    <th>داغ/سرد</th>
+                    <th>نام خانوادگی</th>
+                    <th>گروه</th>
                     <th>#</th>
                   </tr>
                   </thead>
                   <tbody>
-                      @foreach ($temperatures as $index => $item)
+                      @foreach ($users as $index => $item)
                       <tr>
                         <td>{{ $index + 1 }}</td>
                         <td>{{ $item->id }}</td>
-                        <td>{{ $item->name }}</td>
-                        <td>{{ $item->status=='hot'?'داغ':'سرد' }}</td>
+                        <td>{{ $item->email }}</td>
+                        <td>{{ $item->first_name }}</td>
+                        <td>{{ $item->last_name }}</td>
+                        <td>{{ ($item->group)?$item->group->name:'-' }}</td>
                         <td>
-                            <a class="btn btn-primary" href="{{ route('temperature_edit', $item->id) }}">
+                            <a class="btn btn-primary" href="{{ route('user_edit', $item->id) }}">
                                 ویرایش
                             </a>
-                            <a class="btn btn-danger" href="{{ route('temperature_delete', $item->id) }}">
+                            <a class="btn btn-danger" href="{{ route('user_delete', $item->id) }}">
                                 حذف
                             </a>
                         </td>
                       </tr>
                       @endforeach
                   </tbody>
-                  <!--
-                  <tfoot>
-                  <tr>
-                    <th>Rendering engine</th>
-                    <th>Browser</th>
-                    <th>Platform(s)</th>
-                    <th>Engine version</th>
-                    <th>CSS grade</th>
-                  </tr>
-                  </tfoot>
-                  -->
                 </table>
               </div>
               <!-- /.card-body -->

@@ -1,5 +1,13 @@
 @extends('layouts.index')
 
+@section('css')
+<style>
+    .morepanel{
+        display: none;
+    }
+</style>
+@endsection
+
 @section('content')
     <!-- Content Header (Page header) -->
     <section class="content-header">
@@ -38,33 +46,141 @@
                     <th>ردیف</th>
                     <th>کد</th>
                     <th>نام</th>
-                    <th>نام خاانوادگی</th>
+                    <th>نام خانوادگی</th>
                     <th>کاربر ثبت کننده</th>
                     <th>منبع ورودی شماره</th>
                     <th>برچسب</th>
                     <th>داغ/سرد</th>
+                    <th>پشتیبان</th>
                     <th>#</th>
                   </tr>
                   </thead>
                   <tbody>
-                      @foreach ($tags as $index => $item)
+                      @foreach ($students as $index => $item)
                       <tr>
-                        <td>{{ $index + 1 }}</td>
-                        <td>{{ $item->id }}</td>
-                        <td>{{ $item->name }}</td>
-                        <td>{{ ($item->parent_one)?$item->parent_one->name:'-' }}</td>
-                        <td>{{ ($item->parent_two)?$item->parent_two->name:'-' }}</td>
-                        <td>{{ ($item->parent_three)?$item->parent_three->name:'-' }}</td>
-                        <td>{{ ($item->parent_four)?$item->parent_four->name:'-' }}</td>
-                        <td>{{ ($item->user)?$item->user->first_name . ' ' . $item->user->last_name:'-' }}</td>
+                        <td onclick="$('#morepanel-{{ $index }}').toggle();">{{ $index + 1 }}</td>
+                        <td onclick="$('#morepanel-{{ $index }}').toggle();">{{ $item->id }}</td>
+                        <td onclick="$('#morepanel-{{ $index }}').toggle();">{{ $item->first_name }}</td>
+                        <td onclick="$('#morepanel-{{ $index }}').toggle();">{{ $item->last_name }}</td>
+                        <td onclick="$('#morepanel-{{ $index }}').toggle();">{{ ($item->user)?$item->user->first_name . ' ' . $item->user->last_name:'-' }}</td>
+                        <td onclick="$('#morepanel-{{ $index }}').toggle();">{{ ($item->source)?$item->source->name:'-' }}</td>
+                        @if($item->studenttags && count($item->studenttags)>0)
+                        <td onclick="$('#morepanel-{{ $index }}').toggle();">
+                            @for($i = 0; $i < count($item->studenttags);$i++)
+                            <span class="alert alert-info p-1">
+                                {{ $item->studenttags[$i]->tag->name }}
+                            </span>
+                            @endfor
+                        </td>
+                        @else
+                        <td onclick="$('#morepanel-{{ $index }}').toggle();"></td>
+                        @endif
+                        @if($item->studenttemperatures && count($item->studenttemperatures)>0)
+                        <td onclick="$('#morepanel-{{ $index }}').toggle();">
+                            @foreach ($item->studenttemperatures as $sitem)
+                            @if($sitem->temperature->status=='hot')
+                            <span class="alert alert-danger p-1">
+                            @else
+                            <span class="alert alert-info p-1">
+                            @endif
+                                {{ $sitem->temperature->name }}
+                            </span>
+                            @endforeach
+                        </td>
+                        @else
+                        <td onclick="$('#morepanel-{{ $index }}').toggle();"></td>
+                        @endif
+                        <td onclick="$('#morepanel-{{ $index }}').toggle();">{{ ($item->supporter)?$item->supporter->first_name . ' ' . $item->supporter->last_name:'-' }}</td>
                         <td>
-                            <a class="btn btn-primary" href="{{ route('tag_edit', $item->id) }}">
+                            <a class="btn btn-primary" href="{{ route('student_edit', $item->id) }}">
                                 ویرایش
                             </a>
-                            <a class="btn btn-danger" href="{{ route('tag_delete', $item->id) }}">
+                            <a class="btn btn-danger" href="{{ route('student_delete', $item->id) }}">
                                 حذف
                             </a>
                         </td>
+                      </tr>
+                      <tr class="morepanel" id="morepanel-{{ $index }}">
+                          <td colspan="10">
+                              <div class="container">
+                                <div class="row">
+                                    <div class="col">
+                                        تراز یا رتبه سال قبل :
+                                        {{ $item->last_year_grade }}
+                                    </div>
+                                    <div class="col">
+                                        مشاور :
+                                        {{ ($item->consultant)?$item->consultant->first_name . ' ' . $item->consultant->last_name:'' }}
+                                    </div>
+                                    <div class="col">
+                                        شغل پدر یا مادر :
+                                        {{ $item->parents_job_title }}
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        شماره منزل :
+                                        {{ $item->home_phone }}
+                                    </div>
+                                    <div class="col">
+                                        مقطع :
+                                        {{ $item->egucation_level }}
+                                    </div>
+                                    <div class="col">
+                                        شماره موبایل والدین :
+                                        {{ $item->father_phone }}
+                                        {{ $item->mother_phone }}
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        مدرسه :
+                                        {{ $item->school }}
+                                    </div>
+                                    <div class="col">
+                                        معدل :
+                                        {{ $item->average }}
+                                    </div>
+                                    <div class="col">
+                                        رشته تحصیلی :
+                                        {{ $item->major }}
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <a href="{{ route('student_edit', $item->id) }}">
+                                            ویرایش مشخصات
+                                        </a>
+                                    </div>
+                                    <div class="col">
+                                        تاریخ ثبت دانش آموز :
+                                    </div>
+                                    <div class="col">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <a href="#">
+                                            برچسب روحیات اخلاقی
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <a href="#">
+                                            برچسب نیازهای دانش آموز
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <a href="#">
+                                            گزارش خریدهای قطعی دانش آموز
+                                        </a>
+                                    </div>
+                                </div>
+                              </div>
+                          </td>
                       </tr>
                       @endforeach
                   </tbody>
@@ -122,6 +238,9 @@
           if(!confirm('آیا مطمئنید؟')){
             e.preventDefault();
           }
+      });
+      $('a').click(function(event){
+        event.stopPropagation();
       });
     });
   </script>
