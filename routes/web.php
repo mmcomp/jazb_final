@@ -19,7 +19,7 @@ Route::get('/register', 'RegisterController@index')->name('register');
 Route::post('/register', 'RegisterController@sendsms')->name('sendsms');
 Route::post('/register/checksms', 'RegisterController@checksms')->name('checksms');
 Route::post('/register/createuser', 'RegisterController@createuser')->name('createuser');
-Route::group(['middleware' => ['auth']], function () {
+Route::group(['middleware' => ['auth', 'message']], function () {
     Route::get('/', 'DashboardController@index')->name('home');
 
     Route::group(['prefix' => '/need_parent_tag_ones'], function () {
@@ -135,6 +135,13 @@ Route::group(['middleware' => ['auth']], function () {
         Route::any('/create', 'UserController@create')->name('user_create');
         Route::any('/edit/{id}', 'UserController@edit')->name('user_edit');
         Route::get('/delete/{id}', 'UserController@delete')->name('user_delete');
+    });
+
+    Route::group(['prefix' => '/messages'], function () {
+        Route::get('/', 'MessageController@index')->name('messages');
+        Route::any('/create', 'MessageController@create')->name('message_create');
+        Route::any('/edit/{id}', 'MessageController@edit')->name('message_edit');
+        Route::get('/delete/{id}', 'MessageController@delete')->name('message_delete');
     });
 });
 
