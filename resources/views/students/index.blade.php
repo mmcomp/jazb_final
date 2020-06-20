@@ -40,6 +40,41 @@
               </div>
               <!-- /.card-header -->
               <div class="card-body">
+                <h3 class="text-center">
+                    مرتب سازی
+                </h3>
+                <div class="row">
+                  <div class="col text-center p-1">
+                    <a class="btn btn-warning btn-block" href="#">سطح بندی</a>
+                  </div>
+                  <div class="col text-center p-1">
+                    <a class="btn btn-warning btn-block" href="#">پیشنهاد فروش</a>
+                  </div>
+                  <div class="col text-center p-1">
+                    <a class="btn btn-warning btn-block" href="#">محصول</a>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col text-center p-1">
+                    <a class="btn btn-warning btn-block" href="#">سایت</a>
+                  </div>
+                  <div class="col text-center p-1">
+                    <a class="btn btn-warning btn-block" href="#">تعداد پیشنهاد فروش</a>
+                  </div>
+                  <div class="col text-center p-1">
+                    <a class="btn btn-warning btn-block" href="#">یادآور</a>
+                  </div>
+                </div>
+                <div class="row">
+                    <div class="col text-center p-1">
+                      <a class="btn btn-warning btn-block" href="#">برچسب اخلاقی</a>
+                    </div>
+                    <div class="col text-center p-1">
+                      <a class="btn btn-warning btn-block" href="#">برچسب ارزیابی</a>
+                    </div>
+                    <div class="col text-center p-1">
+                    </div>
+                  </div>
                 <table id="example2" class="table table-bordered table-hover">
                   <thead>
                   <tr>
@@ -91,7 +126,7 @@
                         <td onclick="$('#morepanel-{{ $index }}').toggle();"></td>
                         @endif
                         <td onclick="$('#morepanel-{{ $index }}').toggle();">{{ ($item->supporter)?$item->supporter->first_name . ' ' . $item->supporter->last_name:'-' }}</td>
-                        <td>
+                        <td onclick="$('#morepanel-{{ $index }}').toggle();">
                             <a class="btn btn-primary" href="{{ route('student_edit', $item->id) }}">
                                 ویرایش
                             </a>
