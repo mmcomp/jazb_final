@@ -41,6 +41,65 @@
               <!-- /.card-header -->
               <div class="card-body">
                 <h3 class="text-center">
+                   فیلتر
+                </h3>
+                <form method="post">
+                    @csrf
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="supporters_id">پشتیبان</label>
+                                <select  id="supporters_id" name="supporters_id" class="form-control">
+                                    <option>همه</option>
+                                    @foreach ($supports as $item)
+                                        @if(isset($supporters_id) && $supporters_id==$item->id)
+                                        <option value="{{ $item->id }}" selected >
+                                        @else
+                                        <option value="{{ $item->id }}" >
+                                        @endif
+                                        {{ $item->first_name }} {{ $item->last_name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="sources_id">منبع</label>
+                                <select  id="sources_id" name="sources_id" class="form-control">
+                                    <option>همه</option>
+                                    @foreach ($sources as $item)
+                                        @if(isset($sources_id) && $sources_id==$item->id)
+                                        <option value="{{ $item->id }}" selected >
+                                        @else
+                                        <option value="{{ $item->id }}" >
+                                        @endif
+                                        {{ $item->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="name">نام و نام خانوادگی</label>
+                                <input type="text" class="form-control" id="name" name="name" placeholder="نام و نام خانوادگی" value="{{ isset($name)?$name:'' }}" />
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="phone">تلفن</label>
+                                <input type="number" class="form-control" id="phone" name="phone" placeholder="تلفن"  value="{{ isset($phone)?$phone:'' }}" />
+                            </div>
+                        </div>
+                        <div class="col" style="padding-top: 32px;">
+                            <button class="btn btn-success">
+                                جستجو
+                            </button>
+                        </div>
+                    </div>
+                </form>
+                <h3 class="text-center">
                     مرتب سازی
                 </h3>
                 <div class="row">

@@ -14,18 +14,56 @@ use Exception;
 class StudentController extends Controller
 {
     public function index(){
-        $students = Student::where('is_deleted', false)
+        $students = Student::where('is_deleted', false);
+        $supportGroupId = Group::getSupport();
+        if($supportGroupId)
+            $supportGroupId = $supportGroupId->id;
+        $supports = User::where('is_deleted', false)->where('groups_id', $supportGroupId)->get();
+        $sources = Source::where('is_deleted', false)->get();
+        $supporters_id = null;
+        $name = null;
+        $sources_id = null;
+        $phone = null;
+        if(request()->getMethod()=='POST'){
+            if(request()->input('supporters_id')!=null){
+                $supporters_id = (int)request()->input('supporters_id');
+                $students = $students->where('supporters_id', $supporters_id);
+            }
+            if(request()->input('name')!=null){
+                $name = trim(request()->input('name'));
+                $students = $students->where(function ($query) use ($name) {
+                    $query->where('first_name', 'like', '%' . $name . '%')->orWhere('last_name', 'like', '%' . $name . '%');
+                });
+            }
+            if(request()->input('sources_id')!=null){
+                $sources_id = (int)request()->input('sources_id');
+                $students = $students->where('sources_id', $sources_id);
+            }
+            if(request()->input('phone')!=null){
+                $phone = (int)request()->input('phone');
+                $students = $students->where('phone', $phone);
+            }
+        }
+
+        $students = $students
             ->with('user')
             ->with('studenttags.tag')
             ->with('studenttemperatures.temperature')
             ->with('source')
             ->with('consultant')
             ->with('supporter')
-            ->orderBy('created_at', 'desc')->get();
+            ->orderBy('created_at', 'desc')
+            ->get();
 
         // dd($students);
         return view('students.index',[
             'students' => $students,
+            'supports' => $supports,
+            'sources' => $sources,
+            'supporters_id' => $supporters_id,
+            'name' => $name,
+            'sources_id' => $sources_id,
+            'phone' => $phone,
             'msg_success' => request()->session()->get('msg_success'),
             'msg_error' => request()->session()->get('msg_error')
         ]);
