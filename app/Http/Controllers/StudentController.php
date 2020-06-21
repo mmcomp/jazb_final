@@ -55,7 +55,6 @@ class StudentController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        // dd($students);
         return view('students.index',[
             'students' => $students,
             'supports' => $supports,
