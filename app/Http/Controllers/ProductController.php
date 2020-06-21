@@ -76,4 +76,58 @@ class ProductController extends Controller
         $request->session()->flash("msg_success", "محصول با موفقیت حذف شد.");
         return redirect()->route('products');
     }
+
+    //---------------------API------------------------------------
+    public function apiAddProducts(Request $request){
+        $products = $request->input('products', []);
+        $ids = [];
+        $fails = [];
+        foreach($products as $product){
+            if(!isset($product['name']) || !isset($product['collections_id'])){
+                $fails[] = $product;
+                continue;
+            }
+            $productObject = new Product;
+            foreach($product as $key=>$value){
+                $productObject->$key = $value;
+            }
+            try{
+                $productObject->save();
+                $ids[] = $productObject->id;
+            }catch(Exception $e){
+                $fails[] = $product;
+            }
+        }
+        return [
+            "added_ids" => $ids,
+            "fails" => $fails
+        ];
+    }
+
+    //---------------------API------------------------------------
+    public function apiAddStudents(Request $request){
+        $students = $request->input('students', []);
+        $ids = [];
+        $fails = [];
+        foreach($students as $student){
+            if(!isset($student['phone']) || !isset($student['last_name'])){
+                $fails[] = $student;
+                continue;
+            }
+            $studentObject = new Student;
+            foreach($student as $key=>$value){
+                $studentObject->$key = $value;
+            }
+            try{
+                $studentObject->save();
+                $ids[] = $studentObject->id;
+            }catch(Exception $e){
+                $fails[] = $student;
+            }
+        }
+        return [
+            "added_ids" => $ids,
+            "fails" => $fails
+        ];
+    }
 }

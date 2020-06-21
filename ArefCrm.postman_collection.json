@@ -1,0 +1,344 @@
+{
+	"info": {
+		"_postman_id": "5f89c92c-cf15-4c13-a702-6161b1300317",
+		"name": "ArefCrm",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Add Students",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"students\": [\r\n        {\r\n            \"first_name\": \"حامد\",\r\n            \"last_name\": \"شاکری\",\r\n            \"phone\": \"09153068145\"\r\n        },\r\n        {\r\n            \"first_name\": \"مهرداد\",\r\n            \"last_name\": \"میرسمیع\",\r\n            \"phone\": \"09155193104\"\r\n        }\r\n    ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}:{{port}}/api/students",
+					"host": [
+						"{{base_url}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"api",
+						"students"
+					]
+				},
+				"description": "# Add Students\r\n- every must have atleast `last_name` and valid `phone`"
+			},
+			"response": [
+				{
+					"name": "Add Students",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"students\": [\r\n        {\r\n            \"first_name\": \"حامد\",\r\n            \"last_name\": \"شاکری\",\r\n            \"phone\": \"09153068145\"\r\n        },\r\n        {\r\n            \"first_name\": \"مهرداد\",\r\n            \"last_name\": \"میرسمیع\",\r\n            \"phone\": \"09155193104\"\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}:{{port}}/api/students",
+							"host": [
+								"{{base_url}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"students"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Host",
+							"value": "localhost:8000"
+						},
+						{
+							"key": "Date",
+							"value": "Sun, 21 Jun 2020 05:58:21 GMT"
+						},
+						{
+							"key": "Date",
+							"value": "Sun, 21 Jun 2020 05:58:21 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "close"
+						},
+						{
+							"key": "X-Powered-By",
+							"value": "PHP/7.3.18"
+						},
+						{
+							"key": "Cache-Control",
+							"value": "no-cache, private"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "X-RateLimit-Limit",
+							"value": "60"
+						},
+						{
+							"key": "X-RateLimit-Remaining",
+							"value": "59"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"added_ids\": [\n        1,\n        2\n    ],\n    \"fails\": []\n}"
+				}
+			]
+		},
+		{
+			"name": "Add Products",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"products\": [\r\n        {\r\n            \"name\": \"کلاس الکی\",\r\n            \"collections_id\": 101\r\n        },\r\n        {\r\n            \"name\": \"کلاس دولکی\",\r\n            \"collections_id\": 231\r\n        }\r\n    ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}:{{port}}/api/products",
+					"host": [
+						"{{base_url}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"api",
+						"products"
+					]
+				},
+				"description": "# Add Products\r\n- `name` and `collections_id` are required"
+			},
+			"response": [
+				{
+					"name": "Add Products",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"products\": [\r\n        {\r\n            \"name\": \"کلاس الکی\",\r\n            \"collections_id\": 101\r\n        },\r\n        {\r\n            \"name\": \"کلاس دولکی\",\r\n            \"collections_id\": 231\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}:{{port}}/api/products",
+							"host": [
+								"{{base_url}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"products"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Host",
+							"value": "localhost:8000"
+						},
+						{
+							"key": "Date",
+							"value": "Sun, 21 Jun 2020 06:09:10 GMT"
+						},
+						{
+							"key": "Date",
+							"value": "Sun, 21 Jun 2020 06:09:10 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "close"
+						},
+						{
+							"key": "X-Powered-By",
+							"value": "PHP/7.3.18"
+						},
+						{
+							"key": "Cache-Control",
+							"value": "no-cache, private"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "X-RateLimit-Limit",
+							"value": "60"
+						},
+						{
+							"key": "X-RateLimit-Remaining",
+							"value": "58"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"added_ids\": [\n        2,\n        3\n    ],\n    \"fails\": []\n}"
+				}
+			]
+		},
+		{
+			"name": "Add Purchases",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"purchases\": [\r\n        {\r\n            \"woo_id\": 45,\r\n            \"phone\": \"09155193104\",\r\n            \"price\": 12000\r\n        },\r\n        {\r\n            \"woo_id\": 46,\r\n            \"phone\": \"09155193104\",\r\n            \"price\": 13000\r\n        }\r\n    ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}:{{port}}/api/purchases",
+					"host": [
+						"{{base_url}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"api",
+						"purchases"
+					]
+				},
+				"description": "# Add Purchases\r\n- `woo_id` for product and `phone` for user are required"
+			},
+			"response": [
+				{
+					"name": "Add Purchases",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"purchases\": [\r\n        {\r\n            \"woo_id\": 45,\r\n            \"phone\": \"09155193104\",\r\n            \"price\": 12000\r\n        },\r\n        {\r\n            \"woo_id\": 46,\r\n            \"phone\": \"09155193104\",\r\n            \"price\": 13000\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}:{{port}}/api/purchases",
+							"host": [
+								"{{base_url}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"purchases"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Host",
+							"value": "localhost:8000"
+						},
+						{
+							"key": "Date",
+							"value": "Sun, 21 Jun 2020 06:28:24 GMT"
+						},
+						{
+							"key": "Date",
+							"value": "Sun, 21 Jun 2020 06:28:24 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "close"
+						},
+						{
+							"key": "X-Powered-By",
+							"value": "PHP/7.3.18"
+						},
+						{
+							"key": "Cache-Control",
+							"value": "no-cache, private"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "X-RateLimit-Limit",
+							"value": "60"
+						},
+						{
+							"key": "X-RateLimit-Remaining",
+							"value": "59"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"added_ids\": [\n        1,\n        2\n    ],\n    \"fails\": []\n}"
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "e45df469-11b9-474c-a72b-5fe6ace31b2d",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "e4c28fc0-6895-4091-89a7-9ca8a8761590",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "dcd4c8d3-e401-4035-9bcf-85b59dd50c1c",
+			"key": "base_url",
+			"value": "http://localhost"
+		},
+		{
+			"id": "7e59b146-7013-44de-84d0-9e3948bb8cff",
+			"key": "port",
+			"value": "8000"
+		}
+	],
+	"protocolProfileBehavior": {}
+}
