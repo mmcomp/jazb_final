@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Student;
 use App\User;
 use App\Source;
+use Exception;
 
 class StudentController extends Controller
 {
@@ -136,5 +137,32 @@ class StudentController extends Controller
 
         $request->session()->flash("msg_success", "دانش آموز با موفقیت حذف شد.");
         return redirect()->route('students');
+    }
+
+    //---------------------API------------------------------------
+    public function apiAddStudents(Request $request){
+        $students = $request->input('students', []);
+        $ids = [];
+        $fails = [];
+        foreach($students as $student){
+            if(!isset($student['phone']) || !isset($student['last_name'])){
+                $fails[] = $student;
+                continue;
+            }
+            $studentObject = new Student;
+            foreach($student as $key=>$value){
+                $studentObject->$key = $value;
+            }
+            try{
+                $studentObject->save();
+                $ids[] = $studentObject->id;
+            }catch(Exception $e){
+                $fails[] = $student;
+            }
+        }
+        return [
+            "added_ids" => $ids,
+            "fails" => $fails
+        ];
     }
 }
