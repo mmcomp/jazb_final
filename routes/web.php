@@ -125,7 +125,7 @@ Route::group(['middleware' => ['auth', 'message']], function () {
         Route::post('/supporter', 'StudentController@supporter')->name('student_supporter');
     });
 
-    Route::get('marketerprofile','MarketerController@profile')->name('marketerprofile');
+    Route::any('marketerprofile','MarketerController@profile')->name('marketerprofile');
 
     Route::group(['prefix' => '/sources'], function () {
         Route::get('/', 'SourceController@index')->name('sources');
