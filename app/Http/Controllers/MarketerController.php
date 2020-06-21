@@ -77,4 +77,29 @@ class MarketerController extends Controller
         $marketer->birthdate = isset($marketer->birthdate) ? jdate($marketer->birthdate)->format('%Y/%m/%d') : '';
         return view('marketers.index', ['marketer' => $marketer, 'user' => $user , 'msg'=>$msg]);
     }
+    public function dashboard(){
+        //
+    }
+    
+    public function students(){
+        //
+    }
+    public function payments(){
+        //
+    }
+    public function circulars(){
+        //
+    }
+    public function mails(){
+        //
+    }
+    public function products(){
+        //
+    }
+    public function discounts(){
+        //
+    }
+    public function code(){
+        //
+    }
 }

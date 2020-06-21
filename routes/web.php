@@ -126,6 +126,15 @@ Route::group(['middleware' => ['auth', 'message']], function () {
     });
 
     Route::any('marketerprofile','MarketerController@profile')->name('marketerprofile');
+    Route::get('marketerdashboard','MarketerController@dashboard')->name('marketerdashboard');
+    Route::get('marketerstudents','MarketerController@students')->name('marketerstudents');
+    Route::get('marketerpayments','MarketerController@payments')->name('marketerpayments');
+    Route::get('marketercirculars','MarketerController@circulars')->name('marketercirculars');
+    Route::get('marketermails','MarketerController@mails')->name('marketermails');
+    Route::get('marketerdiscounts','MarketerController@discounts')->name('marketerdiscounts');
+    Route::get('marketerproducts','MarketerController@products')->name('marketerproducts');
+    Route::get('marketercode','MarketerController@code')->name('marketercode');
+
 
     Route::group(['prefix' => '/sources'], function () {
         Route::get('/', 'SourceController@index')->name('sources');
