@@ -163,11 +163,11 @@
                     </div>
                     <div class="col">
                         <div class="form-group">
-                            <label for="last_name">نام خانوادگی</label>
+                            <label for="last_name">نام خانوادگی <span style="color: red;">*</span></label>
                             @if (isset($student) && isset($student->id))
-                            <input type="text" class="form-control" id="last_name" name="last_name" placeholder="نام خانوادگی" value="{{ $student->last_name }}" />
+                            <input type="text" class="form-control" id="last_name" name="last_name" placeholder="نام خانوادگی" value="{{ $student->last_name }}" required />
                             @else
-                            <input type="text" class="form-control" id="last_name" name="last_name" placeholder="نام خانوادگی"  />
+                            <input type="text" class="form-control" id="last_name" name="last_name" placeholder="نام خانوادگی" required />
                             @endif
                         </div>
 

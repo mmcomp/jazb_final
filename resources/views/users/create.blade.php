@@ -70,9 +70,9 @@
                         <div class="form-group">
                             <label for="last_name">نام خانوادگی</label>
                             @if (isset($user))
-                            <input type="text" class="form-control" id="last_name" name="last_name" placeholder="نام خانوادگی" value="{{ $user->last_name }}" />
+                            <input type="text" class="form-control" id="last_name" name="last_name" placeholder="نام خانوادگی" value="{{ $user->last_name }}" required />
                             @else
-                            <input type="text" class="form-control" id="last_name" name="last_name" placeholder="نام خانوادگی" value="{{ old('last_name') }}" />
+                            <input type="text" class="form-control" id="last_name" name="last_name" placeholder="نام خانوادگی" value="{{ old('last_name') }}" required />
                             @endif
                         </div>
 
