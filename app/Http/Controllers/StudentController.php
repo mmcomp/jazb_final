@@ -9,6 +9,11 @@ use Illuminate\Support\Facades\Auth;
 use App\Student;
 use App\User;
 use App\Source;
+use App\StudentTag;
+use App\StudentTemperature;
+use App\Tag;
+use App\Temperature;
+
 use Exception;
 
 class StudentController extends Controller
@@ -55,6 +60,11 @@ class StudentController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
+        $moralTags = Tag::where('is_deleted', false)->where('type', 'moral')->get();
+        $needTags = Tag::where('is_deleted', false)->where('type', 'need')->get();
+        $hotTemperatures = Temperature::where('is_deleted', false)->where('status', 'hot')->get();
+        $coldTemperatures = Temperature::where('is_deleted', false)->where('status', 'cold')->get();
+
         return view('students.index',[
             'students' => $students,
             'supports' => $supports,
@@ -63,6 +73,10 @@ class StudentController extends Controller
             'name' => $name,
             'sources_id' => $sources_id,
             'phone' => $phone,
+            'moralTags'=>$moralTags,
+            'needTags'=>$needTags,
+            'hotTemperatures'=>$hotTemperatures,
+            'coldTemperatures'=>$coldTemperatures,
             'msg_success' => request()->session()->get('msg_success'),
             'msg_error' => request()->session()->get('msg_error')
         ]);
@@ -174,6 +188,73 @@ class StudentController extends Controller
 
         $request->session()->flash("msg_success", "دانش آموز با موفقیت حذف شد.");
         return redirect()->route('students');
+    }
+
+    //---------------------AJAX-----------------------------------
+    public function tag(Request $request){
+        $students_id = $request->input('students_id');
+        $selectedTags = $request->input('selectedTags');
+
+        $student = Student::where('id', $students_id)->where('is_deleted', false)->first();
+        if($student==null){
+            return [
+                "error"=>"student_not_found",
+                "data"=>null
+            ];
+        }
+
+        StudentTag::where("students_id", $students_id)->update([
+            "is_deleted"=>true
+        ]);
+
+        if($selectedTags){
+            foreach($selectedTags as $theselectedTag) {
+                $studentTag = new StudentTag;
+                $studentTag->students_id = $students_id;
+                $studentTag->tags_id = $theselectedTag;
+                $studentTag->users_id = Auth::user()->id;
+                $studentTag->save();
+            }
+        }
+
+
+        return [
+            "error"=>null,
+            "data"=>null
+        ];
+    }
+
+    public function temperature(Request $request){
+        $students_id = $request->input('students_id');
+        $selectedTemperatures = $request->input('selectedTemperatures');
+
+        $student = Student::where('id', $students_id)->where('is_deleted', false)->first();
+        if($student==null){
+            return [
+                "error"=>"student_not_found",
+                "data"=>null
+            ];
+        }
+
+        StudentTemperature::where("students_id", $students_id)->update([
+            "is_deleted"=>true
+        ]);
+
+        if($selectedTemperatures){
+            foreach($selectedTemperatures as $theselectedTemperature) {
+                $studentTemperature = new StudentTemperature;
+                $studentTemperature->students_id = $students_id;
+                $studentTemperature->temperatures_id = $theselectedTemperature;
+                $studentTemperature->users_id = Auth::user()->id;
+                $studentTemperature->save();
+            }
+        }
+
+
+        return [
+            "error"=>null,
+            "data"=>null
+        ];
     }
 
     //---------------------API------------------------------------

@@ -119,6 +119,8 @@ Route::group(['middleware' => ['auth', 'message']], function () {
         Route::any('/edit/{id}', 'StudentController@edit')->name('student_edit');
         Route::get('/delete/{id}', 'StudentController@delete')->name('student_delete');
         Route::get('/call/{id}', 'StudentController@call')->name('student_call');
+        Route::post('/tag', 'StudentController@tag')->name('student_tag');
+        Route::post('/temperature', 'StudentController@temperature')->name('student_temperature');
     });
 
     Route::get('marketerprofile','MarketerController@profile')->name('marketerprofile');

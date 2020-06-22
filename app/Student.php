@@ -15,11 +15,11 @@ class Student extends Model
     }
 
     public function studenttags(){
-        return $this->hasMany('App\StudentTag', 'students_id', 'id');
+        return $this->hasMany('App\StudentTag', 'students_id', 'id')->where('is_deleted', false);
     }
 
     public function studenttemperatures(){
-        return $this->hasMany('App\StudentTemperature', 'students_id', 'id');
+        return $this->hasMany('App\StudentTemperature', 'students_id', 'id')->where('is_deleted', false);
     }
 
     public function consultant(){

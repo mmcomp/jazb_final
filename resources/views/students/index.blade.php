@@ -1,6 +1,7 @@
 @extends('layouts.index')
 
 @section('css')
+<meta name="csrf-token" content="{{ csrf_token() }}">
 <style>
     .morepanel{
         display: none;
@@ -185,7 +186,13 @@
                         <td onclick="$('#morepanel-{{ $index }}').toggle();"></td>
                         @endif
                         <td onclick="$('#morepanel-{{ $index }}').toggle();">{{ ($item->supporter)?$item->supporter->first_name . ' ' . $item->supporter->last_name:'-' }}</td>
-                        <td onclick="$('#morepanel-{{ $index }}').toggle();">
+                        <td>
+                            <a class="btn btn-warning" href="#" onclick="$('#students_index').val({{ $index }});preloadTagModal();$('#tag_modal').modal('show'); return false;">
+                                برچسب
+                            </a>
+                            <a class="btn btn-warning" href="#" onclick="$('#students_index2').val({{ $index }});preloadTemperatureModal();$('#temperature_modal').modal('show'); return false;">
+                                داغ/سرد
+                            </a>
                             <a class="btn btn-primary" href="{{ route('student_edit', $item->id) }}">
                                 ویرایش
                             </a>
@@ -303,39 +310,186 @@
 @endsection
 
 @section('js')
+<div class="modal" id="tag_modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">برچسب</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <p>
+                <input type="hidden" id="students_index" />
+                <h3 class="text-center">
+                    اخلاقی
+                </h3>
+                @foreach ($moralTags as $index => $item)
+                    <input type="checkbox" class="tag-checkbox" id="tag_{{ $item->id }}" value="{{ $item->id }}" />
+                    {{ $item->name }}
+                @endforeach
+                <h3 class="text-center">
+                    نیازسنجی
+                </h3>
+                @foreach ($needTags as $index => $item)
+                    <input type="checkbox" class="tag-checkbox" id="tag_{{ $item->id }}" value="{{ $item->id }}" />
+                    {{ $item->name }}
+                @endforeach
+            </p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" onclick="saveTags();">اعمال</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">انصراف</button>
+        </div>
+      </div>
+    </div>
+</div>
+<div class="modal" id="temperature_modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">داغ/سرد</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <p>
+                <input type="hidden" id="students_index2" />
+                <h3 class="text-center">
+                    داغ
+                </h3>
+                @foreach ($hotTemperatures as $index => $item)
+                    <input type="checkbox" class="temperature-checkbox" id="temperature_{{ $item->id }}" value="{{ $item->id }}" />
+                    {{ $item->name }}
+                @endforeach
+                <h3 class="text-center">
+                    سرد
+                </h3>
+                @foreach ($coldTemperatures as $index => $item)
+                    <input type="checkbox" class="temperature-checkbox" id="temperature_{{ $item->id }}" value="{{ $item->id }}" />
+                    {{ $item->name }}
+                @endforeach
+            </p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" onclick="saveTemperatures();">اعمال</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">انصراف</button>
+        </div>
+      </div>
+    </div>
+</div>
 <!-- DataTables -->
 <script src="../../plugins/datatables/jquery.dataTables.js"></script>
 <script src="../../plugins/datatables-bs4/js/dataTables.bootstrap4.js"></script>
 <!-- page script -->
 <script>
-    $(function () {
-    //   $("#example1").DataTable();
-      $('#example2').DataTable({
-        "paging": true,
-        "lengthChange": false,
-        "searching": false,
-        "ordering": true,
-        "info": true,
-        "autoWidth": false,
-        "language": {
-            "paginate": {
-                "previous": "قبل",
-                "next": "بعد"
-            },
-            "emptyTable":     "داده ای برای نمایش وجود ندارد",
-            "info":           "نمایش _START_ تا _END_ از _TOTAL_ داده",
-            "infoEmpty":      "نمایش 0 تا 0 از 0 داده",
+    let students = @JSON($students);
+    function preloadTagModal(){
+        $("input.tag-checkbox").prop('checked', false);
+        var studentsIndex = parseInt($("#students_index").val(), 10);
+        if(!isNaN(studentsIndex)){
+            if(students[studentsIndex]){
+                console.log(students[studentsIndex].studenttags);
+                for(studenttag of students[studentsIndex].studenttags){
+                    $("#tag_" + studenttag.tags_id).prop("checked", true);
+                }
+                // console.log(students[studentsIndex].studenttemperatures);
+            }
         }
-      });
+    }
+    function preloadTemperatureModal(){
+        $("input.tag-checkbox").prop('checked', false);
+        var studentsIndex = parseInt($("#students_index2").val(), 10);
+        if(!isNaN(studentsIndex)){
+            if(students[studentsIndex]){
+                console.log(students[studentsIndex].studenttemperatures);
+                for(studenttag of students[studentsIndex].studenttemperatures){
+                    $("#temperature_" + studenttag.temperatures_id).prop("checked", true);
+                }
+            }
+        }
+    }
+    function saveTags(){
+        var selectedTags = [];
+        $("input.tag-checkbox:checked").each(function (id , field){
+            selectedTags.push(parseInt(field.value, 10));
+        });
+        var studentsIndex = parseInt($("#students_index").val(), 10);
+        if(!isNaN(studentsIndex)){
+            if(students[studentsIndex]){
+                console.log('selected tags', selectedTags);
+                $.post('{{ route('student_tag') }}', {
+                    students_id: students[studentsIndex].id,
+                    selectedTags
+                }, function(result){
+                    console.log('Result', result);
+                    if(result.error!=null){
+                        alert('خطای بروز رسانی');
+                    }else{
+                        window.location.reload();
+                    }
+                }).fail(function(){
+                    alert('خطای بروز رسانی');
+                });
+            }
+        }
+    }
+    function saveTemperatures(){
+        var selectedTemperatures = [];
+        $("input.temperature-checkbox:checked").each(function (id , field){
+            selectedTemperatures.push(parseInt(field.value, 10));
+        });
+        var studentsIndex = parseInt($("#students_index2").val(), 10);
+        if(!isNaN(studentsIndex)){
+            if(students[studentsIndex]){
+                console.log('selected temperatures', selectedTemperatures);
+                $.post('{{ route('student_temperature') }}', {
+                    students_id: students[studentsIndex].id,
+                    selectedTemperatures
+                }, function(result){
+                    console.log('Result', result);
+                    if(result.error!=null){
+                        alert('خطای بروز رسانی');
+                    }else{
+                        window.location.reload();
+                    }
+                }).fail(function(){
+                    alert('خطای بروز رسانی');
+                });
+            }
+        }
+    }
+    $(function () {
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        $(".btn-danger").click(function(e){
+            if(!confirm('آیا مطمئنید؟')){
+                e.preventDefault();
+            }
+        });
 
-      $(".btn-danger").click(function(e){
-          if(!confirm('آیا مطمئنید؟')){
-            e.preventDefault();
-          }
-      });
-      $('a').click(function(event){
-        event.stopPropagation();
-      });
+        $('#example2').DataTable({
+            "paging": true,
+            "lengthChange": false,
+            "searching": false,
+            "ordering": true,
+            "info": true,
+            "autoWidth": false,
+            "language": {
+                "paginate": {
+                    "previous": "قبل",
+                    "next": "بعد"
+                },
+                "emptyTable":     "داده ای برای نمایش وجود ندارد",
+                "info":           "نمایش _START_ تا _END_ از _TOTAL_ داده",
+                "infoEmpty":      "نمایش 0 تا 0 از 0 داده",
+            }
+        });
     });
   </script>
 @endsection
