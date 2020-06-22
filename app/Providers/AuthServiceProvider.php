@@ -42,5 +42,11 @@ class AuthServiceProvider extends ServiceProvider
             $gates = $group->gates()->where('key', 'users')->get();
             return count($gates)>0;
         });
+
+        Gate::define('purchases', function ($user) {
+            $group = $user->group()->first();
+            $gates = $group->gates()->where('key', 'purchases')->get();
+            return count($gates)>0;
+        });
     }
 }

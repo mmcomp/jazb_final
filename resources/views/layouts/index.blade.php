@@ -463,6 +463,37 @@
             </ul>
           </li>
           @endif
+          @if (Gate::allows('purchases'))
+          <li class="nav-header">پرداخت</li>
+          </li>
+          @if(strpos(\Request::route()->getName(), 'purchase')===0)
+          <li class="nav-item has-treeview menu-open">
+          @else
+          <li class="nav-item has-treeview">
+          @endif
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-bookmark"></i>
+              <p>
+                دستی
+                <i class="fas fa-angle-left right"></i>
+                <!--<span class="badge badge-info right">6</span>-->
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                @if(strpos(\Request::route()->getName(), 'purchase')===0)
+                <a href="{{ route('purchases') }}" class="nav-link active">
+                @else
+                <a href="{{ route('purchases') }}" class="nav-link">
+                @endif
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>لیست</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+          @else
+          @endif
           <!--
           <li class="nav-item has-treeview menu-open">
             <a href="#" class="nav-link active">

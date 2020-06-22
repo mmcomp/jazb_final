@@ -142,8 +142,13 @@ Route::group(['middleware' => ['auth', 'message']], function () {
     Route::group(['prefix' => '/messages'], function () {
         Route::get('/', 'MessageController@index')->name('messages');
         Route::any('/create', 'MessageController@create')->name('message_create');
-        Route::any('/edit/{id}', 'MessageController@edit')->name('message_edit');
-        Route::get('/delete/{id}', 'MessageController@delete')->name('message_delete');
+    });
+
+    Route::group(['prefix' => '/purchases'], function () {
+        Route::get('/', 'PurchaseController@index')->name('purchases');
+        Route::any('/create', 'PurchaseController@create')->name('purchase_create');
+        Route::any('/edit/{id}', 'PurchaseController@edit')->name('purchase_edit');
+        Route::get('/delete/{id}', 'PurchaseController@delete')->name('purchase_delete');
     });
 });
 
