@@ -31,8 +31,16 @@ class MessageController extends Controller
             ]);
         }
 
+        $attachment = null;
+
+        if($request->file('attachment')){
+            $filename = now()->timestamp . '.' . $request->file('attachment')->extension();
+            $attachment = $request->file('attachment')->storeAs('messages', $filename, 'public_uploads');
+        }
+
         $message->users_id = Auth::user()->id;
         $message->message = $request->input('message');
+        $message->attachment = $attachment;
         $message->save();
 
         foreach($request->input('recievers_id') as $reciever_id){
@@ -40,6 +48,17 @@ class MessageController extends Controller
             $messageFlow->messages_id = $message->id;
             $messageFlow->sender_id = $message->users_id;
             $messageFlow->users_id = $reciever_id;
+            $messageFlow->attachment = $attachment;
+            $messageFlow->save();
+        }
+
+        foreach($request->input('ccs_id') as $reciever_id){
+            $messageFlow = new MessageFlow;
+            $messageFlow->messages_id = $message->id;
+            $messageFlow->sender_id = $message->users_id;
+            $messageFlow->users_id = $reciever_id;
+            $messageFlow->type = 'cc';
+            $messageFlow->attachment = $attachment;
             $messageFlow->save();
         }
 

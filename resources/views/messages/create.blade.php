@@ -50,9 +50,29 @@
                 <div class="row">
                     <div class="col">
                         <div class="form-group">
-                            <label for="recievers_id">پیام</label>
+                            <label for="ccs_id">رونوشت</label>
+                            <select class="form-control select2" id="ccs_id" name="ccs_id[]" multiple >
+                                @foreach ($users as $user)
+                                    <option value="{{ $user->id }}">{{ $user->first_name }} {{ $user->last_name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="message">پیام</label>
                             <textarea class="form-control" id="message" name="message">
                             </textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="attachment">ضمیمه</label>
+                            <input type="file" class="form-control" id="attachment" name="attachment" />
                         </div>
                     </div>
                 </div>

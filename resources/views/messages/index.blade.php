@@ -39,6 +39,7 @@
                     <th>کد</th>
                     <th>ایجاد کننده</th>
                     <th>پیام</th>
+                    <th>ضمیمه</th>
                     <th>گیرنده ها</th>
                   </tr>
                   </thead>
@@ -49,6 +50,11 @@
                         <td>{{ $item->id }}</td>
                         <td>{{ ($item->user)?$item->user->first_name . ' ' . $item->user->last_name:'-' }}</td>
                         <td>{{ $item->message }}</td>
+                        @if($item->attachment)
+                        <td><a target="_blank" href="/uploads/{{ $item->attachment }}">ضمیمه</a></td>
+                        @else
+                        <td></td>
+                        @endif
                         <td>
                             @foreach ($item->flows as $fitem)
                                 <span class="alert alert-primary">
