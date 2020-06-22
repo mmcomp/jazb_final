@@ -121,6 +121,7 @@ Route::group(['middleware' => ['auth', 'message']], function () {
         Route::get('/call/{id}', 'StudentController@call')->name('student_call');
         Route::post('/tag', 'StudentController@tag')->name('student_tag');
         Route::post('/temperature', 'StudentController@temperature')->name('student_temperature');
+        Route::any('/csv', 'StudentController@csv')->name('student_csv');
     });
 
     Route::get('marketerprofile','MarketerController@profile')->name('marketerprofile');

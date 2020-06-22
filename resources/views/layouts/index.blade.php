@@ -421,13 +421,23 @@
             </a>
             <ul class="nav nav-treeview">
               <li class="nav-item">
-                @if(strpos(\Request::route()->getName(), 'student')===0)
+                @if(strpos(\Request::route()->getName(), 'students')===0)
                 <a href="{{ route('students') }}" class="nav-link active">
                 @else
                 <a href="{{ route('students') }}" class="nav-link">
                 @endif
                   <i class="far fa-circle nav-icon"></i>
                   <p>لیست</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                @if(strpos(\Request::route()->getName(), 'student_csv')===0)
+                <a href="{{ route('student_csv') }}" class="nav-link active">
+                @else
+                <a href="{{ route('student_csv') }}" class="nav-link">
+                @endif
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>CSV</p>
                 </a>
               </li>
             </ul>

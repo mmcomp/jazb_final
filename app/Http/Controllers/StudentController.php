@@ -190,6 +190,48 @@ class StudentController extends Controller
         return redirect()->route('students');
     }
 
+    public function csv(Request $request){
+        $msg = null;
+        $fails = [];
+        if($request->getMethod()=='POST'){
+            $msg = 'بروز رسانی با موفقیت انجام شد';
+            $csvPath = $request->file('attachment')->getPathname();
+            $csv = explode("\n", file_get_contents($csvPath));
+            foreach($csv as $index => $line){
+                $line = explode(',', $line);
+                if($index>0 && count($line)>=13){
+
+                    // dump($line);
+                    $student = new Student;
+                    $student->phone = '0' . $line[0];
+                    $student->first_name = $line[1]=="NULL"?null:$line[1];
+                    $student->last_name = $line[2];
+                    $student->egucation_level = $line[3];
+                    $student->parents_job_title = $line[4]=="NULL"?null:$line[4];
+                    $student->home_phone = $line[5]=="NULL"?null:$line[5];
+                    $student->father_phone = $line[6]=="NULL"?null:$line[6];
+                    $student->mother_phone = $line[7]=="NULL"?null:$line[7];
+                    $student->school = $line[8]=="NULL"?null:$line[8];
+                    $student->average = $line[9]=="NULL"?null:$line[9];
+                    $student->major = $line[10];
+                    $student->introducing = $line[11]=="NULL"?null:$line[11];
+                    $student->student_phone = $line[12]=="NULL"?null:$line[12];
+                    try{
+                        $student->save();
+                    }catch(Exception $e){
+                        $fails[] = $line[0];
+                        // dump($e->getMessage());
+                    }
+                }
+            }
+        }
+        $sources = Source::where('is_deleted', false)->get();
+        return view('students.csv', [
+            'msg_success' => $msg,
+            'fails'=>$fails,
+            'sources'=>$sources
+        ]);
+    }
     //---------------------AJAX-----------------------------------
     public function tag(Request $request){
         $students_id = $request->input('students_id');
