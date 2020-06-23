@@ -122,6 +122,7 @@ Route::group(['middleware' => ['auth', 'message']], function () {
         Route::post('/tag', 'StudentController@tag')->name('student_tag');
         Route::post('/temperature', 'StudentController@temperature')->name('student_temperature');
         Route::any('/csv', 'StudentController@csv')->name('student_csv');
+        Route::post('/supporter', 'StudentController@supporter')->name('student_supporter');
     });
 
     Route::get('marketerprofile','MarketerController@profile')->name('marketerprofile');

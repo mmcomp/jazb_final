@@ -299,6 +299,27 @@ class StudentController extends Controller
         ];
     }
 
+    public function supporter(Request $request){
+        $students_id = $request->input('students_id');
+        $supporters_id = $request->input('supporters_id');
+
+        $student = Student::where('id', $students_id)->where('is_deleted', false)->first();
+        if($student==null){
+            return [
+                "error"=>"student_not_found",
+                "data"=>null
+            ];
+        }
+
+        $student->supporters_id = $supporters_id;
+        $student->save();
+
+        return [
+            "error"=>null,
+            "data"=>null
+        ];
+    }
+
     //---------------------API------------------------------------
     public function apiAddStudents(Request $request){
         $students = $request->input('students', []);

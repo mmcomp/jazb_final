@@ -1,6 +1,7 @@
 @extends('layouts.index')
 
 @section('css')
+<link href="/plugins/select2/css/select2.min.css" rel="stylesheet" />
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <style>
     .morepanel{
@@ -185,7 +186,27 @@
                         @else
                         <td onclick="$('#morepanel-{{ $index }}').toggle();"></td>
                         @endif
-                        <td onclick="$('#morepanel-{{ $index }}').toggle();">{{ ($item->supporter)?$item->supporter->first_name . ' ' . $item->supporter->last_name:'-' }}</td>
+                        <td class="text-center">
+                            <!-- {{ ($item->supporter)?$item->supporter->first_name . ' ' . $item->supporter->last_name:'-' }} -->
+                            <select id="supporters_id_{{ $index }}" class="form-control select2">
+                                <option>-</option>
+                                @foreach ($supports as $sitem)
+                                    @if ($sitem->id==$item->supporters_id)
+                                    <option value="{{ $sitem->id }}" selected>
+                                    @else
+                                    <option value="{{ $sitem->id }}">
+                                    @endif
+                                    {{ $sitem->first_name }} {{ $sitem->last_name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <br/>
+                            <a class="btn btn-success btn-sm" href="#" onclick="return changeSupporter({{ $index }});">
+                                ذخیره
+                            </a>
+                            <br/>
+                            <img id="loading-{{ $index }}" src="/dist/img/loading.gif" style="height: 20px;display: none;" />
+                        </td>
                         <td>
                             <a class="btn btn-warning" href="#" onclick="$('#students_index').val({{ $index }});preloadTagModal();$('#tag_modal').modal('show'); return false;">
                                 برچسب
@@ -380,12 +401,35 @@
       </div>
     </div>
 </div>
+<!-- Select2 -->
+<script src="/plugins/select2/js/select2.full.min.js"></script>
 <!-- DataTables -->
 <script src="../../plugins/datatables/jquery.dataTables.js"></script>
 <script src="../../plugins/datatables-bs4/js/dataTables.bootstrap4.js"></script>
 <!-- page script -->
 <script>
     let students = @JSON($students);
+    function changeSupporter(studentsIndex){
+        if(students[studentsIndex]){
+            var students_id = students[studentsIndex].id;
+            var supporters_id = $("#supporters_id_" + studentsIndex).val();
+            $("#loading-" + studentsIndex).show();
+            $.post('{{ route('student_supporter') }}', {
+                students_id,
+                supporters_id
+            }, function(result){
+                $("#loading-" + studentsIndex).hide();
+                console.log('Result', result);
+                if(result.error!=null){
+                    alert('خطای بروز رسانی');
+                }
+            }).fail(function(){
+                $("#loading-" + studentsIndex).hide();
+                alert('خطای بروز رسانی');
+            });
+        }
+        return false;
+    }
     function preloadTagModal(){
         $("input.tag-checkbox").prop('checked', false);
         var studentsIndex = parseInt($("#students_index").val(), 10);
@@ -472,6 +516,7 @@
                 e.preventDefault();
             }
         });
+        $('select.select2').select2();
 
         $('#example2').DataTable({
             "paging": true,
