@@ -197,6 +197,7 @@ class StudentController extends Controller
             $msg = 'بروز رسانی با موفقیت انجام شد';
             $csvPath = $request->file('attachment')->getPathname();
             $csv = explode("\n", file_get_contents($csvPath));
+            $sources_id = $request->input('sources_id');
             foreach($csv as $index => $line){
                 $line = explode(',', $line);
                 if($index>0 && count($line)>=13){
@@ -216,6 +217,7 @@ class StudentController extends Controller
                     $student->major = $line[10];
                     $student->introducing = $line[11]=="NULL"?null:$line[11];
                     $student->student_phone = $line[12]=="NULL"?null:$line[12];
+                    $student->sources_id = $sources_id;
                     try{
                         $student->save();
                     }catch(Exception $e){

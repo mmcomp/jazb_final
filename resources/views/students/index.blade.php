@@ -1,3 +1,10 @@
+@php
+    $majors = [
+        "mathematics"=>"ریاضی",
+        "experimental"=>"تجربی",
+        "humanities"=>"انسانی"
+    ];
+@endphp
 @extends('layouts.index')
 
 @section('css')
@@ -265,7 +272,7 @@
                                     </div>
                                     <div class="col">
                                         رشته تحصیلی :
-                                        {{ $item->major }}
+                                        {{ $majors[$item->major] }}
                                     </div>
                                 </div>
                                 <div class="row">
