@@ -48,7 +48,8 @@
                         <td>{{ $index + 1 }}</td>
                         <td>{{ $item->id }}</td>
                         <td>{{ $item->name }}</td>
-                        <td>{{ ($item->collection)?$item->collection->name:'-' }}</td>
+                        <!--<td>{{ ($item->collection)?$item->collection->name:'-' }}</td>-->
+                        <td>{{ $item->parents }}</td>
                         <td>
                             <a class="btn btn-primary" href="{{ route('product_edit', $item->id) }}">
                                 ویرایش

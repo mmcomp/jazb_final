@@ -6,12 +6,22 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Product;
 use App\Collection;
+use App\Student;
+
+use Exception;
 
 class ProductController extends Controller
 {
     public function index(){
         $products = Product::where('is_deleted', false)->with('collection')->orderBy('name')->get();
-
+        foreach($products as $index => $product){
+            $products[$index]->parents = "-";
+            if($product->collection) {
+                $parents = $product->collection->parents();
+                $name = ($parents!='')?$parents . "->" . $product->collection->name : $product->collection->name;
+                $products[$index]->parents = $name;
+            }
+        }
         return view('products.index',[
             'products' => $products,
             'msg_success' => request()->session()->get('msg_success'),
@@ -22,6 +32,10 @@ class ProductController extends Controller
     public function create(Request $request)
     {
         $collections = Collection::where('is_deleted', false)->orderBy('name')->get();
+        foreach($collections as $index => $collection){
+            $collections[$index]->parents = $collection->parents();
+            $collections[$index]->name = ($collections[$index]->parents!='')?$collections[$index]->parents . "->" . $collections[$index]->name : $collections[$index]->name;
+        }
         $product = new Product;
         if($request->getMethod()=='GET'){
             return view('products.create', [
@@ -41,6 +55,10 @@ class ProductController extends Controller
     public function edit(Request $request, $id)
     {
         $collections = Collection::where('is_deleted', false)->orderBy('name')->get();
+        foreach($collections as $index => $collection){
+            $collections[$index]->parents = $collection->parents();
+            $collections[$index]->name = ($collections[$index]->parents!='')?$collections[$index]->parents . "->" . $collections[$index]->name : $collections[$index]->name;
+        }
         $product = Product::where('id', $id)->where('is_deleted', false)->first();
         if($product==null){
             $request->session()->flash("msg_error", "محصول مورد نظر پیدا نشد!");
