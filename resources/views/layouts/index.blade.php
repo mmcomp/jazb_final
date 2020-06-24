@@ -70,13 +70,30 @@
     <!-- Right navbar links -->
     <ul class="navbar-nav mr-auto-navbav">
       <!-- Messages Dropdown Menu -->
-      <!--
+
       <li class="nav-item dropdown">
         <a class="nav-link" data-toggle="dropdown" href="#">
           <i class="far fa-comments"></i>
-          <span class="badge badge-danger navbar-badge">3</span>
+          <span class="badge badge-danger navbar-badge">{{ count($usermessages) }}</span>
         </a>
         <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+          @foreach ($usermessages as $item)
+          <a href="#" class="dropdown-item">
+            <div class="media">
+              <img src="/dist/img/user1-128x128.jpg" alt="User Avatar" class="img-size-50 mr-3 img-circle">
+              <div class="media-body">
+                <h3 class="dropdown-item-title">
+                  {{ $item->themessage->user->first_name }} {{ $item->themessage->user->last_name }}
+                  <span class="float-right text-sm text-danger"><i class="fas fa-star"></i></span>
+                </h3>
+                <p class="text-sm">{{ $item->themessage->message }}</p>
+                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> {{ jdate(strtotime($item->created_at))->format("Y/m/d H:i:s") }} </p>
+              </div>
+            </div>
+          </a>
+          <div class="dropdown-divider"></div>
+          @endforeach
+          <!--
           <a href="#" class="dropdown-item">
             <div class="media">
               <img src="/dist/img/user1-128x128.jpg" alt="User Avatar" class="img-size-50 mr-3 img-circle">
@@ -119,10 +136,11 @@
             </div>
           </a>
           <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item dropdown-footer">See All Messages</a>
+            -->
+          <a href="{{ route('messages') }}" class="dropdown-item dropdown-footer">صندوق پیام</a>
         </div>
       </li>
-      -->
+
       <!-- Notifications Dropdown Menu -->
       <!--
       <li class="nav-item dropdown">
@@ -403,13 +421,23 @@
             </a>
             <ul class="nav nav-treeview">
               <li class="nav-item">
-                @if(strpos(\Request::route()->getName(), 'student')===0)
+                @if(strpos(\Request::route()->getName(), 'students')===0)
                 <a href="{{ route('students') }}" class="nav-link active">
                 @else
                 <a href="{{ route('students') }}" class="nav-link">
                 @endif
                   <i class="far fa-circle nav-icon"></i>
                   <p>لیست</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                @if(strpos(\Request::route()->getName(), 'student_csv')===0)
+                <a href="{{ route('student_csv') }}" class="nav-link active">
+                @else
+                <a href="{{ route('student_csv') }}" class="nav-link">
+                @endif
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>CSV</p>
                 </a>
               </li>
             </ul>
@@ -444,6 +472,37 @@
               </li>
             </ul>
           </li>
+          @endif
+          @if (Gate::allows('purchases'))
+          <li class="nav-header">پرداخت</li>
+          </li>
+          @if(strpos(\Request::route()->getName(), 'purchase')===0)
+          <li class="nav-item has-treeview menu-open">
+          @else
+          <li class="nav-item has-treeview">
+          @endif
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-bookmark"></i>
+              <p>
+                دستی
+                <i class="fas fa-angle-left right"></i>
+                <!--<span class="badge badge-info right">6</span>-->
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                @if(strpos(\Request::route()->getName(), 'purchase')===0)
+                <a href="{{ route('purchases') }}" class="nav-link active">
+                @else
+                <a href="{{ route('purchases') }}" class="nav-link">
+                @endif
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>لیست</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+          @else
           @endif
           <!--
           <li class="nav-item has-treeview menu-open">

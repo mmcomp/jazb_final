@@ -11,6 +11,11 @@ class CollectionController extends Controller
     public function index(){
         $collections = Collection::where('is_deleted', false)->with('parent')->orderBy('name')->get();
 
+        foreach($collections as $index => $collection){
+            $collections[$index]->parents = $collection->parents();
+        }
+        // dd($collections[2]->parents());
+
         return view('collections.index',[
             'collections' => $collections,
             'msg_success' => request()->session()->get('msg_success'),
@@ -21,6 +26,10 @@ class CollectionController extends Controller
     public function create(Request $request)
     {
         $collections = Collection::where('is_deleted', false)->orderBy('name')->get();
+        foreach($collections as $index => $collection){
+            $collections[$index]->parents = $collection->parents();
+            $collections[$index]->name = ($collections[$index]->parents!='')?$collections[$index]->parents . "->" . $collections[$index]->name : $collections[$index]->name;
+        }
         $collection = new Collection;
         if($request->getMethod()=='GET'){
             return view('collections.create', [
@@ -40,6 +49,10 @@ class CollectionController extends Controller
     public function edit(Request $request, $id)
     {
         $collections = Collection::where('is_deleted', false)->where('id', '!=', $id)->orderBy('name')->get();
+        foreach($collections as $index => $collection){
+            $collections[$index]->parents = $collection->parents();
+            $collections[$index]->name = ($collections[$index]->parents!='')?$collections[$index]->parents . "->" . $collections[$index]->name : $collections[$index]->name;
+        }
         $collection = Collection::where('id', $id)->where('is_deleted', false)->first();
         if($collection==null){
             $request->session()->flash("msg_error", "دسته مورد نظر پیدا نشد!");

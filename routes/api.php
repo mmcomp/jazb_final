@@ -14,6 +14,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
+// Route::middleware('auth:api')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
+
+Route::post('/students', 'StudentController@apiAddStudents')->name('api_add_students');
+Route::post('/products', 'ProductController@apiAddProducts')->name('api_add_products');
+Route::post('/purchases', 'PurchaseController@apiAddPurchases')->name('api_add_purchases');

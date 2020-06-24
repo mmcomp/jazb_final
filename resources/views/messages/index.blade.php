@@ -6,7 +6,7 @@
         <div class="container-fluid">
           <div class="row mb-2">
             <div class="col-sm-6">
-              <h1>دسته های محصولات</h1>
+              <h1>صندوق پیام</h1>
             </div>
             <div class="col-sm-6">
               <!--
@@ -27,7 +27,7 @@
             <div class="card">
               <div class="card-header">
                 <h3 class="card-title">
-                    <a class="btn btn-success" href="{{ route('collection_create') }}">دسته جدید</a>
+                    <a class="btn btn-success" href="{{ route('message_create') }}">پیام جدید</a>
                 </h3>
               </div>
               <!-- /.card-header -->
@@ -37,26 +37,30 @@
                   <tr>
                     <th>ردیف</th>
                     <th>کد</th>
-                    <th>نام</th>
-                    <th>والد</th>
-                    <th>#</th>
+                    <th>ایجاد کننده</th>
+                    <th>پیام</th>
+                    <th>ضمیمه</th>
+                    <th>گیرنده ها</th>
                   </tr>
                   </thead>
                   <tbody>
-                      @foreach ($collections as $index => $item)
+                      @foreach ($messages as $index => $item)
                       <tr>
                         <td>{{ $index + 1 }}</td>
                         <td>{{ $item->id }}</td>
-                        <td>{{ $item->name }}</td>
-                        <!--<td>{{ ($item->parent)?$item->parent->name:'-' }}</td>-->
-                        <td>{{ $item->parents }}</td>
+                        <td>{{ ($item->user)?$item->user->first_name . ' ' . $item->user->last_name:'-' }}</td>
+                        <td>{{ $item->message }}</td>
+                        @if($item->attachment)
+                        <td><a target="_blank" href="/uploads/{{ $item->attachment }}">ضمیمه</a></td>
+                        @else
+                        <td></td>
+                        @endif
                         <td>
-                            <a class="btn btn-primary" href="{{ route('collection_edit', $item->id) }}">
-                                ویرایش
-                            </a>
-                            <a class="btn btn-danger" href="{{ route('collection_delete', $item->id) }}">
-                                حذف
-                            </a>
+                            @foreach ($item->flows as $fitem)
+                                <span class="alert alert-primary">
+                                {{ $fitem->user->first_name }} {{ $fitem->user->last_name }} {{ jdate(strtotime($fitem->created_at))->format("Y/m/d") }}
+                                </span>
+                            @endforeach
                         </td>
                       </tr>
                       @endforeach
