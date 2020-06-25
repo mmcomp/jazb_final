@@ -130,11 +130,19 @@ class MarketerController extends Controller
         return redirect()->route('marketermystudents');
     }
     public function students(){
-        //
+        $students = Student::where('is_deleted', false)->where('marketers_id',Auth::user()->id);
+        $students = $students
+            ->with('user')
+            ->with('studentcollections.collection')
+            ->with('studenttemperatures.temperature')
+            ->with('consultant')
+            ->orderBy('created_at', 'desc')
+            ->get();
+        return view('marketers.students', ['students' => $students]);
     }
 
     public function payments(){
-        //
+        return view('marketers.payments');
     }
 
     public function circulars(){
