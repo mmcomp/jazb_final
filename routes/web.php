@@ -162,5 +162,10 @@ Route::group(['middleware' => ['auth', 'message']], function () {
         Route::any('/edit/{id}', 'PurchaseController@edit')->name('purchase_edit');
         Route::get('/delete/{id}', 'PurchaseController@delete')->name('purchase_delete');
     });
+
+    Route::group(['prefix' => '/supporters'], function () {
+        Route::get('/', 'SupporterController@index')->name('supporters');
+        // Route::any('/students/{id}', 'SupporterController@students')->name('supporter_students');
+    });
 });
 

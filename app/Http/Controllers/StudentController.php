@@ -242,7 +242,7 @@ class StudentController extends Controller
             return redirect()->route('students');
         }
         // dump($student);
-        $purchases = $student->purchases()->get();
+        $purchases = $student->purchases()->where('type', '!=', 'site_failed')->get();
         // dd($purchases);
         return view('students.purchase', [
             'student' => $student,

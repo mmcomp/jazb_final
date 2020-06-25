@@ -40,4 +40,8 @@ class User extends Authenticatable
     public function group(){
         return $this->hasOne('App\Group', 'id', 'groups_id');
     }
+
+    public function students(){
+        return $this->hasMany('App\Student', 'supporters_id', 'id')->where('is_deleted', false);
+    }
 }

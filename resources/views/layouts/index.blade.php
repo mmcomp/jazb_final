@@ -446,7 +446,7 @@
           @if (Gate::allows('users'))
           <li class="nav-header">کاربران</li>
           </li>
-          @if(strpos(\Request::route()->getName(), 'user')===0)
+          @if(strpos(\Request::route()->getName(), 'user')===0 || strpos(\Request::route()->getName(), 'supporter')===0)
           <li class="nav-item has-treeview menu-open">
           @else
           <li class="nav-item has-treeview">
@@ -468,6 +468,16 @@
                 @endif
                   <i class="far fa-circle nav-icon"></i>
                   <p>لیست</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                @if(strpos(\Request::route()->getName(), 'supporter')===0)
+                <a href="{{ route('supporters') }}" class="nav-link active">
+                @else
+                <a href="{{ route('supporters') }}" class="nav-link">
+                @endif
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>پشتیبان</p>
                 </a>
               </li>
             </ul>
