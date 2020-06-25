@@ -5,6 +5,10 @@ namespace App\Http\Controllers;
 use App\Marketer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Student;
+use App\Group;
+use App\User;
+use App\Source;
 
 class MarketerController extends Controller
 {
@@ -72,25 +76,84 @@ class MarketerController extends Controller
         return view('marketers.dashboard');
     }
     
+    public function mystudents(){
+        $students = Student::where('is_deleted', false)->where('marketers_id',Auth::user()->id);
+        $students = $students
+            ->with('user')
+            ->with('studentcollections.collection')
+            ->with('studenttemperatures.temperature')
+            ->with('consultant')
+            ->orderBy('created_at', 'desc')
+            ->get();
+        return view('marketers.mystudents', ['students' => $students]);
+    }
+
+    public function createStudents(Request $request){
+        $student = new Student();
+        $supportGroupId = Group::getSupport();
+        if($supportGroupId)
+            $supportGroupId = $supportGroupId->id;
+        $consultantGroupId = Group::getConsultant();
+        if($consultantGroupId)
+            $consultantGroupId = $consultantGroupId->id;
+        $supports = User::where('is_deleted', false)->where('groups_id', $supportGroupId)->get();
+        $consultants = User::where('is_deleted', false)->where('groups_id', $consultantGroupId)->get();
+        $sources = Source::where('is_deleted', false)->get();
+        if($request->getMethod()=='GET'){
+            return view('marketers.create', [
+                "supports"=>$supports,
+                "consultants"=>$consultants,
+                "sources"=>$sources,
+                "student"=>$student
+            ]);
+        }
+
+        $student->users_id = Auth::user()->id;
+        $student->marketers_id = $student->users_id ;
+        $student->first_name = $request->input('first_name');
+        $student->last_name = $request->input('last_name');
+        $student->last_year_grade = (int)$request->input('last_year_grade');
+        $student->consultants_id = 0 ;
+        $student->parents_job_title = $request->input('parents_job_title');
+        $student->home_phone = $request->input('home_phone');
+        $student->egucation_level = $request->input('egucation_level');
+        $student->father_phone = $request->input('father_phone');
+        $student->mother_phone = $request->input('mother_phone');
+        $student->phone  = $request->input('phone');
+        $student->school = $request->input('school');
+        $student->average = $request->input('average');
+        $student->major = $request->input('major');
+        $student->student_phone = $request->input('student_phone');
+        $student->save();
+
+        $request->session()->flash("msg_success", "دانش آموز با موفقیت افزوده شد.");
+        return redirect()->route('marketermystudents');
+    }
     public function students(){
         //
     }
+
     public function payments(){
         //
     }
+
     public function circulars(){
         //
     }
+
     public function mails(){
         //
     }
+
     public function products(){
         //
     }
+
     public function discounts(){
         //
     }
+
     public function code(){
-        //
+        return view('marketers.code', ['code' =>Auth::user()->id]);
     }
 }
