@@ -14,8 +14,12 @@
 
       <!-- Main content -->
       <section class="content">
-        <div class="row p-2">
-            {{-- <form method="post" action="{{ route('marketerprofile') }}" > --}}
+        @if($msg!='')
+          <div class="alert alert-danger alert-dismissible" > {{ $msg }} </div>
+        @endif
+        <form method="post" action="{{ route('marketerprofile') }}" enctype="multipart/form-data" >
+          <div class="row p-2">
+              @csrf
               <div class="col-md-4 col-sm-6 col-xs-12 mt-2" >
                 <label for="cell_phone" >تلفن همراه</label>
                 <div>{{ $marketer->cell_phone }}</div>
@@ -60,8 +64,39 @@
                   </div>
                 </div>
               </div>
-            {{-- </form> --}}
-        </div>
+              <div class="col-12 my-3" >احراز هویت</div>
+              <div class="col-md-12 col-sm-12 col-xs-12 mt-2" >
+                <label for="image_path" >تصویر</label>
+                @if($marketer->image_path)
+                    <a href="{{ $marketer->image_path }}" target="_blank" >
+                      <img class="col-md-4" src="{{ $marketer->image_path }}" >
+                    </a>
+                @endif  
+                @if($marketer->enabled == 'no')
+                  <input type="file"  name="image_path" id="image_path" >
+                @endif
+              </div>
+              <div class="col-md-12 col-sm-12 col-xs-12 mt-2" >
+                <label for="background" >سوابق کاری</label>
+                <textarea class="form-control" name="background" id="background" rows="3" placeholder="سوابق کاری ...">{{ $marketer->background }}</textarea>              
+              </div>
+              <div class="col-md-4 col-sm-12 col-xs-12 mt-2" >
+                <label for="education" >تحصیلات</label>
+                <input class="form-control"  name="education" id="education" value="{{ $marketer->education }}" >
+              </div>
+              <div class="col-md-4 col-sm-12 col-xs-12 mt-2" >
+                <label for="major" >رشته</label>
+                <input class="form-control"  name="major" id="major" value="{{ $marketer->major }}" >
+              </div>
+              <div class="col-md-4 col-sm-12 col-xs-12 mt-2" >
+                <label for="university" >دانشگاه</label>
+                <input class="form-control"  name="university" id="university" value="{{ $marketer->university }}" >
+              </div>
+              <div class="col-md-4 col-sm-12 col-xs-12 mt-2" >
+                <button class="btn btn-primary" >ذخیره</button>
+              </div>
+          </div>
+        </form>
         <!-- /.row -->
       </section>
       <!-- /.content -->
