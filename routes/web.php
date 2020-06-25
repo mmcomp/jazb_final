@@ -167,5 +167,12 @@ Route::group(['middleware' => ['auth', 'message']], function () {
         Route::get('/', 'SupporterController@index')->name('supporters');
         // Route::any('/students/{id}', 'SupporterController@students')->name('supporter_students');
     });
+
+    Route::group(['prefix' => '/schools'], function () {
+        Route::get('/', 'SchoolController@index')->name('schools');
+        Route::any('/create', 'SchoolController@create')->name('school_create');
+        Route::any('/edit/{id}', 'SchoolController@edit')->name('school_edit');
+        Route::get('/delete/{id}', 'SchoolController@delete')->name('school_delete');
+    });
 });
 

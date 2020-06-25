@@ -1,60 +1,62 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>
-      @section('page_title')
-          {{ env('APP_NAME') }}
-      @show
-  </title>
-  <!-- Tell the browser to be responsive to screen width -->
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="/plugins/fontawesome-free/css/all.min.css">
-  <!-- Ionicons -->
-  <link rel="stylesheet" href="/dist/css/ionicons.min.css">
-  <!-- Tempusdominus Bbootstrap 4 -->
-  <link rel="stylesheet" href="/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css">
-  <!-- iCheck -->
-  <link rel="stylesheet" href="/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
-  <!-- JQVMap -->
-  <link rel="stylesheet" href="/plugins/jqvmap/jqvmap.min.css">
-  <!-- Theme style -->
-  <link rel="stylesheet" href="/dist/css/adminlte.min.css">
-  <!-- overlayScrollbars -->
-  <link rel="stylesheet" href="/plugins/overlayScrollbars/css/OverlayScrollbars.min.css">
-  <!-- Daterange picker -->
-  <link rel="stylesheet" href="/plugins/daterangepicker/daterangepicker.css">
-  <!-- summernote -->
-  <link rel="stylesheet" href="/plugins/summernote/summernote-bs4.css">
-  <!-- Bootstrap 4 RTL -->
-  <link rel="stylesheet" href="/dist/css/bootstrap.min.css">
-  <!-- Custom style for RTL -->
-  <link rel="stylesheet" href="/dist/css/custom.css">
-  @yield('css')
-</head>
-<body class="hold-transition sidebar-mini layout-fixed">
-<div class="wrapper">
 
-  <!-- Navbar -->
-  <nav class="main-header navbar navbar-expand navbar-white navbar-light">
-    <!-- Left navbar links -->
-    <ul class="navbar-nav">
-      <li class="nav-item">
-        <a class="nav-link" data-widget="pushmenu" href="#"><i class="fas fa-bars"></i></a>
-      </li>
-      <!--<li class="nav-item d-none d-sm-inline-block">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>
+        @section('page_title')
+        {{ env('APP_NAME') }}
+        @show
+    </title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="/plugins/fontawesome-free/css/all.min.css">
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="/dist/css/ionicons.min.css">
+    <!-- Tempusdominus Bbootstrap 4 -->
+    <link rel="stylesheet" href="/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css">
+    <!-- iCheck -->
+    <link rel="stylesheet" href="/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
+    <!-- JQVMap -->
+    <link rel="stylesheet" href="/plugins/jqvmap/jqvmap.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="/dist/css/adminlte.min.css">
+    <!-- overlayScrollbars -->
+    <link rel="stylesheet" href="/plugins/overlayScrollbars/css/OverlayScrollbars.min.css">
+    <!-- Daterange picker -->
+    <link rel="stylesheet" href="/plugins/daterangepicker/daterangepicker.css">
+    <!-- summernote -->
+    <link rel="stylesheet" href="/plugins/summernote/summernote-bs4.css">
+    <!-- Bootstrap 4 RTL -->
+    <link rel="stylesheet" href="/dist/css/bootstrap.min.css">
+    <!-- Custom style for RTL -->
+    <link rel="stylesheet" href="/dist/css/custom.css">
+    @yield('css')
+</head>
+
+<body class="hold-transition sidebar-mini layout-fixed">
+    <div class="wrapper">
+
+        <!-- Navbar -->
+        <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+            <!-- Left navbar links -->
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" data-widget="pushmenu" href="#"><i class="fas fa-bars"></i></a>
+                </li>
+                <!--<li class="nav-item d-none d-sm-inline-block">
         <a href="index3.html" class="nav-link">Home</a>
       </li>
       <li class="nav-item d-none d-sm-inline-block">
         <a href="#" class="nav-link">Contact</a>
       </li>-->
-    </ul>
+            </ul>
 
 
-    <!-- SEARCH FORM -->
-    <!--
+            <!-- SEARCH FORM -->
+            <!--
     <form class="form-inline ml-3">
       <div class="input-group input-group-sm">
         <input class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search">
@@ -67,33 +69,36 @@
     </form>
     -->
 
-    <!-- Right navbar links -->
-    <ul class="navbar-nav mr-auto-navbav">
-      <!-- Messages Dropdown Menu -->
+            <!-- Right navbar links -->
+            <ul class="navbar-nav mr-auto-navbav">
+                <!-- Messages Dropdown Menu -->
 
-      <li class="nav-item dropdown">
-        <a class="nav-link" data-toggle="dropdown" href="#">
-          <i class="far fa-comments"></i>
-          <span class="badge badge-danger navbar-badge">{{ count($usermessages) }}</span>
-        </a>
-        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-          @foreach ($usermessages as $item)
-          <a href="#" class="dropdown-item">
-            <div class="media">
-              <img src="/dist/img/user1-128x128.jpg" alt="User Avatar" class="img-size-50 mr-3 img-circle">
-              <div class="media-body">
-                <h3 class="dropdown-item-title">
-                  {{ $item->themessage->user->first_name }} {{ $item->themessage->user->last_name }}
-                  <span class="float-right text-sm text-danger"><i class="fas fa-star"></i></span>
-                </h3>
-                <p class="text-sm">{{ $item->themessage->message }}</p>
-                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> {{ jdate(strtotime($item->created_at))->format("Y/m/d H:i:s") }} </p>
-              </div>
-            </div>
-          </a>
-          <div class="dropdown-divider"></div>
-          @endforeach
-          <!--
+                <li class="nav-item dropdown">
+                    <a class="nav-link" data-toggle="dropdown" href="#">
+                        <i class="far fa-comments"></i>
+                        <span class="badge badge-danger navbar-badge">{{ count($usermessages) }}</span>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+                        @foreach ($usermessages as $item)
+                        <a href="#" class="dropdown-item">
+                            <div class="media">
+                                <img src="/dist/img/user1-128x128.jpg" alt="User Avatar"
+                                    class="img-size-50 mr-3 img-circle">
+                                <div class="media-body">
+                                    <h3 class="dropdown-item-title">
+                                        {{ $item->themessage->user->first_name }}
+                                        {{ $item->themessage->user->last_name }}
+                                        <span class="float-right text-sm text-danger"><i class="fas fa-star"></i></span>
+                                    </h3>
+                                    <p class="text-sm">{{ $item->themessage->message }}</p>
+                                    <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i>
+                                        {{ jdate(strtotime($item->created_at))->format("Y/m/d H:i:s") }} </p>
+                                </div>
+                            </div>
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        @endforeach
+                        <!--
           <a href="#" class="dropdown-item">
             <div class="media">
               <img src="/dist/img/user1-128x128.jpg" alt="User Avatar" class="img-size-50 mr-3 img-circle">
@@ -137,12 +142,12 @@
           </a>
           <div class="dropdown-divider"></div>
             -->
-          <a href="{{ route('messages') }}" class="dropdown-item dropdown-footer">صندوق پیام</a>
-        </div>
-      </li>
+                        <a href="{{ route('messages') }}" class="dropdown-item dropdown-footer">صندوق پیام</a>
+                    </div>
+                </li>
 
-      <!-- Notifications Dropdown Menu -->
-      <!--
+                <!-- Notifications Dropdown Menu -->
+                <!--
       <li class="nav-item dropdown">
         <a class="nav-link" data-toggle="dropdown" href="#">
           <i class="far fa-bell"></i>
@@ -170,452 +175,484 @@
         </div>
       </li>
       -->
-      <!--
+                <!--
       <li class="nav-item">
         <a class="nav-link" data-widget="control-sidebar" data-slide="true" href="#">
           <i class="fas fa-th-large"></i>
         </a>
       </li>
       -->
-    </ul>
-  </nav>
-  <!-- /.navbar -->
+            </ul>
+        </nav>
+        <!-- /.navbar -->
 
-  <!-- Main Sidebar Container -->
-  <aside class="main-sidebar sidebar-dark-primary elevation-4">
-    <!-- Brand Logo -->
-    <a href="{{ route('home') }}" class="brand-link">
-      <img src="/dist/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
-           style="opacity: .8">
-      <span class="brand-text font-weight-light">{{ env('APP_NAME') }}</span>
-    </a>
-
-    <!-- Sidebar -->
-    <div class="sidebar">
-      <!-- Sidebar user panel (optional) -->
-      <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-        <div class="image">
-          <img src="/dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
-        </div>
-        <div class="info">
-            <a href="/login"  class="d-block">
-                {{ Auth::user()->first_name }} {{ Auth::user()->last_name }}
-
-                <i class="fa fa-window-close"></i>
+        <!-- Main Sidebar Container -->
+        <aside class="main-sidebar sidebar-dark-primary elevation-4">
+            <!-- Brand Logo -->
+            <a href="{{ route('home') }}" class="brand-link">
+                <img src="/dist/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
+                    style="opacity: .8">
+                <span class="brand-text font-weight-light">{{ env('APP_NAME') }}</span>
             </a>
-        </div>
-      </div>
 
-      <!-- Sidebar Menu -->
-      <nav class="mt-2">
-        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-          <!-- Add icons to the links using the .nav-icon class
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <!-- Sidebar user panel (optional) -->
+                <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+                    <div class="image">
+                        <img src="/dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
+                    </div>
+                    <div class="info">
+                        <a href="/login" class="d-block">
+                            {{ Auth::user()->first_name }} {{ Auth::user()->last_name }}
+
+                            <i class="fa fa-window-close"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Sidebar Menu -->
+                <nav class="mt-2">
+                    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
+                        data-accordion="false">
+                        <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
 
-          @if (Gate::allows('parameters'))
-          <li class="nav-header">تعاریف پایه</li>
-          @if(strpos(\Request::route()->getName(), 'tag')===0 || strpos(\Request::route()->getName(), 'need_tag')===0 || strpos(\Request::route()->getName(), 'parent_tag')===0 || strpos(\Request::route()->getName(), 'need_parent_tag')===0 || strpos(\Request::route()->getName(), 'temperature')===0)
-          <li class="nav-item has-treeview menu-open">
-          @else
-          <li class="nav-item has-treeview">
-          @endif
-            <a href="#" class="nav-link">
-              <i class="nav-icon fas fa-bookmark"></i>
-              <p>
-                برچسب ها
-                <i class="fas fa-angle-left right"></i>
-                <!--<span class="badge badge-info right">6</span>-->
-              </p>
-            </a>
-            <ul class="nav nav-treeview">
-              <li class="nav-item">
-                @if(strpos(\Request::route()->getName(), 'parent_tag_one')===0)
-                <a href="{{ route('parent_tag_ones') }}" class="nav-link active">
-                @else
-                <a href="{{ route('parent_tag_ones') }}" class="nav-link">
-                @endif
-                    <i class="far fa-circle nav-icon"></i>
-                    <p>برچسب اصلی اخلاقی</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                @if(strpos(\Request::route()->getName(), 'parent_tag_two')===0)
-                <a href="{{ route('parent_tag_twos') }}" class="nav-link active">
-                @else
-                <a href="{{ route('parent_tag_twos') }}" class="nav-link">
-                @endif
-                    <i class="far fa-circle nav-icon"></i>
-                    <p>برچسب فرعی 1 اخلاقی</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                @if(strpos(\Request::route()->getName(), 'parent_tag_three')===0)
-                <a href="{{ route('parent_tag_threes') }}" class="nav-link active">
-                @else
-                <a href="{{ route('parent_tag_threes') }}" class="nav-link">
-                @endif
-                    <i class="far fa-circle nav-icon"></i>
-                    <p>برچسب فرعی 2 اخلاقی</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                @if(strpos(\Request::route()->getName(), 'parent_tag_four')===0)
-                <a href="{{ route('parent_tag_fours') }}" class="nav-link active">
-                @else
-                <a href="{{ route('parent_tag_fours') }}" class="nav-link">
-                @endif
-                    <i class="far fa-circle nav-icon"></i>
-                    <p>برچسب فرعی 3 اخلاقی</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                @if(strpos(\Request::route()->getName(), 'tag')===0)
-                <a href="{{ route('tags') }}" class="nav-link active">
-                @else
-                <a href="{{ route('tags') }}" class="nav-link">
-                @endif
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>اخلاقی</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                @if(strpos(\Request::route()->getName(), 'need_parent_tag_one')===0)
-                <a href="{{ route('need_parent_tag_ones') }}" class="nav-link active">
-                @else
-                <a href="{{ route('need_parent_tag_ones') }}" class="nav-link">
-                @endif
-                    <i class="far fa-circle nav-icon"></i>
-                    <p>برچسب اصلی نیازسنجی</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                @if(strpos(\Request::route()->getName(), 'need_parent_tag_two')===0)
-                <a href="{{ route('need_parent_tag_twos') }}" class="nav-link active">
-                @else
-                <a href="{{ route('need_parent_tag_twos') }}" class="nav-link">
-                @endif
-                    <i class="far fa-circle nav-icon"></i>
-                    <p>برچسب فرعی 1 نیازسنجی</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                @if(strpos(\Request::route()->getName(), 'need_parent_tag_three')===0)
-                <a href="{{ route('need_parent_tag_threes') }}" class="nav-link active">
-                @else
-                <a href="{{ route('need_parent_tag_threes') }}" class="nav-link">
-                @endif
-                    <i class="far fa-circle nav-icon"></i>
-                    <p>برچسب فرعی 2 نیازسنجی</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                @if(strpos(\Request::route()->getName(), 'need_parent_tag_four')===0)
-                <a href="{{ route('need_parent_tag_fours') }}" class="nav-link active">
-                @else
-                <a href="{{ route('need_parent_tag_fours') }}" class="nav-link">
-                @endif
-                    <i class="far fa-circle nav-icon"></i>
-                    <p>برچسب فرعی 3 نیازسنجی</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                @if(strpos(\Request::route()->getName(), 'need_tag')===0)
-                <a href="{{ route('need_tags') }}" class="nav-link active">
-                @else
-                <a href="{{ route('need_tags') }}" class="nav-link">
-                @endif
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>نیازسنجی</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                @if(strpos(\Request::route()->getName(), 'temperature')===0)
-                <a href="{{ route('temperatures') }}" class="nav-link active">
-                @else
-                <a href="{{ route('temperatures') }}" class="nav-link">
-                @endif
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>داغ/سرد</p>
-                </a>
-              </li>
-            </ul>
-          </li>
-          @if(strpos(\Request::route()->getName(), 'collection')===0 || strpos(\Request::route()->getName(), 'product')===0)
-          <li class="nav-item has-treeview menu-open">
-          @else
-          <li class="nav-item has-treeview">
-          @endif
-            <a href="#" class="nav-link">
-              <i class="nav-icon fas fa-bookmark"></i>
-              <p>
-                محصولات
-                <i class="fas fa-angle-left right"></i>
-                <!--<span class="badge badge-info right">6</span>-->
-              </p>
-            </a>
-            <ul class="nav nav-treeview">
-              <li class="nav-item">
-                @if(strpos(\Request::route()->getName(), 'collection')===0)
-                <a href="{{ route('collections') }}" class="nav-link active">
-                @else
-                <a href="{{ route('collections') }}" class="nav-link">
-                @endif
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>دسته</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                @if(strpos(\Request::route()->getName(), 'product')===0)
-                <a href="{{ route('products') }}" class="nav-link active">
-                @else
-                <a href="{{ route('products') }}" class="nav-link">
-                @endif
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>محصول</p>
-                </a>
-              </li>
-            </ul>
-          </li>
-          @if(strpos(\Request::route()->getName(), 'source')===0)
-          <li class="nav-item has-treeview menu-open">
-          @else
-          <li class="nav-item has-treeview">
-          @endif
-            <a href="#" class="nav-link">
-              <i class="nav-icon fas fa-bookmark"></i>
-              <p>
-                منابع
-                <i class="fas fa-angle-left right"></i>
-                <!--<span class="badge badge-info right">6</span>-->
-              </p>
-            </a>
-            <ul class="nav nav-treeview">
-              <li class="nav-item">
-                @if(strpos(\Request::route()->getName(), 'source')===0)
-                <a href="{{ route('sources') }}" class="nav-link active">
-                @else
-                <a href="{{ route('sources') }}" class="nav-link">
-                @endif
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>منبع</p>
-                </a>
-              </li>
-            </ul>
-          </li>
-          @endif
-          @if (Gate::allows('students'))
-          <li class="nav-header">دانش آموز</li>
-          </li>
-          @if(strpos(\Request::route()->getName(), 'student')===0)
-          <li class="nav-item has-treeview menu-open">
-          @else
-          <li class="nav-item has-treeview">
-          @endif
-            <a href="#" class="nav-link">
-              <i class="nav-icon fas fa-bookmark"></i>
-              <p>
-                دانش آموز
-                <i class="fas fa-angle-left right"></i>
-                <!--<span class="badge badge-info right">6</span>-->
-              </p>
-            </a>
-            <ul class="nav nav-treeview">
-              <li class="nav-item">
-                @if(strpos(\Request::route()->getName(), 'students')===0)
-                <a href="{{ route('students') }}" class="nav-link active">
-                @else
-                <a href="{{ route('students') }}" class="nav-link">
-                @endif
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>لیست</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                @if(strpos(\Request::route()->getName(), 'student_csv')===0)
-                <a href="{{ route('student_csv') }}" class="nav-link active">
-                @else
-                <a href="{{ route('student_csv') }}" class="nav-link">
-                @endif
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>CSV</p>
-                </a>
-              </li>
-            </ul>
-          </li>
-          @endif
-          @if (Gate::allows('users'))
-          <li class="nav-header">کاربران</li>
-          </li>
-          @if(strpos(\Request::route()->getName(), 'user')===0 || strpos(\Request::route()->getName(), 'supporter')===0)
-          <li class="nav-item has-treeview menu-open">
-          @else
-          <li class="nav-item has-treeview">
-          @endif
-            <a href="#" class="nav-link">
-              <i class="nav-icon fas fa-bookmark"></i>
-              <p>
-                کاربر
-                <i class="fas fa-angle-left right"></i>
-                <!--<span class="badge badge-info right">6</span>-->
-              </p>
-            </a>
-            <ul class="nav nav-treeview">
-              <li class="nav-item">
-                @if(strpos(\Request::route()->getName(), 'user')===0)
-                <a href="{{ route('users') }}" class="nav-link active">
-                @else
-                <a href="{{ route('users') }}" class="nav-link">
-                @endif
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>لیست</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                @if(strpos(\Request::route()->getName(), 'supporter')===0)
-                <a href="{{ route('supporters') }}" class="nav-link active">
-                @else
-                <a href="{{ route('supporters') }}" class="nav-link">
-                @endif
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>پشتیبان</p>
-                </a>
-              </li>
-            </ul>
-          </li>
-          @endif
-          @if (Gate::allows('purchases'))
-          <li class="nav-header">پرداخت</li>
-          </li>
-          @if(strpos(\Request::route()->getName(), 'purchase')===0)
-          <li class="nav-item has-treeview menu-open">
-          @else
-          <li class="nav-item has-treeview">
-          @endif
-            <a href="#" class="nav-link">
-              <i class="nav-icon fas fa-bookmark"></i>
-              <p>
-                دستی
-                <i class="fas fa-angle-left right"></i>
-                <!--<span class="badge badge-info right">6</span>-->
-              </p>
-            </a>
-            <ul class="nav nav-treeview">
-              <li class="nav-item">
-                @if(strpos(\Request::route()->getName(), 'purchase')===0)
-                <a href="{{ route('purchases') }}" class="nav-link active">
-                @else
-                <a href="{{ route('purchases') }}" class="nav-link">
-                @endif
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>لیست</p>
-                </a>
-              </li>
-            </ul>
-          </li>
-          @else
-          @endif
-          @if (Gate::allows('marketers'))
-          <li class="nav-header">نمایندگان</li>
-          </li>
-          @if(strpos(\Request::route()->getName(), 'marketer')===0)
-          <li class="nav-item has-treeview menu-open">
-          @else
-          <li class="nav-item has-treeview">
-          @endif
-            <a href="#" class="nav-link">
-              <i class="nav-icon fas fa-bookmark"></i>
-              <p>
-                نماینده
-                <i class="fas fa-angle-left right"></i>
-                <!--<span class="badge badge-info right">6</span>-->
-              </p>
-            </a>
-            <ul class="nav nav-treeview">
-              <li class="nav-item">
-                @if(strpos(\Request::route()->getName(), 'marketerdashboard')===0)
-                <a href="{{ route('marketerdashboard') }}" class="nav-link active">
-                @else
-                <a href="{{ route('marketerdashboard') }}" class="nav-link">
-                @endif
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>داشبورد</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                @if(strpos(\Request::route()->getName(), 'marketerstudents')===0)
-                <a href="{{ route('marketerstudents') }}" class="nav-link active">
-                @else
-                <a href="{{ route('marketerstudents') }}" class="nav-link">
-                @endif
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>لیست مالی دانش آموزان</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                @if(strpos(\Request::route()->getName(), 'marketerpayments')===0)
-                <a href="{{ route('marketerpayments') }}" class="nav-link active">
-                @else
-                <a href="{{ route('marketerpayments') }}" class="nav-link">
-                @endif
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>وصولی های من</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                @if(strpos(\Request::route()->getName(), 'marketercirculars')===0)
-                <a href="{{ route('marketercirculars') }}" class="nav-link active">
-                @else
-                <a href="{{ route('marketercirculars') }}" class="nav-link">
-                @endif
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>آموزش و راهنما </p>
-                </a>
-              </li>
-              <li class="nav-item">
-                @if(strpos(\Request::route()->getName(), 'marketermails')===0)
-                <a href="{{ route('marketermails') }}" class="nav-link active">
-                @else
-                <a href="{{ route('marketermails') }}" class="nav-link">
-                @endif
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>دریافت بخش نامه </p>
-                </a>
-              </li>
-              <li class="nav-item">
-                @if(strpos(\Request::route()->getName(), 'marketerdiscounts')===0)
-                <a href="{{ route('marketerdiscounts') }}" class="nav-link active">
-                @else
-                <a href="{{ route('marketerdiscounts') }}" class="nav-link">
-                @endif
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>ایجاد کد تخفیف</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                @if(strpos(\Request::route()->getName(), 'marketerproducts')===0)
-                <a href="{{ route('marketerproducts') }}" class="nav-link active">
-                @else
-                <a href="{{ route('marketerproducts') }}" class="nav-link">
-                @endif
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>فهرست محصولات</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                @if(strpos(\Request::route()->getName(), 'marketercode')===0)
-                <a href="{{ route('marketercode') }}" class="nav-link active">
-                @else
-                <a href="{{ route('marketercode') }}" class="nav-link">
-                @endif
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>لینک معرفی و کد شناسایی</p>
-                </a>
-              </li>
-            </ul>
-          </li>
-          @else
-          @endif
-          <!--
+                        @if (Gate::allows('parameters'))
+                        <li class="nav-header">تعاریف پایه</li>
+                        @if(strpos(\Request::route()->getName(), 'tag')===0 || strpos(\Request::route()->getName(),
+                        'need_tag')===0 || strpos(\Request::route()->getName(), 'parent_tag')===0 ||
+                        strpos(\Request::route()->getName(), 'need_parent_tag')===0 ||
+                        strpos(\Request::route()->getName(), 'temperature')===0)
+                        <li class="nav-item has-treeview menu-open">
+                            @else
+                        <li class="nav-item has-treeview">
+                            @endif
+                            <a href="#" class="nav-link">
+                                <i class="nav-icon fas fa-bookmark"></i>
+                                <p>
+                                    برچسب ها
+                                    <i class="fas fa-angle-left right"></i>
+                                    <!--<span class="badge badge-info right">6</span>-->
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    @if(strpos(\Request::route()->getName(), 'parent_tag_one')===0)
+                                    <a href="{{ route('parent_tag_ones') }}" class="nav-link active">
+                                        @else
+                                        <a href="{{ route('parent_tag_ones') }}" class="nav-link">
+                                            @endif
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>برچسب اصلی اخلاقی</p>
+                                        </a>
+                                </li>
+                                <li class="nav-item">
+                                    @if(strpos(\Request::route()->getName(), 'parent_tag_two')===0)
+                                    <a href="{{ route('parent_tag_twos') }}" class="nav-link active">
+                                        @else
+                                        <a href="{{ route('parent_tag_twos') }}" class="nav-link">
+                                            @endif
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>برچسب فرعی 1 اخلاقی</p>
+                                        </a>
+                                </li>
+                                <li class="nav-item">
+                                    @if(strpos(\Request::route()->getName(), 'parent_tag_three')===0)
+                                    <a href="{{ route('parent_tag_threes') }}" class="nav-link active">
+                                        @else
+                                        <a href="{{ route('parent_tag_threes') }}" class="nav-link">
+                                            @endif
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>برچسب فرعی 2 اخلاقی</p>
+                                        </a>
+                                </li>
+                                <li class="nav-item">
+                                    @if(strpos(\Request::route()->getName(), 'parent_tag_four')===0)
+                                    <a href="{{ route('parent_tag_fours') }}" class="nav-link active">
+                                        @else
+                                        <a href="{{ route('parent_tag_fours') }}" class="nav-link">
+                                            @endif
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>برچسب فرعی 3 اخلاقی</p>
+                                        </a>
+                                </li>
+                                <li class="nav-item">
+                                    @if(strpos(\Request::route()->getName(), 'tag')===0)
+                                    <a href="{{ route('tags') }}" class="nav-link active">
+                                        @else
+                                        <a href="{{ route('tags') }}" class="nav-link">
+                                            @endif
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>اخلاقی</p>
+                                        </a>
+                                </li>
+                                <li class="nav-item">
+                                    @if(strpos(\Request::route()->getName(), 'need_parent_tag_one')===0)
+                                    <a href="{{ route('need_parent_tag_ones') }}" class="nav-link active">
+                                        @else
+                                        <a href="{{ route('need_parent_tag_ones') }}" class="nav-link">
+                                            @endif
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>برچسب اصلی نیازسنجی</p>
+                                        </a>
+                                </li>
+                                <li class="nav-item">
+                                    @if(strpos(\Request::route()->getName(), 'need_parent_tag_two')===0)
+                                    <a href="{{ route('need_parent_tag_twos') }}" class="nav-link active">
+                                        @else
+                                        <a href="{{ route('need_parent_tag_twos') }}" class="nav-link">
+                                            @endif
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>برچسب فرعی 1 نیازسنجی</p>
+                                        </a>
+                                </li>
+                                <li class="nav-item">
+                                    @if(strpos(\Request::route()->getName(), 'need_parent_tag_three')===0)
+                                    <a href="{{ route('need_parent_tag_threes') }}" class="nav-link active">
+                                        @else
+                                        <a href="{{ route('need_parent_tag_threes') }}" class="nav-link">
+                                            @endif
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>برچسب فرعی 2 نیازسنجی</p>
+                                        </a>
+                                </li>
+                                <li class="nav-item">
+                                    @if(strpos(\Request::route()->getName(), 'need_parent_tag_four')===0)
+                                    <a href="{{ route('need_parent_tag_fours') }}" class="nav-link active">
+                                        @else
+                                        <a href="{{ route('need_parent_tag_fours') }}" class="nav-link">
+                                            @endif
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>برچسب فرعی 3 نیازسنجی</p>
+                                        </a>
+                                </li>
+                                <li class="nav-item">
+                                    @if(strpos(\Request::route()->getName(), 'need_tag')===0)
+                                    <a href="{{ route('need_tags') }}" class="nav-link active">
+                                        @else
+                                        <a href="{{ route('need_tags') }}" class="nav-link">
+                                            @endif
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>نیازسنجی</p>
+                                        </a>
+                                </li>
+                                <li class="nav-item">
+                                    @if(strpos(\Request::route()->getName(), 'temperature')===0)
+                                    <a href="{{ route('temperatures') }}" class="nav-link active">
+                                        @else
+                                        <a href="{{ route('temperatures') }}" class="nav-link">
+                                            @endif
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>داغ/سرد</p>
+                                        </a>
+                                </li>
+                            </ul>
+                        </li>
+                        @if(strpos(\Request::route()->getName(), 'school')===0)
+                        <li class="nav-item has-treeview menu-open">
+                        @else
+                        <li class="nav-item has-treeview">
+                        @endif
+                            <a href="#" class="nav-link">
+                                <i class="nav-icon fas fa-bookmark"></i>
+                                <p>
+                                     مدارس
+                                    <i class="fas fa-angle-left right"></i>
+                                    <!--<span class="badge badge-info right">6</span>-->
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    @if(strpos(\Request::route()->getName(), 'school')===0)
+                                    <a href="{{ route('schools') }}" class="nav-link active">
+                                    @else
+                                    <a href="{{ route('schools') }}" class="nav-link">
+                                    @endif
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>لیست</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        @if(strpos(\Request::route()->getName(), 'collection')===0 ||
+                        strpos(\Request::route()->getName(), 'product')===0)
+                        <li class="nav-item has-treeview menu-open">
+                            @else
+                        <li class="nav-item has-treeview">
+                            @endif
+                            <a href="#" class="nav-link">
+                                <i class="nav-icon fas fa-bookmark"></i>
+                                <p>
+                                    محصولات
+                                    <i class="fas fa-angle-left right"></i>
+                                    <!--<span class="badge badge-info right">6</span>-->
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    @if(strpos(\Request::route()->getName(), 'collection')===0)
+                                    <a href="{{ route('collections') }}" class="nav-link active">
+                                        @else
+                                        <a href="{{ route('collections') }}" class="nav-link">
+                                            @endif
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>دسته</p>
+                                        </a>
+                                </li>
+                                <li class="nav-item">
+                                    @if(strpos(\Request::route()->getName(), 'product')===0)
+                                    <a href="{{ route('products') }}" class="nav-link active">
+                                        @else
+                                        <a href="{{ route('products') }}" class="nav-link">
+                                            @endif
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>محصول</p>
+                                        </a>
+                                </li>
+                            </ul>
+                        </li>
+                        @if(strpos(\Request::route()->getName(), 'source')===0)
+                        <li class="nav-item has-treeview menu-open">
+                            @else
+                        <li class="nav-item has-treeview">
+                            @endif
+                            <a href="#" class="nav-link">
+                                <i class="nav-icon fas fa-bookmark"></i>
+                                <p>
+                                    منابع
+                                    <i class="fas fa-angle-left right"></i>
+                                    <!--<span class="badge badge-info right">6</span>-->
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    @if(strpos(\Request::route()->getName(), 'source')===0)
+                                    <a href="{{ route('sources') }}" class="nav-link active">
+                                        @else
+                                        <a href="{{ route('sources') }}" class="nav-link">
+                                            @endif
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>منبع</p>
+                                        </a>
+                                </li>
+                            </ul>
+                        </li>
+                        @endif
+                        @if (Gate::allows('students'))
+                        <li class="nav-header">دانش آموز</li>
+                        </li>
+                        @if(strpos(\Request::route()->getName(), 'student')===0)
+                        <li class="nav-item has-treeview menu-open">
+                            @else
+                        <li class="nav-item has-treeview">
+                            @endif
+                            <a href="#" class="nav-link">
+                                <i class="nav-icon fas fa-bookmark"></i>
+                                <p>
+                                    دانش آموز
+                                    <i class="fas fa-angle-left right"></i>
+                                    <!--<span class="badge badge-info right">6</span>-->
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    @if(strpos(\Request::route()->getName(), 'students')===0)
+                                    <a href="{{ route('students') }}" class="nav-link active">
+                                        @else
+                                        <a href="{{ route('students') }}" class="nav-link">
+                                            @endif
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>لیست</p>
+                                        </a>
+                                </li>
+                                <li class="nav-item">
+                                    @if(strpos(\Request::route()->getName(), 'student_csv')===0)
+                                    <a href="{{ route('student_csv') }}" class="nav-link active">
+                                        @else
+                                        <a href="{{ route('student_csv') }}" class="nav-link">
+                                            @endif
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>CSV</p>
+                                        </a>
+                                </li>
+                            </ul>
+                        </li>
+                        @endif
+                        @if (Gate::allows('users'))
+                        <li class="nav-header">کاربران</li>
+                        </li>
+                        @if(strpos(\Request::route()->getName(), 'user')===0 || strpos(\Request::route()->getName(),
+                        'supporter')===0)
+                        <li class="nav-item has-treeview menu-open">
+                            @else
+                        <li class="nav-item has-treeview">
+                            @endif
+                            <a href="#" class="nav-link">
+                                <i class="nav-icon fas fa-bookmark"></i>
+                                <p>
+                                    کاربر
+                                    <i class="fas fa-angle-left right"></i>
+                                    <!--<span class="badge badge-info right">6</span>-->
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    @if(strpos(\Request::route()->getName(), 'user')===0)
+                                    <a href="{{ route('users') }}" class="nav-link active">
+                                        @else
+                                        <a href="{{ route('users') }}" class="nav-link">
+                                            @endif
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>لیست</p>
+                                        </a>
+                                </li>
+                                <li class="nav-item">
+                                    @if(strpos(\Request::route()->getName(), 'supporter')===0)
+                                    <a href="{{ route('supporters') }}" class="nav-link active">
+                                        @else
+                                        <a href="{{ route('supporters') }}" class="nav-link">
+                                            @endif
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>پشتیبان</p>
+                                        </a>
+                                </li>
+                            </ul>
+                        </li>
+                        @endif
+                        @if (Gate::allows('purchases'))
+                        <li class="nav-header">پرداخت</li>
+                        </li>
+                        @if(strpos(\Request::route()->getName(), 'purchase')===0)
+                        <li class="nav-item has-treeview menu-open">
+                            @else
+                        <li class="nav-item has-treeview">
+                            @endif
+                            <a href="#" class="nav-link">
+                                <i class="nav-icon fas fa-bookmark"></i>
+                                <p>
+                                    دستی
+                                    <i class="fas fa-angle-left right"></i>
+                                    <!--<span class="badge badge-info right">6</span>-->
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    @if(strpos(\Request::route()->getName(), 'purchase')===0)
+                                    <a href="{{ route('purchases') }}" class="nav-link active">
+                                        @else
+                                        <a href="{{ route('purchases') }}" class="nav-link">
+                                            @endif
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>لیست</p>
+                                        </a>
+                                </li>
+                            </ul>
+                        </li>
+                        @else
+                        @endif
+                        @if (Gate::allows('marketers'))
+                        <li class="nav-header">نمایندگان</li>
+                        </li>
+                        @if(strpos(\Request::route()->getName(), 'marketer')===0)
+                        <li class="nav-item has-treeview menu-open">
+                            @else
+                        <li class="nav-item has-treeview">
+                            @endif
+                            <a href="#" class="nav-link">
+                                <i class="nav-icon fas fa-bookmark"></i>
+                                <p>
+                                    نماینده
+                                    <i class="fas fa-angle-left right"></i>
+                                    <!--<span class="badge badge-info right">6</span>-->
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    @if(strpos(\Request::route()->getName(), 'marketerdashboard')===0)
+                                    <a href="{{ route('marketerdashboard') }}" class="nav-link active">
+                                        @else
+                                        <a href="{{ route('marketerdashboard') }}" class="nav-link">
+                                            @endif
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>داشبورد</p>
+                                        </a>
+                                </li>
+                                <li class="nav-item">
+                                    @if(strpos(\Request::route()->getName(), 'marketerstudents')===0)
+                                    <a href="{{ route('marketerstudents') }}" class="nav-link active">
+                                        @else
+                                        <a href="{{ route('marketerstudents') }}" class="nav-link">
+                                            @endif
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>لیست مالی دانش آموزان</p>
+                                        </a>
+                                </li>
+                                <li class="nav-item">
+                                    @if(strpos(\Request::route()->getName(), 'marketerpayments')===0)
+                                    <a href="{{ route('marketerpayments') }}" class="nav-link active">
+                                        @else
+                                        <a href="{{ route('marketerpayments') }}" class="nav-link">
+                                            @endif
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>وصولی های من</p>
+                                        </a>
+                                </li>
+                                <li class="nav-item">
+                                    @if(strpos(\Request::route()->getName(), 'marketercirculars')===0)
+                                    <a href="{{ route('marketercirculars') }}" class="nav-link active">
+                                        @else
+                                        <a href="{{ route('marketercirculars') }}" class="nav-link">
+                                            @endif
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>آموزش و راهنما </p>
+                                        </a>
+                                </li>
+                                <li class="nav-item">
+                                    @if(strpos(\Request::route()->getName(), 'marketermails')===0)
+                                    <a href="{{ route('marketermails') }}" class="nav-link active">
+                                        @else
+                                        <a href="{{ route('marketermails') }}" class="nav-link">
+                                            @endif
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>دریافت بخش نامه </p>
+                                        </a>
+                                </li>
+                                <li class="nav-item">
+                                    @if(strpos(\Request::route()->getName(), 'marketerdiscounts')===0)
+                                    <a href="{{ route('marketerdiscounts') }}" class="nav-link active">
+                                        @else
+                                        <a href="{{ route('marketerdiscounts') }}" class="nav-link">
+                                            @endif
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>ایجاد کد تخفیف</p>
+                                        </a>
+                                </li>
+                                <li class="nav-item">
+                                    @if(strpos(\Request::route()->getName(), 'marketerproducts')===0)
+                                    <a href="{{ route('marketerproducts') }}" class="nav-link active">
+                                        @else
+                                        <a href="{{ route('marketerproducts') }}" class="nav-link">
+                                            @endif
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>فهرست محصولات</p>
+                                        </a>
+                                </li>
+                                <li class="nav-item">
+                                    @if(strpos(\Request::route()->getName(), 'marketercode')===0)
+                                    <a href="{{ route('marketercode') }}" class="nav-link active">
+                                        @else
+                                        <a href="{{ route('marketercode') }}" class="nav-link">
+                                            @endif
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>لینک معرفی و کد شناسایی</p>
+                                        </a>
+                                </li>
+                            </ul>
+                        </li>
+                        @else
+                        @endif
+                        <!--
           <li class="nav-item has-treeview menu-open">
             <a href="#" class="nav-link active">
               <i class="nav-icon fas fa-tachometer-alt"></i>
@@ -1046,120 +1083,124 @@
             </a>
           </li>
           -->
-        </ul>
-      </nav>
-      <!-- /.sidebar-menu -->
-    </div>
-    <!-- /.sidebar -->
-  </aside>
-
-  <!-- Content Wrapper. Contains page content -->
-  <div class="content-wrapper">
-    @yield('content')
-    @if (isset($msg_success))
-    <div class="card card-success" style="width: 400px;position: fixed;left: 10px;bottom: 10px;">
-        <div class="card-header">
-            <h3 class="card-title">موفقیت</h3>
-
-            <div class="card-tools">
-            <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i>
-            </button>
+                    </ul>
+                </nav>
+                <!-- /.sidebar-menu -->
             </div>
-            <!-- /.card-tools -->
-        </div>
-        <!-- /.card-header -->
-        <div class="card-body">
-            {{ $msg_success }}
-        </div>
-        <!-- /.card-body -->
-    </div>
-    @endif
-    @if (isset($msg_error))
-    <div class="card card-danger" style="width: 400px;position: fixed;left: 10px;bottom: 10px;">
-        <div class="card-header">
-            <h3 class="card-title">خطا</h3>
+            <!-- /.sidebar -->
+        </aside>
 
-            <div class="card-tools">
-            <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i>
-            </button>
+        <!-- Content Wrapper. Contains page content -->
+        <div class="content-wrapper">
+            @yield('content')
+            @if (isset($msg_success))
+            <div class="card card-success" style="width: 400px;position: fixed;left: 10px;bottom: 10px;">
+                <div class="card-header">
+                    <h3 class="card-title">موفقیت</h3>
+
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="remove"><i
+                                class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <!-- /.card-tools -->
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body">
+                    {{ $msg_success }}
+                </div>
+                <!-- /.card-body -->
             </div>
-            <!-- /.card-tools -->
+            @endif
+            @if (isset($msg_error))
+            <div class="card card-danger" style="width: 400px;position: fixed;left: 10px;bottom: 10px;">
+                <div class="card-header">
+                    <h3 class="card-title">خطا</h3>
+
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="remove"><i
+                                class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <!-- /.card-tools -->
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body">
+                    {{ $msg_error }}
+                </div>
+                <!-- /.card-body -->
+            </div>
+            @endif
         </div>
-        <!-- /.card-header -->
-        <div class="card-body">
-            {{ $msg_error }}
-        </div>
-        <!-- /.card-body -->
-    </div>
-    @endif
-  </div>
-  <!-- /.content-wrapper -->
-  <footer class="main-footer">
-    <!--
+        <!-- /.content-wrapper -->
+        <footer class="main-footer">
+            <!--
     <strong>Copyright &copy; 2014-2019 <a href="http://adminlte.io">AdminLTE.io</a>.</strong>
     All rights reserved.
     <div class="float-right d-none d-sm-inline-block">
       <b>Version</b> 3.0.0-rc.1
     </div>
     -->
-    کلیه حقوق متعلق به
-    <strong>
-        <a href="https://aref-group.ir/">
-            خانه کنکور عارف
-        </a>
-        &copy;
-        1390-1399
-    </strong>
-    است
-  </footer>
+            کلیه حقوق متعلق به
+            <strong>
+                <a href="https://aref-group.ir/">
+                    خانه کنکور عارف
+                </a>
+                &copy;
+                1390-1399
+            </strong>
+            است
+        </footer>
 
-  <!-- Control Sidebar -->
-  <aside class="control-sidebar control-sidebar-dark">
-    <!-- Control sidebar content goes here -->
-  </aside>
-  <!-- /.control-sidebar -->
-</div>
-<!-- ./wrapper -->
-
-
+        <!-- Control Sidebar -->
+        <aside class="control-sidebar control-sidebar-dark">
+            <!-- Control sidebar content goes here -->
+        </aside>
+        <!-- /.control-sidebar -->
+    </div>
+    <!-- ./wrapper -->
 
 
-<!-- jQuery -->
-<script src="/plugins/jquery/jquery.min.js"></script>
-<!-- jQuery UI 1.11.4 -->
-<script src="/plugins/jquery-ui/jquery-ui.min.js"></script>
-<!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
-<script>
-  $.widget.bridge('uibutton', $.ui.button)
-</script>
-<!-- Bootstrap 4 rtl -->
-<script src="/dist/js/bootstrap.min.js"></script>
-<!-- Bootstrap 4 -->
-<script src="/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
-<!-- ChartJS -->
-<script src="/plugins/chart.js/Chart.min.js"></script>
-<!-- Sparkline -->
-<script src="/plugins/sparklines/sparkline.js"></script>
-<!-- JQVMap -->
-<script src="/plugins/jqvmap/jquery.vmap.min.js"></script>
-<script src="/plugins/jqvmap/maps/jquery.vmap.world.js"></script>
-<!-- jQuery Knob Chart -->
-<script src="/plugins/jquery-knob/jquery.knob.min.js"></script>
-<!-- daterangepicker -->
-<script src="/plugins/moment/moment.min.js"></script>
-<script src="/plugins/daterangepicker/daterangepicker.js"></script>
-<!-- Tempusdominus Bootstrap 4 -->
-<script src="/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
-<!-- Summernote -->
-<script src="/plugins/summernote/summernote-bs4.min.js"></script>
-<!-- overlayScrollbars -->
-<script src="/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script>
-<!-- AdminLTE App -->
-<script src="/dist/js/adminlte.js"></script>
-<!-- AdminLTE dashboard demo (This is only for demo purposes) -->
-<script src="/dist/js/pages/dashboard.js"></script>
-<!-- AdminLTE for demo purposes -->
-<script src="/dist/js/demo.js"></script>
-@yield('js')
+
+
+    <!-- jQuery -->
+    <script src="/plugins/jquery/jquery.min.js"></script>
+    <!-- jQuery UI 1.11.4 -->
+    <script src="/plugins/jquery-ui/jquery-ui.min.js"></script>
+    <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
+    <script>
+        $.widget.bridge('uibutton', $.ui.button)
+
+    </script>
+    <!-- Bootstrap 4 rtl -->
+    <script src="/dist/js/bootstrap.min.js"></script>
+    <!-- Bootstrap 4 -->
+    <script src="/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <!-- ChartJS -->
+    <script src="/plugins/chart.js/Chart.min.js"></script>
+    <!-- Sparkline -->
+    <script src="/plugins/sparklines/sparkline.js"></script>
+    <!-- JQVMap -->
+    <script src="/plugins/jqvmap/jquery.vmap.min.js"></script>
+    <script src="/plugins/jqvmap/maps/jquery.vmap.world.js"></script>
+    <!-- jQuery Knob Chart -->
+    <script src="/plugins/jquery-knob/jquery.knob.min.js"></script>
+    <!-- daterangepicker -->
+    <script src="/plugins/moment/moment.min.js"></script>
+    <script src="/plugins/daterangepicker/daterangepicker.js"></script>
+    <!-- Tempusdominus Bootstrap 4 -->
+    <script src="/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
+    <!-- Summernote -->
+    <script src="/plugins/summernote/summernote-bs4.min.js"></script>
+    <!-- overlayScrollbars -->
+    <script src="/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script>
+    <!-- AdminLTE App -->
+    <script src="/dist/js/adminlte.js"></script>
+    <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
+    <script src="/dist/js/pages/dashboard.js"></script>
+    <!-- AdminLTE for demo purposes -->
+    <script src="/dist/js/demo.js"></script>
+    @yield('js')
 </body>
+
 </html>
