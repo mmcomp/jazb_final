@@ -283,27 +283,28 @@
                                     </div>
                                     <div class="col">
                                         تاریخ ثبت دانش آموز :
+                                        {{ jdate(strtotime($item->created_at))->format("Y/m/d") }}
                                     </div>
                                     <div class="col">
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col">
-                                        <a href="#">
+                                        <a href="#" onclick="$('#students_index').val({{ $index }});preloadTagModal();$('#tag_modal').modal('show'); return false;">
                                             برچسب روحیات اخلاقی
                                         </a>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col">
-                                        <a href="#">
+                                        <a href="#" onclick="$('#students_index').val({{ $index }});preloadTagModal();$('#tag_modal').modal('show'); return false;">
                                             برچسب نیازهای دانش آموز
                                         </a>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col">
-                                        <a href="#">
+                                        <a target="_blank" href="{{ route('student_purchases', $item->id) }}">
                                             گزارش خریدهای قطعی دانش آموز
                                         </a>
                                     </div>

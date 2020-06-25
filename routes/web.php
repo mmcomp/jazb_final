@@ -123,6 +123,7 @@ Route::group(['middleware' => ['auth', 'message']], function () {
         Route::post('/temperature', 'StudentController@temperature')->name('student_temperature');
         Route::any('/csv', 'StudentController@csv')->name('student_csv');
         Route::post('/supporter', 'StudentController@supporter')->name('student_supporter');
+        Route::get('/purchases/{id}', 'StudentController@purchases')->name('student_purchases');
     });
 
     Route::any('marketerprofile','MarketerController@profile')->name('marketerprofile');
