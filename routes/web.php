@@ -174,5 +174,12 @@ Route::group(['middleware' => ['auth', 'message']], function () {
         Route::any('/edit/{id}', 'SchoolController@edit')->name('school_edit');
         Route::get('/delete/{id}', 'SchoolController@delete')->name('school_delete');
     });
+
+    Route::group(['prefix' => '/sale_suggestions'], function () {
+        Route::get('/', 'SaleSuggestionController@index')->name('sale_suggestions');
+        Route::any('/create', 'SaleSuggestionController@create')->name('sale_suggestion_create');
+        Route::any('/edit/{id}', 'SaleSuggestionController@edit')->name('sale_suggestion_edit');
+        Route::get('/delete/{id}', 'SaleSuggestionController@delete')->name('sale_suggestion_delete');
+    });
 });
 

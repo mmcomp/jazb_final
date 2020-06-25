@@ -485,7 +485,7 @@
                         @if(strpos(\Request::route()->getName(), 'user')===0 || strpos(\Request::route()->getName(),
                         'supporter')===0)
                         <li class="nav-item has-treeview menu-open">
-                            @else
+                        @else
                         <li class="nav-item has-treeview">
                             @endif
                             <a href="#" class="nav-link">
@@ -525,7 +525,7 @@
                         </li>
                         @if(strpos(\Request::route()->getName(), 'purchase')===0)
                         <li class="nav-item has-treeview menu-open">
-                            @else
+                        @else
                         <li class="nav-item has-treeview">
                             @endif
                             <a href="#" class="nav-link">
@@ -556,7 +556,7 @@
                         </li>
                         @if(strpos(\Request::route()->getName(), 'marketer')===0)
                         <li class="nav-item has-treeview menu-open">
-                            @else
+                        @else
                         <li class="nav-item has-treeview">
                             @endif
                             <a href="#" class="nav-link">
@@ -647,6 +647,37 @@
                                             <i class="far fa-circle nav-icon"></i>
                                             <p>لینک معرفی و کد شناسایی</p>
                                         </a>
+                                </li>
+                            </ul>
+                        </li>
+                        @else
+                        @endif
+                        @if (Gate::allows('sale_suggestions'))
+                        <li class="nav-header">شروط پیشنهاد</li>
+                        </li>
+                        @if(strpos(\Request::route()->getName(), 'sale_suggestion')===0)
+                        <li class="nav-item has-treeview menu-open">
+                        @else
+                        <li class="nav-item has-treeview">
+                        @endif
+                            <a href="#" class="nav-link">
+                                <i class="nav-icon fas fa-bookmark"></i>
+                                <p>
+                                    شروط
+                                    <i class="fas fa-angle-left right"></i>
+                                    <!--<span class="badge badge-info right">6</span>-->
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    @if(strpos(\Request::route()->getName(), 'sale_suggestion')===0)
+                                    <a href="{{ route('sale_suggestions') }}" class="nav-link active">
+                                    @else
+                                    <a href="{{ route('sale_suggestions') }}" class="nav-link">
+                                    @endif
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>لیست</p>
+                                    </a>
                                 </li>
                             </ul>
                         </li>
