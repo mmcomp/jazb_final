@@ -45,6 +45,15 @@
                             <input type="text" class="form-control" id="name" name="name" placeholder="نام"  />
                             @endif
                         </div>
+
+                        <div class="form-group">
+                            <label for="price">قیمت</label>
+                            @if (isset($product) && isset($product->id))
+                            <input type="number" class="form-control" id="price" name="price" placeholder="قیمت" value="{{ $product->price }}" />
+                            @else
+                            <input type="number" class="form-control" id="price" name="price" placeholder="قیمت"  />
+                            @endif
+                        </div>
                     </div>
                     <div class="col">
                         <div class="form-group">

@@ -46,6 +46,7 @@ class ProductController extends Controller
 
         $product->name = $request->input('name', '');
         $product->collections_id = (int)$request->input('collections_id', 0);
+        $product->price = (int)$request->input('price', 0);
         $product->save();
 
         $request->session()->flash("msg_success", "محصول با موفقیت افزوده شد.");
@@ -74,6 +75,7 @@ class ProductController extends Controller
 
         $product->name = $request->input('name', '');
         $product->collections_id = (int)$request->input('collections_id', 0);
+        $product->price = (int)$request->input('price', 0);
         $product->save();
 
         $request->session()->flash("msg_success", "محصول با موفقیت ویرایش شد.");

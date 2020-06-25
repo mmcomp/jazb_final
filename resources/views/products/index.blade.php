@@ -39,6 +39,7 @@
                     <th>کد</th>
                     <th>نام</th>
                     <th>دسته</th>
+                    <th>قیمت</th>
                     <th>#</th>
                   </tr>
                   </thead>
@@ -50,6 +51,7 @@
                         <td>{{ $item->name }}</td>
                         <!--<td>{{ ($item->collection)?$item->collection->name:'-' }}</td>-->
                         <td>{{ $item->parents }}</td>
+                        <td>{{ number_format($item->price) }}</td>
                         <td>
                             <a class="btn btn-primary" href="{{ route('product_edit', $item->id) }}">
                                 ویرایش
