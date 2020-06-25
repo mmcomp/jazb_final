@@ -42,7 +42,7 @@ class SchoolController extends Controller
         $school = School::where('id', $id)->where('is_deleted', false)->first();
         if($school==null){
             $request->session()->flash("msg_error", "مدرسه مورد نظر پیدا نشد!");
-            return redirect()->route('products');
+            return redirect()->route('schools');
         }
 
         if($request->getMethod()=='GET'){
