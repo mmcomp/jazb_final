@@ -504,6 +504,107 @@
           </li>
           @else
           @endif
+          @if (Gate::allows('marketers'))
+          <li class="nav-header">نمایندگان</li>
+          </li>
+          @if(strpos(\Request::route()->getName(), 'marketer')===0)
+          <li class="nav-item has-treeview menu-open">
+          @else
+          <li class="nav-item has-treeview">
+          @endif
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-bookmark"></i>
+              <p>
+                نماینده
+                <i class="fas fa-angle-left right"></i>
+                <!--<span class="badge badge-info right">6</span>-->
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                @if(strpos(\Request::route()->getName(), 'marketerdashboard')===0)
+                <a href="{{ route('marketerdashboard') }}" class="nav-link active">
+                @else
+                <a href="{{ route('marketerdashboard') }}" class="nav-link">
+                @endif
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>داشبورد</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                @if(strpos(\Request::route()->getName(), 'marketerstudents')===0)
+                <a href="{{ route('marketerstudents') }}" class="nav-link active">
+                @else
+                <a href="{{ route('marketerstudents') }}" class="nav-link">
+                @endif
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>لیست مالی دانش آموزان</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                @if(strpos(\Request::route()->getName(), 'marketerpayments')===0)
+                <a href="{{ route('marketerpayments') }}" class="nav-link active">
+                @else
+                <a href="{{ route('marketerpayments') }}" class="nav-link">
+                @endif
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>وصولی های من</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                @if(strpos(\Request::route()->getName(), 'marketercirculars')===0)
+                <a href="{{ route('marketercirculars') }}" class="nav-link active">
+                @else
+                <a href="{{ route('marketercirculars') }}" class="nav-link">
+                @endif
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>آموزش و راهنما </p>
+                </a>
+              </li>
+              <li class="nav-item">
+                @if(strpos(\Request::route()->getName(), 'marketermails')===0)
+                <a href="{{ route('marketermails') }}" class="nav-link active">
+                @else
+                <a href="{{ route('marketermails') }}" class="nav-link">
+                @endif
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>دریافت بخش نامه </p>
+                </a>
+              </li>
+              <li class="nav-item">
+                @if(strpos(\Request::route()->getName(), 'marketerdiscounts')===0)
+                <a href="{{ route('marketerdiscounts') }}" class="nav-link active">
+                @else
+                <a href="{{ route('marketerdiscounts') }}" class="nav-link">
+                @endif
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>ایجاد کد تخفیف</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                @if(strpos(\Request::route()->getName(), 'marketerproducts')===0)
+                <a href="{{ route('marketerproducts') }}" class="nav-link active">
+                @else
+                <a href="{{ route('marketerproducts') }}" class="nav-link">
+                @endif
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>فهرست محصولات</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                @if(strpos(\Request::route()->getName(), 'marketercode')===0)
+                <a href="{{ route('marketercode') }}" class="nav-link active">
+                @else
+                <a href="{{ route('marketercode') }}" class="nav-link">
+                @endif
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>لینک معرفی و کد شناسایی</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+          @else
+          @endif
           <!--
           <li class="nav-item has-treeview menu-open">
             <a href="#" class="nav-link active">

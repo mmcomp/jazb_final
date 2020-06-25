@@ -65,6 +65,20 @@ class UserController extends Controller
         $user->groups_id = (int)$request->input('groups_id');
         $user->email = $request->input('email');
         $user->password = Hash::make($request->input('password'));
+        $user->gender = $request->input('gender');
+        $user->national_code = $request->input('national_code');
+        $user->education = $request->input('education');
+        $user->major = $request->input('major');
+        $user->home_phone = $request->input('home_phone');
+        $user->mobile = $request->input('mobile');
+        $user->work_mobile = $request->input('work_mobile');
+        $user->home_address = $request->input('home_address');
+        $user->work_address = $request->input('work_address');
+        $user->max_student = (int)$request->input('max_student');
+        if($request->file('image_path')){
+            $filename = now()->timestamp . '.' . $request->file('image_path')->extension();
+            $user->image_path = $request->file('image_path')->storeAs('supporters', $filename, 'public_uploads');
+        }
 
         $find = User::where('email', $request->input('email'))->first();
         if($find){
@@ -115,6 +129,21 @@ class UserController extends Controller
         $user->email = $request->input('email');
         if($request->input('password')!=null && $request->input('password')!='')
             $user->password = Hash::make($request->input('password'));
+
+        $user->gender = $request->input('gender');
+        $user->national_code = $request->input('national_code');
+        $user->education = $request->input('education');
+        $user->major = $request->input('major');
+        $user->home_phone = $request->input('home_phone');
+        $user->mobile = $request->input('mobile');
+        $user->work_mobile = $request->input('work_mobile');
+        $user->home_address = $request->input('home_address');
+        $user->work_address = $request->input('work_address');
+        $user->max_student = (int)$request->input('max_student');
+        if($request->file('image_path')){
+            $filename = now()->timestamp . '.' . $request->file('image_path')->extension();
+            $user->image_path = $request->file('image_path')->storeAs('supporters', $filename, 'public_uploads');
+        }
 
         $find = User::where('email', $request->input('email'))->first();
         if($find && $old_email!=$request->input('email')){

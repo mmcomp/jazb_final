@@ -62,8 +62,60 @@
 
                         <div class="form-group">
                             <label for="password">رمز عبور</label>
-                            <input type="password" class="form-control" id="password" name="password" placeholder="رمز عبور"  />
-                            <input type="password" class="form-control" id="repassword" name="repassword" placeholder="تکرار رمز عبور"  />
+                            <input type="password" class="form-control" id="password" name="password" placeholder="رمز عبور" />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="image_path">تصویر</label>
+                            @if (isset($user) && $user->image_path && file_exists(public_path() . '/uploads/' . $user->image_path))
+                            <img src="{{ '/uploads/' . $user->image_path }}" style="height: 30px;" />
+                            @endif
+                            <input type="file" class="form-control" id="image_path" name="image_path" />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="national_code">کد ملی</label>
+                            @if (isset($user))
+                            <input type="text" class="form-control" id="national_code" name="national_code" placeholder="کد ملی" value="{{ $user->national_code }}" />
+                            @else
+                            <input type="text" class="form-control" id="national_code" name="national_code" placeholder="کد ملی" value="{{ old('national_code') }}" />
+                            @endif
+                        </div>
+
+                        <div class="form-group">
+                            <label for="major">رشته تحصیلی</label>
+                            @if (isset($user))
+                            <input type="text" class="form-control" id="major" name="major" placeholder="رشته تحصیلی" value="{{ $user->major }}" />
+                            @else
+                            <input type="text" class="form-control" id="major" name="major" placeholder="رشته تحصیلی" value="{{ old('major') }}" />
+                            @endif
+                        </div>
+
+                        <div class="form-group">
+                            <label for="mobile">موبایل</label>
+                            @if (isset($user))
+                            <input type="text" class="form-control" id="mobile" name="mobile" placeholder="موبایل" value="{{ $user->mobile }}" />
+                            @else
+                            <input type="text" class="form-control" id="mobile" name="mobile" placeholder="موبایل" value="{{ old('mobile') }}" />
+                            @endif
+                        </div>
+
+                        <div class="form-group">
+                            <label for="home_address">آدرس منزل</label>
+                            @if (isset($user))
+                            <input type="text" class="form-control" id="home_address" name="home_address" placeholder="منزل" value="{{ $user->home_address }}" />
+                            @else
+                            <input type="text" class="form-control" id="home_address" name="home_address" placeholder="منزل" value="{{ old('home_address') }}" />
+                            @endif
+                        </div>
+
+                        <div class="form-group">
+                            <label for="max_student">حداکثر دانش آموز</label>
+                            @if (isset($user))
+                            <input type="number" class="form-control" id="max_student" name="max_student" placeholder="دانش آموز" value="{{ $user->max_student }}" />
+                            @else
+                            <input type="number" class="form-control" id="max_student" name="max_student" placeholder="دانش آموز" value="{{ old('max_student') }}" />
+                            @endif
                         </div>
                     </div>
                     <div class="col">
@@ -77,11 +129,68 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="email">نام کاربری</label>
+                            <label for="email">نام کاربری (ایمیل)</label>
                             @if (isset($user))
                             <input autocomplete="off" type="text" class="form-control" id="email" name="email" placeholder="نام کاربری" value="{{ $user->email }}" />
                             @else
                             <input autocomplete="off" type="text" class="form-control" id="email" name="email" placeholder="نام کاربری" value="{{ old('email') }}" />
+                            @endif
+                        </div>
+
+                        <div class="form-group">
+                            <label for="password">تکرار رمز عبور</label>
+                            <input type="password" class="form-control" id="repassword" name="repassword" placeholder="تکرار رمز عبور"  />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="gender">جنسیت</label>
+                            <select class="form-control" id="gender" name="gender" >
+                                @if (isset($user) && $user->gender == "male")
+                                <option value="male" selected>مرد</option>
+                                @else
+                                <option value="male" >مرد</option>
+                                @endif
+                                @if (isset($user) && $user->gender == "female")
+                                <option value="female" selected>زن</option>
+                                @else
+                                <option value="female" >زن</option>
+                                @endif
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="education">تحصیلات</label>
+                            @if (isset($user))
+                            <input type="text" class="form-control" id="education" name="education" placeholder="تحصیلات" value="{{ $user->education }}" />
+                            @else
+                            <input type="text" class="form-control" id="education" name="education" placeholder="تحصیلات" value="{{ old('education') }}" />
+                            @endif
+                        </div>
+
+                        <div class="form-group">
+                            <label for="home_phone">تلفن منزل</label>
+                            @if (isset($user))
+                            <input type="text" class="form-control" id="home_phone" name="home_phone" placeholder="تلفن منزل" value="{{ $user->home_phone }}" />
+                            @else
+                            <input type="text" class="form-control" id="home_phone" name="home_phone" placeholder="تلفن منزل" value="{{ old('home_phone') }}" />
+                            @endif
+                        </div>
+
+                        <div class="form-group">
+                            <label for="work_mobile">شماره برای دانش آموزان</label>
+                            @if (isset($user))
+                            <input type="text" class="form-control" id="work_mobile" name="work_mobile" placeholder="موبایل" value="{{ $user->work_mobile }}" />
+                            @else
+                            <input type="text" class="form-control" id="work_mobile" name="work_mobile" placeholder="موبایل" value="{{ old('work_mobile') }}" />
+                            @endif
+                        </div>
+
+                        <div class="form-group">
+                            <label for="work_address">آدرس کار</label>
+                            @if (isset($user))
+                            <input type="text" class="form-control" id="work_address" name="work_address" placeholder="کار" value="{{ $user->work_address }}" />
+                            @else
+                            <input type="text" class="form-control" id="work_address" name="work_address" placeholder="کار" value="{{ old('work_address') }}" />
                             @endif
                         </div>
                     </div>
