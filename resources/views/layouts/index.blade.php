@@ -512,23 +512,24 @@
           @else
           <li class="nav-item has-treeview">
           @endif
-            <a href="#" class="nav-link">
-              <i class="nav-icon fas fa-bookmark"></i>
-              <p>
-                نماینده
-                <i class="fas fa-angle-left right"></i>
-                <!--<span class="badge badge-info right">6</span>-->
-              </p>
-            </a>
-            <ul class="nav nav-treeview">
               <li class="nav-item">
                 @if(strpos(\Request::route()->getName(), 'marketerdashboard')===0)
                 <a href="{{ route('marketerdashboard') }}" class="nav-link active">
                 @else
                 <a href="{{ route('marketerdashboard') }}" class="nav-link">
                 @endif
-                  <i class="far fa-circle nav-icon"></i>
+                  <i class="fa fa-palette nav-icon"></i>
                   <p>داشبورد</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                @if(strpos(\Request::route()->getName(), 'marketermystudents')===0)
+                <a href="{{ route('marketermystudents') }}" class="nav-link active">
+                @else
+                <a href="{{ route('marketermystudents') }}" class="nav-link">
+                @endif
+                  <i class="fa fa-street-view nav-icon"></i>
+                  <p>دانش آموزان من</p>
                 </a>
               </li>
               <li class="nav-item">
@@ -537,7 +538,7 @@
                 @else
                 <a href="{{ route('marketerstudents') }}" class="nav-link">
                 @endif
-                  <i class="far fa-circle nav-icon"></i>
+                  <i class="fa fa-address-book nav-icon"></i>
                   <p>لیست مالی دانش آموزان</p>
                 </a>
               </li>
@@ -547,7 +548,7 @@
                 @else
                 <a href="{{ route('marketerpayments') }}" class="nav-link">
                 @endif
-                  <i class="far fa-circle nav-icon"></i>
+                  <i class="fa fa-donate nav-icon"></i>
                   <p>وصولی های من</p>
                 </a>
               </li>
@@ -557,7 +558,7 @@
                 @else
                 <a href="{{ route('marketercirculars') }}" class="nav-link">
                 @endif
-                  <i class="far fa-circle nav-icon"></i>
+                  <i class="fa fa-book nav-icon"></i>
                   <p>آموزش و راهنما </p>
                 </a>
               </li>
@@ -567,7 +568,7 @@
                 @else
                 <a href="{{ route('marketermails') }}" class="nav-link">
                 @endif
-                  <i class="far fa-circle nav-icon"></i>
+                  <i class="fa fa-bell nav-icon"></i>
                   <p>دریافت بخش نامه </p>
                 </a>
               </li>
@@ -577,7 +578,7 @@
                 @else
                 <a href="{{ route('marketerdiscounts') }}" class="nav-link">
                 @endif
-                  <i class="far fa-circle nav-icon"></i>
+                  <i class="fa fa-chart-pie nav-icon"></i>
                   <p>ایجاد کد تخفیف</p>
                 </a>
               </li>
@@ -587,8 +588,18 @@
                 @else
                 <a href="{{ route('marketerproducts') }}" class="nav-link">
                 @endif
-                  <i class="far fa-circle nav-icon"></i>
+                  <i class="fa fa-project-diagram nav-icon"></i>
                   <p>فهرست محصولات</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                @if(strpos(\Request::route()->getName(), 'marketerprofile')===0)
+                <a href="{{ route('marketerprofile') }}" class="nav-link active">
+                @else
+                <a href="{{ route('marketerprofile') }}" class="nav-link">
+                @endif
+                  <i class="fa fa-address-card nav-icon"></i>
+                  <p>مشخصات من</p>
                 </a>
               </li>
               <li class="nav-item">
@@ -597,11 +608,10 @@
                 @else
                 <a href="{{ route('marketercode') }}" class="nav-link">
                 @endif
-                  <i class="far fa-circle nav-icon"></i>
+                  <i class="fa fa-link nav-icon"></i>
                   <p>لینک معرفی و کد شناسایی</p>
                 </a>
               </li>
-            </ul>
           </li>
           @else
           @endif
