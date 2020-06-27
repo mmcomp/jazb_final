@@ -44,7 +44,6 @@
             <div class="card">
               <div class="card-header">
                 <h3 class="card-title">
-                    <a class="btn btn-success" href="{{ route('student_create') }}">دانش آموز جدید</a>
                 </h3>
               </div>
               <!-- /.card-header -->
@@ -55,23 +54,6 @@
                 <form method="post">
                     @csrf
                     <div class="row">
-                        <div class="col">
-                            <div class="form-group">
-                                <label for="supporters_id">پشتیبان</label>
-                                <select  id="supporters_id" name="supporters_id" class="form-control">
-                                    <option>همه</option>
-                                    @foreach ($supports as $item)
-                                        @if(isset($supporters_id) && $supporters_id==$item->id)
-                                        <option value="{{ $item->id }}" selected >
-                                        @else
-                                        <option value="{{ $item->id }}" >
-                                        @endif
-                                        {{ $item->first_name }} {{ $item->last_name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
                         <div class="col">
                             <div class="form-group">
                                 <label for="sources_id">منبع</label>
@@ -154,7 +136,6 @@
                     <th>منبع ورودی شماره</th>
                     <th>برچسب</th>
                     <th>داغ/سرد</th>
-                    <th>پشتیبان</th>
                     <th>#</th>
                   </tr>
                   </thead>
@@ -193,27 +174,6 @@
                         @else
                         <td onclick="$('.morepanel').hide();$('#morepanel-{{ $index }}').toggle();"></td>
                         @endif
-                        <td class="text-center">
-                            <!-- {{ ($item->supporter)?$item->supporter->first_name . ' ' . $item->supporter->last_name:'-' }} -->
-                            <select id="supporters_id_{{ $index }}" class="form-control select2">
-                                <option>-</option>
-                                @foreach ($supports as $sitem)
-                                    @if ($sitem->id==$item->supporters_id)
-                                    <option value="{{ $sitem->id }}" selected>
-                                    @else
-                                    <option value="{{ $sitem->id }}">
-                                    @endif
-                                    {{ $sitem->first_name }} {{ $sitem->last_name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            <br/>
-                            <a class="btn btn-success btn-sm" href="#" onclick="return changeSupporter({{ $index }});">
-                                ذخیره
-                            </a>
-                            <br/>
-                            <img id="loading-{{ $index }}" src="/dist/img/loading.gif" style="height: 20px;display: none;" />
-                        </td>
                         <td>
                             <a class="btn btn-warning" href="#" onclick="$('#students_index').val({{ $index }});preloadTagModal();$('#tag_modal').modal('show'); return false;">
                                 برچسب

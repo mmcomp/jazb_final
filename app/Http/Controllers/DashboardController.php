@@ -14,7 +14,7 @@ class DashboardController extends Controller
         }
         $gates = $group->gates()->where('key', 'supporters')->get();
         if(count($gates)>0){
-            return redirect()->route('supporter_dashboard');
+            return redirect()->route('supporter_students');
         }
         return view('dashboard.admin');
     }
