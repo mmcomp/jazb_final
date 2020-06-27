@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Collection;
 use App\Group;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -13,6 +14,7 @@ use App\StudentTag;
 use App\StudentTemperature;
 use App\Tag;
 use App\Temperature;
+use App\StudentCollection;
 
 use Exception;
 
@@ -53,6 +55,7 @@ class StudentController extends Controller
         $students = $students
             ->with('user')
             ->with('studenttags.tag')
+            ->with('studentcollections.collection')
             ->with('studenttemperatures.temperature')
             ->with('source')
             ->with('consultant')
@@ -61,7 +64,7 @@ class StudentController extends Controller
             ->get();
 
         $moralTags = Tag::where('is_deleted', false)->where('type', 'moral')->get();
-        $needTags = Tag::where('is_deleted', false)->where('type', 'need')->get();
+        $collections = Collection::where('is_deleted', false)->get();
         $hotTemperatures = Temperature::where('is_deleted', false)->where('status', 'hot')->get();
         $coldTemperatures = Temperature::where('is_deleted', false)->where('status', 'cold')->get();
 
@@ -74,7 +77,7 @@ class StudentController extends Controller
             'sources_id' => $sources_id,
             'phone' => $phone,
             'moralTags'=>$moralTags,
-            'needTags'=>$needTags,
+            'needTags'=>$collections,
             'hotTemperatures'=>$hotTemperatures,
             'coldTemperatures'=>$coldTemperatures,
             'msg_success' => request()->session()->get('msg_success'),
@@ -249,11 +252,11 @@ class StudentController extends Controller
             'purchases'=>$purchases
         ]);
     }
-
     //---------------------AJAX-----------------------------------
     public function tag(Request $request){
         $students_id = $request->input('students_id');
         $selectedTags = $request->input('selectedTags');
+        $selectedCollections = $request->input('selectedColllections');
 
         $student = Student::where('id', $students_id)->where('is_deleted', false)->first();
         if($student==null){
@@ -267,6 +270,10 @@ class StudentController extends Controller
             "is_deleted"=>true
         ]);
 
+        StudentCollection::where("students_id", $students_id)->update([
+            "is_deleted"=>true
+        ]);
+
         if($selectedTags){
             foreach($selectedTags as $theselectedTag) {
                 $studentTag = new StudentTag;
@@ -277,6 +284,15 @@ class StudentController extends Controller
             }
         }
 
+        if($selectedCollections){
+            foreach($selectedCollections as $theselectedCollection) {
+                $studentCollection = new StudentCollection();
+                $studentCollection->students_id = $students_id;
+                $studentCollection->collections_id = $theselectedCollection;
+                $studentCollection->users_id = Auth::user()->id;
+                $studentCollection->save();
+            }
+        }
 
         return [
             "error"=>null,
