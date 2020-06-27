@@ -161,14 +161,14 @@
                   <tbody>
                       @foreach ($students as $index => $item)
                       <tr>
-                        <td onclick="$('#morepanel-{{ $index }}').toggle();">{{ $index + 1 }}</td>
-                        <td onclick="$('#morepanel-{{ $index }}').toggle();">{{ $item->id }}</td>
-                        <td onclick="$('#morepanel-{{ $index }}').toggle();">{{ $item->first_name }}</td>
-                        <td onclick="$('#morepanel-{{ $index }}').toggle();">{{ $item->last_name }}</td>
-                        <td onclick="$('#morepanel-{{ $index }}').toggle();">{{ ($item->user)?$item->user->first_name . ' ' . $item->user->last_name:'-' }}</td>
-                        <td onclick="$('#morepanel-{{ $index }}').toggle();">{{ ($item->source)?$item->source->name:'-' }}</td>
+                        <td onclick="$('.morepanel').hide();$('#morepanel-{{ $index }}').toggle();">{{ $index + 1 }}</td>
+                        <td onclick="$('.morepanel').hide();$('#morepanel-{{ $index }}').toggle();">{{ $item->id }}</td>
+                        <td onclick="$('.morepanel').hide();$('#morepanel-{{ $index }}').toggle();">{{ $item->first_name }}</td>
+                        <td onclick="$('.morepanel').hide();$('#morepanel-{{ $index }}').toggle();">{{ $item->last_name }}</td>
+                        <td onclick="$('.morepanel').hide();$('#morepanel-{{ $index }}').toggle();">{{ ($item->user)?$item->user->first_name . ' ' . $item->user->last_name:'-' }}</td>
+                        <td onclick="$('.morepanel').hide();$('#morepanel-{{ $index }}').toggle();">{{ ($item->source)?$item->source->name:'-' }}</td>
                         @if($item->studenttags && count($item->studenttags)>0)
-                        <td onclick="$('#morepanel-{{ $index }}').toggle();">
+                        <td onclick="$('.morepanel').hide();$('#morepanel-{{ $index }}').toggle();">
                             @for($i = 0; $i < count($item->studenttags);$i++)
                             <span class="alert alert-info p-1">
                                 {{ $item->studenttags[$i]->tag->name }}
@@ -176,10 +176,10 @@
                             @endfor
                         </td>
                         @else
-                        <td onclick="$('#morepanel-{{ $index }}').toggle();"></td>
+                        <td onclick="$('.morepanel').hide();$('#morepanel-{{ $index }}').toggle();"></td>
                         @endif
                         @if($item->studenttemperatures && count($item->studenttemperatures)>0)
-                        <td onclick="$('#morepanel-{{ $index }}').toggle();">
+                        <td onclick="$('.morepanel').hide();$('#morepanel-{{ $index }}').toggle();">
                             @foreach ($item->studenttemperatures as $sitem)
                             @if($sitem->temperature->status=='hot')
                             <span class="alert alert-danger p-1">
@@ -191,7 +191,7 @@
                             @endforeach
                         </td>
                         @else
-                        <td onclick="$('#morepanel-{{ $index }}').toggle();"></td>
+                        <td onclick="$('.morepanel').hide();$('#morepanel-{{ $index }}').toggle();"></td>
                         @endif
                         <td class="text-center">
                             <!-- {{ ($item->supporter)?$item->supporter->first_name . ' ' . $item->supporter->last_name:'-' }} -->
@@ -283,27 +283,28 @@
                                     </div>
                                     <div class="col">
                                         تاریخ ثبت دانش آموز :
+                                        {{ jdate(strtotime($item->created_at))->format("Y/m/d") }}
                                     </div>
                                     <div class="col">
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col">
-                                        <a href="#">
+                                        <a href="#" onclick="$('#students_index').val({{ $index }});preloadTagModal();$('#tag_modal').modal('show'); return false;">
                                             برچسب روحیات اخلاقی
                                         </a>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col">
-                                        <a href="#">
+                                        <a href="#" onclick="$('#students_index').val({{ $index }});preloadTagModal();$('#tag_modal').modal('show'); return false;">
                                             برچسب نیازهای دانش آموز
                                         </a>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col">
-                                        <a href="#">
+                                        <a target="_blank" href="{{ route('student_purchases', $item->id) }}">
                                             گزارش خریدهای قطعی دانش آموز
                                         </a>
                                     </div>

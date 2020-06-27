@@ -234,6 +234,22 @@ class StudentController extends Controller
             'sources'=>$sources
         ]);
     }
+
+    public function purchases(Request $request, $id){
+        $student = Student::where('is_deleted', false)->where('id', $id)->first();
+        if($student == null){
+            $request->session()->flash("msg_error", "دانش آموز پیدا نشد!");
+            return redirect()->route('students');
+        }
+        // dump($student);
+        $purchases = $student->purchases()->where('type', '!=', 'site_failed')->get();
+        // dd($purchases);
+        return view('students.purchase', [
+            'student' => $student,
+            'purchases'=>$purchases
+        ]);
+    }
+
     //---------------------AJAX-----------------------------------
     public function tag(Request $request){
         $students_id = $request->input('students_id');

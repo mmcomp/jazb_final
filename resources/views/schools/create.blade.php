@@ -10,7 +10,7 @@
         <div class="container-fluid">
           <div class="row mb-2">
             <div class="col-sm-6">
-              <h1>محصول</h1>
+              <h1>مدرسه</h1>
             </div>
             <div class="col-sm-6">
               <!--
@@ -39,36 +39,14 @@
                     <div class="col">
                         <div class="form-group">
                             <label for="name">نام</label>
-                            @if (isset($product) && isset($product->id))
-                            <input type="text" class="form-control" id="name" name="name" placeholder="نام" value="{{ $product->name }}" />
+                            @if (isset($school) && isset($school->id))
+                            <input type="text" class="form-control" id="name" name="name" placeholder="نام" value="{{ $school->name }}" />
                             @else
                             <input type="text" class="form-control" id="name" name="name" placeholder="نام"  />
                             @endif
                         </div>
-
-                        <div class="form-group">
-                            <label for="price">قیمت</label>
-                            @if (isset($product) && isset($product->id))
-                            <input type="number" class="form-control" id="price" name="price" placeholder="قیمت" value="{{ $product->price }}" />
-                            @else
-                            <input type="number" class="form-control" id="price" name="price" placeholder="قیمت"  />
-                            @endif
-                        </div>
                     </div>
                     <div class="col">
-                        <div class="form-group">
-                            <label for="parent_id">دسته</label>
-                            <select class="form-control select2" id="collections_id" name="collections_id" >
-                                <option value="0"> - </option>
-                                @foreach ($collections as $item)
-                                    @if (isset($product) && isset($product->id) && $product->collections_id == $item->id)
-                                    <option value="{{ $item->id }}" selected>{{ $item->name }}</option>
-                                    @else
-                                    <option value="{{ $item->id }}">{{ $item->name }}</option>
-                                    @endif
-                                @endforeach
-                            </select>
-                        </div>
                     </div>
                 </div>
                 <div class="row">

@@ -29,4 +29,8 @@ class Student extends Model
     public function supporter(){
         return $this->hasOne('App\User', 'id', 'supporters_id');
     }
+
+    public function purchases(){
+        return $this->hasMany('App\Purchase', 'students_id', 'id')->where('is_deleted', false);
+    }
 }

@@ -6,7 +6,10 @@
         <div class="container-fluid">
           <div class="row mb-2">
             <div class="col-sm-6">
-              <h1>پرداخت ها</h1>
+              <h1>
+                  پرداخت های
+                  {{ $student->first_name }} {{ $student->last_name }} [{{ $student->phone }}]
+              </h1>
             </div>
             <div class="col-sm-6">
               <!--
@@ -27,7 +30,7 @@
             <div class="card">
               <div class="card-header">
                 <h3 class="card-title">
-                    <a class="btn btn-success" href="{{ route('purchase_create') }}">پرداخت جدید</a>
+
                 </h3>
               </div>
               <!-- /.card-header -->
@@ -37,7 +40,6 @@
                   <tr>
                     <th>ردیف</th>
                     <th>کد</th>
-                    <th>نام و نام خانوادگی</th>
                     <th>محصول</th>
                     <th>مبلغ</th>
                     <th>#</th>
@@ -48,16 +50,9 @@
                       <tr>
                         <td>{{ $index + 1 }}</td>
                         <td>{{ $item->id }}</td>
-                        <td>{{ $item->student->first_name }} {{ $item->student->last_name }} [{{ $item->student->phone }}]</td>
                         <td>{{ $item->product->name }}</td>
                         <td>{{ number_format($item->price) }}</td>
                         <td>
-                            <a class="btn btn-primary" href="{{ route('purchase_edit', $item->id) }}">
-                                ویرایش
-                            </a>
-                            <a class="btn btn-danger" href="{{ route('purchase_delete', $item->id) }}">
-                                حذف
-                            </a>
                         </td>
                       </tr>
                       @endforeach
