@@ -37,4 +37,8 @@ class Student extends Model
     public function studentcollections(){
         return $this->hasMany('App\StudentCollection', 'students_id', 'id')->where('is_deleted', false);
     }
+
+    public function calls(){
+        return $this->hasMany('App\Call', 'students_id', 'id');
+    }
 }
