@@ -1,8 +1,20 @@
 @php
 $majors = [
-"mathematics"=>"ریاضی",
-"experimental"=>"تجربی",
-"humanities"=>"انسانی"
+    "mathematics"=>"ریاضی",
+    "experimental"=>"تجربی",
+    "humanities"=>"انسانی"
+];
+$persons = [
+    "student"=>"دانش آموز",
+    "father"=>"پدر",
+    "mother"=>"مادر",
+    "other"=>"غیره"
+];
+$results = [
+    "no_answer"=>"بدون پاسخ",
+    "unsuccessful"=>"ناموفق",
+    "successful"=>"موفق",
+    "rejected"=>"در شده"
 ];
 @endphp
 @extends('layouts.index')
@@ -298,15 +310,17 @@ $majors = [
                                                     </tr>
                                                 </thead>
                                                 <tbody>
+                                                    @foreach($item->calls as $cindex => $call)
                                                     <tr>
-                                                        <td>ردیف</td>
-                                                        <td>کد</td>
-                                                        <td>محصول</td>
-                                                        <td>پاسخگو</td>
-                                                        <td>نتیجه</td>
-                                                        <td>یادآور</td>
-                                                        <td>پاسخگو بعد</td>
+                                                        <td>{{ $cindex + 1 }}</td>
+                                                        <td>{{ $call->id }}</td>
+                                                        <td>{{ $call->product->name }}</td>
+                                                        <td>{{ $persons[$call->replier] }}</td>
+                                                        <td>{{ $results[$call->result] }}</td>
+                                                        <td>{{ $call->next_call }}</td>
+                                                        <td>{{ ($call->next_call)?$persons[$call->next_to_call]:'' }}</td>
                                                     </tr>
+                                                    @endforeach
                                                 </tbody>
                                             </table>
                                         </div>
@@ -542,43 +556,23 @@ $majors = [
         });
         $('select.select2').select2();
 
-        $("table.datatables").DataTable({
-            "paging": true,
-            "lengthChange": false,
-            "searching": false,
-            "ordering": true,
-            "info": true,
-            "autoWidth": true,
-            "language": {
-                "paginate": {
-                    "previous": "قبل",
-                    "next": "بعد"
-                },
-                "emptyTable": "داده ای برای نمایش وجود ندارد",
-                "info": "نمایش _START_ تا _END_ از _TOTAL_ داده",
-                "infoEmpty": "نمایش 0 تا 0 از 0 داده",
-            }
-        });
-        /*
-        $('#example2').DataTable({
-            "paging": true,
-            "lengthChange": false,
-            "searching": false,
-            "ordering": true,
-            "info": true,
-            "autoWidth": false,
-            "language": {
-                "paginate": {
-                    "previous": "قبل",
-                    "next": "بعد"
-                },
-                "emptyTable": "داده ای برای نمایش وجود ندارد",
-                "info": "نمایش _START_ تا _END_ از _TOTAL_ داده",
-                "infoEmpty": "نمایش 0 تا 0 از 0 داده",
-            }
-        });
-        */
-    //    console.log('aa');
+        // $("table.datatables").DataTable({
+        //     "paging": true,
+        //     "lengthChange": false,
+        //     "searching": false,
+        //     "ordering": true,
+        //     "info": true,
+        //     "autoWidth": true,
+        //     "language": {
+        //         "paginate": {
+        //             "previous": "قبل",
+        //             "next": "بعد"
+        //         },
+        //         "emptyTable": "داده ای برای نمایش وجود ندارد",
+        //         "info": "نمایش _START_ تا _END_ از _TOTAL_ داده",
+        //         "infoEmpty": "نمایش 0 تا 0 از 0 داده",
+        //     }
+        // });
     });
 
 </script>

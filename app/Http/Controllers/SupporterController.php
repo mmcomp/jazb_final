@@ -58,7 +58,7 @@ class SupporterController extends Controller
             ->with('studenttemperatures.temperature')
             ->with('source')
             ->with('consultant')
-            ->with('calls')
+            ->with('calls.product')
             ->orderBy('created_at', 'desc')
             ->get();
 
