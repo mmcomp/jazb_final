@@ -6,6 +6,7 @@ use App\Collection;
 use App\Group;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 use App\Student;
 use App\User;
@@ -32,6 +33,7 @@ class StudentController extends Controller
         $sources_id = null;
         $phone = null;
         if(request()->getMethod()=='POST'){
+            // dump(request()->all());
             if(request()->input('supporters_id')!=null){
                 $supporters_id = (int)request()->input('supporters_id');
                 $students = $students->where('supporters_id', $supporters_id);
@@ -51,7 +53,7 @@ class StudentController extends Controller
                 $students = $students->where('phone', $phone);
             }
         }
-
+        // DB::enableQueryLog();
         $students = $students
             ->with('user')
             ->with('studenttags.tag')
@@ -62,7 +64,7 @@ class StudentController extends Controller
             ->with('supporter')
             ->orderBy('created_at', 'desc')
             ->get();
-
+        // dd(DB::getQueryLog());
         $moralTags = Tag::where('is_deleted', false)->where('type', 'moral')->get();
         $collections = Collection::where('is_deleted', false)->get();
         $hotTemperatures = Temperature::where('is_deleted', false)->where('status', 'hot')->get();

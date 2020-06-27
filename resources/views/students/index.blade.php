@@ -59,7 +59,7 @@
                             <div class="form-group">
                                 <label for="supporters_id">پشتیبان</label>
                                 <select  id="supporters_id" name="supporters_id" class="form-control">
-                                    <option>همه</option>
+                                    <option value="">همه</option>
                                     @foreach ($supports as $item)
                                         @if(isset($supporters_id) && $supporters_id==$item->id)
                                         <option value="{{ $item->id }}" selected >
@@ -76,7 +76,7 @@
                             <div class="form-group">
                                 <label for="sources_id">منبع</label>
                                 <select  id="sources_id" name="sources_id" class="form-control">
-                                    <option>همه</option>
+                                    <option value="">همه</option>
                                     @foreach ($sources as $item)
                                         @if(isset($sources_id) && $sources_id==$item->id)
                                         <option value="{{ $item->id }}" selected >

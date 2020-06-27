@@ -662,6 +662,32 @@
                             </li>
                         </li>
                       @endif
+                      @if(strpos(\Request::route()->getName(), 'supporter')===0)
+                      <li class="nav-item has-treeview menu-open">
+                      @else
+                      <li class="nav-item has-treeview">
+                      @endif
+                          <a href="#" class="nav-link">
+                              <i class="nav-icon fas fa-bookmark"></i>
+                              <p>
+                                   پشتیبانی
+                                  <i class="fas fa-angle-left right"></i>
+                                  <!--<span class="badge badge-info right">6</span>-->
+                              </p>
+                          </a>
+                          <ul class="nav nav-treeview">
+                              <li class="nav-item">
+                                  @if(strpos(\Request::route()->getName(), 'supporter_student')===0)
+                                  <a href="{{ route('supporter_students') }}" class="nav-link active">
+                                  @else
+                                  <a href="{{ route('supporter_students') }}" class="nav-link">
+                                  @endif
+                                      <i class="far fa-circle nav-icon"></i>
+                                      <p>دانش آموزان</p>
+                                  </a>
+                              </li>
+                          </ul>
+                      </li>
                         <!--
           <li class="nav-item has-treeview menu-open">
             <a href="#" class="nav-link active">
