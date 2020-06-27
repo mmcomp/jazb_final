@@ -8,8 +8,7 @@ use Illuminate\Support\Facades\Auth;
 
 class MarketerController extends Controller
 {
-    public static function hamed_jalalitomiladi($str)
-	{
+    public static function hamed_jalalitomiladi($str){
 		$s=explode('/',$str);
 		$out = "";
 		if(count($s)==3){
@@ -27,7 +26,6 @@ class MarketerController extends Controller
 			$out=$miladi[0]."-".$miladi[1]."-".$miladi[2];
 		}
 		return $out;
-		//jalali_to_gregorian()
 	}  
     public function profile(Request $request){
         $user = Auth::user();
@@ -67,18 +65,11 @@ class MarketerController extends Controller
             }
             $marketer->save();
         }
-        // $date = \Morilog\Jalali\Jalalian::now();
-        // //var_dump($date);
-        // $Jalalian = '1394/11/25';
-
-        // // get instance of \DateTime
-        // $dateTime = \Morilog\Jalali\CalendarUtils::createDatetimeFromFormat('Y/m/d', $Jalalian);
-        // var_dump($dateTime);
         $marketer->birthdate = isset($marketer->birthdate) ? jdate($marketer->birthdate)->format('%Y/%m/%d') : '';
-        return view('marketers.index', ['marketer' => $marketer, 'user' => $user , 'msg'=>$msg]);
+        return view('marketers.profile', ['marketer' => $marketer, 'user' => $user , 'msg'=>$msg]);
     }
     public function dashboard(){
-        //
+        return view('marketers.dashboard');
     }
     
     public function students(){

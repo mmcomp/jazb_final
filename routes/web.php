@@ -128,6 +128,7 @@ Route::group(['middleware' => ['auth', 'message']], function () {
 
     Route::any('marketerprofile','MarketerController@profile')->name('marketerprofile');
     Route::get('marketerdashboard','MarketerController@dashboard')->name('marketerdashboard');
+    Route::get('marketermystudents','MarketerController@mystudents')->name('marketermystudents');
     Route::get('marketerstudents','MarketerController@students')->name('marketerstudents');
     Route::get('marketerpayments','MarketerController@payments')->name('marketerpayments');
     Route::get('marketercirculars','MarketerController@circulars')->name('marketercirculars');
