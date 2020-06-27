@@ -559,159 +559,109 @@
                         <li class="nav-item has-treeview menu-open">
                         @else
                         <li class="nav-item has-treeview">
-                            @endif
-                            <a href="#" class="nav-link">
-                                <i class="nav-icon fas fa-bookmark"></i>
-                                <p>
-                                    نماینده
-                                    <i class="fas fa-angle-left right"></i>
-                                    <!--<span class="badge badge-info right">6</span>-->
-                                </p>
-                            </a>
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    @if(strpos(\Request::route()->getName(), 'marketerdashboard')===0)
-                                    <a href="{{ route('marketerdashboard') }}" class="nav-link active">
-                                        @else
-                                        <a href="{{ route('marketerdashboard') }}" class="nav-link">
-                                            @endif
-                                            <i class="far fa-circle nav-icon"></i>
-                                            <p>داشبورد</p>
-                                        </a>
-                                </li>
-                                <li class="nav-item">
-                                    @if(strpos(\Request::route()->getName(), 'marketerstudents')===0)
-                                    <a href="{{ route('marketerstudents') }}" class="nav-link active">
-                                        @else
-                                        <a href="{{ route('marketerstudents') }}" class="nav-link">
-                                            @endif
-                                            <i class="far fa-circle nav-icon"></i>
-                                            <p>لیست مالی دانش آموزان</p>
-                                        </a>
-                                </li>
-                                <li class="nav-item">
-                                    @if(strpos(\Request::route()->getName(), 'marketerpayments')===0)
-                                    <a href="{{ route('marketerpayments') }}" class="nav-link active">
-                                        @else
-                                        <a href="{{ route('marketerpayments') }}" class="nav-link">
-                                            @endif
-                                            <i class="far fa-circle nav-icon"></i>
-                                            <p>وصولی های من</p>
-                                        </a>
-                                </li>
-                                <li class="nav-item">
-                                    @if(strpos(\Request::route()->getName(), 'marketercirculars')===0)
-                                    <a href="{{ route('marketercirculars') }}" class="nav-link active">
-                                        @else
-                                        <a href="{{ route('marketercirculars') }}" class="nav-link">
-                                            @endif
-                                            <i class="far fa-circle nav-icon"></i>
-                                            <p>آموزش و راهنما </p>
-                                        </a>
-                                </li>
-                                <li class="nav-item">
-                                    @if(strpos(\Request::route()->getName(), 'marketermails')===0)
-                                    <a href="{{ route('marketermails') }}" class="nav-link active">
-                                        @else
-                                        <a href="{{ route('marketermails') }}" class="nav-link">
-                                            @endif
-                                            <i class="far fa-circle nav-icon"></i>
-                                            <p>دریافت بخش نامه </p>
-                                        </a>
-                                </li>
-                                <li class="nav-item">
-                                    @if(strpos(\Request::route()->getName(), 'marketerdiscounts')===0)
-                                    <a href="{{ route('marketerdiscounts') }}" class="nav-link active">
-                                        @else
-                                        <a href="{{ route('marketerdiscounts') }}" class="nav-link">
-                                            @endif
-                                            <i class="far fa-circle nav-icon"></i>
-                                            <p>ایجاد کد تخفیف</p>
-                                        </a>
-                                </li>
-                                <li class="nav-item">
-                                    @if(strpos(\Request::route()->getName(), 'marketerproducts')===0)
-                                    <a href="{{ route('marketerproducts') }}" class="nav-link active">
-                                        @else
-                                        <a href="{{ route('marketerproducts') }}" class="nav-link">
-                                            @endif
-                                            <i class="far fa-circle nav-icon"></i>
-                                            <p>فهرست محصولات</p>
-                                        </a>
-                                </li>
-                                <li class="nav-item">
-                                    @if(strpos(\Request::route()->getName(), 'marketercode')===0)
-                                    <a href="{{ route('marketercode') }}" class="nav-link active">
-                                        @else
-                                        <a href="{{ route('marketercode') }}" class="nav-link">
-                                            @endif
-                                            <i class="far fa-circle nav-icon"></i>
-                                            <p>لینک معرفی و کد شناسایی</p>
-                                        </a>
-                                </li>
-                            </ul>
-                        </li>
                         @endif
-                        @if (Gate::allows('sale_suggestions'))
-                        <li class="nav-header">شروط پیشنهاد</li>
+                            <li class="nav-item">
+                              @if(strpos(\Request::route()->getName(), 'marketerdashboard')===0)
+                              <a href="{{ route('marketerdashboard') }}" class="nav-link active">
+                              @else
+                              <a href="{{ route('marketerdashboard') }}" class="nav-link">
+                              @endif
+                                <i class="fa fa-palette nav-icon"></i>
+                                <p>داشبورد</p>
+                              </a>
+                            </li>
+                            <li class="nav-item">
+                              @if(strpos(\Request::route()->getName(), 'marketermystudents')===0)
+                              <a href="{{ route('marketermystudents') }}" class="nav-link active">
+                              @else
+                              <a href="{{ route('marketermystudents') }}" class="nav-link">
+                              @endif
+                                <i class="fa fa-street-view nav-icon"></i>
+                                <p>دانش آموزان من</p>
+                              </a>
+                            </li>
+                            <li class="nav-item">
+                              @if(strpos(\Request::route()->getName(), 'marketerstudents')===0)
+                              <a href="{{ route('marketerstudents') }}" class="nav-link active">
+                              @else
+                              <a href="{{ route('marketerstudents') }}" class="nav-link">
+                              @endif
+                                <i class="fa fa-address-book nav-icon"></i>
+                                <p>لیست مالی دانش آموزان</p>
+                              </a>
+                            </li>
+                            <li class="nav-item">
+                              @if(strpos(\Request::route()->getName(), 'marketerpayments')===0)
+                              <a href="{{ route('marketerpayments') }}" class="nav-link active">
+                              @else
+                              <a href="{{ route('marketerpayments') }}" class="nav-link">
+                              @endif
+                                <i class="fa fa-donate nav-icon"></i>
+                                <p>وصولی های من</p>
+                              </a>
+                            </li>
+                            <li class="nav-item">
+                              @if(strpos(\Request::route()->getName(), 'marketercirculars')===0)
+                              <a href="{{ route('marketercirculars') }}" class="nav-link active">
+                              @else
+                              <a href="{{ route('marketercirculars') }}" class="nav-link">
+                              @endif
+                                <i class="fa fa-book nav-icon"></i>
+                                <p>آموزش و راهنما </p>
+                              </a>
+                            </li>
+                            <li class="nav-item">
+                              @if(strpos(\Request::route()->getName(), 'marketermails')===0)
+                              <a href="{{ route('marketermails') }}" class="nav-link active">
+                              @else
+                              <a href="{{ route('marketermails') }}" class="nav-link">
+                              @endif
+                                <i class="fa fa-bell nav-icon"></i>
+                                <p>دریافت بخش نامه </p>
+                              </a>
+                            </li>
+                            <li class="nav-item">
+                              @if(strpos(\Request::route()->getName(), 'marketerdiscounts')===0)
+                              <a href="{{ route('marketerdiscounts') }}" class="nav-link active">
+                              @else
+                              <a href="{{ route('marketerdiscounts') }}" class="nav-link">
+                              @endif
+                                <i class="fa fa-chart-pie nav-icon"></i>
+                                <p>ایجاد کد تخفیف</p>
+                              </a>
+                            </li>
+                            <li class="nav-item">
+                              @if(strpos(\Request::route()->getName(), 'marketerproducts')===0)
+                              <a href="{{ route('marketerproducts') }}" class="nav-link active">
+                              @else
+                              <a href="{{ route('marketerproducts') }}" class="nav-link">
+                              @endif
+                                <i class="fa fa-project-diagram nav-icon"></i>
+                                <p>فهرست محصولات</p>
+                              </a>
+                            </li>
+                            <li class="nav-item">
+                              @if(strpos(\Request::route()->getName(), 'marketerprofile')===0)
+                              <a href="{{ route('marketerprofile') }}" class="nav-link active">
+                              @else
+                              <a href="{{ route('marketerprofile') }}" class="nav-link">
+                              @endif
+                                <i class="fa fa-address-card nav-icon"></i>
+                                <p>مشخصات من</p>
+                              </a>
+                            </li>
+                            <li class="nav-item">
+                              @if(strpos(\Request::route()->getName(), 'marketercode')===0)
+                              <a href="{{ route('marketercode') }}" class="nav-link active">
+                              @else
+                              <a href="{{ route('marketercode') }}" class="nav-link">
+                              @endif
+                                <i class="fa fa-link nav-icon"></i>
+                                <p>لینک معرفی و کد شناسایی</p>
+                              </a>
+                            </li>
                         </li>
-                        @if(strpos(\Request::route()->getName(), 'sale_suggestion')===0)
-                        <li class="nav-item has-treeview menu-open">
-                        @else
-                        <li class="nav-item has-treeview">
-                        @endif
-                            <a href="#" class="nav-link">
-                                <i class="nav-icon fas fa-bookmark"></i>
-                                <p>
-                                    شروط
-                                    <i class="fas fa-angle-left right"></i>
-                                    <!--<span class="badge badge-info right">6</span>-->
-                                </p>
-                            </a>
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    @if(strpos(\Request::route()->getName(), 'sale_suggestion')===0)
-                                    <a href="{{ route('sale_suggestions') }}" class="nav-link active">
-                                    @else
-                                    <a href="{{ route('sale_suggestions') }}" class="nav-link">
-                                    @endif
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>لیست</p>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                        @endif
-                        @if (Gate::allows('supporters'))
-                        <li class="nav-header">پشتیبانی</li>
-                        </li>
-                        @if(strpos(\Request::route()->getName(), 'supporter')===0)
-                        <li class="nav-item has-treeview menu-open">
-                        @else
-                        <li class="nav-item has-treeview">
-                        @endif
-                            <a href="#" class="nav-link">
-                                <i class="nav-icon fas fa-bookmark"></i>
-                                <p>
-                                    دانش آموز
-                                    <i class="fas fa-angle-left right"></i>
-                                    <!--<span class="badge badge-info right">6</span>-->
-                                </p>
-                            </a>
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    @if(strpos(\Request::route()->getName(), 'supporter_student')===0)
-                                    <a href="{{ route('supporter_students') }}" class="nav-link active">
-                                    @else
-                                    <a href="{{ route('supporter_students') }}" class="nav-link">
-                                    @endif
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>لیست</p>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                        @endif
+                      @endif
                         <!--
           <li class="nav-item has-treeview menu-open">
             <a href="#" class="nav-link active">
