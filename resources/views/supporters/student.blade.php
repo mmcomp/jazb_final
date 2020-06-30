@@ -297,6 +297,13 @@ $results = [
                                             </div>
                                         </div>
                                         <div class="row">
+                                            <div class="col">
+                                                <a class="btn btn-success" href="#" onclick="students_id = {{ $item->id }};$('#call_modal').modal('show');return false;">
+                                                    ثبت تماس
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <div class="row">
                                             <table class="table table-bordered table-hover datatables-all datatables-{{ $index }}" style="width: 100%;">
                                                 <thead>
                                                     <tr>
@@ -417,6 +424,70 @@ $results = [
         </div>
     </div>
 </div>
+<div class="modal" id="call_modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">ثبت تماس</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>
+                    <div class="form-group">
+                        <label for="description">توضیحات</label>
+                        <input type="text" class="form-control" id="description" name="description" placeholder="توضیحات"  />
+                    </div>
+                    <div class="form-group">
+                        <label for="result">نتیجه</label>
+                        <select class="form-control" id="result" name="result">
+                            <option value="no_answer">بدون پاسخ</option>
+                            <option value="unsuccessful">ناموفق</option>
+                            <option value="successful">موفق</option>
+                            <option value="rejected">رد شده</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="replier">پاسخگو</label>
+                        <select class="form-control" id="replier" name="replier">
+                            <option value="student">داشن آموز</option>
+                            <option value="father">پدر</option>
+                            <option value="mother">مادر</option>
+                            <option value="other">غیره</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="products_id">محصول</label>
+                        <select class="form-control" id="products_id" name="products_id">
+                            <option value=""></option>
+                            @foreach ($products as $item)
+                            <option value="{{ $item->id }}">{{ $item->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="next_to_call">تماس بعد</label>
+                        <select class="form-control" id="next_to_call" name="next_to_call">
+                            <option value="student">داشن آموز</option>
+                            <option value="father">پدر</option>
+                            <option value="mother">مادر</option>
+                            <option value="other">غیره</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="description">زمان تماس بعد</label>
+                        <input type="text" class="form-control" id="next_call" name="next_call" placeholder="زمان تماس بعد"  />
+                    </div>
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="saveCall();">ثبت</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">انصراف</button>
+            </div>
+        </div>
+    </div>
+</div>
 <!-- Select2 -->
 <script src="/plugins/select2/js/select2.full.min.js"></script>
 <!-- DataTables -->
@@ -425,7 +496,7 @@ $results = [
 <!-- page script -->
 <script>
     let students = @JSON($students);
-
+    let students_id;
     function showMorePanel(index){
         $('.morepanel').hide();
         $('#morepanel-' + index).show();
@@ -543,6 +614,29 @@ $results = [
             }
         }
     }
+
+    function saveCall() {
+        $.post('{{ route('supporter_student_call') }}', {
+                students_id,
+                description: $("#description").val(),
+                result: $("#result").val(),
+                replier: $("#replier").val(),
+                products_id: $("#products_id").val(),
+                next_to_call: $("#next_to_call").val(),
+                next_call: $("#next_call").val()
+            },
+            function (result) {
+                console.log('Result', result);
+                if (result.error != null) {
+                    alert('خطای بروز رسانی');
+                } else {
+                    window.location.reload();
+                }
+            }).fail(function () {
+            alert('خطای بروز رسانی');
+        });
+    }
+
     $(function () {
         $.ajaxSetup({
             headers: {

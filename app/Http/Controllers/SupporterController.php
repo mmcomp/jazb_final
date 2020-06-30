@@ -9,10 +9,10 @@ use App\Group;
 use App\Student;
 use App\User;
 use App\Source;
-use App\StudentTag;
-use App\StudentTemperature;
+use App\Product;
 use App\Tag;
 use App\Temperature;
+use App\Call;
 
 class SupporterController extends Controller
 {
@@ -32,6 +32,7 @@ class SupporterController extends Controller
     public function student(){
         $students = Student::where('is_deleted', false)->where('supporters_id', Auth::user()->id);
         $sources = Source::where('is_deleted', false)->get();
+        $products = Product::where('is_deleted', false)->get();
         $name = null;
         $sources_id = null;
         $phone = null;
@@ -77,8 +78,38 @@ class SupporterController extends Controller
             'needTags'=>$needTags,
             'hotTemperatures'=>$hotTemperatures,
             'coldTemperatures'=>$coldTemperatures,
+            'products'=>$products,
             'msg_success' => request()->session()->get('msg_success'),
             'msg_error' => request()->session()->get('msg_error')
         ]);
     }
+        //---------------------AJAX-----------------------------------
+        public function call(Request $request){
+            $students_id = $request->input('students_id');
+
+            $student = Student::where('id', $students_id)->where('is_deleted', false)->first();
+            if($student==null){
+                return [
+                    "error"=>"student_not_found",
+                    "data"=>null
+                ];
+            }
+
+            $call = new Call;
+            $call->title = 'تماس';
+            $call->students_id = $students_id;
+            $call->users_id = Auth::user()->id;
+            $call->description = $request->input('description');
+            $call->result = $request->input('result');
+            $call->replier = $request->input('replier');
+            $call->products_id = $request->input('products_id');
+            $call->next_to_call = $request->input('next_to_call');
+            $call->next_call = $request->input('next_call');
+            $call->save();
+
+            return [
+                "error"=>null,
+                "data"=>null
+            ];
+        }
 }
