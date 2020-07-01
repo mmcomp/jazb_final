@@ -126,16 +126,20 @@ Route::group(['middleware' => ['auth', 'message']], function () {
         Route::get('/purchases/{id}', 'StudentController@purchases')->name('student_purchases');
     });
 
-    Route::any('marketerprofile','MarketerController@profile')->name('marketerprofile');
-    Route::get('marketerdashboard','MarketerController@dashboard')->name('marketerdashboard');
-    Route::get('marketermystudents','MarketerController@mystudents')->name('marketermystudents');
-    Route::get('marketerstudents','MarketerController@students')->name('marketerstudents');
-    Route::get('marketerpayments','MarketerController@payments')->name('marketerpayments');
-    Route::get('marketercirculars','MarketerController@circulars')->name('marketercirculars');
-    Route::get('marketermails','MarketerController@mails')->name('marketermails');
-    Route::get('marketerdiscounts','MarketerController@discounts')->name('marketerdiscounts');
-    Route::get('marketerproducts','MarketerController@products')->name('marketerproducts');
-    Route::get('marketercode','MarketerController@code')->name('marketercode');
+    Route::group(['prefix' => '/marketer'], function () {
+        Route::any('profile','MarketerController@profile')->name('marketerprofile');
+        Route::get('dashboard','MarketerController@dashboard')->name('marketerdashboard');
+        Route::get('mystudents','MarketerController@mystudents')->name('marketermystudents');
+        Route::get('students','MarketerController@students')->name('marketerstudents');
+        Route::any('students/create','MarketerController@createStudents')->name('marketercreatestudents');
+        Route::get('payments','MarketerController@payments')->name('marketerpayments');
+        Route::get('circulars','MarketerController@circulars')->name('marketercirculars');
+        Route::get('mails','MarketerController@mails')->name('marketermails');
+        Route::get('discounts','MarketerController@discounts')->name('marketerdiscounts');
+        Route::get('products','MarketerController@products')->name('marketerproducts');
+        Route::get('code','MarketerController@code')->name('marketercode');
+    });
+    
 
 
     Route::group(['prefix' => '/sources'], function () {
