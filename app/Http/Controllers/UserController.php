@@ -105,7 +105,7 @@ class UserController extends Controller
         $user->save();
 
         $request->session()->flash("msg_success", "کاربر با موفقیت افزوده شد.");
-        return redirect()->route('users');
+        return redirect()->route('user_alls');
     }
 
     public function edit(Request $request, $id)
@@ -114,7 +114,7 @@ class UserController extends Controller
         $user = User::where('id', $id)->where('is_deleted', false)->first();
         if($user==null){
             $request->session()->flash("msg_error", "کاربر مورد نظر پیدا نشد.");
-            return redirect()->route('users');
+            return redirect()->route('user_alls');
         }
         if($request->getMethod()=='GET'){
             return view('users.create', [
@@ -170,7 +170,7 @@ class UserController extends Controller
         $user->save();
 
         $request->session()->flash("msg_success", "کاربر با موفقیت بروز شد.");
-        return redirect()->route('users');
+        return redirect()->route('user_alls');
     }
 
     public function delete(Request $request, $id)
@@ -179,12 +179,12 @@ class UserController extends Controller
         $user = User::where('id', $id)->where('is_deleted', false)->first();
         if($user==null){
             $request->session()->flash("msg_error", "کاربر مورد نظر پیدا نشد.");
-            return redirect()->route('users');
+            return redirect()->route('user_alls');
         }
         $user->is_deleted = true;
         $user->save();
 
         $request->session()->flash("msg_success", "کاربر با موفقیت حذف شد.");
-        return redirect()->route('users');
+        return redirect()->route('user_alls');
     }
 }
