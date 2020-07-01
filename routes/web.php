@@ -146,10 +146,10 @@ Route::group(['middleware' => ['auth', 'message']], function () {
     });
 
     Route::group(['prefix' => '/users'], function () {
-        Route::get('/', 'UserController@index')->name('users');
-        Route::any('/create', 'UserController@create')->name('user_create');
-        Route::any('/edit/{id}', 'UserController@edit')->name('user_edit');
-        Route::get('/delete/{id}', 'UserController@delete')->name('user_delete');
+        Route::get('/', 'UserController@index')->name('user_alls');
+        Route::any('/create', 'UserController@create')->name('user_all_create');
+        Route::any('/edit/{id}', 'UserController@edit')->name('user_all_edit');
+        Route::get('/delete/{id}', 'UserController@delete')->name('user_all_delete');
     });
 
     Route::group(['prefix' => '/messages'], function () {
@@ -164,8 +164,8 @@ Route::group(['middleware' => ['auth', 'message']], function () {
         Route::get('/delete/{id}', 'PurchaseController@delete')->name('purchase_delete');
     });
 
-    Route::group(['prefix' => '/supporters'], function () {
-        Route::get('/', 'SupporterController@index')->name('supporters');
+    Route::group(['prefix' => '/user_supporters'], function () {
+        Route::get('/', 'SupporterController@index')->name('user_supporters');
         // Route::any('/students/{id}', 'SupporterController@students')->name('supporter_students');
     });
 

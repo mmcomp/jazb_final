@@ -27,7 +27,7 @@
             <div class="card">
               <div class="card-header">
                 <h3 class="card-title">
-                    <a class="btn btn-success" href="{{ route('user_create') }}">کاربر جدید</a>
+                    <a class="btn btn-success" href="{{ route('user_all_create') }}">کاربر جدید</a>
                 </h3>
               </div>
               <!-- /.card-header -->
@@ -54,10 +54,10 @@
                         <td>{{ $item->last_name }}</td>
                         <td>{{ ($item->group)?$item->group->name:'-' }}</td>
                         <td>
-                            <a class="btn btn-primary" href="{{ route('user_edit', $item->id) }}">
+                            <a class="btn btn-primary" href="{{ route('user_all_edit', $item->id) }}">
                                 ویرایش
                             </a>
-                            <a class="btn btn-danger" href="{{ route('user_delete', $item->id) }}">
+                            <a class="btn btn-danger" href="{{ route('user_all_delete', $item->id) }}">
                                 حذف
                             </a>
                         </td>

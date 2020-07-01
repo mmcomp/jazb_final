@@ -35,7 +35,6 @@
             <div class="card">
               <div class="card-header">
                 <h3 class="card-title">
-                    <!-- <a class="btn btn-success" href="{{ route('user_create') }}">پشتیبان جدید</a> -->
                 </h3>
               </div>
               <!-- /.card-header -->
@@ -51,7 +50,6 @@
                     <th>محل کار</th>
                     <th>فروش</th>
                     <th>برچسب ها</th>
-                    <th>#</th>
                   </tr>
                   </thead>
                   <tbody>
@@ -105,16 +103,6 @@
                         @else
                         <td></td>
                         @endif
-                        <td>
-                            <!--
-                            <a class="btn btn-primary" href="{{ route('user_edit', $item->id) }}">
-                                ویرایش
-                            </a>
-                            <a class="btn btn-danger" href="{{ route('user_delete', $item->id) }}">
-                                حذف
-                            </a>
-                            -->
-                        </td>
                       </tr>
                       @endforeach
                   </tbody>
