@@ -187,6 +187,13 @@ Route::group(['middleware' => ['auth', 'message']], function () {
         Route::get('/delete/{id}', 'SaleSuggestionController@delete')->name('sale_suggestion_delete');
     });
 
+    Route::group(['prefix' => '/call_results'], function () {
+        Route::get('/', 'CallResultController@index')->name('call_results');
+        Route::any('/create', 'CallResultController@create')->name('call_result_create');
+        Route::any('/edit/{id}', 'CallResultController@edit')->name('call_result_edit');
+        Route::get('/delete/{id}', 'CallResultController@delete')->name('call_result_delete');
+    });
+
     Route::group(['prefix' => '/supporter_students'], function () {
         Route::get('/', 'SupporterController@student')->name('supporter_students');
         Route::post('/call', 'SupporterController@call')->name('supporter_student_call');

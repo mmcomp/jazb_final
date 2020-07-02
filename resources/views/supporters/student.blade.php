@@ -30,6 +30,8 @@ $results = [
         width : 100% !important;
     }
 </style>
+<!-- Date Picker -->
+<link href="/plugins/persiancalender/jquery.md.bootstrap.datetimepicker.style.css" rel="stylesheet"/>
 @endsection
 
 @section('content')
@@ -477,7 +479,8 @@ $results = [
                     </div>
                     <div class="form-group">
                         <label for="description">زمان تماس بعد</label>
-                        <input type="text" class="form-control" id="next_call" name="next_call" placeholder="زمان تماس بعد"  />
+                        <input type="text" class="form-control" id="next_call_persian"placeholder="زمان تماس بعد" readonly />
+                        <input type="hidden" id="next_call" name="next_call" />
                     </div>
                 </p>
             </div>
@@ -488,6 +491,8 @@ $results = [
         </div>
     </div>
 </div>
+<!-- Date Picker -->
+<script src="/plugins/persiancalender/jquery.md.bootstrap.datetimepicker.js"></script>
 <!-- Select2 -->
 <script src="/plugins/select2/js/select2.full.min.js"></script>
 <!-- DataTables -->
@@ -638,6 +643,10 @@ $results = [
     }
 
     $(function () {
+        $('#next_call_persian').MdPersianDateTimePicker({
+            targetTextSelector: '#next_call_persian',
+            targetDateSelector: '#next_call',
+        });
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
