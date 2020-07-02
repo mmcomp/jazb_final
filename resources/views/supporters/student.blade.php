@@ -325,7 +325,7 @@ $results = [
                                                         <td>{{ $call->id }}</td>
                                                         <td>{{ $call->product->name }}</td>
                                                         <td>{{ $persons[$call->replier] }}</td>
-                                                        <td>{{ $results[$call->result] }}</td>
+                                                        <td>{{ $call->callresult?$call->callresult->title:'-' }}</td>
                                                         <td>{{ $call->next_call }}</td>
                                                         <td>{{ ($call->next_call)?$persons[$call->next_to_call]:'' }}</td>
                                                     </tr>
@@ -442,12 +442,17 @@ $results = [
                         <input type="text" class="form-control" id="description" name="description" placeholder="توضیحات"  />
                     </div>
                     <div class="form-group">
-                        <label for="result">نتیجه</label>
-                        <select class="form-control" id="result" name="result">
+                        <label for="call_results_id">نتیجه</label>
+                        <select class="form-control" id="call_results_id" name="call_results_id">
+                            <!--
                             <option value="no_answer">بدون پاسخ</option>
                             <option value="unsuccessful">ناموفق</option>
                             <option value="successful">موفق</option>
                             <option value="rejected">رد شده</option>
+                            -->
+                            @foreach ($callResults as $item)
+                            <option value="{{ $item->id }}">{{ $item->title }}</option>
+                            @endforeach
                         </select>
                     </div>
                     <div class="form-group">

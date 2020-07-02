@@ -13,6 +13,7 @@ use App\Product;
 use App\Tag;
 use App\Temperature;
 use App\Call;
+use App\CallResult;
 
 class SupporterController extends Controller
 {
@@ -33,6 +34,7 @@ class SupporterController extends Controller
         $students = Student::where('is_deleted', false)->where('supporters_id', Auth::user()->id);
         $sources = Source::where('is_deleted', false)->get();
         $products = Product::where('is_deleted', false)->get();
+        $callResults = CallResult::where('is_deleted', false)->get();
         $name = null;
         $sources_id = null;
         $phone = null;
@@ -60,6 +62,7 @@ class SupporterController extends Controller
             ->with('source')
             ->with('consultant')
             ->with('calls.product')
+            ->with('calls.callresult')
             ->orderBy('created_at', 'desc')
             ->get();
 
@@ -79,6 +82,7 @@ class SupporterController extends Controller
             'hotTemperatures'=>$hotTemperatures,
             'coldTemperatures'=>$coldTemperatures,
             'products'=>$products,
+            'callResults'=>$callResults,
             'msg_success' => request()->session()->get('msg_success'),
             'msg_error' => request()->session()->get('msg_error')
         ]);
@@ -100,7 +104,7 @@ class SupporterController extends Controller
             $call->students_id = $students_id;
             $call->users_id = Auth::user()->id;
             $call->description = $request->input('description');
-            $call->result = $request->input('result');
+            $call->call_results_id = $request->input('call_results_id');
             $call->replier = $request->input('replier');
             $call->products_id = $request->input('products_id');
             $call->next_to_call = $request->input('next_to_call');
