@@ -26,7 +26,7 @@ class UserController extends Controller
 
         try{
             if(Auth::attempt(["email"=>$request->input('email'), "password"=>$request->input('password')])){
-                return redirect()->route('home');
+                return redirect('/');
             }else{
                 return view('layouts.login', [
                     "error" => new Exception(config('Constants.errors.inavlid_email_password'))
