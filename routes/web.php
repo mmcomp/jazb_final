@@ -20,7 +20,7 @@ Route::post('/register', 'RegisterController@sendsms')->name('sendsms');
 Route::post('/register/checksms', 'RegisterController@checksms')->name('checksms');
 Route::post('/register/createuser', 'RegisterController@createuser')->name('createuser');
 Route::group(['middleware' => ['auth', 'message']], function () {
-    Route::get('/', 'DashboardController@index')->name('home');
+    Route::get('/', 'DashboardController@index')->name('dashboard_admin');
 
     Route::group(['prefix' => '/need_parent_tag_ones'], function () {
         Route::get('/', 'NeedParentTagOneController@index')->name('need_parent_tag_ones');
@@ -139,7 +139,7 @@ Route::group(['middleware' => ['auth', 'message']], function () {
         Route::get('products','MarketerController@products')->name('marketerproducts');
         Route::get('code','MarketerController@code')->name('marketercode');
     });
-    
+
 
 
     Route::group(['prefix' => '/sources'], function () {
