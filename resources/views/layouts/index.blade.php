@@ -521,7 +521,11 @@
                         -->
                         @endif
                         <li class="nav-item">
-                            <a href="#" class="nav-link">
+                            @if(strpos(\Request::route()->getName(), 'help')===0)
+                            <a href="{{ route('helps') }}" class="nav-link active">
+                            @else
+                            <a href="{{ route('helps') }}" class="nav-link">
+                            @endif
                                 <p>آموزش و راهنما</p>
                             </a>
                         </li>
