@@ -200,5 +200,12 @@ Route::group(['middleware' => ['auth', 'message']], function () {
         // Route::any('/create', 'SupporterController@create')->name('supporter_student_create');
         // Route::get('/delete/{id}', 'SupporterController@delete')->name('supporter_student_delete');
     });
+
+    Route::group(['prefix' => '/circulars'], function () {
+        Route::get('/', 'CircularController@index')->name('circulars');
+        Route::any('/create', 'CircularController@create')->name('circular_create');
+        Route::any('/edit/{id}', 'CircularController@edit')->name('circular_edit');
+        Route::get('/delete/{id}', 'CircularController@delete')->name('circular_delete');
+    });
 });
 

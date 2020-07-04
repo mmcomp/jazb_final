@@ -456,11 +456,17 @@
                                 <p>ارسال و دریافت پیام</p>
                             </a>
                         </li>
+                        @if(Gate::allows('parameters'))
                         <li class="nav-item">
-                            <a href="#" class="nav-link">
+                            @if(strpos(\Request::route()->getName(), 'circular')===0)
+                            <a href="{{ route('circulars') }}" class="nav-link active">
+                            @else
+                            <a href="{{ route('circulars') }}" class="nav-link">
+                            @endif
                                 <p>ارسال بخشنامه برای پشتیبان ها</p>
                             </a>
                         </li>
+                        @endif
                         @if (Gate::allows('sale_suggestions'))
                         <li class="nav-item">
                             @if(strpos(\Request::route()->getName(), 'sale_suggestion')===0)
