@@ -27,7 +27,9 @@
             <div class="card">
               <div class="card-header">
                 <h3 class="card-title">
+                    @if(Gate::allows('parameters'))
                     <a class="btn btn-success" href="{{ route('circular_create') }}">بخشنامه جدید</a>
+                    @endif
                 </h3>
               </div>
               <!-- /.card-header -->
