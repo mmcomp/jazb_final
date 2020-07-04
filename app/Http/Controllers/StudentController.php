@@ -22,7 +22,7 @@ use Exception;
 class StudentController extends Controller
 {
     public function index(){
-        $students = Student::where('is_deleted', false);
+        $students = Student::where('is_deleted', false)->where('supporters_id', 0);
         $supportGroupId = Group::getSupport();
         if($supportGroupId)
             $supportGroupId = $supportGroupId->id;

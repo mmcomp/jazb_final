@@ -18,6 +18,7 @@ class PurchaseController extends Controller
         }
 
         $purchases = Purchase::where('is_deleted', false)
+            ->where('type', 'manual')
             ->with('user')
             ->with('student')
             ->with('product')
@@ -50,6 +51,7 @@ class PurchaseController extends Controller
         $purchase->description = $request->input('description');
         $purchase->price = $request->input('price');
         $purchase->factor_number = $request->input('factor_number');
+        $purchase->type = 'manual';
         $purchase->save();
 
         $request->session()->flash("msg_success", "پرداخت با موفقیت افزوده شد.");
@@ -58,7 +60,7 @@ class PurchaseController extends Controller
 
     public function edit(Request $request, $id)
     {
-        $purchase = Purchase::where('id', $id)->where('is_deleted', false)->first();
+        $purchase = Purchase::where('id', $id)->where('is_deleted', false)->where('type', 'manual')->first();
         if($purchase==null){
             $request->session()->flash("msg_error", "پرداخت پیدا نشد!");
             return redirect()->route('purchases');
