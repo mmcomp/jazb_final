@@ -33,7 +33,15 @@ class SupporterController extends Controller
     public function student(){
         $students = Student::where('is_deleted', false)->where('supporters_id', Auth::user()->id);
         $sources = Source::where('is_deleted', false)->get();
-        $products = Product::where('is_deleted', false)->get();
+        $products = Product::where('is_deleted', false)->with('collection')->orderBy('name')->get();
+        foreach($products as $index => $product){
+            $products[$index]->parents = "-";
+            if($product->collection) {
+                $parents = $product->collection->parents();
+                $name = ($parents!='')?$parents . "->" . $product->collection->name : $product->collection->name;
+                $products[$index]->parents = $name;
+            }
+        }
         $callResults = CallResult::where('is_deleted', false)->get();
         $name = null;
         $sources_id = null;

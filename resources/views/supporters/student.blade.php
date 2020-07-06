@@ -438,10 +438,6 @@ $results = [
             <div class="modal-body">
                 <p>
                     <div class="form-group">
-                        <label for="description">توضیحات</label>
-                        <input type="text" class="form-control" id="description" name="description" placeholder="توضیحات"  />
-                    </div>
-                    <div class="form-group">
                         <label for="call_results_id">نتیجه</label>
                         <select class="form-control" id="call_results_id" name="call_results_id">
                             <!--
@@ -469,7 +465,7 @@ $results = [
                         <select class="form-control" id="products_id" name="products_id">
                             <option value=""></option>
                             @foreach ($products as $item)
-                            <option value="{{ $item->id }}">{{ $item->name }}</option>
+                        <option value="{{ $item->id }}">{{($item->parents!='-')?$item->parents . '->':''}} {{ $item->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -486,6 +482,10 @@ $results = [
                         <label for="description">زمان تماس بعد</label>
                         <input type="text" class="form-control" id="next_call_persian"placeholder="زمان تماس بعد" readonly />
                         <input type="hidden" id="next_call" name="next_call" />
+                    </div>
+                    <div class="form-group">
+                        <label for="description">توضیحات</label>
+                        <input type="text" class="form-control" id="description" name="description" placeholder="توضیحات"  />
                     </div>
                 </p>
             </div>
