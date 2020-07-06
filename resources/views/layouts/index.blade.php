@@ -521,10 +521,19 @@
                         -->
                         @endif
                         <li class="nav-item">
+                            @if(Gate::allows('parameters'))
                             @if(strpos(\Request::route()->getName(), 'help')===0)
                             <a href="{{ route('helps') }}" class="nav-link active">
                             @else
                             <a href="{{ route('helps') }}" class="nav-link">
+                            @endif
+                                <p>مدیریت آموزش و راهنما</p>
+                            </a>
+                            @endif
+                            @if(strpos(\Request::route()->getName(), 'grid')===0)
+                            <a href="{{ route('grid') }}" class="nav-link active">
+                            @else
+                            <a href="{{ route('grid') }}" class="nav-link">
                             @endif
                                 <p>آموزش و راهنما</p>
                             </a>

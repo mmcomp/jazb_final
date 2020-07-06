@@ -11,9 +11,19 @@ use Exception;
 class HelpController extends Controller
 {
     public function index(){
-        $helps = Help::orderBy('created_at', 'desc')->get();
+        $helps = Help::orderBy('created_at')->get();
 
         return view('helps.index',[
+            'helps' => $helps,
+            'msg_success' => request()->session()->get('msg_success'),
+            'msg_error' => request()->session()->get('msg_error')
+        ]);
+    }
+
+    public function grid(){
+        $helps = Help::orderBy('created_at', 'desc')->get();
+
+        return view('helps.grid',[
             'helps' => $helps,
             'msg_success' => request()->session()->get('msg_success'),
             'msg_error' => request()->session()->get('msg_error')

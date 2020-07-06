@@ -210,6 +210,7 @@ Route::group(['middleware' => ['auth', 'message']], function () {
 
     Route::group(['prefix' => '/helps'], function () {
         Route::get('/', 'HelpController@index')->name('helps');
+        Route::get('/grid', 'HelpController@grid')->name('grid');
         Route::any('/create', 'HelpController@create')->name('help_create');
         Route::any('/edit/{id}', 'HelpController@edit')->name('help_edit');
         Route::get('/delete/{id}', 'HelpController@delete')->name('help_delete');
