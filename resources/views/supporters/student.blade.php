@@ -316,6 +316,7 @@ $results = [
                                                         <th>نتیجه</th>
                                                         <th>یادآور</th>
                                                         <th>پاسخگو بعد</th>
+                                                        <th>توضیحات</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -328,6 +329,7 @@ $results = [
                                                         <td>{{ $call->callresult?$call->callresult->title:'-' }}</td>
                                                         <td>{{ $call->next_call }}</td>
                                                         <td>{{ ($call->next_call)?$persons[$call->next_to_call]:'' }}</td>
+                                                        <td>{{ $call->description }}</td>
                                                     </tr>
                                                     @endforeach
                                                 </tbody>
