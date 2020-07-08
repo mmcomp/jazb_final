@@ -14,6 +14,9 @@ use App\Tag;
 use App\Temperature;
 use App\Call;
 use App\CallResult;
+use App\StudentCollection;
+use App\Collection;
+use App\Purchase;
 
 class SupporterController extends Controller
 {
@@ -46,6 +49,8 @@ class SupporterController extends Controller
         $name = null;
         $sources_id = null;
         $phone = null;
+        $has_collection = 'false';
+        $has_the_product = 'false';
         if(request()->getMethod()=='POST'){
             if(request()->input('name')!=null){
                 $name = trim(request()->input('name'));
@@ -60,6 +65,18 @@ class SupporterController extends Controller
             if(request()->input('phone')!=null){
                 $phone = (int)request()->input('phone');
                 $students = $students->where('phone', $phone);
+            }
+            if(request()->input('has_collection')!=null){
+                $has_collection = request()->input('has_collection');
+                if($has_collection=='true'){
+                    $studentCollections = StudentCollection::where('is_deleted', false)->pluck('students_id');
+                    $students = $students->whereIn('id', $studentCollections);
+                }
+            }
+            if(request()->input('has_the_product')!=null && request()->input('has_the_product')!=''){
+                $has_the_product = request()->input('has_the_product');
+                $purchases = Purchase::where('is_deleted', false)->where('type', '!=', 'site_failed')->where('products_id', $has_the_product)->pluck('students_id');
+                $students = $students->whereIn('id', $purchases);
             }
         }
 
@@ -76,9 +93,10 @@ class SupporterController extends Controller
             ->get();
 
         $moralTags = Tag::where('is_deleted', false)->where('type', 'moral')->get();
-        $needTags = Tag::where('is_deleted', false)->where('type', 'need')->get();
+        // $needTags = Tag::where('is_deleted', false)->where('type', 'need')->get();
         $hotTemperatures = Temperature::where('is_deleted', false)->where('status', 'hot')->get();
         $coldTemperatures = Temperature::where('is_deleted', false)->where('status', 'cold')->get();
+        $collections = Collection::where('is_deleted', false)->get();
 
         return view('supporters.student',[
             'students' => $students,
@@ -87,11 +105,13 @@ class SupporterController extends Controller
             'sources_id' => $sources_id,
             'phone' => $phone,
             'moralTags'=>$moralTags,
-            'needTags'=>$needTags,
+            'needTags'=>$collections,
             'hotTemperatures'=>$hotTemperatures,
             'coldTemperatures'=>$coldTemperatures,
             'products'=>$products,
             'callResults'=>$callResults,
+            'has_collection'=>$has_collection,
+            'has_the_product'=>$has_the_product,
             'msg_success' => request()->session()->get('msg_success'),
             'msg_error' => request()->session()->get('msg_error')
         ]);

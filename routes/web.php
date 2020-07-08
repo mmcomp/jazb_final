@@ -195,7 +195,7 @@ Route::group(['middleware' => ['auth', 'message']], function () {
     });
 
     Route::group(['prefix' => '/supporter_students'], function () {
-        Route::get('/', 'SupporterController@student')->name('supporter_students');
+        Route::any('/', 'SupporterController@student')->name('supporter_students');
         Route::post('/call', 'SupporterController@call')->name('supporter_student_call');
         // Route::any('/create', 'SupporterController@create')->name('supporter_student_create');
         // Route::get('/delete/{id}', 'SupporterController@delete')->name('supporter_student_delete');

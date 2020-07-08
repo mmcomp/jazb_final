@@ -68,7 +68,7 @@ $results = [
                     <h3 class="text-center">
                         فیلتر
                     </h3>
-                    <form method="post">
+                    <form method="post" id="search-frm">
                         @csrf
                         <div class="row">
                             <div class="col">
@@ -108,42 +108,62 @@ $results = [
                                 </button>
                             </div>
                         </div>
+                        <input type="hidden" id="has_collection" name="has_collection" value="{{ isset($has_collection)?$has_collection:'false' }}" />
+                        <input type="hidden" id="has_the_product" name="has_the_product" value="{{ isset($has_the_product)?$has_the_product:'' }}" />
                     </form>
                     <h3 class="text-center">
                         مرتب سازی
                     </h3>
                     <div class="row">
                         <div class="col text-center p-1">
-                            <a class="btn btn-warning btn-block" href="#">سطح بندی</a>
+                            @if(isset($has_collection) && $has_collection=='true')
+                            <a class="btn btn-success btn-block" href="#" onclick="return StudentCollection();">پیشنهاد فروش</a>
+                            @else
+                            <a class="btn btn-warning btn-block" href="#" onclick="return StudentCollection();">پیشنهاد فروش</a>
+                            @endif
                         </div>
                         <div class="col text-center p-1">
-                            <a class="btn btn-warning btn-block" href="#">پیشنهاد فروش</a>
+                            <!--<a class="btn btn-warning btn-block" href="#">محصول</a>-->
+                            <select id="has_product" class="form-control select2" onchange="return selectProduct();">
+                                @if(isset($has_the_product) && $has_the_product>0)
+                                <option value="" disabled>محصول</option>
+                                @else
+                                <option selected value="" disabled>محصول</option>
+                                @endif
+                                <option value="">همه</option>
+                                @foreach($products as $product)
+                                @if(isset($has_the_product) && $has_the_product==$product->id)
+                                <option value="{{ $product->id }}" selected>{{ $product->name }}</option>
+                                @else
+                                <option value="{{ $product->id }}">{{ $product->name }}</option>
+                                @endif
+                                @endforeach
+                            </select>
                         </div>
-                        <div class="col text-center p-1">
-                            <a class="btn btn-warning btn-block" href="#">محصول</a>
-                        </div>
-                    </div>
-                    <div class="row">
                         <div class="col text-center p-1">
                             <a class="btn btn-warning btn-block" href="#">سایت</a>
                         </div>
+                    </div>
+                    <div class="row">
                         <div class="col text-center p-1">
                             <a class="btn btn-warning btn-block" href="#">تعداد پیشنهاد فروش</a>
                         </div>
                         <div class="col text-center p-1">
                             <a class="btn btn-warning btn-block" href="#">یادآور</a>
                         </div>
-                    </div>
-                    <div class="row">
                         <div class="col text-center p-1">
                             <a class="btn btn-warning btn-block" href="#">برچسب اخلاقی</a>
                         </div>
+                    </div>
+                    <!--<div class="row">
                         <div class="col text-center p-1">
                             <a class="btn btn-warning btn-block" href="#">برچسب ارزیابی</a>
                         </div>
                         <div class="col text-center p-1">
                         </div>
-                    </div>
+                        <div class="col text-center p-1">
+                        </div>
+                    </div>-->
                     <table id="example2" class="table table-bordered table-hover datatables1">
                         <thead>
                             <tr>
@@ -647,6 +667,22 @@ $results = [
             }).fail(function () {
             alert('خطای بروز رسانی');
         });
+    }
+
+    function StudentCollection(){
+        var has_collection = $("#has_collection").val().trim();
+        if(has_collection=='' || has_collection=='false'){
+            has_collection = 'true';
+        }else {
+            has_collection = 'false';
+        }
+        $("#has_collection").val(has_collection);
+        $("#search-frm").submit();
+    }
+
+    function selectProduct(){
+        $("#has_the_product").val($("#has_product").val());
+        $("#search-frm").submit();
     }
 
     $(function () {
