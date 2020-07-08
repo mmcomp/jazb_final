@@ -65,6 +65,7 @@ class SupporterController extends Controller
 
         $students = $students
             ->with('user')
+            ->with('studentcollections.collection')
             ->with('studenttags.tag')
             ->with('studenttemperatures.temperature')
             ->with('source')
