@@ -6,7 +6,7 @@
         <div class="container-fluid">
           <div class="row mb-2">
             <div class="col-sm-6">
-              <h1>کاربران</h1>
+              <h1>آموز و راهنما</h1>
             </div>
             <div class="col-sm-6">
               <!--
@@ -27,7 +27,9 @@
             <div class="card">
               <div class="card-header">
                 <h3 class="card-title">
-                    <a class="btn btn-success" href="{{ route('user_all_create') }}">کاربر جدید</a>
+                    @if(Gate::allows('parameters'))
+                    <a class="btn btn-success" href="{{ route('help_create') }}">آموزش جدید</a>
+                    @endif
                 </h3>
               </div>
               <!-- /.card-header -->
@@ -37,30 +39,32 @@
                   <tr>
                     <th>ردیف</th>
                     <th>کد</th>
-                    <th>نام کاربری</th>
-                    <th>نام</th>
-                    <th>نام خانوادگی</th>
-                    <th>گروه</th>
+                    <th>عنوان</th>
+                    <th>فایل</th>
+                    <th>زمان</th>
+                    @if(Gate::allows('parameters'))
                     <th>#</th>
+                    @endif
                   </tr>
                   </thead>
                   <tbody>
-                      @foreach ($users as $index => $item)
+                      @foreach ($helps as $index => $item)
                       <tr>
                         <td>{{ $index + 1 }}</td>
                         <td>{{ $item->id }}</td>
-                        <td>{{ $item->email }}</td>
-                        <td>{{ $item->first_name }}</td>
-                        <td>{{ $item->last_name }}</td>
-                        <td>{{ ($item->group)?$item->group->name:'-' }}</td>
+                        <td>{{ $item->name }}</td>
+                        <td>{{ $item->link }}</td>
+                        <td>{{ jdate($item->created_at)->format("Y/m/d") }}</td>
+                        @if(Gate::allows('parameters'))
                         <td>
-                            <a class="btn btn-primary" href="{{ route('user_all_edit', $item->id) }}">
+                            <a class="btn btn-primary" href="{{ route('help_edit', $item->id) }}">
                                 ویرایش
                             </a>
-                            <a class="btn btn-danger" href="{{ route('user_all_delete', $item->id) }}">
+                            <a class="btn btn-danger" href="{{ route('help_delete', $item->id) }}">
                                 حذف
                             </a>
                         </td>
+                        @endif
                       </tr>
                       @endforeach
                   </tbody>

@@ -39,7 +39,8 @@
                     <div class="col">
                         <div class="form-group">
                             <label for="students_id">دانش آموز</label>
-                            <select class="form-control select2" id="students_id" name="students_id" >
+                            <select required class="form-control select2" id="students_id" name="students_id">
+                                <option value="" disabled selected>جستجو</option>
                                 @foreach ($students as $item)
                                     @if (isset($purchase) && isset($purchase->id) && $purchase->students_id==$item->id)
                                     <option value="{{ $item->id }}" selected>{{ $item->first_name }} {{ $item->last_name }} [{{ $item->phone }}]</option>
@@ -49,7 +50,10 @@
                                 @endforeach
                             </select>
                         </div>
-
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
                         <div class="form-group">
                             <label for="description">توضیحات</label>
                             @if (isset($purchase) && isset($purchase->id))
@@ -118,6 +122,7 @@
 <script>
     $(document).ready(function(){
         $('select.select2').select2();
+
     });
 </script>
 @endsection

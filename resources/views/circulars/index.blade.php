@@ -6,7 +6,7 @@
         <div class="container-fluid">
           <div class="row mb-2">
             <div class="col-sm-6">
-              <h1>کاربران</h1>
+              <h1>بخشنامه ها</h1>
             </div>
             <div class="col-sm-6">
               <!--
@@ -27,7 +27,9 @@
             <div class="card">
               <div class="card-header">
                 <h3 class="card-title">
-                    <a class="btn btn-success" href="{{ route('user_all_create') }}">کاربر جدید</a>
+                    @if(Gate::allows('parameters'))
+                    <a class="btn btn-success" href="{{ route('circular_create') }}">بخشنامه جدید</a>
+                    @endif
                 </h3>
               </div>
               <!-- /.card-header -->
@@ -37,30 +39,19 @@
                   <tr>
                     <th>ردیف</th>
                     <th>کد</th>
-                    <th>نام کاربری</th>
-                    <th>نام</th>
-                    <th>نام خانوادگی</th>
-                    <th>گروه</th>
-                    <th>#</th>
+                    <th>عنوان</th>
+                    <th>متن</th>
+                    <th>زمان</th>
                   </tr>
                   </thead>
                   <tbody>
-                      @foreach ($users as $index => $item)
+                      @foreach ($circulars as $index => $item)
                       <tr>
                         <td>{{ $index + 1 }}</td>
                         <td>{{ $item->id }}</td>
-                        <td>{{ $item->email }}</td>
-                        <td>{{ $item->first_name }}</td>
-                        <td>{{ $item->last_name }}</td>
-                        <td>{{ ($item->group)?$item->group->name:'-' }}</td>
-                        <td>
-                            <a class="btn btn-primary" href="{{ route('user_all_edit', $item->id) }}">
-                                ویرایش
-                            </a>
-                            <a class="btn btn-danger" href="{{ route('user_all_delete', $item->id) }}">
-                                حذف
-                            </a>
-                        </td>
+                        <td>{{ $item->title }}</td>
+                        <td>{{ $item->content }}</td>
+                        <td>{{ jdate($item->created_at)->format("Y/m/d") }}</td>
                       </tr>
                       @endforeach
                   </tbody>
