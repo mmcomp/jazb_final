@@ -50,8 +50,13 @@ class SupporterController extends Controller
         $sources_id = null;
         $phone = null;
         $has_collection = 'false';
-        $has_the_product = 'false';
+        $has_the_product = '';
+        $has_site = 'false';
+        $order_collection = 'false';
+        $has_reminder = 'false';
+        $has_tag = 'false';
         if(request()->getMethod()=='POST'){
+            // dump(request()->all());
             if(request()->input('name')!=null){
                 $name = trim(request()->input('name'));
                 $students = $students->where(function ($query) use ($name) {
@@ -78,19 +83,48 @@ class SupporterController extends Controller
                 $purchases = Purchase::where('is_deleted', false)->where('type', '!=', 'site_failed')->where('products_id', $has_the_product)->pluck('students_id');
                 $students = $students->whereIn('id', $purchases);
             }
+            if(request()->input('has_site')!=null){
+                $has_site = request()->input('has_site');
+                if($has_site=='true'){
+                    $purchases = Purchase::where('is_deleted', false)->where('type', 'site_successed')->pluck('students_id');
+                    $students = $students->whereIn('id', $purchases);
+                }
+            }
+            if(request()->input('has_reminder')!=null){
+                $has_reminder = request()->input('has_reminder');
+                if($has_reminder=='true'){
+                    $students = $students->has('remindercalls');
+                }
+            }
+            if(request()->input('has_tag')!=null){
+                $has_tag = request()->input('has_tag');
+                if($has_tag=='true'){
+                    $students = $students->has('studenttags');
+                }
+            }
         }
 
         $students = $students
-            ->with('user')
-            ->with('studentcollections.collection')
-            ->with('studenttags.tag')
-            ->with('studenttemperatures.temperature')
-            ->with('source')
-            ->with('consultant')
-            ->with('calls.product')
-            ->with('calls.callresult')
-            ->orderBy('created_at', 'desc')
-            ->get();
+        ->with('user')
+        ->with('studentcollections.collection')
+        ->with('studenttags.tag')
+        ->with('studenttemperatures.temperature')
+        ->with('source')
+        ->with('consultant')
+        ->with('calls.product')
+        ->with('calls.callresult')
+        ->orderBy('created_at', 'desc')
+        ->get();
+
+        if(request()->input('order_collection')!=null){
+            $order_collection = request()->input('order_collection');
+            if($order_collection=='true'){
+                $students = $students->sortBy(function($hackathon)
+                {
+                    return $hackathon->studentcollections->count();
+                }, SORT_REGULAR, true);
+            }
+        }
 
         $moralTags = Tag::where('is_deleted', false)->where('type', 'moral')->get();
         // $needTags = Tag::where('is_deleted', false)->where('type', 'need')->get();
@@ -112,6 +146,10 @@ class SupporterController extends Controller
             'callResults'=>$callResults,
             'has_collection'=>$has_collection,
             'has_the_product'=>$has_the_product,
+            'has_site'=>$has_site,
+            'order_collection'=>$order_collection,
+            'has_reminder'=>$has_reminder,
+            'has_tag'=>$has_tag,
             'msg_success' => request()->session()->get('msg_success'),
             'msg_error' => request()->session()->get('msg_error')
         ]);

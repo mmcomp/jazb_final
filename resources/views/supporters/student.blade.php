@@ -110,6 +110,10 @@ $results = [
                         </div>
                         <input type="hidden" id="has_collection" name="has_collection" value="{{ isset($has_collection)?$has_collection:'false' }}" />
                         <input type="hidden" id="has_the_product" name="has_the_product" value="{{ isset($has_the_product)?$has_the_product:'' }}" />
+                        <input type="hidden" id="has_site" name="has_site" value="{{ isset($has_site)?$has_site:'false' }}" />
+                        <input type="hidden" id="order_collection" name="order_collection" value="{{ isset($order_collection)?$order_collection:'false' }}" />
+                        <input type="hidden" id="has_reminder" name="has_reminder" value="{{ isset($has_reminder)?$has_reminder:'false' }}" />
+                        <input type="hidden" id="has_tag" name="has_tag" value="{{ isset($has_tag)?$has_tag:'false' }}" />
                     </form>
                     <h3 class="text-center">
                         مرتب سازی
@@ -141,18 +145,34 @@ $results = [
                             </select>
                         </div>
                         <div class="col text-center p-1">
-                            <a class="btn btn-warning btn-block" href="#">سایت</a>
+                            @if(isset($has_site) && $has_site=='true')
+                            <a class="btn btn-success btn-block" href="#" onclick="return StudentSite();">سایت</a>
+                            @else
+                            <a class="btn btn-warning btn-block" href="#" onclick="return StudentSite();">سایت</a>
+                            @endif
                         </div>
                     </div>
                     <div class="row">
                         <div class="col text-center p-1">
-                            <a class="btn btn-warning btn-block" href="#">تعداد پیشنهاد فروش</a>
+                            @if(isset($order_collection) && $order_collection=='true')
+                            <a class="btn btn-success btn-block" href="#" onclick="return OrderCollection();">تعداد پیشنهاد فروش</a>
+                            @else
+                            <a class="btn btn-warning btn-block" href="#" onclick="return OrderCollection();">تعداد پیشنهاد فروش</a>
+                            @endif
                         </div>
                         <div class="col text-center p-1">
-                            <a class="btn btn-warning btn-block" href="#">یادآور</a>
+                            @if(isset($has_reminder) && $has_reminder=='true')
+                            <a class="btn btn-success btn-block" href="#" onclick="return StudentReminder();">یادآور</a>
+                            @else
+                            <a class="btn btn-warning btn-block" href="#" onclick="return StudentReminder();">یادآور</a>
+                            @endif
                         </div>
                         <div class="col text-center p-1">
-                            <a class="btn btn-warning btn-block" href="#">برچسب اخلاقی</a>
+                            @if(isset($has_tag) && $has_tag=='true')
+                            <a class="btn btn-success btn-block" href="#" onclick="return StudentTag();">برچسب اخلاقی</a>
+                            @else
+                            <a class="btn btn-warning btn-block" href="#" onclick="return StudentTag();">برچسب اخلاقی</a>
+                            @endif
                         </div>
                     </div>
                     <!--<div class="row">
@@ -678,6 +698,54 @@ $results = [
         }
         $("#has_collection").val(has_collection);
         $("#search-frm").submit();
+    }
+
+    function StudentTag(){
+        var has_tag = $("#has_tag").val().trim();
+        if(has_tag=='' || has_tag=='false'){
+            has_tag = 'true';
+        }else {
+            has_tag = 'false';
+        }
+        $("#has_tag").val(has_tag);
+        $("#search-frm").submit();
+        return false;
+    }
+
+    function StudentReminder(){
+        var has_reminder = $("#has_reminder").val().trim();
+        if(has_reminder=='' || has_reminder=='false'){
+            has_reminder = 'true';
+        }else {
+            has_reminder = 'false';
+        }
+        $("#has_reminder").val(has_reminder);
+        $("#search-frm").submit();
+        return false;
+    }
+
+    function StudentSite() {
+        var has_site = $("#has_site").val().trim();
+        if(has_site=='' || has_site=='false'){
+            has_site = 'true';
+        }else {
+            has_site = 'false';
+        }
+        $("#has_site").val(has_site);
+        $("#search-frm").submit();
+        return false;
+    }
+
+    function OrderCollection() {
+        var order_collection = $("#order_collection").val().trim();
+        if(order_collection=='' || order_collection=='false'){
+            order_collection = 'true';
+        }else {
+            order_collection = 'false';
+        }
+        $("#order_collection").val(order_collection);
+        $("#search-frm").submit();
+        return false;
     }
 
     function selectProduct(){

@@ -41,4 +41,8 @@ class Student extends Model
     public function calls(){
         return $this->hasMany('App\Call', 'students_id', 'id');
     }
+
+    public function remindercalls(){
+        return $this->hasMany('App\Call', 'students_id', 'id')->where('next_call', '!=', null);
+    }
 }
