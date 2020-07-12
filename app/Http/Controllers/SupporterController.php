@@ -34,6 +34,9 @@ class SupporterController extends Controller
     }
 
     public function student(){
+        Student::where('is_deleted', false)->where('supporters_id', Auth::user()->id)->where('viewed', false)->update([
+            'viewed'=>true
+        ]);
         $students = Student::where('is_deleted', false)->where('supporters_id', Auth::user()->id);
         $sources = Source::where('is_deleted', false)->get();
         $products = Product::where('is_deleted', false)->with('collection')->orderBy('name')->get();

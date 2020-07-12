@@ -33,7 +33,26 @@ class DashboardController extends Controller
         }
         $gates = $group->gates()->where('key', 'supporters')->get();
         if(count($gates)>0){
-            return redirect()->route('supporter_students');
+            $newStudents = Student::where('is_deleted', false)->where('supporters_id', Auth::user()->id)->where('viewed', false)->count();
+            $year = (int)jdate()->format("Y");
+            $month = (int)jdate()->format("m");
+            $startOfYear = implode('-', CalendarUtils::toGregorian($year, 1, 1));
+
+            $dates = [$startOfYear];
+            $currentMonth = 2;
+            do{
+                $dates[] = implode('-', CalendarUtils::toGregorian($year, $currentMonth, 1));
+                $currentMonth++;
+            }while($currentMonth <= $month);
+            $dates[] = date("Y-m-d");
+            $results = [];
+            for($i = 0;$i < count($dates)-1;$i++){
+                $results[] = Student::where('is_deleted', false)->where('supporters_id', Auth::user()->id)->where('created_at', '>=', DashboardController::fixDateDigits($dates[$i]) . ' 00:00:00')->where('created_at', '<', DashboardController::fixDateDigits($dates[$i+1]) . ' 00:00:00')->count();
+            }
+            return view('dashboard.support', [
+                'newStudents'=>$newStudents,
+                'results'=>$results
+            ]);
         }
 
         $devideStudents = Student::where('is_deleted', false)->where('supporters_id', 0)->count();
