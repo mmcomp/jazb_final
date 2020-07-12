@@ -28,13 +28,15 @@
           <div class="row">
             <div class="col-lg-4 col-6">
               <!-- small box -->
-              <div class="small-box bg-danger">
+              <div class="small-box bg-orange">
                 <div class="inner p-0">
                   <!--<h3>150</h3>-->
 
                     <p class="text-center">
-                      تقسیم داشن آموز
-                      <span class="badge badge-warning right">6</span>
+                        <a href="{{ route('students') }}" class="text-light btn">
+                        تقسیم داشن آموز
+                        <span class="badge badge-warning right">{{ $devideStudents }}</span>
+                        </a>
                     </p>
                 </div>
                 <!--
@@ -48,14 +50,16 @@
             <!-- ./col -->
             <div class="col-lg-4 col-6">
                 <!-- small box -->
-                <div class="small-box bg-danger">
+                <div class="small-box bg-orange">
                   <div class="inner p-0">
                     <!--<h3>150</h3>-->
 
                       <p class="text-center">
-                        تقسیم داشن آموز
-                        <span class="badge badge-warning right">6</span>
-                      </p>
+                        <a href="{{ route('students') }}" class="text-light btn">
+                            ورودی امروز
+                            <span class="badge badge-warning right">{{ $todayStudents }}</span>
+                        </a>
+                    </p>
                   </div>
                   <!--
                   <div class="icon">
@@ -68,14 +72,16 @@
             <!-- ./col -->
             <div class="col-lg-4 col-6">
                 <!-- small box -->
-                <div class="small-box bg-danger">
+                <div class="small-box bg-orange">
                   <div class="inner p-0">
                     <!--<h3>150</h3>-->
 
                       <p class="text-center">
-                        تقسیم داشن آموز
-                        <span class="badge badge-warning right">6</span>
-                      </p>
+                        <a href="{{ route('students') }}" class="text-light btn">
+                            ورودی گذشته
+                            <span class="badge badge-warning right">{{ $devideStudents - $todayStudents }}</span>
+                        </a>
+                    </p>
                   </div>
                   <!--
                   <div class="icon">
@@ -92,13 +98,14 @@
           <div class="row">
             <div class="col-lg-4 col-6">
               <!-- small box -->
-              <div class="small-box bg-danger">
+              <div class="small-box bg-orange">
                 <div class="inner p-0">
                   <!--<h3>150</h3>-->
 
                     <p class="text-center">
-                      تقسیم داشن آموز
-                      <span class="badge badge-warning right">6</span>
+                        <a href="{{ route('messages') }}" class="text-light btn">
+                        پیام دریافتی از پشتیبان
+                        </a>
                     </p>
                 </div>
                 <!--
@@ -112,14 +119,15 @@
             <!-- ./col -->
             <div class="col-lg-4 col-6">
                 <!-- small box -->
-                <div class="small-box bg-danger">
+                <div class="small-box bg-orange">
                   <div class="inner p-0">
                     <!--<h3>150</h3>-->
 
                       <p class="text-center">
-                        تقسیم داشن آموز
-                        <span class="badge badge-warning right">6</span>
-                      </p>
+                        <a href="#" class="text-light btn">
+                            گزارش فروش پشتیبان
+                        </a>
+                    </p>
                   </div>
                   <!--
                   <div class="icon">
@@ -132,14 +140,15 @@
             <!-- ./col -->
             <div class="col-lg-4 col-6">
                 <!-- small box -->
-                <div class="small-box bg-danger">
+                <div class="small-box bg-success">
                   <div class="inner p-0">
                     <!--<h3>150</h3>-->
 
                       <p class="text-center">
-                        تقسیم داشن آموز
-                        <span class="badge badge-warning right">6</span>
-                      </p>
+                        <a href="{{ route('student_create') }}" class="text-light btn">
+                            ثبت دانش آموز جدید
+                        </a>
+                    </p>
                   </div>
                   <!--
                   <div class="icon">
@@ -170,42 +179,20 @@
                 <p>
                   <strong>تعداد دانش  آموزان پشتیبان</strong>
                 </p>
-
+                @foreach ($supporters as $item)
                 <div class="progress-group">
-                  پشتیبان 1
-                  <span class="float-right"><b>160</b>/200</span>
-                  <div class="progress progress-sm">
-                    <div class="progress-bar bg-primary" style="width: 80%"></div>
-                  </div>
+                    {{ $item->first_name }} {{ $item->last_name }}
+                    <span class="float-right"><b>{{ count($item->students) }}</b>/{{ $item->max_student?$item->max_student:0 }}</span>
+                    <div class="progress progress-sm">
+                       @if ($item->max_student && $item->max_student>0)
+                        <div class="progress-bar bg-primary" style="width: {{ count($item->students)*100/$item->max_student }}%"></div>
+                      @else
+                        <div class="progress-bar bg-primary" style="width: 100%"></div>
+                      @endif
+                    </div>
                 </div>
                 <!-- /.progress-group -->
-
-                <div class="progress-group">
-                    پشتیبان 2
-                  <span class="float-right"><b>310</b>/400</span>
-                  <div class="progress progress-sm">
-                    <div class="progress-bar bg-danger" style="width: 75%"></div>
-                  </div>
-                </div>
-
-                <!-- /.progress-group -->
-                <div class="progress-group">
-                  <span class="progress-text">پشتیبان 3</span>
-                  <span class="float-right"><b>480</b>/800</span>
-                  <div class="progress progress-sm">
-                    <div class="progress-bar bg-success" style="width: 60%"></div>
-                  </div>
-                </div>
-
-                <!-- /.progress-group -->
-                <div class="progress-group">
-                    پشتیبان 4
-                  <span class="float-right"><b>250</b>/500</span>
-                  <div class="progress progress-sm">
-                    <div class="progress-bar bg-warning" style="width: 50%"></div>
-                  </div>
-                </div>
-                <!-- /.progress-group -->
+                @endforeach
               </div>
           </div>
         </div><!-- /.container-fluid -->
@@ -231,12 +218,31 @@
 
       // Get context with jQuery - using jQuery's .get() method.
       var areaChartCanvas = $('#areaChart').get(0).getContext('2d')
-
+      var mainLabels = [
+             'فروردین'
+            , 'اردیبهشت'
+            , 'خرداد'
+            , 'تیر'
+            , 'مرداد'
+            , 'شهریور'
+            , 'مهر'
+            , 'آبان'
+            , 'آذر'
+            , 'دی'
+            , 'بهمن'
+            , 'اسفند'
+        ];
+      var labels = [];
+      var results = @JSON($results);
+      for(var i = 0;i < results.length;i++){
+          labels.push(mainLabels[i])
+      }
+      console.log(mainLabels, labels)
       var areaChartData = {
-        labels  : ['مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند'],
+        labels ,
         datasets: [
           {
-            label               : 'Digital Goods',
+            label               : 'دانش آموزان',
             backgroundColor     : 'rgba(60,141,188,0.9)',
             borderColor         : 'rgba(60,141,188,0.8)',
             pointRadius          : false,
@@ -244,19 +250,19 @@
             pointStrokeColor    : 'rgba(60,141,188,1)',
             pointHighlightFill  : '#fff',
             pointHighlightStroke: 'rgba(60,141,188,1)',
-            data                : [28, 48, 40, 19, 86, 27]
+            data                : results
           },
-          {
-            label               : 'Electronics',
-            backgroundColor     : 'rgba(210, 214, 222, 1)',
-            borderColor         : 'rgba(210, 214, 222, 1)',
-            pointRadius         : false,
-            pointColor          : 'rgba(210, 214, 222, 1)',
-            pointStrokeColor    : '#c1c7d1',
-            pointHighlightFill  : '#fff',
-            pointHighlightStroke: 'rgba(220,220,220,1)',
-            data                : [65, 59, 80, 81, 56, 55]
-          },
+        //   {
+        //     label               : 'Electronics',
+        //     backgroundColor     : 'rgba(210, 214, 222, 1)',
+        //     borderColor         : 'rgba(210, 214, 222, 1)',
+        //     pointRadius         : false,
+        //     pointColor          : 'rgba(210, 214, 222, 1)',
+        //     pointStrokeColor    : '#c1c7d1',
+        //     pointHighlightFill  : '#fff',
+        //     pointHighlightStroke: 'rgba(220,220,220,1)',
+        //     data                : [65, 59, 80, 81, 56, 55]
+        //   },
         ]
       }
 
