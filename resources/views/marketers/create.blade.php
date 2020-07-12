@@ -59,6 +59,7 @@
                         <div class="form-group">
                             <label for="egucation_level">مقطع</label>
                             <select  id="egucation_level" name="egucation_level" class="form-control">
+                                <option value=""></option>
                                 @if (isset($student) && isset($student->id) && $student->egucation_level == "6")
                                 <option value="6" selected>
                                 @else
@@ -114,6 +115,13 @@
                                 <option value="13" >
                                 @endif
                                 فارغ التحصیل
+                                </option>
+                                @if (isset($student) && isset($student->id) && $student->egucation_level == "14")
+                                <option value="14" selected>
+                                @else
+                                <option value="14" >
+                                @endif
+                                دانشجو
                                 </option>
                             </select>
                         </div>
