@@ -6,6 +6,11 @@
         "art"=>"هنر",
         "other"=>"دیگر"
     ];
+    $egucation_levels = [
+        "13" => "فارغ التحصیل",
+        "13" => "دانشجو",
+        null => ""
+    ];
 @endphp
 @extends('layouts.index')
 
@@ -261,7 +266,7 @@
                                     </div>
                                     <div class="col">
                                         مقطع :
-                                       {{ $item->egucation_level!='13'?$item->egucation_level:'فارغ التحصیل' }}
+                                       {{ $egucation_levels[$item->] }}
                                     </div>
                                     <div class="col">
                                         شماره موبایل والدین :
