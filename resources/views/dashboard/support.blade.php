@@ -33,9 +33,9 @@
                   <!--<h3>150</h3>-->
 
                     <p class="text-center">
-                        <a href="{{ route('students') }}" class="text-light btn">
-                        تقسیم داشن آموز
-                        <span class="badge badge-warning right">{{ $devideStudents }}</span>
+                        <a href="{{ route('supporter_students') }}" class="text-light btn">
+                        ورودی جدید
+                        <span class="badge badge-warning right">{{ $newStudents }}</span>
                         </a>
                     </p>
                 </div>
@@ -55,31 +55,9 @@
                     <!--<h3>150</h3>-->
 
                       <p class="text-center">
-                        <a href="{{ route('students') }}" class="text-light btn">
-                            ورودی امروز
-                            <span class="badge badge-warning right">{{ $todayStudents }}</span>
-                        </a>
-                    </p>
-                  </div>
-                  <!--
-                  <div class="icon">
-                    <i class="ion ion-bag"></i>
-                  </div>
-                  <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-                  -->
-                </div>
-              </div>
-            <!-- ./col -->
-            <div class="col-lg-4 col-6">
-                <!-- small box -->
-                <div class="small-box bg-orange">
-                  <div class="inner p-0">
-                    <!--<h3>150</h3>-->
-
-                      <p class="text-center">
-                        <a href="{{ route('students') }}" class="text-light btn">
-                            ورودی گذشته
-                            <span class="badge badge-warning right">{{ $devideStudents - $todayStudents }}</span>
+                        <a href="{{ route('messages') }}" class="text-light btn">
+                            پیام های دریافتی
+                            <span class="badge badge-warning right">{{ count($usermessages) }}</span>
                         </a>
                     </p>
                   </div>
@@ -94,73 +72,6 @@
             <!-- ./col -->
           </div>
           <!-- /.row -->
-          <!-- Main row -->
-          <div class="row">
-            <div class="col-lg-4 col-6">
-              <!-- small box -->
-              <div class="small-box bg-orange">
-                <div class="inner p-0">
-                  <!--<h3>150</h3>-->
-
-                    <p class="text-center">
-                        <a href="{{ route('messages') }}" class="text-light btn">
-                        پیام دریافتی از پشتیبان
-                        </a>
-                    </p>
-                </div>
-                <!--
-                <div class="icon">
-                  <i class="ion ion-bag"></i>
-                </div>
-                <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-                -->
-              </div>
-            </div>
-            <!-- ./col -->
-            <div class="col-lg-4 col-6">
-                <!-- small box -->
-                <div class="small-box bg-orange">
-                  <div class="inner p-0">
-                    <!--<h3>150</h3>-->
-
-                      <p class="text-center">
-                        <a href="#" class="text-light btn">
-                            گزارش فروش پشتیبان
-                        </a>
-                    </p>
-                  </div>
-                  <!--
-                  <div class="icon">
-                    <i class="ion ion-bag"></i>
-                  </div>
-                  <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-                  -->
-                </div>
-              </div>
-            <!-- ./col -->
-            <div class="col-lg-4 col-6">
-                <!-- small box -->
-                <div class="small-box bg-success">
-                  <div class="inner p-0">
-                    <!--<h3>150</h3>-->
-
-                      <p class="text-center">
-                        <a href="{{ route('student_create') }}" class="text-light btn">
-                            ثبت دانش آموز جدید
-                        </a>
-                    </p>
-                  </div>
-                  <!--
-                  <div class="icon">
-                    <i class="ion ion-bag"></i>
-                  </div>
-                  <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-                  -->
-                </div>
-              </div>
-            <!-- ./col -->
-          </div>
-          <!-- /.row (main row) -->
           <div class="row">
             <div class="col-md-3">
                 <h4 style="margin-top: 110px;">
@@ -173,27 +84,6 @@
                     <canvas id="areaChart" style="height: 250px; min-height: 250px; display: block; width: 524px;" width="524" height="250" class="chartjs-render-monitor"></canvas>
                 </div>
             </div>
-          </div>
-          <div class="row">
-            <div class="col">
-                <p>
-                  <strong>تعداد دانش  آموزان پشتیبان</strong>
-                </p>
-                @foreach ($supporters as $item)
-                <div class="progress-group">
-                    {{ $item->first_name }} {{ $item->last_name }}
-                    <span class="float-right"><b>{{ count($item->students) }}</b>/{{ $item->max_student?$item->max_student:0 }}</span>
-                    <div class="progress progress-sm">
-                       @if ($item->max_student && $item->max_student>0)
-                        <div class="progress-bar bg-primary" style="width: {{ count($item->students)*100/$item->max_student }}%"></div>
-                      @else
-                        <div class="progress-bar bg-primary" style="width: 100%"></div>
-                      @endif
-                    </div>
-                </div>
-                <!-- /.progress-group -->
-                @endforeach
-              </div>
           </div>
         </div><!-- /.container-fluid -->
       </section>

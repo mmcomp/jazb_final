@@ -59,6 +59,41 @@
                         <div class="form-group">
                             <label for="egucation_level">مقطع</label>
                             <select  id="egucation_level" name="egucation_level" class="form-control">
+                                @if (isset($student) && isset($student->id) && $student->egucation_level == "6")
+                                <option value="6" selected>
+                                @else
+                                <option value="6" >
+                                @endif
+                                6
+                                </option>
+                                @if (isset($student) && isset($student->id) && $student->egucation_level == "7")
+                                <option value="7" selected>
+                                @else
+                                <option value="7" >
+                                @endif
+                                7
+                                </option>
+                                @if (isset($student) && isset($student->id) && $student->egucation_level == "8")
+                                <option value="8" selected>
+                                @else
+                                <option value="8" >
+                                @endif
+                                8
+                                </option>
+                                @if (isset($student) && isset($student->id) && $student->egucation_level == "9")
+                                <option value="9" selected>
+                                @else
+                                <option value="9" >
+                                @endif
+                                9
+                                </option>
+                                @if (isset($student) && isset($student->id) && $student->egucation_level == "10")
+                                <option value="10" selected>
+                                @else
+                                <option value="10" >
+                                @endif
+                                10
+                                </option>
                                 @if (isset($student) && isset($student->id) && $student->egucation_level == "11")
                                 <option value="11" selected>
                                 @else
@@ -78,7 +113,7 @@
                                 @else
                                 <option value="13" >
                                 @endif
-                                13
+                                فارغ التحصیل
                                 </option>
                             </select>
                         </div>
@@ -104,6 +139,7 @@
                         <div class="form-group">
                             <label for="major">رشته</label>
                             <select  id="major" name="major" class="form-control">
+                                <option value=""></option>
                                 @if (isset($student) && isset($student->id) && $student->major == "mathematics")
                                 <option value="mathematics" selected>
                                 @else
@@ -124,6 +160,20 @@
                                 <option value="humanities" >
                                 @endif
                                 انسانی
+                                </option>
+                                @if (isset($student) && isset($student->id) && $student->major == "art")
+                                <option value="art" selected>
+                                @else
+                                <option value="art" >
+                                @endif
+                                هنر
+                                </option>
+                                @if (isset($student) && isset($student->id) && $student->major == "other")
+                                <option value="other" selected>
+                                @else
+                                <option value="other" >
+                                @endif
+                                دیگر
                                 </option>
                             </select>
                         </div>

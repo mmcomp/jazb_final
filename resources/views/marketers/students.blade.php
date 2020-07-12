@@ -2,7 +2,9 @@
     $majors = [
         "mathematics"=>"ریاضی",
         "experimental"=>"تجربی",
-        "humanities"=>"انسانی"
+        "humanities"=>"انسانی",
+        "art"=>"هنر",
+        "other"=>"دیگر"
     ];
 @endphp
 @extends('layouts.index')
@@ -72,7 +74,7 @@
                     </div>
                 </form>
                 </div>
-                
+
                 <table id="example2" class="table table-bordered table-hover">
                   <thead>
                   <tr>
@@ -116,7 +118,7 @@
                                     </div>
                                     <div class="col">
                                         مقطع :
-                                        {{ $item->egucation_level }}
+                                        {{ $item->egucation_level!='13'?$item->egucation_level:'فارغ التحصیل' }}
                                     </div>
                                     <div class="col">
                                         شماره موبایل والدین :
@@ -135,7 +137,7 @@
                                     </div>
                                     <div class="col">
                                         رشته تحصیلی :
-                                        {{ $majors[$item->major] }}
+                                        {{ isset($majors[$item->major])?$majors[$item->major]:'-' }}
                                     </div>
                                 </div>
                                 <div class="row">
@@ -246,7 +248,7 @@
                 }            }
         }
     }
-    
+
     $(function () {
         $.ajaxSetup({
             headers: {
