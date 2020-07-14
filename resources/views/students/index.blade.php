@@ -8,7 +8,7 @@
     ];
     $egucation_levels = [
         "13" => "فارغ التحصیل",
-        "13" => "دانشجو",
+        "14" => "دانشجو",
         null => ""
     ];
 @endphp
@@ -265,7 +265,7 @@
                                     </div>
                                     <div class="col">
                                         مقطع :
-                                        {{ $egucation_levels[$item->egucation_level] }}
+                                        {{ isset($egucation_levels[$item->egucation_level])?$egucation_levels[$item->egucation_level]:$item->egucation_level }}
                                     </div>
                                     <div class="col">
                                         شماره موبایل والدین :
