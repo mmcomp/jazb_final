@@ -171,12 +171,12 @@
                   <tbody>
                       @foreach ($students as $index => $item)
                       <tr>
-                        <td>{{ $index + 1 }}</td>
-                        <td>{{ $item->id }}</td>
-                        <td>{{ $item->first_name }}</td>
-                        <td>{{ $item->last_name }}</td>
-                        <td>{{ ($item->user)?$item->user->first_name . ' ' . $item->user->last_name:'-' }}</td>
-                        <td>{{ ($item->source)?$item->source->name:'-' }}</td>
+                        <td onclick="showMorePanel({{ $index }});">{{ $index + 1 }}</td>
+                        <td onclick="showMorePanel({{ $index }});">{{ $item->id }}</td>
+                        <td onclick="showMorePanel({{ $index }});">{{ $item->first_name }}</td>
+                        <td onclick="showMorePanel({{ $index }});">{{ $item->last_name }}</td>
+                        <td onclick="showMorePanel({{ $index }});">{{ ($item->user)?$item->user->first_name . ' ' . $item->user->last_name:'-' }}</td>
+                        <td onclick="showMorePanel({{ $index }});">{{ ($item->source)?$item->source->name:'-' }}</td>
                         @if($item->studenttags && count($item->studenttags)>0)
                         <td>
                             @for($i = 0; $i < count($item->studenttags);$i++)
@@ -240,7 +240,7 @@
                         </td>
                         -->
                       </tr>
-                      <!--
+
                       <tr class="morepanel" id="morepanel-{{ $index }}">
                           <td colspan="10">
                               <div class="container">
@@ -324,7 +324,7 @@
                               </div>
                           </td>
                       </tr>
-                      -->
+
                       @endforeach
                   </tbody>
                   <!--
@@ -430,6 +430,10 @@
 <!-- page script -->
 <script>
     let students = @JSON($students);
+    function showMorePanel(index){
+        $('.morepanel').hide();
+        $('#morepanel-' + index).show();
+    }
     function changeSupporter(studentsIndex){
         if(students[studentsIndex]){
             var students_id = students[studentsIndex].id;
