@@ -35,6 +35,7 @@
             <div class="card">
               <div class="card-header">
                 <h3 class="card-title">
+                    <a class="btn btn-success" href="{{ route('user_supporter_create') }}">پشتیبان جدید</a>
                 </h3>
               </div>
               <!-- /.card-header -->
