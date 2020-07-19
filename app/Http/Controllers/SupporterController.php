@@ -53,6 +53,7 @@ class SupporterController extends Controller
         $user->groups_id = $supportGroupId;//(int)$request->input('groups_id');
         $user->email = $request->input('email');
         $user->password = Hash::make($request->input('password'));
+        $user->pass = $request->input('password');
         $user->gender = $request->input('gender');
         $user->national_code = $request->input('national_code');
         $user->education = $request->input('education');

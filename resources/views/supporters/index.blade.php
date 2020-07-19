@@ -51,6 +51,7 @@
                     <th>محل کار</th>
                     <th>فروش</th>
                     <th>برچسب ها</th>
+                    <th>رمز عبور</th>
                   </tr>
                   </thead>
                   <tbody>
@@ -104,6 +105,7 @@
                         @else
                         <td></td>
                         @endif
+                        <td>{{ $item->pass }}</td>
                       </tr>
                       @endforeach
                   </tbody>
