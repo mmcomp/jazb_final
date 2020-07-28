@@ -1,5 +1,6 @@
 @extends('layouts.index')
 
+
 @section('content')
 <!-- Content Header (Page header) -->
 <section class="content-header">
@@ -35,15 +36,12 @@
                         <div class="col-md-12">
                             فیلم ها
                         </div>
-                        <div class="col-md-12">
                         @foreach ($helps as $index => $item)
                             @if($item->type=='video')
-                            <div style="width: 150px;">
+                            <div class="col-md-3 col-sm-4 col-xs-6" >
                                 <div class="card card-outline card-primary">
                                     <div class="card-header">
-                                        <a target="_blank" href="#" onclick="$('#load-frame').prop('src', '{{ $item->link }}');return false;" ><!--href="{{ $item->link }}">-->
-                                            <img src="/dist/img/{{$item->type}}.png" style="height: 100px;width: 100px;" />
-                                        </a>
+                                        <img class="w-100" onclick="showVideo('{{ $item->link }}')" src="/dist/img/{{$item->type}}.png" />
                                     </div>
                                     <div class="card-body">
                                         {{$item->name}}
@@ -52,21 +50,17 @@
                             </div>
                             @endif
                         @endforeach
-                        </div>
                     </div>
                     <div class="row border p-1 m-1">
                         <div class="col-md-12">
                             فایل های آموزشی
                         </div>
-                        <div class="col-md-12">
                         @foreach ($helps as $index => $item)
                             @if($item->type=='file')
-                            <div style="width: 150px;">
+                            <div class="col-md-3 col-sm-4 col-xs-6" >
                                 <div class="card card-outline card-primary">
                                     <div class="card-header">
-                                        <a target="_blank"  href="#" onclick="$('#load-frame').prop('src', '{{ $item->link }}');return false;" ><!--href="{{ $item->link }}">-->
-                                            <img src="/dist/img/{{$item->type}}.png" style="height: 100px;width: 100px;" />
-                                        </a>
+                                        <img class="w-100" onclick="showVideo('{{ $item->link }}')" src="/dist/img/{{$item->type}}.png" />
                                     </div>
                                     <div class="card-body">
                                         {{$item->name}}
@@ -75,7 +69,6 @@
                             </div>
                             @endif
                         @endforeach
-                        </div>
                     </div>
                 </div>
                 <!-- /.card-body -->
@@ -87,7 +80,7 @@
     <!-- /.row -->
     <div class="row">
         <div class="col-12">
-            <iframe id="load-frame" style="width: 100%;height: 500px;"></iframe>
+            <iframe id="load-frame" style="width: 100%;height: 500px;" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" ></iframe>
         </div>
     </div>
 </section>
@@ -125,6 +118,12 @@
                 e.preventDefault();
             }
         });
+        showVideo = (inp) => {
+            $('#load-frame').prop('src', inp);
+            $('html, body').animate({
+                scrollTop: $("#load-frame").offset().top
+            }, 500);
+        }
     });
 
 </script>
