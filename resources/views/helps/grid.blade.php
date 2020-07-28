@@ -41,7 +41,7 @@
                             <div style="width: 150px;">
                                 <div class="card card-outline card-primary">
                                     <div class="card-header">
-                                        <a target="_blank" href="{{ $item->link }}">
+                                        <a target="_blank" href="#" onclick="$('#load-frame').prop('src', '{{ $item->link }}');return false;" ><!--href="{{ $item->link }}">-->
                                             <img src="/dist/img/{{$item->type}}.png" style="height: 100px;width: 100px;" />
                                         </a>
                                     </div>
@@ -64,7 +64,7 @@
                             <div style="width: 150px;">
                                 <div class="card card-outline card-primary">
                                     <div class="card-header">
-                                        <a target="_blank" href="{{ $item->link }}">
+                                        <a target="_blank"  href="#" onclick="$('#load-frame').prop('src', '{{ $item->link }}');return false;" ><!--href="{{ $item->link }}">-->
                                             <img src="/dist/img/{{$item->type}}.png" style="height: 100px;width: 100px;" />
                                         </a>
                                     </div>
@@ -85,6 +85,11 @@
         <!-- /.col -->
     </div>
     <!-- /.row -->
+    <div class="row">
+        <div class="col-12">
+            <iframe id="load-frame" style="width: 100%;"></iframe>
+        </div>
+    </div>
 </section>
 <!-- /.content -->
 @endsection
