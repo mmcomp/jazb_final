@@ -87,7 +87,7 @@
     <!-- /.row -->
     <div class="row">
         <div class="col-12">
-            <iframe id="load-frame" style="width: 100%;"></iframe>
+            <iframe id="load-frame" style="width: 100%;height: 500px;"></iframe>
         </div>
     </div>
 </section>

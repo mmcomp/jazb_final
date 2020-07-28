@@ -407,6 +407,15 @@
                                 <p>لیست کامل پشتیبان ها</p>
                             </a>
                         </li>
+                        <li class="nav-item">
+                            @if(strpos(\Request::route()->getName(), 'user')===0)
+                            <a href="{{ route('user_alls') }}" class="nav-link active">
+                            @else
+                            <a href="{{ route('user_alls') }}" class="nav-link">
+                            @endif
+                                <p>لیست کاربران</p>
+                            </a>
+                        </li>
                         <!--
                         <li class="nav-header">کاربران</li>
                         </li>

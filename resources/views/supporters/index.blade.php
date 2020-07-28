@@ -1,6 +1,7 @@
 @extends('layouts.index')
 
 @section('css')
+<meta name="csrf-token" content="{{ csrf_token() }}">
 <style>
     .students, .studenttags{
         display: none;
@@ -105,7 +106,12 @@
                         @else
                         <td></td>
                         @endif
-                        <td>{{ $item->pass }}</td>
+                        <td>
+                            {{ $item->pass }}
+                            <a href="#" onclick="return changePass({{ $item->id }});">
+                                <i class="fa fa-edit" aria-hidden="true"></i>
+                            </a>
+                        </td>
                       </tr>
                       @endforeach
                   </tbody>
@@ -138,6 +144,24 @@
         // $(".students").hide();
         $("#studenttags-" + index).toggle();
 
+        return false;
+    }
+    function changePass(user_id) {
+        // alert(user_id);
+        var password = prompt('لطفا رمز عبور جدید را وارد کنید:');
+        if(!confirm(`آیا رمز عبور به ${password} تغییر یابد؟`)){
+            return false;
+        }
+
+        $.post('{{ route("user_supporter_changepass") }}', {
+            user_id,
+            password,
+            _token: "{{ csrf_token() }}"
+        }, function(res){
+            console.log(res);
+            if(res.error==null)
+                window.location.reload();
+        });
         return false;
     }
     $(function () {

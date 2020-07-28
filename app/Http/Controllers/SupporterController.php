@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Gate;
 
 use App\Group;
 use App\Student;
@@ -244,6 +245,34 @@ class SupporterController extends Controller
         $call->next_to_call = $request->input('next_to_call');
         $call->next_call = $request->input('next_call');
         $call->save();
+
+        return [
+            "error"=>null,
+            "data"=>null
+        ];
+    }
+
+    public function changePass(Request $request){
+        if(!Gate::allows('parameters')){
+            return [
+                "error"=>"permission denied",
+                "data"=>null
+            ];
+        }
+
+        $user_id = $request->input('user_id');
+
+        $user = User::where('id', $user_id)->where('is_deleted', false)->first();
+        if($user==null){
+            return [
+                "error"=>"user_not_found",
+                "data"=>null
+            ];
+        }
+
+        $user->password = Hash::make($request->input('password'));
+        $user->pass = $request->input('password');
+        $user->save();
 
         return [
             "error"=>null,
