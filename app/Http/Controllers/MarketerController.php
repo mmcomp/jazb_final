@@ -107,7 +107,7 @@ class MarketerController extends Controller
                 "student"=>$student
             ]);
         }
-
+        $tmp = Student::where('phone', $request->input('phone'))->select('id')->first();
         $student->users_id = Auth::user()->id;
         $student->marketers_id = $student->users_id ;
         $student->first_name = $request->input('first_name');
@@ -124,9 +124,26 @@ class MarketerController extends Controller
         $student->average = $request->input('average');
         $student->major = $request->input('major');
         $student->student_phone = $request->input('student_phone');
+        if(isset($tmp) && $tmp->id > 0){
+            $student->id = -1;
+            return view('marketers.create', [
+                "supports"=>$supports,
+                "consultants"=>$consultants,
+                "sources"=>$sources,
+                "student"=>$student,
+                "msg" => 'دانش آموز قبلا ثبت شده است '
+            ]);
+        }
         $student->save();
 
         $request->session()->flash("msg_success", "دانش آموز با موفقیت افزوده شد.");
+        \Artisan::call('createWpUser', [
+            'user'        => $student->phone,
+            'pass'        => $student->phone,
+            'first_name'  => $student->first_name,
+            'last_name'   => $student->last_name,
+            'marketers_id'=> $student->marketers_id
+        ]);
         return redirect()->route('marketermystudents');
     }
     public function students(){
