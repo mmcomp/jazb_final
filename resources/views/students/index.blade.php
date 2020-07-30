@@ -298,6 +298,8 @@
                                         {{ jdate(strtotime($item->created_at))->format("Y/m/d") }}
                                     </div>
                                     <div class="col">
+                                        تلفن :
+                                        {{ $item->phone }}
                                     </div>
                                 </div>
                                 <div class="row">
