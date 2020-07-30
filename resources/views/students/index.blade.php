@@ -367,16 +367,64 @@
                 <h3 class="text-center">
                     اخلاقی
                 </h3>
+                <div>
+                    <select id="parent-one" onchange="selectParentOne(this);">
+                        <option value="">همه</option>
+                        @foreach ($parentOnes as $item)
+                        <option value="{{ $item->id }}">{{$item->name}}</option>
+                        @endforeach
+                    </select>
+
+                    <select id="parent-two" onchange="selectParentTwo(this);">
+                        <option value="">همه</option>
+                        @foreach ($parentTwos as $item)
+                        <option value="{{ $item->id }}">{{$item->name}}</option>
+                        @endforeach
+                    </select>
+
+                    <select id="parent-three" onchange="selectParentThree(this);">
+                        <option value="">همه</option>
+                        @foreach ($parentThrees as $item)
+                        <option value="{{ $item->id }}">{{$item->name}}</option>
+                        @endforeach
+                    </select>
+
+                    <select id="parent-four" onchange="selectParentFour(this);">
+                        <option value="">همه</option>
+                        @foreach ($parentFours as $item)
+                        <option value="{{ $item->id }}">{{$item->name}}</option>
+                        @endforeach
+                    </select>
+                </div>
                 @foreach ($moralTags as $index => $item)
                     <input type="checkbox" class="tag-checkbox" id="tag_{{ $item->id }}" value="{{ $item->id }}" />
+                    <span class="tag-title" id="tag-title-{{ $item->id }}">
                     {{ $item->name }}
+                    </span>
                 @endforeach
                 <h3 class="text-center">
                     نیازسنجی
                 </h3>
+                <div>
+                    <select id="collection-one" onchange="selectCollectionOne(this);">
+                        <option value="">همه</option>
+                        @foreach ($firstCollections as $item)
+                        <option value="{{ $item->id }}">{{$item->name}}</option>
+                        @endforeach
+                    </select>
+
+                    <select id="collection-two" onchange="selectCollectionTwo(this);">
+                        <option value="">همه</option>
+                        @foreach ($secondCollections as $item)
+                        <option value="{{ $item->id }}" data-parent_id="{{$item->parent_id}}">{{$item->name}}</option>
+                        @endforeach
+                    </select>
+                </div>
                 @foreach ($needTags as $index => $item)
                     <input type="checkbox" class="collection-checkbox" id="collection_{{ $item->id }}" value="{{ $item->id }}" />
+                    <span class="collection-title" id="collection-title-{{ $item->id }}">
                     {{ $item->name }}
+                    </span>
                 @endforeach
             </p>
         </div>
@@ -430,6 +478,26 @@
 <!-- page script -->
 <script>
     let students = @JSON($students);
+    let parentOnes = @JSON($parentOnes);
+    let parentTwos = @JSON($parentTwos);
+    let parentThrees = @JSON($parentThrees);
+    let parentFours = @JSON($parentFours);
+    let tmpTags = @JSON($moralTags);
+    let tmpCollections = @JSON($needTags);
+    let tags = {};
+    let collections = {};
+    for(let tg of tmpTags){
+        tags[tg.id] = tg;
+    }
+    for(let cl of tmpCollections){
+        collections[cl.id] = cl;
+    }
+    let filterParents = {
+        parent1: '',
+        parent2: '',
+        parent3: '',
+        parent4: ''
+    }
     function showMorePanel(index){
         $('.morepanel').hide();
         $('#morepanel-' + index).show();
@@ -455,6 +523,114 @@
         }
         return false;
     }
+    function selectParentOne(dobj){
+        filterParents.parent1 = ($(dobj).val()!='')?parseInt($(dobj).val(), 10):'';
+        filterTagsByParent()
+    }
+    function selectParentTwo(dobj){
+        filterParents.parent2 = ($(dobj).val()!='')?parseInt($(dobj).val(), 10):'';
+        filterTagsByParent()
+    }
+    function selectParentThree(dobj){
+        filterParents.parent3 = ($(dobj).val()!='')?parseInt($(dobj).val(), 10):'';
+        filterTagsByParent()
+    }
+    function selectParentFour(dobj){
+        filterParents.parent4 = ($(dobj).val()!='')?parseInt($(dobj).val(), 10):'';
+        filterTagsByParent()
+    }
+    function filterTagsByParent(){
+        $("input.tag-checkbox").show();
+        $("span.tag-title").show();
+        $("input.tag-checkbox").each(function (id, field){
+            console.log('checking', field)
+            let tagId = parseInt($(field).val(), 10);
+            let theTag = tags[tagId];
+            console.log(tagId, theTag)
+            if(theTag){
+                if(filterParents.parent1!=''){
+                    if(filterParents.parent1!=theTag.parent1){
+                        $(field).hide();
+                        $("#tag-title-" + tagId).hide();
+                    }
+                }
+                if(filterParents.parent2!=''){
+                    if(filterParents.parent2!=theTag.parent2){
+                        $(field).hide();
+                        $("#tag-title-" + tagId).hide();
+                    }
+                }
+                if(filterParents.parent3!=''){
+                    if(filterParents.parent3!=theTag.parent3){
+                        $(field).hide();
+                        $("#tag-title-" + tagId).hide();
+                    }
+                }
+                if(filterParents.parent4!=''){
+                    if(filterParents.parent4!=theTag.parent4){
+                        $(field).hide();
+                        $("#tag-title-" + tagId).hide();
+                    }
+                }
+            }
+
+        });
+    }
+    function selectCollectionOne(dobj){
+        $("#collection-two").find('option').show();
+        if($(dobj).val()!=''){
+            $("#collection-two").find('option').each(function(id, field){
+                if($(field).data('parent_id')!=$(dobj).val()){
+                    $(field).hide();
+                }else{
+                    $(field).show();
+                }
+            });
+        }
+        filterCollectionsByParent();
+    }
+    function selectCollectionTwo(dobj){
+        console.log('hey');
+        filterCollectionsByParent();
+    }
+    function filterCollectionsByParent(){
+        $("input.collection-checkbox").show();
+        $("span.collection-title").show();
+        let collectionParents = $("#collection-two").val();
+        let parents = [];
+        if($("#collection-one").val()=='' && collectionParents==''){
+            return false;
+        }
+
+
+        parents.push(parseInt($("#collection-one").val(), 10));
+
+        if(collectionParents==''){
+            $("#collection-two").find('option').each(function(id, field){
+                if($(field).css('display')!='none'){
+                    parents.push(parseInt($(field).val(), 10));
+                }
+            });
+        }else {
+            parents.push(parseInt(collectionParents, 10))
+        }
+        console.log(parents);
+
+        $("input.collection-checkbox").each(function (id, field){
+            // console.log('checking', field)
+            let collectionId = parseInt($(field).val(), 10);
+            let theCollection = collections[collectionId];
+            console.log(collectionId, theCollection)
+            if(theCollection){
+                console.log(parents.indexOf(theCollection.id), parents.indexOf(theCollection.parent_id));
+                if(parents.indexOf(theCollection.id)<0 && parents.indexOf(theCollection.parent_id)<0){
+                    $(field).hide();
+                    $("#collection-title-" + collectionId).hide();
+                }
+            }
+
+        });
+    }
     function preloadTagModal(){
         $("input.tag-checkbox").prop('checked', false);
         $("input.collection-checkbox").prop('checked', false);
@@ -468,7 +644,8 @@
                 console.log(students[studentsIndex].studentcollections);
                 for(studentcollection of students[studentsIndex].studentcollections){
                     $("#collection_" + studentcollection.collections_id).prop("checked", true);
-                }            }
+                }
+            }
         }
     }
     function preloadTemperatureModal(){

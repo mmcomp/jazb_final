@@ -14,6 +14,10 @@ use App\Source;
 use App\StudentTag;
 use App\StudentTemperature;
 use App\Tag;
+use App\TagParentOne;
+use App\TagParentTwo;
+use App\TagParentThree;
+use App\TagParentFour;
 use App\Temperature;
 use App\StudentCollection;
 
@@ -65,8 +69,20 @@ class StudentController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
         // dd(DB::getQueryLog());
-        $moralTags = Tag::where('is_deleted', false)->where('type', 'moral')->get();
+        $moralTags = Tag::where('is_deleted', false)
+            // ->with('parent_one')
+            // ->with('parent_two')
+            // ->with('parent_three')
+            // ->with('parent_four')
+            ->where('type', 'moral')
+            ->get();
+        $parentOnes = TagParentOne::has('tags')->get();
+        $parentTwos = TagParentTwo::has('tags')->get();
+        $parentThrees = TagParentThree::has('tags')->get();
+        $parentFours = TagParentFour::has('tags')->get();
         $collections = Collection::where('is_deleted', false)->get();
+        $firstCollections = Collection::where('is_deleted', false)->where('parent_id', 0)->get();
+        $secondCollections = Collection::where('is_deleted', false)->whereIn('parent_id', $firstCollections->pluck('id'))->get();
         $hotTemperatures = Temperature::where('is_deleted', false)->where('status', 'hot')->get();
         $coldTemperatures = Temperature::where('is_deleted', false)->where('status', 'cold')->get();
 
@@ -82,6 +98,12 @@ class StudentController extends Controller
             'needTags'=>$collections,
             'hotTemperatures'=>$hotTemperatures,
             'coldTemperatures'=>$coldTemperatures,
+            "parentOnes"=>$parentOnes,
+            "parentTwos"=>$parentTwos,
+            "parentThrees"=>$parentThrees,
+            "parentFours"=>$parentFours,
+            "firstCollections"=>$firstCollections,
+            "secondCollections"=>$secondCollections,
             'msg_success' => request()->session()->get('msg_success'),
             'msg_error' => request()->session()->get('msg_error')
         ]);
