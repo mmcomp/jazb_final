@@ -392,6 +392,7 @@ class StudentController extends Controller
             foreach($student as $key=>$value){
                 $studentObject->$key = $value;
             }
+            $studentObject->is_from_site = true;
             try{
                 $studentObject->save();
                 $ids[] = $studentObject->id;
