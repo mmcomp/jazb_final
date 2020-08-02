@@ -237,6 +237,7 @@
                         strpos(\Request::route()->getName(), 'collection')===0 ||
                         strpos(\Request::route()->getName(), 'product')===0 ||
                         strpos(\Request::route()->getName(), 'source')===0 ||
+                        strpos(\Request::route()->getName(), 'user_all')===0 ||
                         strpos(\Request::route()->getName(), 'call_result')===0)
                         <li class="nav-item has-treeview menu-open">
                             @else
@@ -372,6 +373,15 @@
                                             <p>نتایج تماس</p>
                                         </a>
                                 </li>
+                                <li class="nav-item">
+                                    @if(strpos(\Request::route()->getName(), 'user_all')===0)
+                                    <a href="{{ route('user_alls') }}" class="nav-link active">
+                                    @else
+                                    <a href="{{ route('user_alls') }}" class="nav-link">
+                                    @endif
+                                        <p>تعریف پشتیبان</p>
+                                    </a>
+                                </li>
                             </ul>
                         </li>
                         @endif
@@ -405,15 +415,6 @@
                                 <a href="{{ route('user_supporters') }}" class="nav-link">
                                     @endif
                                     <p>لیست کامل پشتیبان ها</p>
-                                </a>
-                        </li>
-                        <li class="nav-item">
-                            @if(strpos(\Request::route()->getName(), 'user')===0)
-                            <a href="{{ route('user_alls') }}" class="nav-link active">
-                                @else
-                                <a href="{{ route('user_alls') }}" class="nav-link">
-                                    @endif
-                                    <p>لیست کاربران</p>
                                 </a>
                         </li>
                         @endif
