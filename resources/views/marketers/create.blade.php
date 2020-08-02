@@ -24,6 +24,9 @@
               <div class="card-header">
               </div>
               <!-- /.card-header -->
+                @isset($msg)
+                    <div class="alert alert-danger" >{{ $msg }}</div>
+                @endisset
               <div class="card-body">
                 <form method="POST" enctype="multipart/form-data">
                 @csrf
@@ -247,6 +250,7 @@
                         <button class="btn btn-primary">
                             ذخیره
                         </button>
+                        <sub>رمز عبور دانش آموز در سایت تلفن درج خواهد شد </sub>
                     </div>
                 </div>
                 </form>
