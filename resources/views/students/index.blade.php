@@ -175,7 +175,13 @@
                         <td onclick="showMorePanel({{ $index }});">{{ $item->id }}</td>
                         <td onclick="showMorePanel({{ $index }});">{{ $item->first_name }}</td>
                         <td onclick="showMorePanel({{ $index }});">{{ $item->last_name }}</td>
-                        <td onclick="showMorePanel({{ $index }});">{{ ($item->user)?$item->user->first_name . ' ' . $item->user->last_name:'-' }}</td>
+                        @if($item->user)
+                        <td onclick="showMorePanel({{ $index }});">{{ $item->user->first_name . ' ' . $item->user->last_name }}</td>
+                        @elseif($item->is_from_site)
+                        <td onclick="showMorePanel({{ $index }});">سایت</td>
+                        @else
+                        <td onclick="showMorePanel({{ $index }});">-</td>
+                        @endif
                         <td onclick="showMorePanel({{ $index }});">{{ ($item->source)?$item->source->name:'-' }}</td>
                         @if($item->studenttags && count($item->studenttags)>0)
                         <td>
