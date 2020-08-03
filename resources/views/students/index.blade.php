@@ -165,7 +165,7 @@
                     <th>برچسب</th>
                     <th>داغ/سرد</th>
                     <th>پشتیبان</th>
-                    <!-- <th>#</th> -->
+                    <th>#</th>
                   </tr>
                   </thead>
                   <tbody>
@@ -223,8 +223,11 @@
                             <br/>
                             <img id="loading-{{ $index }}" src="/dist/img/loading.gif" style="height: 20px;display: none;" />
                         </td>
-                        <!--
                         <td>
+                            <a class="btn btn-warning" href="#" onclick="$('#students_index2').val({{ $index }});preloadTemperatureModal();$('#temperature_modal').modal('show'); return false;">
+                                داغ/سرد
+                            </a>
+                        <!--
                             <a class="btn btn-warning" href="#" onclick="$('#students_index').val({{ $index }});preloadTagModal();$('#tag_modal').modal('show'); return false;">
                                 برچسب
                             </a>
@@ -237,8 +240,8 @@
                             <a class="btn btn-danger" href="{{ route('student_delete', $item->id) }}">
                                 حذف
                             </a>
-                        </td>
                         -->
+                        </td>
                       </tr>
 
                       <tr class="morepanel" id="morepanel-{{ $index }}">
