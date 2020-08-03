@@ -36,12 +36,11 @@
                   <div class="info-box-content">
                     <span class="info-box-text">لینک معرفی به دوستان</span>
                     
-                    <span class="info-box-number my-2" style="direction: ltr !important;" >
+                    <span id="ref_link" class="info-box-number my-2" style="direction: ltr !important;" >
                         https://aref-group.ir/ثبت-نام/?referrer={{ base64_encode($code) }}
-                        
                     </span>
                     
-                    <span style="cursor:pointer" >
+                    <span id="cplink" style="cursor:pointer" onclick="takeCopy('#ref_link')" >
                         <i class="far fa-copy"></i>
                         کپی پیوند
                     </span>
@@ -54,4 +53,23 @@
         <!-- /.row -->
       </section>
       <!-- /.content -->
+@endsection
+@section('js')
+  <script>
+      takeCopy = (element) => {
+        var temp = $("<input>");
+        $("body").append(temp);
+        let txt = $.trim($(element).text());
+        temp.val(txt).select();
+        document.execCommand("copy");
+        temp.remove();
+        $("#cplink").append('<sub id="cplinkdone" class="border border-right text-danger p-1 m-1" >پیوند کپی شد</sub>');
+        setTimeout(()=>{
+          $("#cplinkdone").hide('fast',()=>{
+            $("#cplinkdone").remove();
+          });
+
+        },5000);
+      }
+  </script>
 @endsection
