@@ -307,14 +307,14 @@
                                 </div>
                                 <div class="row">
                                     <div class="col">
-                                        <a href="#" onclick="$('#students_index').val({{ $index }});preloadTagModal();$('#tag_modal').modal('show'); return false;">
+                                        <a href="#" onclick="$('#students_index').val({{ $index }});preloadTagModal('moral');$('#tag_modal').modal('show'); return false;">
                                             برچسب روحیات اخلاقی
                                         </a>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col">
-                                        <a href="#" onclick="$('#students_index').val({{ $index }});preloadTagModal();$('#tag_modal').modal('show'); return false;">
+                                        <a href="#" onclick="$('#students_index').val({{ $index }});preloadTagModal('need');$('#tag_modal').modal('show'); return false;">
                                             برچسب نیازهای دانش آموز
                                         </a>
                                     </div>
@@ -369,6 +369,7 @@
         <div class="modal-body">
             <p>
                 <input type="hidden" id="students_index" />
+                <div class="morals">
                 <h3 class="text-center">
                     اخلاقی
                 </h3>
@@ -406,7 +407,10 @@
                     <span class="tag-title" id="tag-title-{{ $item->id }}">
                     {{ $item->name }}
                     </span>
+                    <br/>
                 @endforeach
+                </div>
+                <div class="needs">
                 <h3 class="text-center">
                     نیازسنجی
                 </h3>
@@ -437,7 +441,9 @@
                     <span class="collection-title" id="collection-title-{{ $item->id }}">
                     {{ $item->name }}
                     </span>
+                    <br/>
                 @endforeach
+                </div>
             </p>
         </div>
         <div class="modal-footer">
@@ -670,7 +676,14 @@
 
         });
     }
-    function preloadTagModal(){
+    function preloadTagModal(mode){
+        if(mode=='needs'){
+            $("div.needs").show();
+            $("div.morals").hide();
+        }else{
+            $("div.needs").hide();
+            $("div.morals").show();
+        }
         $("input.tag-checkbox").prop('checked', false);
         $("input.collection-checkbox").prop('checked', false);
         var studentsIndex = parseInt($("#students_index").val(), 10);
@@ -684,6 +697,7 @@
                 for(studentcollection of students[studentsIndex].studentcollections){
                     $("#collection_" + studentcollection.collections_id).prop("checked", true);
                 }
+
             }
         }
     }
