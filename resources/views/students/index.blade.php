@@ -181,8 +181,7 @@
                         <td onclick="showMorePanel({{ $index }});">سایت</td>
                         @else
                         <td onclick="showMorePanel({{ $index }});">-</td>
-                        @endif
-                        <td onclick="showMorePanel({{ $index }});">{{ ($item->source)?$item->source->name:'-' }}</td>
+                        @endif                        <td onclick="showMorePanel({{ $index }});">{{ ($item->source)?$item->source->name:'-' }}</td>
                         @if($item->studenttags && count($item->studenttags)>0)
                         <td>
                             @for($i = 0; $i < count($item->studenttags);$i++)
@@ -236,9 +235,6 @@
                         <!--
                             <a class="btn btn-warning" href="#" onclick="$('#students_index').val({{ $index }});preloadTagModal();$('#tag_modal').modal('show'); return false;">
                                 برچسب
-                            </a>
-                            <a class="btn btn-warning" href="#" onclick="$('#students_index2').val({{ $index }});preloadTemperatureModal();$('#temperature_modal').modal('show'); return false;">
-                                داغ/سرد
                             </a>
                             <a class="btn btn-primary" href="{{ route('student_edit', $item->id) }}">
                                 ویرایش
@@ -307,8 +303,6 @@
                                         {{ jdate(strtotime($item->created_at))->format("Y/m/d") }}
                                     </div>
                                     <div class="col">
-                                        تلفن :
-                                        {{ $item->phone }}
                                     </div>
                                 </div>
                                 <div class="row">
@@ -428,6 +422,13 @@
                         <option value="">همه</option>
                         @foreach ($secondCollections as $item)
                         <option value="{{ $item->id }}" data-parent_id="{{$item->parent_id}}">{{$item->name}}</option>
+                        @endforeach
+                    </select>
+
+                    <select id="collection-three" onchange="selectCollectionThree(this);">
+                        <option value="">همه</option>
+                        @foreach ($thirdCollections as $item)
+                        <option value="{{ $item->id }}" data-parent_id="{{$item->parent_id}}" data-parent_parent_id="{{$item->parent->parent_id}}">{{$item->name}}</option>
                         @endforeach
                     </select>
                 </div>
@@ -589,9 +590,21 @@
     }
     function selectCollectionOne(dobj){
         $("#collection-two").find('option').show();
+        $("#collection-two").find('option[value=""]').prop('selected', true);
         if($(dobj).val()!=''){
             $("#collection-two").find('option').each(function(id, field){
                 if($(field).data('parent_id')!=$(dobj).val()){
+                    $(field).hide();
+                }else{
+                    $(field).show();
+                }
+            });
+        }
+        $("#collection-three").find('option').show();
+        $("#collection-three").find('option[value=""]').prop('selected', true);
+        if($(dobj).val()!=''){
+            $("#collection-three").find('option').each(function(id, field){
+                if($(field).data('parent_parent_id')!=$(dobj).val()){
                     $(field).hide();
                 }else{
                     $(field).show();
@@ -602,6 +615,21 @@
     }
     function selectCollectionTwo(dobj){
         console.log('hey');
+        $("#collection-three").find('option').show();
+        $("#collection-three").find('option[value=""]').prop('selected', true);
+        if($(dobj).val()!=''){
+            $("#collection-three").find('option').each(function(id, field){
+                if($(field).data('parent_id')!=$(dobj).val()){
+                    $(field).hide();
+                }else{
+                    $(field).show();
+                }
+            });
+        }
+        filterCollectionsByParent();
+    }
+    function selectCollectionThree(dobj){
+        console.log('hey3');
         filterCollectionsByParent();
     }
     function filterCollectionsByParent(){
