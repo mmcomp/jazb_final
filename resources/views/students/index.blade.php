@@ -677,7 +677,7 @@
         });
     }
     function preloadTagModal(mode){
-        if(mode=='needs'){
+        if(mode=='need'){
             $("div.needs").show();
             $("div.morals").hide();
         }else{
