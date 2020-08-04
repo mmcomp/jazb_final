@@ -2,8 +2,8 @@
 namespace App\Classes;
 class wpApi{
     public function getWpData($command,$params){
-        $url = "https://192.168.2.81:8443/api/";
-        //$url = "https://aref-group.ir:2096/api/";
+        //$url = "https://192.168.2.81:8443/api/";
+        $url = "https://aref-group.ir:2096/api/";
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL,$url . $command);
         $data_string = json_encode($params, JSON_UNESCAPED_UNICODE);
