@@ -53,6 +53,7 @@
                     <th>فروش</th>
                     <th>برچسب ها</th>
                     <th>رمز عبور</th>
+                    <th>پیام</th>
                   </tr>
                   </thead>
                   <tbody>
@@ -106,6 +107,11 @@
                             {{ $item->pass }}
                             <a href="#" onclick="return changePass({{ $item->id }});">
                                 <i class="fa fa-edit" aria-hidden="true"></i>
+                            </a>
+                        </td>
+                        <td>
+                            <a target="_blank" href="{{ route('message_user', $item->id) }}">
+                                <i class="fa fa-envelope" aria-hidden="true"></i>
                             </a>
                         </td>
                       </tr>

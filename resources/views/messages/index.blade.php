@@ -27,7 +27,11 @@
             <div class="card">
               <div class="card-header">
                 <h3 class="card-title">
+                    @if($user)
+                    <a class="btn btn-success" href="{{ route('message_user_create', $user->id) }}">پیام جدید</a>
+                    @else
                     <a class="btn btn-success" href="{{ route('message_create') }}">پیام جدید</a>
+                    @endif
                 </h3>
               </div>
               <!-- /.card-header -->

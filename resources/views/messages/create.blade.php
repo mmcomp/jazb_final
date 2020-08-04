@@ -40,8 +40,12 @@
                         <div class="form-group">
                             <label for="recievers_id">گیرنده</label>
                             <select class="form-control select2" id="recievers_id" name="recievers_id[]" multiple >
-                                @foreach ($users as $user)
-                                    <option value="{{ $user->id }}">{{ $user->first_name }} {{ $user->last_name }}</option>
+                                @foreach ($users as $suser)
+                                    @if(isset($id) && $id == $suser->id)
+                                    <option value="{{ $suser->id }}" selected>{{ $suser->first_name }} {{ $suser->last_name }}</option>
+                                    @else
+                                    <option value="{{ $suser->id }}">{{ $suser->first_name }} {{ $suser->last_name }}</option>
+                                    @endif
                                 @endforeach
                             </select>
                         </div>

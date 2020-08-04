@@ -10,11 +10,18 @@ use App\MessageFlow;
 
 class MessageController extends Controller
 {
-    public function index(){
-        $messageIds = MessageFlow::where('users_id', Auth::user()->id)->pluck('messages_id');
+    public function index($id = null){
+        $user = null;
+        if($id==null){
+            $id = Auth::user()->id;
+        }else{
+            $user = User::find($id);
+        }
+        $messageIds = MessageFlow::where('users_id', $id)->pluck('messages_id');
         $messages = Message::where('is_deleted', false)->whereIn('id', $messageIds)->with('flows.user')->with('user')->get();
         // dd($messages);
         return view('messages.index',[
+            'user'=>$user,
             'messages' => $messages,
             'msg_success' => request()->session()->get('msg_success'),
             'msg_error' => request()->session()->get('msg_error')
@@ -64,5 +71,19 @@ class MessageController extends Controller
 
         $request->session()->flash("msg_success", "پیام با موفقیت ارسال شد.");
         return redirect()->route('messages');
+    }
+
+    public function userIndex($id) {
+        return $this->index($id);
+    }
+
+    public function userCreate($id){
+        $users = User::where('is_deleted', false)->orderBy('last_name')->get();
+        if(request()->getMethod()=='GET'){
+            return view('messages.create', [
+                "id"=>$id,
+                "users"=>$users
+            ]);
+        }
     }
 }
