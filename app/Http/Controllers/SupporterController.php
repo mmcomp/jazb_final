@@ -98,11 +98,21 @@ class SupporterController extends Controller
         return redirect()->route('user_supporters');
     }
 
-    public function student(){
-        Student::where('is_deleted', false)->where('supporters_id', Auth::user()->id)->where('viewed', false)->update([
+    public function students($id){
+        return $this->student($id);
+    }
+
+    public function student($id = null){
+        $user = null;
+        if($id==null){
+            $id = Auth::user()->id;
+        }else {
+            $user = User::find($id);
+        }
+        Student::where('is_deleted', false)->where('supporters_id', $id)->where('viewed', false)->update([
             'viewed'=>true
         ]);
-        $students = Student::where('is_deleted', false)->where('supporters_id', Auth::user()->id);
+        $students = Student::where('is_deleted', false)->where('supporters_id', $id);
         $sources = Source::where('is_deleted', false)->get();
         $products = Product::where('is_deleted', false)->with('collection')->orderBy('name')->get();
         foreach($products as $index => $product){
@@ -201,6 +211,7 @@ class SupporterController extends Controller
         $collections = Collection::where('is_deleted', false)->get();
 
         return view('supporters.student',[
+            'user'=>$user,
             'students' => $students,
             'sources' => $sources,
             'name' => $name,

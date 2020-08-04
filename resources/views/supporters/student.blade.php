@@ -48,6 +48,9 @@ $egucation_levels = [
         <div class="row mb-2">
             <div class="col-sm-6">
                 <h1>دانش آموزان</h1>
+                @if($user)
+                <small>{{ $user->first_name }} {{ $user->last_name }}</small>
+                @endif
             </div>
             <div class="col-sm-6">
                 <!--

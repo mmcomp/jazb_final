@@ -68,17 +68,13 @@
                         <td>{{ $item->last_name }}</td>
                         @if($item->students && count($item->students)>0)
                         <td>
-                            <a onclick="return showStudents({{ $index }});" href="#">{{ count($item->students) }}</a>
-                            <div class="students" id="students-{{ $index }}">
-                                @foreach ($item->students as $sitem)
-                                    <span >
-                                        {{ $sitem->first_name }} {{ $sitem->last_name }} [{{ $sitem->phone }}]
-                                    </span><br/>
-                                    @php
-                                        $purchaseCount += count($sitem->purchases);
-                                    @endphp
-                                @endforeach
-                            </div>
+                            <a target="_blank" href="{{ route('supporter_allstudents', $item->id) }}">{{ count($item->students) }}</a>
+                            @php $purchaseCount = 0; @endphp
+                            @foreach ($item->students as $sitem)
+                                @php
+                                    $purchaseCount += count($sitem->purchases);
+                                @endphp
+                            @endforeach
                         </td>
                         @else
                         <td>0</td>
