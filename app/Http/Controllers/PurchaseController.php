@@ -36,7 +36,15 @@ class PurchaseController extends Controller
     {
         $purchase = new Purchase();
         $students = Student::where('is_deleted', false)->get();
-        $products = Product::where('is_deleted', false)->get();
+        $products = Product::where('is_deleted', false)->with('collection')->orderBy('name')->get();
+        foreach($products as $index => $product){
+            $products[$index]->parents = "-";
+            if($product->collection) {
+                $parents = $product->collection->parents();
+                $name = ($parents!='')?$parents . "->" . $product->collection->name : $product->collection->name;
+                $products[$index]->parents = $name;
+            }
+        }
         if($request->getMethod()=='GET'){
             return view('purchases.create', [
                 'purchase'=>$purchase,
