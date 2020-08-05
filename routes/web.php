@@ -115,6 +115,7 @@ Route::group(['middleware' => ['auth', 'message']], function () {
 
     Route::group(['prefix' => '/students'], function () {
         Route::any('/', 'StudentController@index')->name('students');
+        Route::any('/all', 'StudentController@indexAll')->name('student_all');
         Route::any('/create', 'StudentController@create')->name('student_create');
         Route::any('/edit/{id}', 'StudentController@edit')->name('student_edit');
         Route::get('/delete/{id}', 'StudentController@delete')->name('student_delete');

@@ -56,7 +56,7 @@
               </div>
               <!-- /.card-header -->
               <div class="card-body">
-                <!--
+
                 <h3 class="text-center">
                    فیلتر
                 </h3>
@@ -116,6 +116,7 @@
                         </div>
                     </div>
                 </form>
+                <!--
                 <h3 class="text-center">
                     مرتب سازی
                 </h3>

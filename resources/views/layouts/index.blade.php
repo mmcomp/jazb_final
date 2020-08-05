@@ -400,22 +400,32 @@
                         <li class="nav-item">
                             @if(strpos(\Request::route()->getName(), 'students')===0)
                             <a href="{{ route('students') }}" class="nav-link active">
-                                @else
-                                <a href="{{ route('students') }}" class="nav-link">
-                                    @endif
-                                    <!-- <i class="far fa-circle nav-icon"></i> -->
-                                    <p>ورودی و تقسیم دانش آموز</p>
-                                </a>
+                            @else
+                            <a href="{{ route('students') }}" class="nav-link">
+                            @endif
+                                <!-- <i class="far fa-circle nav-icon"></i> -->
+                                <p>ورودی و تقسیم دانش آموز</p>
+                            </a>
                         </li>
                         <li class="nav-item">
                             @if(strpos(\Request::route()->getName(), 'student_csv')===0)
                             <a href="{{ route('student_csv') }}" class="nav-link active">
-                                @else
-                                <a href="{{ route('student_csv') }}" class="nav-link">
-                                    @endif
-                                    <!-- <i class="far fa-circle nav-icon"></i> -->
-                                    <p>ثبت دانش آموز از اکسل</p>
-                                </a>
+                            @else
+                            <a href="{{ route('student_csv') }}" class="nav-link">
+                            @endif
+                                <!-- <i class="far fa-circle nav-icon"></i> -->
+                                <p>ثبت دانش آموز از اکسل</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            @if(strpos(\Request::route()->getName(), 'student_all')===0)
+                            <a href="{{ route('student_all') }}" class="nav-link active">
+                            @else
+                            <a href="{{ route('student_all') }}" class="nav-link">
+                            @endif
+                                <!-- <i class="far fa-circle nav-icon"></i> -->
+                                <p>فهرست دانش آموزان</p>
+                            </a>
                         </li>
                         @endif
                         @if (Gate::allows('users'))
