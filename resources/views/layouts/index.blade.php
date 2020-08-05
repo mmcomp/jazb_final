@@ -255,123 +255,123 @@
                                 <li class="nav-item">
                                     @if(strpos(\Request::route()->getName(), 'parent_tag_one')===0)
                                     <a href="{{ route('parent_tag_ones') }}" class="nav-link active">
-                                        @else
-                                        <a href="{{ route('parent_tag_ones') }}" class="nav-link">
-                                            @endif
-                                            <!-- <i class="far fa-circle nav-icon"></i> -->
-                                            -
-                                            <p>برچسب اصلی اخلاقی</p>
-                                        </a>
+                                    @else
+                                    <a href="{{ route('parent_tag_ones') }}" class="nav-link">
+                                    @endif
+                                        <!-- <i class="far fa-circle nav-icon"></i> -->
+                                        -
+                                        <p>برچسب اصلی اخلاقی</p>
+                                    </a>
                                 </li>
                                 <li class="nav-item">
                                     @if(strpos(\Request::route()->getName(), 'parent_tag_two')===0)
                                     <a href="{{ route('parent_tag_twos') }}" class="nav-link active">
-                                        @else
-                                        <a href="{{ route('parent_tag_twos') }}" class="nav-link">
-                                            @endif
-                                            <!-- <i class="far fa-circle nav-icon"></i> -->
-                                            -
-                                            <p>برچسب فرعی 1 اخلاقی</p>
-                                        </a>
+                                    @else
+                                    <a href="{{ route('parent_tag_twos') }}" class="nav-link">
+                                    @endif
+                                        <!-- <i class="far fa-circle nav-icon"></i> -->
+                                        -
+                                        <p>برچسب فرعی 1 اخلاقی</p>
+                                    </a>
                                 </li>
                                 <li class="nav-item">
                                     @if(strpos(\Request::route()->getName(), 'parent_tag_three')===0)
                                     <a href="{{ route('parent_tag_threes') }}" class="nav-link active">
-                                        @else
-                                        <a href="{{ route('parent_tag_threes') }}" class="nav-link">
-                                            @endif
-                                            <!-- <i class="far fa-circle nav-icon"></i> -->
-                                            -
-                                            <p>برچسب فرعی 2 اخلاقی</p>
-                                        </a>
+                                    @else
+                                    <a href="{{ route('parent_tag_threes') }}" class="nav-link">
+                                    @endif
+                                        <!-- <i class="far fa-circle nav-icon"></i> -->
+                                        -
+                                        <p>برچسب فرعی 2 اخلاقی</p>
+                                    </a>
                                 </li>
                                 <li class="nav-item">
                                     @if(strpos(\Request::route()->getName(), 'parent_tag_four')===0)
                                     <a href="{{ route('parent_tag_fours') }}" class="nav-link active">
-                                        @else
-                                        <a href="{{ route('parent_tag_fours') }}" class="nav-link">
-                                            @endif
-                                            <!-- <i class="far fa-circle nav-icon"></i> -->
-                                            -
-                                            <p>برچسب فرعی 3 اخلاقی</p>
-                                        </a>
+                                    @else
+                                    <a href="{{ route('parent_tag_fours') }}" class="nav-link">
+                                    @endif
+                                        <!-- <i class="far fa-circle nav-icon"></i> -->
+                                        -
+                                        <p>برچسب فرعی 3 اخلاقی</p>
+                                    </a>
                                 </li>
                                 <li class="nav-item">
                                     @if(strpos(\Request::route()->getName(), 'tag')===0)
                                     <a href="{{ route('tags') }}" class="nav-link active">
-                                        @else
-                                        <a href="{{ route('tags') }}" class="nav-link">
-                                            @endif
-                                            <!-- <i class="far fa-circle nav-icon"></i> -->
-                                            -
-                                            <p>اخلاقی</p>
-                                        </a>
+                                    @else
+                                    <a href="{{ route('tags') }}" class="nav-link">
+                                    @endif
+                                        <!-- <i class="far fa-circle nav-icon"></i> -->
+                                        -
+                                        <p>اخلاقی</p>
+                                    </a>
                                 </li>
                                 <li class="nav-item">
                                     @if(strpos(\Request::route()->getName(), 'school')===0)
                                     <a href="{{ route('schools') }}" class="nav-link active">
-                                        @else
-                                        <a href="{{ route('schools') }}" class="nav-link">
-                                            @endif
-                                            <!-- <i class="far fa-circle nav-icon"></i> -->
-                                            -
-                                            <p>تعریف مدرسه</p>
-                                        </a>
+                                    @else
+                                    <a href="{{ route('schools') }}" class="nav-link">
+                                    @endif
+                                        <!-- <i class="far fa-circle nav-icon"></i> -->
+                                        -
+                                        <p>تعریف مدرسه</p>
+                                    </a>
                                 </li>
                                 <li class="nav-item">
                                     @if(strpos(\Request::route()->getName(), 'temperature')===0)
                                     <a href="{{ route('temperatures') }}" class="nav-link active">
-                                        @else
-                                        <a href="{{ route('temperatures') }}" class="nav-link">
-                                            @endif
-                                            <!-- <i class="far fa-circle nav-icon"></i> -->
-                                            -
-                                            <p>داغ/سرد</p>
-                                        </a>
+                                    @else
+                                    <a href="{{ route('temperatures') }}" class="nav-link">
+                                    @endif
+                                        <!-- <i class="far fa-circle nav-icon"></i> -->
+                                        -
+                                        <p>داغ/سرد</p>
+                                    </a>
                                 </li>
                                 <li class="nav-item">
                                     @if(strpos(\Request::route()->getName(), 'collection')===0)
                                     <a href="{{ route('collections') }}" class="nav-link active">
-                                        @else
-                                        <a href="{{ route('collections') }}" class="nav-link">
-                                            @endif
-                                            <!-- <i class="far fa-circle nav-icon"></i> -->
-                                            -
-                                            <p>دسته محصولات</p>
-                                        </a>
+                                    @else
+                                    <a href="{{ route('collections') }}" class="nav-link">
+                                    @endif
+                                        <!-- <i class="far fa-circle nav-icon"></i> -->
+                                        -
+                                        <p>دسته محصولات</p>
+                                    </a>
                                 </li>
                                 <li class="nav-item">
                                     @if(strpos(\Request::route()->getName(), 'product')===0)
                                     <a href="{{ route('products') }}" class="nav-link active">
-                                        @else
-                                        <a href="{{ route('products') }}" class="nav-link">
-                                            @endif
-                                            <!-- <i class="far fa-circle nav-icon"></i> -->
-                                            -
-                                            <p>محصول</p>
-                                        </a>
+                                    @else
+                                    <a href="{{ route('products') }}" class="nav-link">
+                                    @endif
+                                        <!-- <i class="far fa-circle nav-icon"></i> -->
+                                        -
+                                        <p>محصول</p>
+                                    </a>
                                 </li>
                                 <li class="nav-item">
                                     @if(strpos(\Request::route()->getName(), 'source')===0)
                                     <a href="{{ route('sources') }}" class="nav-link active">
-                                        @else
-                                        <a href="{{ route('sources') }}" class="nav-link">
-                                            @endif
+                                    @else
+                                    <a href="{{ route('sources') }}" class="nav-link">
+                                    @endif
                                             <!-- <i class="far fa-circle nav-icon"></i> -->
-                                            -
-                                            <p>منبع</p>
-                                        </a>
+                                        -
+                                        <p>منبع</p>
+                                    </a>
                                 </li>
                                 <li class="nav-item">
                                     @if(strpos(\Request::route()->getName(), 'call_result')===0)
                                     <a href="{{ route('call_results') }}" class="nav-link active">
-                                        @else
-                                        <a href="{{ route('call_results') }}" class="nav-link">
-                                            @endif
-                                            <!-- <i class="far fa-circle nav-icon"></i> -->
-                                            -
-                                            <p>نتایج تماس</p>
-                                        </a>
+                                    @else
+                                    <a href="{{ route('call_results') }}" class="nav-link">
+                                    @endif
+                                        <!-- <i class="far fa-circle nav-icon"></i> -->
+                                        -
+                                        <p>نتایج تماس</p>
+                                    </a>
                                 </li>
                                 <li class="nav-item">
                                     @if(strpos(\Request::route()->getName(), 'user_all')===0)
@@ -379,7 +379,18 @@
                                     @else
                                     <a href="{{ route('user_alls') }}" class="nav-link">
                                     @endif
+                                        -
                                         <p>تعریف پشتیبان</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    @if(strpos(\Request::route()->getName(), 'sale_suggestion')===0)
+                                    <a href="{{ route('sale_suggestions') }}" class="nav-link active">
+                                    @else
+                                    <a href="{{ route('sale_suggestions') }}" class="nav-link">
+                                    @endif
+                                        -
+                                        <p>تعریف شروط</p>
                                     </a>
                                 </li>
                             </ul>
@@ -419,6 +430,7 @@
                         </li>
                         @endif
                         @if (Gate::allows('sale_suggestions'))
+                        <!--
                         <li class="nav-item">
                             @if(strpos(\Request::route()->getName(), 'sale_suggestion')===0)
                             <a href="{{ route('sale_suggestions') }}" class="nav-link active">
@@ -428,6 +440,7 @@
                                     <p> پیشنهاد فروش برای دانش آموز</p>
                                 </a>
                         </li>
+                        -->
                         @endif
                         @if (Gate::allows('purchases'))
                         <li class="nav-item">
