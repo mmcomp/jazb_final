@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use App\Message;
 use App\User;
 use App\MessageFlow;
@@ -19,7 +20,7 @@ class MessageController extends Controller
         }
         $messageIds = MessageFlow::where('users_id', $id)->pluck('messages_id');
         $messages = Message::where('is_deleted', false)->whereIn('id', $messageIds)->with('flows.user')->with('user')->get();
-        // dd($messages);
+        // dd(Str::limit($messages[0]->message, 10));
         return view('messages.index',[
             'user'=>$user,
             'messages' => $messages,
@@ -28,13 +29,22 @@ class MessageController extends Controller
         ]);
     }
 
-    public function create(Request $request)
+    public function create(Request $request, $id = null)
     {
         $users = User::where('is_deleted', false)->orderBy('last_name')->get();
         $message = new Message;
+        if($id!=null){
+            $message = Message::find($id);
+            if($message==null){
+                $message = new Message;
+            }else{
+                // dd($message);
+            }
+        }
         if($request->getMethod()=='GET'){
             return view('messages.create', [
-                "users"=>$users
+                "users"=>$users,
+                "message"=>$message
             ]);
         }
 
@@ -85,5 +95,9 @@ class MessageController extends Controller
                 "users"=>$users
             ]);
         }
+    }
+
+    public function messageCreate($id){
+        return $this->create(request(), $id);
     }
 }

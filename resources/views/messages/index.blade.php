@@ -1,5 +1,13 @@
 @extends('layouts.index')
 
+@section('css')
+<style>
+table tr {
+    cursor: pointer;
+}
+</style>
+@endsection
+
 @section('content')
     <!-- Content Header (Page header) -->
     <section class="content-header">
@@ -44,21 +52,22 @@
                     <th>ایجاد کننده</th>
                     <th>پیام</th>
                     <th>ضمیمه</th>
-                    <th>گیرنده ها</th>
+                    <!--<th>گیرنده ها</th>-->
                   </tr>
                   </thead>
                   <tbody>
-                      @foreach ($messages as $index => $item)
+                    @foreach ($messages as $index => $item)
                       <tr>
-                        <td>{{ $index + 1 }}</td>
-                        <td>{{ $item->id }}</td>
-                        <td>{{ ($item->user)?$item->user->first_name . ' ' . $item->user->last_name:'-' }}</td>
-                        <td>{{ $item->message }}</td>
+                        <td href="{{ route('message_message_create', $item->id) }}">{{ $index + 1 }}</td>
+                        <td href="{{ route('message_message_create', $item->id) }}">{{ $item->id }}</td>
+                        <td href="{{ route('message_message_create', $item->id) }}">{{ ($item->user)?$item->user->first_name . ' ' . $item->user->last_name:'-' }}</td>
+                        <td href="{{ route('message_message_create', $item->id) }}">{!! Str::limit(str_replace("\n", "<br/>", $item->message), 100) !!}</td>
                         @if($item->attachment)
                         <td><a target="_blank" href="/uploads/{{ $item->attachment }}">ضمیمه</a></td>
                         @else
-                        <td></td>
+                        <td href="{{ route('message_message_create', $item->id) }}"></td>
                         @endif
+                        <!--
                         <td>
                             @foreach ($item->flows as $fitem)
                                 <span class="alert alert-primary">
@@ -66,8 +75,9 @@
                                 </span>
                             @endforeach
                         </td>
+                        -->
                       </tr>
-                      @endforeach
+                    @endforeach
                   </tbody>
                 </table>
               </div>
@@ -89,6 +99,12 @@
 <!-- page script -->
 <script>
     $(function () {
+        $('table td').click(function(){
+            if($(this).attr('href')){
+                window.location = $(this).attr('href');
+                return false;
+            }
+        });
     //   $("#example1").DataTable();
       $('#example2').DataTable({
         "paging": true,

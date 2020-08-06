@@ -162,6 +162,7 @@ Route::group(['middleware' => ['auth', 'message']], function () {
         Route::any('/create', 'MessageController@create')->name('message_create');
         Route::get('/user/{id}', 'MessageController@userIndex')->name('message_user');
         Route::any('/user_create/{id}', 'MessageController@userCreate')->name('message_user_create');
+        Route::any('/message_create/{id}', 'MessageController@messageCreate')->name('message_message_create');
     });
 
     Route::group(['prefix' => '/purchases'], function () {

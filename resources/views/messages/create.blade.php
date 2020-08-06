@@ -41,7 +41,7 @@
                             <label for="recievers_id">گیرنده</label>
                             <select class="form-control select2" id="recievers_id" name="recievers_id[]" multiple >
                                 @foreach ($users as $suser)
-                                    @if(isset($id) && $id == $suser->id)
+                                    @if((isset($id) && $id == $suser->id) || (isset($message->id) && $message->users_id==$suser->id))
                                     <option value="{{ $suser->id }}" selected>{{ $suser->first_name }} {{ $suser->last_name }}</option>
                                     @else
                                     <option value="{{ $suser->id }}">{{ $suser->first_name }} {{ $suser->last_name }}</option>
@@ -67,8 +67,7 @@
                     <div class="col">
                         <div class="form-group">
                             <label for="message">پیام</label>
-                            <textarea class="form-control" id="message" name="message">
-                            </textarea>
+                            <textarea class="form-control" id="message" name="message">{{ (isset($message->id))?"   \n_________________________________________\nپاسخ به :\n" . $message->message:'' }}</textarea>
                         </div>
                     </div>
                 </div>
