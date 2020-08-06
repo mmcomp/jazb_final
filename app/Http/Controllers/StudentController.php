@@ -284,6 +284,9 @@ class StudentController extends Controller
         $student->introducing = $request->input('introducing');
         $student->student_phone = $request->input('student_phone');
         $student->sources_id = $request->input('sources_id');
+        if($student->supporters_id != $request->input('supporters_id') && $student->supporter_seen){
+            $student->supporter_seen = false;
+        }
         $student->supporters_id = $request->input('supporters_id');
         $student->save();
 
@@ -471,6 +474,7 @@ class StudentController extends Controller
         }
 
         $student->supporters_id = $supporters_id;
+        $student->supporter_seen = false;
         $student->save();
 
         return [
