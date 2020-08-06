@@ -166,6 +166,7 @@
                     <th>برچسب</th>
                     <th>داغ/سرد</th>
                     <th>پشتیبان</th>
+                    <th>توضیحات</th>
                     <th>#</th>
                   </tr>
                   </thead>
@@ -182,7 +183,8 @@
                         <td onclick="showMorePanel({{ $index }});">سایت</td>
                         @else
                         <td onclick="showMorePanel({{ $index }});">-</td>
-                        @endif                        <td onclick="showMorePanel({{ $index }});">{{ ($item->source)?$item->source->name:'-' }}</td>
+                        @endif
+                        <td onclick="showMorePanel({{ $index }});">{{ ($item->source)?$item->source->name:'-' }}</td>
                         @if($item->studenttags && count($item->studenttags)>0)
                         <td>
                             @for($i = 0; $i < count($item->studenttags);$i++)
@@ -229,6 +231,7 @@
                             <br/>
                             <img id="loading-{{ $index }}" src="/dist/img/loading.gif" style="height: 20px;display: none;" />
                         </td>
+                        <td onclick="showMorePanel({{ $index }});">{{ $item->description }}</td>
                         <td>
                             <a class="btn btn-warning" href="#" onclick="$('#students_index2').val({{ $index }});preloadTemperatureModal();$('#temperature_modal').modal('show'); return false;">
                                 داغ/سرد

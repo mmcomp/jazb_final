@@ -341,6 +341,11 @@ class StudentController extends Controller
                             $student->supporters_id = (int)$line[14];
                         }
                     }
+                    if(isset($line[15])){
+                        if($line[15]=="NULL" && $line[15]==""){
+                            $student->description = (int)$line[15];
+                        }
+                    }
                     try{
                         $student->save();
                     }catch(Exception $e){
