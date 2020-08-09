@@ -586,12 +586,21 @@
                         @endif
                         @if(Gate::allows('supporters'))
                         <li class="nav-item">
-                            @if(strpos(\Request::route()->getName(), 'supporter_student')===0)
+                            @if(strpos(\Request::route()->getName(), 'supporter_students')===0)
                             <a href="{{ route('supporter_students') }}" class="nav-link active">
                                 @else
                                 <a href="{{ route('supporter_students') }}" class="nav-link">
                                     @endif
                                     <p>لیست کامل دانش آموزان</p>
+                                </a>
+                        </li>
+                        <li class="nav-item">
+                            @if(strpos(\Request::route()->getName(), 'supporter_student_new')===0)
+                            <a href="{{ route('supporter_student_new') }}" class="nav-link active">
+                                @else
+                                <a href="{{ route('supporter_student_new') }}" class="nav-link">
+                                    @endif
+                                    <p>ورودی جدید</p>
                                 </a>
                         </li>
                         @endif

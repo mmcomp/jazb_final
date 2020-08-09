@@ -13,6 +13,10 @@ use App\User;
 use App\Source;
 use App\Product;
 use App\Tag;
+use App\TagParentOne;
+use App\TagParentTwo;
+use App\TagParentThree;
+use App\TagParentFour;
 use App\Temperature;
 use App\Call;
 use App\CallResult;
@@ -109,9 +113,9 @@ class SupporterController extends Controller
         }else {
             $user = User::find($id);
         }
-        Student::where('is_deleted', false)->where('supporters_id', $id)->where('viewed', false)->update([
-            'viewed'=>true
-        ]);
+        // Student::where('is_deleted', false)->where('supporters_id', $id)->where('viewed', false)->update([
+        //     'viewed'=>true
+        // ]);
         $students = Student::where('is_deleted', false)->where('supporters_id', $id);
         $sources = Source::where('is_deleted', false)->get();
         $products = Product::where('is_deleted', false)->with('collection')->orderBy('name')->get();
@@ -233,6 +237,81 @@ class SupporterController extends Controller
             'msg_error' => request()->session()->get('msg_error')
         ]);
     }
+
+    public function newStudents(){
+        $students = Student::where('is_deleted', false)->where('supporter_seen', false)->where('supporters_id', Auth::user()->id);
+        $sources = Source::where('is_deleted', false)->get();
+        $name = null;
+        $sources_id = null;
+        $phone = null;
+        if(request()->getMethod()=='POST'){
+            // dump(request()->all());
+            if(request()->input('name')!=null){
+                $name = trim(request()->input('name'));
+                $students = $students->where(function ($query) use ($name) {
+                    $query->where('first_name', 'like', '%' . $name . '%')->orWhere('last_name', 'like', '%' . $name . '%');
+                });
+            }
+            if(request()->input('sources_id')!=null){
+                $sources_id = (int)request()->input('sources_id');
+                $students = $students->where('sources_id', $sources_id);
+            }
+            if(request()->input('phone')!=null){
+                $phone = (int)request()->input('phone');
+                $students = $students->where('phone', $phone);
+            }
+        }
+        // DB::enableQueryLog();
+        $students = $students
+            ->with('user')
+            ->with('studenttags.tag')
+            ->with('studentcollections.collection')
+            ->with('studenttemperatures.temperature')
+            ->with('source')
+            ->with('consultant')
+            ->with('supporter')
+            ->orderBy('created_at', 'desc')
+            ->get();
+        // dd(DB::getQueryLog());
+        $moralTags = Tag::where('is_deleted', false)
+            // ->with('parent_one')
+            // ->with('parent_two')
+            // ->with('parent_three')
+            // ->with('parent_four')
+            ->where('type', 'moral')
+            ->get();
+        $parentOnes = TagParentOne::has('tags')->get();
+        $parentTwos = TagParentTwo::has('tags')->get();
+        $parentThrees = TagParentThree::has('tags')->get();
+        $parentFours = TagParentFour::has('tags')->get();
+        $collections = Collection::where('is_deleted', false)->get();
+        $firstCollections = Collection::where('is_deleted', false)->where('parent_id', 0)->get();
+        $secondCollections = Collection::where('is_deleted', false)->whereIn('parent_id', $firstCollections->pluck('id'))->get();
+        $thirdCollections = Collection::where('is_deleted', false)->with('parent')->whereIn('parent_id', $secondCollections->pluck('id'))->get();
+        $hotTemperatures = Temperature::where('is_deleted', false)->where('status', 'hot')->get();
+        $coldTemperatures = Temperature::where('is_deleted', false)->where('status', 'cold')->get();
+
+        return view('supporters.new',[
+            'students' => $students,
+            'sources' => $sources,
+            'name' => $name,
+            'sources_id' => $sources_id,
+            'phone' => $phone,
+            'moralTags'=>$moralTags,
+            'needTags'=>$collections,
+            'hotTemperatures'=>$hotTemperatures,
+            'coldTemperatures'=>$coldTemperatures,
+            "parentOnes"=>$parentOnes,
+            "parentTwos"=>$parentTwos,
+            "parentThrees"=>$parentThrees,
+            "parentFours"=>$parentFours,
+            "firstCollections"=>$firstCollections,
+            "secondCollections"=>$secondCollections,
+            "thirdCollections"=>$thirdCollections,
+            'msg_success' => request()->session()->get('msg_success'),
+            'msg_error' => request()->session()->get('msg_error')
+        ]);
+    }
     //---------------------AJAX-----------------------------------
     public function call(Request $request){
         $students_id = $request->input('students_id');
@@ -288,6 +367,30 @@ class SupporterController extends Controller
         return [
             "error"=>null,
             "data"=>null
+        ];
+    }
+
+    public function seen(Request $request){
+        if($request->input('student_id')==null){
+            return [
+                "error"=>"InvalidInput",
+                "data"=>null
+            ];
+        }
+
+        $student = Student::find($request->input('student_id'));
+        if($student==null){
+            return [
+                "error"=>"StudentNotFound",
+                "data"=>null
+            ];
+        }
+
+        $student->supporter_seen = true;
+        $student->save();
+        return [
+            "error"=>null,
+            "data"=>$student
         ];
     }
 }
