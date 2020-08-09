@@ -70,7 +70,7 @@ $persons = [
                       <tr>
                         <td>{{ $index + 1 }}</td>
                         <td>{{ $item->id }}</td>
-                        <td>{{ ($item->product)?$item->product->name:'-' }}</td>
+                        <td>{{ ($item->product)?(($item->product->parents!='-')?$item->product->parents . '->':'') . $item->product->name:'-' }}</td>
                         <td>{{ $persons[$item->replier] }}</td>
                         <td>{{ ($item->callresult)?$item->callresult->title:'-' }}</td>
                         <td>{{ ($item->next_call)?jdate($item->next_call)->format("Y/m/d"):'-' }}</td>

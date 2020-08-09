@@ -314,7 +314,18 @@ class SupporterController extends Controller
     }
 
     public function calls($id) {
-        $student = Student::where('id', $id)->with('calls.product')->with('calls.callresult')->first();
+        $student = Student::where('id', $id)->with('calls.product')->with('calls.product.collection')->with('calls.callresult')->first();
+        if($student->calls)
+            foreach($student->calls as $index=>$call){
+                if($student->calls[$index]->product){
+                    $student->calls[$index]->product->parents = "-";
+                    if($student->calls[$index]->product->collection) {
+                        $parents = $student->calls[$index]->product->collection->parents();
+                        $name = ($parents!='')?$parents . "->" . $student->calls[$index]->product->collection->name : $student->calls[$index]->product->collection->name;
+                        $student->calls[$index]->product->parents = $name;
+                    }
+                }
+            }
         return view('supporters.call',[
             "student"=>$student
         ]);
