@@ -194,7 +194,7 @@ $egucation_levels = [
                         <div class="col text-center p-1">
                         </div>
                     </div>-->
-                    <table id="example2" class="table table-bordered table-hover datatables1">
+                    <table id="example2" class="table table-bordered table-hover _datatables">
                         <thead>
                             <tr>
                                 <th>ردیف</th>
@@ -350,6 +350,13 @@ $egucation_levels = [
                                         </div>
                                         <div class="row">
                                             <div class="col">
+                                                <a target="_blank" href="{{ route('supporter_student_allcall', $item->id) }}">
+                                                    گزارش تماس ها
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col">
                                                 <a class="btn btn-success" href="#" onclick="students_id = {{ $item->id }};$('#call_modal').modal('show');return false;">
                                                     ثبت تماس
                                                 </a>
@@ -371,6 +378,7 @@ $egucation_levels = [
                                                 </thead>
                                                 <tbody>
                                                     @foreach($item->calls as $cindex => $call)
+                                                    @if($cindex < 5)
                                                     <tr>
                                                         <td>{{ $cindex + 1 }}</td>
                                                         <td>{{ $call->id }}</td>
@@ -381,6 +389,7 @@ $egucation_levels = [
                                                         <td>{{ ($call->next_call)?$persons[$call->next_to_call]:'' }}</td>
                                                         <td>{{ $call->description }}</td>
                                                     </tr>
+                                                    @endif
                                                     @endforeach
                                                 </tbody>
                                             </table>
@@ -780,23 +789,23 @@ $egucation_levels = [
         });
         $('select.select2').select2();
 
-        // $("table.datatables").DataTable({
-        //     "paging": true,
-        //     "lengthChange": false,
-        //     "searching": false,
-        //     "ordering": true,
-        //     "info": true,
-        //     "autoWidth": true,
-        //     "language": {
-        //         "paginate": {
-        //             "previous": "قبل",
-        //             "next": "بعد"
-        //         },
-        //         "emptyTable": "داده ای برای نمایش وجود ندارد",
-        //         "info": "نمایش _START_ تا _END_ از _TOTAL_ داده",
-        //         "infoEmpty": "نمایش 0 تا 0 از 0 داده",
-        //     }
-        // });
+        $("table.datatables").DataTable({
+            "paging": true,
+            "lengthChange": false,
+            "searching": false,
+            "ordering": true,
+            "info": true,
+            "autoWidth": true,
+            "language": {
+                "paginate": {
+                    "previous": "قبل",
+                    "next": "بعد"
+                },
+                "emptyTable": "داده ای برای نمایش وجود ندارد",
+                "info": "نمایش _START_ تا _END_ از _TOTAL_ داده",
+                "infoEmpty": "نمایش 0 تا 0 از 0 داده",
+            }
+        });
     });
 
 </script>

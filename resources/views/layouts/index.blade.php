@@ -591,7 +591,7 @@
                                 @else
                                 <a href="{{ route('supporter_students') }}" class="nav-link">
                                     @endif
-                                    <p>لیست کامل دانش آموزان</p>
+                                    <p>فهرست دانش آموزان/ تماس</p>
                                 </a>
                         </li>
                         <li class="nav-item">

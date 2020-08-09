@@ -312,6 +312,13 @@ class SupporterController extends Controller
             'msg_error' => request()->session()->get('msg_error')
         ]);
     }
+
+    public function calls($id) {
+        $student = Student::where('id', $id)->with('calls.product')->with('calls.callresult')->first();
+        return view('supporters.call',[
+            "student"=>$student
+        ]);
+    }
     //---------------------AJAX-----------------------------------
     public function call(Request $request){
         $students_id = $request->input('students_id');
