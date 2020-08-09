@@ -181,6 +181,8 @@
                         <td onclick="showMorePanel({{ $index }});">{{ $item->user->first_name . ' ' . $item->user->last_name }}</td>
                         @elseif($item->is_from_site)
                         <td onclick="showMorePanel({{ $index }});">سایت</td>
+                        @elseif($item->saloon)
+                        <td onclick="showMorePanel({{ $index }});">{{ $item->saloon }}</td>
                         @else
                         <td onclick="showMorePanel({{ $index }});">-</td>
                         @endif
