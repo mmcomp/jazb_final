@@ -25,6 +25,92 @@ use Exception;
 
 class StudentController extends Controller
 {
+    public function indexAll(){
+        $students = Student::where('is_deleted', false);
+        $supportGroupId = Group::getSupport();
+        if($supportGroupId)
+            $supportGroupId = $supportGroupId->id;
+        $supports = User::where('is_deleted', false)->where('groups_id', $supportGroupId)->get();
+        $sources = Source::where('is_deleted', false)->get();
+        $supporters_id = null;
+        $name = null;
+        $sources_id = null;
+        $phone = null;
+        if(request()->getMethod()=='POST'){
+            // dump(request()->all());
+            if(request()->input('supporters_id')!=null){
+                $supporters_id = (int)request()->input('supporters_id');
+                $students = $students->where('supporters_id', $supporters_id);
+            }
+            if(request()->input('name')!=null){
+                $name = trim(request()->input('name'));
+                $students = $students->where(function ($query) use ($name) {
+                    $query->where('first_name', 'like', '%' . $name . '%')->orWhere('last_name', 'like', '%' . $name . '%');
+                });
+            }
+            if(request()->input('sources_id')!=null){
+                $sources_id = (int)request()->input('sources_id');
+                $students = $students->where('sources_id', $sources_id);
+            }
+            if(request()->input('phone')!=null){
+                $phone = (int)request()->input('phone');
+                $students = $students->where('phone', $phone);
+            }
+        }
+        // DB::enableQueryLog();
+        $students = $students
+            ->with('user')
+            ->with('studenttags.tag')
+            ->with('studentcollections.collection')
+            ->with('studenttemperatures.temperature')
+            ->with('source')
+            ->with('consultant')
+            ->with('supporter')
+            ->orderBy('created_at', 'desc')
+            ->get();
+        // dd(DB::getQueryLog());
+        $moralTags = Tag::where('is_deleted', false)
+            // ->with('parent_one')
+            // ->with('parent_two')
+            // ->with('parent_three')
+            // ->with('parent_four')
+            ->where('type', 'moral')
+            ->get();
+        $parentOnes = TagParentOne::has('tags')->get();
+        $parentTwos = TagParentTwo::has('tags')->get();
+        $parentThrees = TagParentThree::has('tags')->get();
+        $parentFours = TagParentFour::has('tags')->get();
+        $collections = Collection::where('is_deleted', false)->get();
+        $firstCollections = Collection::where('is_deleted', false)->where('parent_id', 0)->get();
+        $secondCollections = Collection::where('is_deleted', false)->whereIn('parent_id', $firstCollections->pluck('id'))->get();
+        $thirdCollections = Collection::where('is_deleted', false)->with('parent')->whereIn('parent_id', $secondCollections->pluck('id'))->get();
+        $hotTemperatures = Temperature::where('is_deleted', false)->where('status', 'hot')->get();
+        $coldTemperatures = Temperature::where('is_deleted', false)->where('status', 'cold')->get();
+
+        return view('students.index',[
+            'students' => $students,
+            'supports' => $supports,
+            'sources' => $sources,
+            'supporters_id' => $supporters_id,
+            'name' => $name,
+            'sources_id' => $sources_id,
+            'phone' => $phone,
+            'moralTags'=>$moralTags,
+            'needTags'=>$collections,
+            'hotTemperatures'=>$hotTemperatures,
+            'coldTemperatures'=>$coldTemperatures,
+            "parentOnes"=>$parentOnes,
+            "parentTwos"=>$parentTwos,
+            "parentThrees"=>$parentThrees,
+            "parentFours"=>$parentFours,
+            "firstCollections"=>$firstCollections,
+            "secondCollections"=>$secondCollections,
+            "thirdCollections"=>$thirdCollections,
+            'msg_success' => request()->session()->get('msg_success'),
+            'msg_error' => request()->session()->get('msg_error')
+        ]);
+    }
+
     public function index(){
         $students = Student::where('is_deleted', false)->where('supporters_id', 0);
         $supportGroupId = Group::getSupport();
@@ -198,6 +284,9 @@ class StudentController extends Controller
         $student->introducing = $request->input('introducing');
         $student->student_phone = $request->input('student_phone');
         $student->sources_id = $request->input('sources_id');
+        if($student->supporters_id != $request->input('supporters_id') && $student->supporter_seen){
+            $student->supporter_seen = false;
+        }
         $student->supporters_id = $request->input('supporters_id');
         $student->save();
 
@@ -222,6 +311,20 @@ class StudentController extends Controller
     public function csv(Request $request){
         $msg = null;
         $fails = [];
+        $majors = [
+            'ریاضی' => 'mathematics',
+            'تجربی' => 'experimental',
+            'انسانی' => 'humanities',
+            'هنر' => 'art',
+            'غیره' => 'other'
+        ];
+        $mainMajors = [
+            'mathematics' => 'mathematics',
+            'experimental' => 'experimental',
+            'humanities' => 'humanities',
+            'art' => 'art',
+            'other' => 'other'
+        ];
         if($request->getMethod()=='POST'){
             $msg = 'بروز رسانی با موفقیت انجام شد';
             $csvPath = $request->file('attachment')->getPathname();
@@ -242,8 +345,13 @@ class StudentController extends Controller
                     $student->father_phone = $line[6]=="NULL"?null:$line[6];
                     $student->mother_phone = $line[7]=="NULL"?null:$line[7];
                     $student->school = $line[8]=="NULL"?null:$line[8];
-                    $student->average = $line[9]=="NULL"?null:$line[9];
-                    $student->major = $line[10];
+                    $student->average = ($line[9]=="NULL" || $line[9]=="")?null:str_replace('/', '.', $line[9]);
+                    $student->major = null;
+                    if(isset($majors[$line[10]])){
+                        $student->major = $majors[$line[10]];
+                    }else if(isset($mainMajors[$line[10]])) {
+                        $student->major = $line[10];
+                    }
                     $student->introducing = $line[11]=="NULL"?null:$line[11];
                     $student->student_phone = $line[12]=="NULL"?null:$line[12];
                     $student->sources_id = $sources_id;
@@ -255,6 +363,11 @@ class StudentController extends Controller
                             $student->supporters_id = (int)$line[14];
                         }
                     }
+                    if(isset($line[15])){
+                        if($line[15]=="NULL" && $line[15]==""){
+                            $student->description = (int)$line[15];
+                        }
+                    }
                     try{
                         $student->save();
                     }catch(Exception $e){
@@ -264,6 +377,7 @@ class StudentController extends Controller
                 }
             }
         }
+        // die();
         $sources = Source::where('is_deleted', false)->get();
         return view('students.csv', [
             'msg_success' => $msg,
@@ -380,6 +494,7 @@ class StudentController extends Controller
         }
 
         $student->supporters_id = $supporters_id;
+        $student->supporter_seen = false;
         $student->save();
 
         return [

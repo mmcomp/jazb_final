@@ -1,3 +1,11 @@
+@php
+$persons = [
+    "student"=>"دانش آموز",
+    "father"=>"پدر",
+    "mother"=>"مادر",
+    "other"=>"غیره"
+];
+@endphp
 @extends('layouts.index')
 
 @section('css')
@@ -14,7 +22,11 @@
         <div class="container-fluid">
           <div class="row mb-2">
             <div class="col-sm-6">
-              <h1>تماس ها</h1>
+              <h1>
+                  تماس های
+                  {{ $student->first_name }}
+                  {{ $student->last_name }}
+              </h1>
             </div>
             <div class="col-sm-6">
               <!--
@@ -35,7 +47,7 @@
             <div class="card">
               <div class="card-header">
                 <h3 class="card-title">
-                    <a class="btn btn-success" href="{{ route('user_create') }}">تماس جدید</a>
+
                 </h3>
               </div>
               <!-- /.card-header -->
@@ -45,76 +57,25 @@
                   <tr>
                     <th>ردیف</th>
                     <th>کد</th>
-                    <th>نام</th>
-                    <th>نام خانوادگی</th>
-                    <th>دانش آموزان</th>
-                    <th>محل کار</th>
-                    <th>فروش</th>
-                    <th>برچسب ها</th>
-                    <th>#</th>
+                    <th>محصول</th>
+                    <th>پاسخگو</th>
+                    <th>نتیجه</th>
+                    <th>یادآور</th>
+                    <th>پاسخگو بعد</th>
+                    <th>توضیحات</th>
                   </tr>
                   </thead>
                   <tbody>
-                      @foreach ($supporters as $index => $item)
-                      @php
-                        $purchaseCount = 0;
-                        $tags = [];
-                      @endphp
+                      @foreach ($student->calls as $index => $item)
                       <tr>
                         <td>{{ $index + 1 }}</td>
                         <td>{{ $item->id }}</td>
-                        <td>{{ $item->first_name }}</td>
-                        <td>{{ $item->last_name }}</td>
-                        @if($item->students && count($item->students)>0)
-                        <td>
-                            <a onclick="return showStudents({{ $index }});" href="#">{{ count($item->students) }}</a>
-                            <div class="students" id="students-{{ $index }}">
-                                @foreach ($item->students as $sitem)
-                                    <span >
-                                        {{ $sitem->first_name }} {{ $sitem->last_name }} [{{ $sitem->phone }}]
-                                    </span><br/>
-                                    @php
-                                        $purchaseCount += count($sitem->purchases);
-                                    @endphp
-                                @endforeach
-                            </div>
-                        </td>
-                        @else
-                        <td>0</td>
-                        @endif
-                        <td>{{ $item->work_address }}</td>
-                        <td>{{ $purchaseCount }}</td>
-                        @if($item->students && count($item->students)>0)
-                        <td>
-                            <a onclick="return showStudentTags({{ $index }});" href="#">برچسب ها</a>
-                            <div class="studenttags" id="studenttags-{{ $index }}">
-                                @foreach ($item->students as $student)
-                                @foreach ($student->studenttags as $sitem)
-                                @if(!isset($tags[$sitem->tags_id]))
-                                <span >
-                                    {{ $sitem->tag->name }}
-                                </span><br/>
-                                @php
-                                    $tags[] = $sitem->tags_id;
-                                @endphp
-                                @endif
-                                @endforeach
-                                @endforeach
-                            </div>
-                        </td>
-                        @else
-                        <td></td>
-                        @endif
-                        <td>
-                            <!--
-                            <a class="btn btn-primary" href="{{ route('user_edit', $item->id) }}">
-                                ویرایش
-                            </a>
-                            <a class="btn btn-danger" href="{{ route('user_delete', $item->id) }}">
-                                حذف
-                            </a>
-                            -->
-                        </td>
+                        <td>{{ ($item->product)?(($item->product->parents!='-')?$item->product->parents . '->':'') . $item->product->name:'-' }}</td>
+                        <td>{{ $persons[$item->replier] }}</td>
+                        <td>{{ ($item->callresult)?$item->callresult->title:'-' }}</td>
+                        <td>{{ ($item->next_call)?jdate($item->next_call)->format("Y/m/d"):'-' }}</td>
+                        <td>{{ ($item->next_to_call)?$persons[$item->next_to_call]:'-' }}</td>
+                        <td>{{ $item->description }}</td>
                       </tr>
                       @endforeach
                   </tbody>

@@ -33,7 +33,7 @@ class DashboardController extends Controller
         }
         $gates = $group->gates()->where('key', 'supporters')->get();
         if(count($gates)>0){
-            $newStudents = Student::where('is_deleted', false)->where('supporters_id', Auth::user()->id)->where('viewed', false)->count();
+            $newStudents = Student::where('is_deleted', false)->where('supporters_id', Auth::user()->id)->where('supporter_seen', false)->count();
             $year = (int)jdate()->format("Y");
             $month = (int)jdate()->format("m");
             $startOfYear = implode('-', CalendarUtils::toGregorian($year, 1, 1));

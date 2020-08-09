@@ -33,7 +33,7 @@
                   <!--<h3>150</h3>-->
 
                     <p class="text-center">
-                        <a href="{{ route('supporter_students') }}" class="text-light btn">
+                        <a href="{{ route('supporter_student_new') }}" class="text-light btn">
                         ورودی جدید
                         <span class="badge badge-warning right">{{ $newStudents }}</span>
                         </a>

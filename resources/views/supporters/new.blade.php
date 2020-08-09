@@ -51,7 +51,9 @@
             <div class="card">
               <div class="card-header">
                 <h3 class="card-title">
+                    <!--
                     <a class="btn btn-success" href="{{ route('student_create') }}">دانش آموز جدید</a>
+                    -->
                 </h3>
               </div>
               <!-- /.card-header -->
@@ -63,23 +65,6 @@
                 <form method="post">
                     @csrf
                     <div class="row">
-                        <div class="col">
-                            <div class="form-group">
-                                <label for="supporters_id">پشتیبان</label>
-                                <select  id="supporters_id" name="supporters_id" class="form-control">
-                                    <option value="">همه</option>
-                                    @foreach ($supports as $item)
-                                        @if(isset($supporters_id) && $supporters_id==$item->id)
-                                        <option value="{{ $item->id }}" selected >
-                                        @else
-                                        <option value="{{ $item->id }}" >
-                                        @endif
-                                        {{ $item->first_name }} {{ $item->last_name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
                         <div class="col">
                             <div class="form-group">
                                 <label for="sources_id">منبع</label>
@@ -165,14 +150,13 @@
                     <th>منبع ورودی شماره</th>
                     <th>برچسب</th>
                     <th>داغ/سرد</th>
-                    <th>پشتیبان</th>
                     <th>توضیحات</th>
                     <th>#</th>
                   </tr>
                   </thead>
                   <tbody>
                       @foreach ($students as $index => $item)
-                      <tr>
+                      <tr id="main-tr-{{ $item->id }}">
                         <td onclick="showMorePanel({{ $index }});">{{ $index + 1 }}</td>
                         <td onclick="showMorePanel({{ $index }});">{{ $item->id }}</td>
                         <td onclick="showMorePanel({{ $index }});">{{ $item->first_name }}</td>
@@ -211,30 +195,13 @@
                         @else
                         <td></td>
                         @endif
-                        <td>
-                            <!-- {{ ($item->supporter)?$item->supporter->first_name . ' ' . $item->supporter->last_name:'-' }} -->
-                            <select id="supporters_id_{{ $index }}" class="form-control select2">
-                                <option>-</option>
-                                @foreach ($supports as $sitem)
-                                    @if ($sitem->id==$item->supporters_id)
-                                    <option value="{{ $sitem->id }}" selected>
-                                    @else
-                                    <option value="{{ $sitem->id }}">
-                                    @endif
-                                    {{ $sitem->first_name }} {{ $sitem->last_name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            <a class="btn btn-success btn-sm" href="#" onclick="return changeSupporter({{ $index }});">
-                                ذخیره
-                            </a>
-                            <br/>
-                            <img id="loading-{{ $index }}" src="/dist/img/loading.gif" style="height: 20px;display: none;" />
-                        </td>
                         <td onclick="showMorePanel({{ $index }});">{{ $item->description }}</td>
                         <td>
                             <a class="btn btn-warning" href="#" onclick="$('#students_index2').val({{ $index }});preloadTemperatureModal();$('#temperature_modal').modal('show'); return false;">
                                 داغ/سرد
+                            </a>
+                            <a class="btn btn-danger" href="#" onclick="seenStudent({{ $item->id }}); return false;">
+                                مشاهده شد!
                             </a>
                         <!--
                             <a class="btn btn-warning" href="#" onclick="$('#students_index').val({{ $index }});preloadTagModal();$('#tag_modal').modal('show'); return false;">
@@ -298,9 +265,11 @@
                                 </div>
                                 <div class="row">
                                     <div class="col">
+                                        <!--
                                         <a href="{{ route('student_edit', $item->id) }}">
                                             ویرایش مشخصات
                                         </a>
+                                        -->
                                     </div>
                                     <div class="col">
                                         تاریخ ثبت دانش آموز :
@@ -524,27 +493,21 @@
         $('.morepanel').hide();
         $('#morepanel-' + index).show();
     }
-    function changeSupporter(studentsIndex){
-        if(students[studentsIndex]){
-            var students_id = students[studentsIndex].id;
-            var supporters_id = $("#supporters_id_" + studentsIndex).val();
-            $("#loading-" + studentsIndex).show();
-            $.post('{{ route('student_supporter') }}', {
-                students_id,
-                supporters_id
-            }, function(result){
-                $("#loading-" + studentsIndex).hide();
-                console.log('Result', result);
-                if(result.error!=null){
-                    alert('خطای بروز رسانی');
-                }
-            }).fail(function(){
-                $("#loading-" + studentsIndex).hide();
+    function seenStudent(student_id) {
+        $.post('{{ route('supporter_student_seen') }}', {
+            student_id
+        }, function(result){
+            console.log('Result', result);
+            if(result.error!=null){
                 alert('خطای بروز رسانی');
-            });
-        }
-        return false;
+            }else{
+                $("#main-tr-" + result.data.id).remove();
+            }
+        }).fail(function(){
+            alert('خطای بروز رسانی');
+        });
     }
+
     function selectParentOne(dobj){
         filterParents.parent1 = ($(dobj).val()!='')?parseInt($(dobj).val(), 10):'';
         filterTagsByParent()
