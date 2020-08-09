@@ -311,6 +311,20 @@ class StudentController extends Controller
     public function csv(Request $request){
         $msg = null;
         $fails = [];
+        $majors = [
+            'ریاضی' => 'mathematics',
+            'تجربی' => 'experimental',
+            'انسانی' => 'humanities',
+            'هنر' => 'art',
+            'غیره' => 'other'
+        ];
+        $mainMajors = [
+            'mathematics' => 'mathematics',
+            'experimental' => 'experimental',
+            'humanities' => 'humanities',
+            'art' => 'art',
+            'other' => 'other'
+        ];
         if($request->getMethod()=='POST'){
             $msg = 'بروز رسانی با موفقیت انجام شد';
             $csvPath = $request->file('attachment')->getPathname();
@@ -331,8 +345,13 @@ class StudentController extends Controller
                     $student->father_phone = $line[6]=="NULL"?null:$line[6];
                     $student->mother_phone = $line[7]=="NULL"?null:$line[7];
                     $student->school = $line[8]=="NULL"?null:$line[8];
-                    $student->average = $line[9]=="NULL"?null:$line[9];
-                    $student->major = $line[10];
+                    $student->average = ($line[9]=="NULL" || $line[9]=="")?null:str_replace('/', '.', $line[9]);
+                    $student->major = null;
+                    if(isset($majors[$line[10]])){
+                        $student->major = $majors[$line[10]];
+                    }else if(isset($mainMajors[$line[10]])) {
+                        $student->major = $line[10];
+                    }
                     $student->introducing = $line[11]=="NULL"?null:$line[11];
                     $student->student_phone = $line[12]=="NULL"?null:$line[12];
                     $student->sources_id = $sources_id;
@@ -358,6 +377,7 @@ class StudentController extends Controller
                 }
             }
         }
+        // die();
         $sources = Source::where('is_deleted', false)->get();
         return view('students.csv', [
             'msg_success' => $msg,
