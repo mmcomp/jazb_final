@@ -119,6 +119,7 @@ class SupporterController extends Controller
         $students = Student::where('is_deleted', false)->where('supporters_id', $id);
         $sources = Source::where('is_deleted', false)->get();
         $products = Product::where('is_deleted', false)->with('collection')->orderBy('name')->get();
+        $callResults = CallResult::where('is_deleted', false)->get();
         foreach($products as $index => $product){
             $products[$index]->parents = "-";
             if($product->collection) {
@@ -133,6 +134,7 @@ class SupporterController extends Controller
         $phone = null;
         $has_collection = 'false';
         $has_the_product = '';
+        $has_call_result = '';
         $has_site = 'false';
         $order_collection = 'false';
         $has_reminder = 'false';
@@ -164,6 +166,15 @@ class SupporterController extends Controller
                 $has_the_product = request()->input('has_the_product');
                 $purchases = Purchase::where('is_deleted', false)->where('type', '!=', 'site_failed')->where('products_id', $has_the_product)->pluck('students_id');
                 $students = $students->whereIn('id', $purchases);
+            }
+            if(request()->input('has_call_result')!=null && request()->input('has_call_result')!=''){
+                $has_call_result = request()->input('has_call_result');
+                $calls = Call::where('call_results_id', $has_call_result);
+                if($has_the_product!='') {
+                    $calls = $calls->where('products_id', $has_the_product);
+                }
+                $calls = $calls->pluck('students_id');
+                $students = $students->whereIn('id', $calls);
             }
             if(request()->input('has_site')!=null){
                 $has_site = request()->input('has_site');
@@ -227,8 +238,10 @@ class SupporterController extends Controller
             'coldTemperatures'=>$coldTemperatures,
             'products'=>$products,
             'callResults'=>$callResults,
+            'callResults'=>$callResults,
             'has_collection'=>$has_collection,
             'has_the_product'=>$has_the_product,
+            'has_call_result'=>$has_call_result,
             'has_site'=>$has_site,
             'order_collection'=>$order_collection,
             'has_reminder'=>$has_reminder,

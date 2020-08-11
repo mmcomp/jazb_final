@@ -120,6 +120,7 @@ $egucation_levels = [
                         </div>
                         <input type="hidden" id="has_collection" name="has_collection" value="{{ isset($has_collection)?$has_collection:'false' }}" />
                         <input type="hidden" id="has_the_product" name="has_the_product" value="{{ isset($has_the_product)?$has_the_product:'' }}" />
+                        <input type="hidden" id="has_call_result" name="has_call_result" value="{{ isset($has_call_result)?$has_call_result:'' }}" />
                         <input type="hidden" id="has_site" name="has_site" value="{{ isset($has_site)?$has_site:'false' }}" />
                         <input type="hidden" id="order_collection" name="order_collection" value="{{ isset($order_collection)?$order_collection:'false' }}" />
                         <input type="hidden" id="has_reminder" name="has_reminder" value="{{ isset($has_reminder)?$has_reminder:'false' }}" />
@@ -150,6 +151,21 @@ $egucation_levels = [
                                 <option value="{{ $product->id }}" selected>{{ $product->name }}</option>
                                 @else
                                 <option value="{{ $product->id }}">{{ $product->name }}</option>
+                                @endif
+                                @endforeach
+                            </select>
+                            <select id="has_cal_result" class="form-control select2" onchange="return selectCallResult();">
+                                @if(isset($has_call_result) && $has_call_result>0)
+                                <option value="" disabled>نتیجه تماس</option>
+                                @else
+                                <option selected value="" disabled>نتیجه تماس</option>
+                                @endif
+                                <option value="">همه</option>
+                                @foreach($callResults as $callResult)
+                                @if(isset($has_call_result) && $has_call_result==$callResult->id)
+                                <option value="{{ $callResult->id }}" selected>{{ $callResult->title }}</option>
+                                @else
+                                <option value="{{ $callResult->id }}">{{ $callResult->title }}</option>
                                 @endif
                                 @endforeach
                             </select>
@@ -769,6 +785,11 @@ $egucation_levels = [
 
     function selectProduct(){
         $("#has_the_product").val($("#has_product").val());
+        $("#search-frm").submit();
+    }
+
+    function selectCallResult(){
+        $("#has_call_result").val($("#has_cal_result").val());
         $("#search-frm").submit();
     }
 
