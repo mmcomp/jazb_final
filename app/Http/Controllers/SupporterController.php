@@ -23,6 +23,7 @@ use App\CallResult;
 use App\StudentCollection;
 use App\Collection;
 use App\Purchase;
+use App\StudentTag;
 
 class SupporterController extends Controller
 {
@@ -107,6 +108,7 @@ class SupporterController extends Controller
     }
 
     public function student($id = null){
+        // dump(request()->all());
         $user = null;
         if($id==null){
             $id = Auth::user()->id;
@@ -134,6 +136,7 @@ class SupporterController extends Controller
         $phone = null;
         $has_collection = 'false';
         $has_the_product = '';
+        $has_the_tags = '';
         $has_call_result = '';
         $has_site = 'false';
         $order_collection = 'false';
@@ -164,17 +167,22 @@ class SupporterController extends Controller
             }
             if(request()->input('has_the_product')!=null && request()->input('has_the_product')!=''){
                 $has_the_product = request()->input('has_the_product');
-                $purchases = Purchase::where('is_deleted', false)->where('type', '!=', 'site_failed')->where('products_id', $has_the_product)->pluck('students_id');
+                $purchases = Purchase::where('is_deleted', false)->where('type', '!=', 'site_failed')->whereIn('products_id', explode(',', $has_the_product))->pluck('students_id');
                 $students = $students->whereIn('id', $purchases);
             }
             if(request()->input('has_call_result')!=null && request()->input('has_call_result')!=''){
                 $has_call_result = request()->input('has_call_result');
                 $calls = Call::where('call_results_id', $has_call_result);
                 if($has_the_product!='') {
-                    $calls = $calls->where('products_id', $has_the_product);
+                    $calls = $calls->whereIn('products_id', explode(',', $has_the_product));
                 }
                 $calls = $calls->pluck('students_id');
                 $students = $students->whereIn('id', $calls);
+            }
+            if(request()->input('has_the_tags')!=null && request()->input('has_the_tags')!=''){
+                $has_the_tags = request()->input('has_the_tags');
+                $studentTags = StudentTag::where('is_deleted', false)->whereIn('tags_id', explode(',', $has_the_tags))->pluck('students_id');
+                $students = $students->whereIn('id', $studentTags);
             }
             if(request()->input('has_site')!=null){
                 $has_site = request()->input('has_site');
@@ -224,7 +232,7 @@ class SupporterController extends Controller
         $hotTemperatures = Temperature::where('is_deleted', false)->where('status', 'hot')->get();
         $coldTemperatures = Temperature::where('is_deleted', false)->where('status', 'cold')->get();
         $collections = Collection::where('is_deleted', false)->get();
-
+        // dd($has_the_product);
         return view('supporters.student',[
             'user'=>$user,
             'students' => $students,
@@ -240,7 +248,8 @@ class SupporterController extends Controller
             'callResults'=>$callResults,
             'callResults'=>$callResults,
             'has_collection'=>$has_collection,
-            'has_the_product'=>$has_the_product,
+            'has_the_product'=>($has_the_product!='')?explode(',', $has_the_product):'',
+            'has_the_tags'=>($has_the_tags!='')?explode(',', $has_the_tags):'',
             'has_call_result'=>$has_call_result,
             'has_site'=>$has_site,
             'order_collection'=>$order_collection,

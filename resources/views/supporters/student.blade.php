@@ -119,7 +119,8 @@ $egucation_levels = [
                             </div>
                         </div>
                         <input type="hidden" id="has_collection" name="has_collection" value="{{ isset($has_collection)?$has_collection:'false' }}" />
-                        <input type="hidden" id="has_the_product" name="has_the_product" value="{{ isset($has_the_product)?$has_the_product:'' }}" />
+                        <input type="hidden" id="has_the_product" name="has_the_product" value="{{ isset($has_the_product[0])?implode(',', $has_the_product):'' }}" />
+                        <input type="hidden" id="has_the_tags" name="has_the_tags" value="{{ isset($has_the_tags[0])?implode(',', $has_the_tags):'' }}" />
                         <input type="hidden" id="has_call_result" name="has_call_result" value="{{ isset($has_call_result)?$has_call_result:'' }}" />
                         <input type="hidden" id="has_site" name="has_site" value="{{ isset($has_site)?$has_site:'false' }}" />
                         <input type="hidden" id="order_collection" name="order_collection" value="{{ isset($order_collection)?$order_collection:'false' }}" />
@@ -139,15 +140,20 @@ $egucation_levels = [
                         </div>
                         <div class="col text-center p-1">
                             <!--<a class="btn btn-warning btn-block" href="#">محصول</a>-->
-                            <select id="has_product" class="form-control select2" onchange="return selectProduct();">
-                                @if(isset($has_the_product) && $has_the_product>0)
+                            <!--
+                            <label>
+                                محصول:
+                            </label>
+                            -->
+                            <select id="has_product" class="form-control select2" multiple onchange="return selectProduct();">
+                                @if(isset($has_the_product[0]))
                                 <option value="" disabled>محصول</option>
                                 @else
                                 <option selected value="" disabled>محصول</option>
                                 @endif
                                 <option value="">همه</option>
                                 @foreach($products as $product)
-                                @if(isset($has_the_product) && $has_the_product==$product->id)
+                                @if(isset($has_the_product[0]) && in_array($product->id,$has_the_product))
                                 <option value="{{ $product->id }}" selected>{{ $product->name }}</option>
                                 @else
                                 <option value="{{ $product->id }}">{{ $product->name }}</option>
@@ -195,10 +201,25 @@ $egucation_levels = [
                         </div>
                         <div class="col text-center p-1">
                             @if(isset($has_tag) && $has_tag=='true')
-                            <a class="btn btn-success btn-block" href="#" onclick="return StudentTag();">برچسب اخلاقی</a>
+                            <a class="btn btn-success btn-block" href="#" onclick="return StudentTag();">برچسب اخلاقی دارد؟</a>
                             @else
-                            <a class="btn btn-warning btn-block" href="#" onclick="return StudentTag();">برچسب اخلاقی</a>
+                            <a class="btn btn-warning btn-block" href="#" onclick="return StudentTag();">برچسب اخلاقی دارد؟</a>
                             @endif
+                            <select id="has_the_tag" class="form-control select2" multiple onchange="return selectTag();">
+                                @if(isset($has_the_tags[0]))
+                                <option value="" disabled>برچسب اخلاقی</option>
+                                @else
+                                <option selected value="" disabled>برچسب اخلاقی</option>
+                                @endif
+                                <option value="">همه</option>
+                                @foreach($moralTags as $tag)
+                                @if(isset($has_the_tags[0]) && in_array($tag->id,$has_the_tags))
+                                <option value="{{ $tag->id }}" selected>{{ $tag->name }}</option>
+                                @else
+                                <option value="{{ $tag->id }}">{{ $tag->name }}</option>
+                                @endif
+                                @endforeach
+                            </select>
                         </div>
                     </div>
                     <!--<div class="row">
@@ -784,8 +805,12 @@ $egucation_levels = [
     }
 
     function selectProduct(){
-        $("#has_the_product").val($("#has_product").val());
-        $("#search-frm").submit();
+        $("#has_the_product").val($("#has_product").val().join(','));
+        // $("#search-frm").submit();
+    }
+
+    function selectTag(){
+        $("#has_the_tags").val($("#has_the_tag").val().join(','));
     }
 
     function selectCallResult(){
