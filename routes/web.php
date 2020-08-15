@@ -206,7 +206,7 @@ Route::group(['middleware' => ['auth', 'message']], function () {
         Route::post('/call', 'SupporterController@call')->name('supporter_student_call');
         Route::post('/seen', 'SupporterController@seen')->name('supporter_student_seen');
         Route::any('/calls/{id}', 'SupporterController@calls')->name('supporter_student_allcall');
-        // Route::any('/create', 'SupporterController@create')->name('supporter_student_create');
+        Route::any('/create', 'SupporterController@studentCreate')->name('supporter_student_create');
         // Route::get('/delete/{id}', 'SupporterController@delete')->name('supporter_student_delete');
     });
 

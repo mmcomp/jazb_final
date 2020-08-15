@@ -352,6 +352,51 @@ class SupporterController extends Controller
             "student"=>$student
         ]);
     }
+
+    public function studentCreate() {
+        $student = new Student();
+        $supportGroupId = Group::getSupport();
+        if($supportGroupId)
+            $supportGroupId = $supportGroupId->id;
+        $consultantGroupId = Group::getConsultant();
+        if($consultantGroupId)
+            $consultantGroupId = $consultantGroupId->id;
+        $supports = User::where('is_deleted', false)->where('groups_id', $supportGroupId)->get();
+        $consultants = User::where('is_deleted', false)->where('groups_id', $consultantGroupId)->get();
+        $sources = Source::where('is_deleted', false)->get();
+        if(request()->getMethod()=='GET'){
+            return view('students.create', [
+                "supports"=>$supports,
+                "consultants"=>$consultants,
+                "sources"=>$sources,
+                "student"=>$student
+            ]);
+        }
+
+        $student->users_id = Auth::user()->id;
+        $student->first_name = request()->input('first_name');
+        $student->last_name = request()->input('last_name');
+        $student->last_year_grade = (int)request()->input('last_year_grade');
+        $student->consultants_id = request()->input('consultants_id');
+        $student->parents_job_title = request()->input('parents_job_title');
+        $student->home_phone = request()->input('home_phone');
+        $student->egucation_level = request()->input('egucation_level');
+        $student->father_phone = request()->input('father_phone');
+        $student->mother_phone = request()->input('mother_phone');
+        $student->phone  = request()->input('phone');
+        $student->school = request()->input('school');
+        $student->average = request()->input('average');
+        $student->major = request()->input('major');
+        $student->introducing = request()->input('introducing');
+        $student->student_phone = request()->input('student_phone');
+        $student->sources_id = request()->input('sources_id');
+        $student->supporters_id = $student->users_id;
+        $student->supporter_seen = false;
+        $student->save();
+
+        request()->session()->flash("msg_success", "دانش آموز با موفقیت افزوده شد.");
+        return redirect()->route('supporter_student_new');
+    }
     //---------------------AJAX-----------------------------------
     public function call(Request $request){
         $students_id = $request->input('students_id');
