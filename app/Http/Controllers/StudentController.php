@@ -495,6 +495,7 @@ class StudentController extends Controller
 
         $student->supporters_id = $supporters_id;
         $student->supporter_seen = false;
+        $student->supporter_start = date("Y-m-d H:i:s");
         $student->save();
 
         return [
