@@ -492,17 +492,19 @@ class SupporterController extends Controller
             ];
         }
 
-        $call = new Call;
-        $call->title = 'تماس';
-        $call->students_id = $students_id;
-        $call->users_id = Auth::user()->id;
-        $call->description = $request->input('description');
-        $call->call_results_id = $request->input('call_results_id');
-        $call->replier = $request->input('replier');
-        $call->products_id = $request->input('products_id');
-        $call->next_to_call = $request->input('next_to_call');
-        $call->next_call = $request->input('next_call');
-        $call->save();
+        foreach($request->input('products_id') as $products_id ){
+            $call = new Call;
+            $call->title = 'تماس';
+            $call->students_id = $students_id;
+            $call->users_id = Auth::user()->id;
+            $call->description = $request->input('description');
+            $call->call_results_id = $request->input('call_results_id');
+            $call->replier = $request->input('replier');
+            $call->products_id = $products_id;
+            $call->next_to_call = $request->input('next_to_call');
+            $call->next_call = $request->input('next_call');
+            $call->save();
+        }
 
         return [
             "error"=>null,

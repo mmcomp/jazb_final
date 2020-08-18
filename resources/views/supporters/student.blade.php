@@ -560,7 +560,7 @@ $egucation_levels = [
                     </div>
                     <div class="form-group">
                         <label for="products_id">محصول</label>
-                        <select class="form-control select2" id="products_id" name="products_id" style="width: 100% !important;">
+                        <select class="form-control select2" id="products_id" name="products_id[]" style="width: 100% !important;" multiple>
                             <option value=""></option>
                             @foreach ($products as $item)
                             <option value="{{ $item->id }}">{{($item->parents!='-')?$item->parents . '->':''}} {{ $item->name }}</option>
