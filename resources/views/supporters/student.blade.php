@@ -154,9 +154,9 @@ $egucation_levels = [
                                 <option value="">همه</option>
                                 @foreach($products as $product)
                                 @if(isset($has_the_product[0]) && in_array($product->id,$has_the_product))
-                                <option value="{{ $product->id }}" selected>{{ $product->name }}</option>
+                                <option value="{{ $product->id }}">{{($product->parents!='-')?$product->parents . '->':''}} {{ $product->name }}</option>
                                 @else
-                                <option value="{{ $product->id }}">{{ $product->name }}</option>
+                                <option value="{{ $product->id }}">{{($product->parents!='-')?$product->parents . '->':''}} {{ $product->name }}</option>
                                 @endif
                                 @endforeach
                             </select>
@@ -563,7 +563,7 @@ $egucation_levels = [
                         <select class="form-control select2" id="products_id" name="products_id" style="width: 100% !important;">
                             <option value=""></option>
                             @foreach ($products as $item)
-                        <option value="{{ $item->id }}">{{($item->parents!='-')?$item->parents . '->':''}} {{ $item->name }}</option>
+                            <option value="{{ $item->id }}">{{($item->parents!='-')?$item->parents . '->':''}} {{ $item->name }}</option>
                             @endforeach
                         </select>
                     </div>
