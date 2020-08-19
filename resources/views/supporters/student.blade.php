@@ -201,11 +201,15 @@ $egucation_levels = [
                         </div>
                         <div class="col text-center p-1">
                             @if(isset($has_tag) && $has_tag=='true')
-                            <a class="btn btn-success btn-block" href="#" onclick="return StudentTag();">برچسب اخلاقی دارد؟</a>
+                            <!-- <a class="btn btn-success btn-block" href="#" onclick="return StudentTag();">برچسب اخلاقی دارد؟</a> -->
                             @else
-                            <a class="btn btn-warning btn-block" href="#" onclick="return StudentTag();">برچسب اخلاقی دارد؟</a>
+                            <!-- <a class="btn btn-warning btn-block" href="#" onclick="return StudentTag();">برچسب اخلاقی دارد؟</a> -->
                             @endif
-                            <select id="has_the_tag" class="form-control select2" multiple onchange="return selectTag();">
+                            <a class="btn btn-warning btn-block" href="#" onclick="preloadFilterTagModal();$('#tag_modal_filter').modal('show');return false;">
+                                برچسب اخلاقی
+                            </a>
+
+                            <select id="has_the_tag" class="form-control select22" style="display: none;" multiple> <!--onchange="return selectTag();">-->
                                 @if(isset($has_the_tags[0]))
                                 <option value="" disabled>برچسب اخلاقی</option>
                                 @else
@@ -487,6 +491,37 @@ $egucation_levels = [
         </div>
     </div>
 </div>
+<div class="modal" id="tag_modal_filter" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">برچسب</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>
+                    <input type="hidden" id="students_index" />
+                    <h3 class="text-center">
+                        اخلاقی
+                    </h3>
+                    <input type="checkbox" class="filter-tag-checkbox" id="filter-tag_all" value="" onclick="selectFilterAll();" />
+                    همه
+                    @foreach ($moralTags as $index => $item)
+                    <input type="checkbox" class="filter-tag-checkbox" id="filter-tag_{{ $item->id }}" value="{{ $item->id }}" />
+                    {{ $item->name }}
+                    <br/>
+                    @endforeach
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="saveFilterTags();">اعمال</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">انصراف</button>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="modal" id="temperature_modal" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -630,6 +665,42 @@ $egucation_levels = [
             });
         }
         return false;
+    }
+
+    function preloadFilterTagModal() {
+        $("input.filter-tag-checkbox").prop('checked', false);
+        var selecteds = $("#has_the_tag").val();
+        console.log(selecteds);
+        for(var i of selecteds) {
+            if(i=='') {
+                $("input.filter-tag-checkbox").prop('checked', true);
+            }
+            $("#filter-tag_" + i).prop('checked', true);
+        }
+    }
+
+    function saveFilterTags() {
+        console.log('SAVE')
+        $(`#has_the_tag option`).prop('selected', false);
+        $("input.filter-tag-checkbox:checked").each(function (id, field) {
+            console.log(`#has_the_tag option[value='${$(field).val()}']`);
+            $(`#has_the_tag option[value='${$(field).val()}']`).prop('selected', true);
+        });
+        $('#tag_modal_filter').modal('hide');
+        console.log($("#has_the_tag").val());
+        $("#has_the_tags").val($("#has_the_tag").val().join(','));
+    }
+
+    function selectFilterAll() {
+        var state = $("#filter-tag_all").prop('checked');
+        console.log('State', state);
+        $("input.filter-tag-checkbox").each(function(id, field){
+            console.log(field);
+            if(field.id!="filter-tag_all") {
+                console.log('set', field.id, state);
+                $(field).prop('checked', state);
+            }
+        });
     }
 
     function preloadTagModal() {
