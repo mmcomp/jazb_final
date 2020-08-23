@@ -413,7 +413,7 @@
                     <span class="tag-title" id="tag-title-{{ $item->id }}">
                     {{ $item->name }}
                     </span>
-                    <br id="tag-br-{{ $item->id }}"/>
+                    <br class="tag-br" id="tag-br-{{ $item->id }}"/>
                 @endforeach
                 </div>
                 <div class="needs">
