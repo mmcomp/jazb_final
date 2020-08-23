@@ -413,7 +413,7 @@
                     <span class="tag-title" id="tag-title-{{ $item->id }}">
                     {{ $item->name }}
                     </span>
-                    <br/>
+                    <br id="tag-br-{{ $item->id }}"/>
                 @endforeach
                 </div>
                 <div class="needs">
@@ -447,7 +447,7 @@
                     <span class="collection-title" id="collection-title-{{ $item->id }}">
                     {{ $item->name }}
                     </span>
-                    <br/>
+                    <br class="collection-br" id="collection-br-{{ $item->id }}"/>
                 @endforeach
                 </div>
             </p>
@@ -665,6 +665,7 @@
     function filterTagsByParent(){
         $("input.tag-checkbox").show();
         $("span.tag-title").show();
+        $("br.tag-br").show();
         $("input.tag-checkbox").each(function (id, field){
             console.log('checking', field)
             let tagId = parseInt($(field).val(), 10);
@@ -675,24 +676,28 @@
                     if(filterParents.parent1!=theTag.parent1){
                         $(field).hide();
                         $("#tag-title-" + tagId).hide();
+                        $("#tag-br-" + tagId).hide();
                     }
                 }
                 if(filterParents.parent2!=''){
                     if(filterParents.parent2!=theTag.parent2){
                         $(field).hide();
                         $("#tag-title-" + tagId).hide();
+                        $("#tag-br-" + tagId).hide();
                     }
                 }
                 if(filterParents.parent3!=''){
                     if(filterParents.parent3!=theTag.parent3){
                         $(field).hide();
                         $("#tag-title-" + tagId).hide();
+                        $("#tag-br-" + tagId).hide();
                     }
                 }
                 if(filterParents.parent4!=''){
                     if(filterParents.parent4!=theTag.parent4){
                         $(field).hide();
                         $("#tag-title-" + tagId).hide();
+                        $("#tag-br-" + tagId).hide();
                     }
                 }
             }
@@ -746,6 +751,7 @@
     function filterCollectionsByParent(){
         $("input.collection-checkbox").show();
         $("span.collection-title").show();
+        $("br.collection-br").show();
         let collectionParents = $("#collection-two").val();
         let parents = [];
         if($("#collection-one").val()=='' && collectionParents==''){
@@ -776,6 +782,7 @@
                 if(parents.indexOf(theCollection.id)<0 && parents.indexOf(theCollection.parent_id)<0){
                     $(field).hide();
                     $("#collection-title-" + collectionId).hide();
+                    $("#collection-br-" + collectionId).hide();
                 }
             }
 
