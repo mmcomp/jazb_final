@@ -19,7 +19,7 @@
                 <!-- small box -->
                 <div class="small-box bg-cyan">
                   <div class="inner">
-                  <h3>{{ $code }}</h3>
+                  <h3>{{ $code + 1000 }}</h3>
     
                     <p>کد شناسایی من</p>
                   </div>
