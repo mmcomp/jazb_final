@@ -87,6 +87,10 @@ class StudentController extends Controller
         $hotTemperatures = Temperature::where('is_deleted', false)->where('status', 'hot')->get();
         $coldTemperatures = Temperature::where('is_deleted', false)->where('status', 'cold')->get();
 
+        foreach($students as $index => $student) {
+            $students[$index]->pcreated_at = jdate(strtotime($student->created_at))->format("Y/m/d");
+        }
+
         return view('students.index',[
             'students' => $students,
             'supports' => $supports,
@@ -172,6 +176,10 @@ class StudentController extends Controller
         $thirdCollections = Collection::where('is_deleted', false)->with('parent')->whereIn('parent_id', $secondCollections->pluck('id'))->get();
         $hotTemperatures = Temperature::where('is_deleted', false)->where('status', 'hot')->get();
         $coldTemperatures = Temperature::where('is_deleted', false)->where('status', 'cold')->get();
+
+        foreach($students as $index => $student) {
+            $students[$index]->pcreated_at = jdate(strtotime($student->created_at))->format("Y/m/d");
+        }
 
         return view('students.index',[
             'students' => $students,
@@ -336,7 +344,7 @@ class StudentController extends Controller
 
                     // dump($line);
                     $student = new Student;
-                    $student->phone = '0' . $line[0];
+                    $student->phone = ((strpos($line[0], '0')!==0)?'0':'') . $line[0];
                     $student->first_name = $line[1]=="NULL"?null:$line[1];
                     $student->last_name = $line[2];
                     $student->egucation_level = $line[3];

@@ -172,7 +172,7 @@
                   </thead>
                   <tbody>
                       @foreach ($students as $index => $item)
-                      <tr>
+                      <tr id="tr-{{ $index }}">
                         <td onclick="showMorePanel({{ $index }});">{{ $index + 1 }}</td>
                         <td onclick="showMorePanel({{ $index }});">{{ $item->id }}</td>
                         <td onclick="showMorePanel({{ $index }});">{{ $item->first_name }}</td>
@@ -251,9 +251,9 @@
                         -->
                         </td>
                       </tr>
-
+                      <!--
                       <tr class="morepanel" id="morepanel-{{ $index }}">
-                          <td colspan="10">
+                          <td colspan="11">
                               <div class="container">
                                 <div class="row">
                                     <div class="col">
@@ -335,7 +335,7 @@
                               </div>
                           </td>
                       </tr>
-
+                        -->
                       @endforeach
                   </tbody>
                   <!--
@@ -508,8 +508,11 @@
     let parentFours = @JSON($parentFours);
     let tmpTags = @JSON($moralTags);
     let tmpCollections = @JSON($needTags);
+    let egucation_levels = @JSON($egucation_levels);
+    let majors = @JSON($majors);
     let tags = {};
     let collections = {};
+    var table;
     for(let tg of tmpTags){
         tags[tg.id] = tg;
     }
@@ -523,8 +526,104 @@
         parent4: ''
     }
     function showMorePanel(index){
-        $('.morepanel').hide();
-        $('#morepanel-' + index).show();
+        // $('.morepanel').hide();
+        // $('#morepanel-' + index).show();
+        var editRoute = `{{ route('student_edit', -1) }}`;
+        var purchaseRoute = `{{ route('student_purchases', -1) }}`;
+        var test = `<table style="width: 100%">
+            <tr>
+                <td>
+                    <div class="container">
+                        <div class="row">
+                            <div class="col">
+                                تراز یا رتبه سال قبل :
+                                ${ (students[index].last_year_grade!=null)?students[index].last_year_grade:'' }
+                            </div>
+                            <div class="col">
+                                مشاور :
+                                ${ (students[index].consultant)?students[index].consultant.first_name + ' ' + students[index].consultant.last_name:'' }
+                            </div>
+                            <div class="col">
+                                شغل پدر یا مادر :
+                                ${ (students[index].parents_job_title!=null)?students[index].parents_job_title:'' }
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                شماره منزل :
+                                ${ (students[index].home_phone!=null)?students[index].home_phone:'' }
+                            </div>
+                            <div class="col">
+                                مقطع :
+                                ${ (students[index].egucation_level!=null)?((egucation_levels[students[index].egucation_level])?egucation_levels[students[index].egucation_level]:students[index].egucation_level):'' }
+                            </div>
+                            <div class="col">
+                                شماره موبایل والدین :
+                                ${ (students[index].father_phone!=null)?students[index].father_phone:'' }
+                                ${ (students[index].mother_phone!=null)?students[index].mother_phone:'' }
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                مدرسه :
+                                ${ (students[index].school)!=null?students[index].school:'' }
+                            </div>
+                            <div class="col">
+                                معدل :
+                                ${ (students[index].average!=null)?students[index].average:'' }
+                            </div>
+                            <div class="col">
+                                رشته تحصیلی :
+                                ${ (majors[students[index].major])?majors[students[index].major]:'-' }
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <a href="${ editRoute.replace('-1', students[index].id) }">
+                                    ویرایش مشخصات
+                                </a>
+                            </div>
+                            <div class="col">
+                                تاریخ ثبت دانش آموز :
+                                ${ students[index].pcreated_at }
+                            </div>
+                            <div class="col">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <a href="#" onclick="$('#students_index').val(${ index });preloadTagModal('moral');$('#tag_modal').modal('show'); return false;">
+                                    برچسب روحیات اخلاقی
+                                </a>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <a href="#" onclick="$('#students_index').val(${ index });preloadTagModal('need');$('#tag_modal').modal('show'); return false;">
+                                    برچسب نیازهای دانش آموز
+                                </a>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <a target="_blank" href="${ purchaseRoute.replace('-1', students[index].id) }">
+                                    گزارش خریدهای قطعی دانش آموز
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </table>`;
+
+        var tr = $("#tr-" + index)[0];
+        var row = table.row(tr);
+        if ( row.child.isShown() ) {
+            row.child.hide();
+        }
+        else {
+            row.child( test ).show();
+        }
     }
     function changeSupporter(studentsIndex){
         if(students[studentsIndex]){
@@ -788,7 +887,7 @@
         });
         $('select.select2').select2();
 
-        $('#example2').DataTable({
+        table = $('#example2').DataTable({
             "paging": true,
             "lengthChange": false,
             "searching": false,
@@ -805,6 +904,7 @@
                 "infoEmpty":      "نمایش 0 تا 0 از 0 داده",
             }
         });
+
     });
   </script>
 @endsection
