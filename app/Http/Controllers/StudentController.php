@@ -355,19 +355,21 @@ class StudentController extends Controller
                     $student->introducing = $line[11]=="NULL"?null:$line[11];
                     $student->student_phone = $line[12]=="NULL"?null:$line[12];
                     $student->sources_id = $sources_id;
-                    if(count($line)==15){
-                        if($line[13]=="NULL" && $line[13]=="" && (int)$line[13]>0){
-                            $student->sources_id = (int)$line[13];
+                    if(count($line)==17){
+                        if($line[14]!="NULL" && $line[14]!="" && (int)$line[14]>0){
+                            $student->sources_id = (int)$line[14];
                         }
-                        if($line[14]=="NULL" && $line[14]=="" && (int)$line[14]>0){
-                            $student->supporters_id = (int)$line[14];
-                        }
-                    }
-                    if(isset($line[15])){
-                        if($line[15]=="NULL" && $line[15]==""){
-                            $student->description = (int)$line[15];
+                        if($line[15]!="NULL" && $line[15]!="" && (int)$line[15]>0){
+                            $student->supporters_id = (int)$line[15];
                         }
                     }
+                    if(isset($line[16])){
+                        $line[16] = trim($line[16]);
+                        if($line[16]!="NULL" && $line[16]!=""){
+                            $student->description = $line[16];
+                        }
+                    }
+                    // dd($student);
                     try{
                         $student->save();
                     }catch(Exception $e){
