@@ -344,6 +344,7 @@ class StudentController extends Controller
 
                     // dump($line);
                     $student = new Student;
+                    $student->users_id = Auth::user()->id;
                     $student->phone = ((strpos($line[0], '0')!==0)?'0':'') . $line[0];
                     $student->first_name = $line[1]=="NULL"?null:$line[1];
                     $student->last_name = $line[2];
