@@ -200,6 +200,13 @@ Route::group(['middleware' => ['auth', 'message']], function () {
         Route::get('/delete/{id}', 'CallResultController@delete')->name('call_result_delete');
     });
 
+    Route::group(['prefix' => '/notices'], function () {
+        Route::get('/', 'NoticeController@index')->name('notices');
+        Route::any('/create', 'NoticeController@create')->name('notice_create');
+        Route::any('/edit/{id}', 'NoticeController@edit')->name('notice_edit');
+        Route::get('/delete/{id}', 'NoticeController@delete')->name('notice_delete');
+    });
+
     Route::group(['prefix' => '/supporter_students'], function () {
         Route::any('/', 'SupporterController@student')->name('supporter_students');
         Route::any('/students', 'SupporterController@newStudents')->name('supporter_student_new');

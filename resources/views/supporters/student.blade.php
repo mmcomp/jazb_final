@@ -410,6 +410,7 @@ $egucation_levels = [
                                                         <th>ردیف</th>
                                                         <th>کد</th>
                                                         <th>محصول</th>
+                                                        <th>اطلاع رسانی</th>
                                                         <th>پاسخگو</th>
                                                         <th>نتیجه</th>
                                                         <th>یادآور</th>
@@ -423,7 +424,8 @@ $egucation_levels = [
                                                     <tr>
                                                         <td>{{ $cindex + 1 }}</td>
                                                         <td>{{ $call->id }}</td>
-                                                        <td>{{ $call->product->name }}</td>
+                                                        <td>{{ ($call->product)?$call->product->name:'-' }}</td>
+                                                        <td>{{ ($call->notice)?$call->notice->name:'-' }}</td>
                                                         <td>{{ $persons[$call->replier] }}</td>
                                                         <td>{{ $call->callresult?$call->callresult->title:'-' }}</td>
                                                         <td>{{ $call->next_call }}</td>
@@ -599,6 +601,15 @@ $egucation_levels = [
                             <option value=""></option>
                             @foreach ($products as $item)
                             <option value="{{ $item->id }}">{{($item->parents!='-')?$item->parents . '->':''}} {{ $item->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="products_id">اطلاع رسانی</label>
+                        <select class="form-control select2" id="notices_id" name="notices_id" style="width: 100% !important;">
+                            <option value=""></option>
+                            @foreach ($notices as $item)
+                            <option value="{{ $item->id }}">{{ $item->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -801,17 +812,18 @@ $egucation_levels = [
                 result: $("#result").val(),
                 replier: $("#replier").val(),
                 products_id: $("#products_id").val(),
+                notices_id: $("#notices_id").val(),
                 next_to_call: $("#next_to_call").val(),
                 next_call: $("#next_call").val()
-            },
-            function (result) {
+        },
+        function (result) {
                 console.log('Result', result);
                 if (result.error != null) {
                     alert('خطای بروز رسانی');
                 } else {
                     window.location.reload();
                 }
-            }).fail(function () {
+        }).fail(function () {
             alert('خطای بروز رسانی');
         });
     }

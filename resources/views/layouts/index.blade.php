@@ -238,7 +238,8 @@
                         strpos(\Request::route()->getName(), 'product')===0 ||
                         strpos(\Request::route()->getName(), 'source')===0 ||
                         strpos(\Request::route()->getName(), 'user_all')===0 ||
-                        strpos(\Request::route()->getName(), 'call_result')===0)
+                        strpos(\Request::route()->getName(), 'call_result')===0 ||
+                        strpos(\Request::route()->getName(), 'notice')===0))
                         <li class="nav-item has-treeview menu-open">
                             @else
                         <li class="nav-item has-treeview">
@@ -371,6 +372,17 @@
                                         <!-- <i class="far fa-circle nav-icon"></i> -->
                                         -
                                         <p>نتایج تماس</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    @if(strpos(\Request::route()->getName(), 'notice')===0)
+                                    <a href="{{ route('notices') }}" class="nav-link active">
+                                    @else
+                                    <a href="{{ route('notices') }}" class="nav-link">
+                                    @endif
+                                        <!-- <i class="far fa-circle nav-icon"></i> -->
+                                        -
+                                        <p>اطلاع رسانی</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">

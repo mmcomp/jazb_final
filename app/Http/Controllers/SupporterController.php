@@ -22,8 +22,10 @@ use App\Call;
 use App\CallResult;
 use App\StudentCollection;
 use App\Collection;
+use App\Notice;
 use App\Purchase;
 use App\StudentTag;
+use Exception;
 
 class SupporterController extends Controller
 {
@@ -121,7 +123,7 @@ class SupporterController extends Controller
         $students = Student::where('is_deleted', false)->where('supporters_id', $id);
         $sources = Source::where('is_deleted', false)->get();
         $products = Product::where('is_deleted', false)->with('collection')->orderBy('name')->get();
-        $callResults = CallResult::where('is_deleted', false)->get();
+        // $callResults = CallResult::where('is_deleted', false)->get();
         foreach($products as $index => $product){
             $products[$index]->parents = "-";
             if($product->collection) {
@@ -131,6 +133,7 @@ class SupporterController extends Controller
             }
         }
         $callResults = CallResult::where('is_deleted', false)->get();
+        $notices = Notice::where('is_deleted', false)->get();
         $name = null;
         $sources_id = null;
         $phone = null;
@@ -213,6 +216,7 @@ class SupporterController extends Controller
         ->with('source')
         ->with('consultant')
         ->with('calls.product')
+        ->with('calls.notice')
         ->with('calls.callresult')
         ->orderBy('created_at', 'desc')
         ->get();
@@ -245,7 +249,7 @@ class SupporterController extends Controller
             'hotTemperatures'=>$hotTemperatures,
             'coldTemperatures'=>$coldTemperatures,
             'products'=>$products,
-            'callResults'=>$callResults,
+            'notices'=>$notices,
             'callResults'=>$callResults,
             'has_collection'=>$has_collection,
             'has_the_product'=>($has_the_product!='')?explode(',', $has_the_product):'',
@@ -492,7 +496,7 @@ class SupporterController extends Controller
             ];
         }
 
-        foreach($request->input('products_id') as $products_id ){
+        if($request->input('products_id')==null){
             $call = new Call;
             $call->title = 'تماس';
             $call->students_id = $students_id;
@@ -500,10 +504,34 @@ class SupporterController extends Controller
             $call->description = $request->input('description');
             $call->call_results_id = $request->input('call_results_id');
             $call->replier = $request->input('replier');
-            $call->products_id = $products_id;
             $call->next_to_call = $request->input('next_to_call');
             $call->next_call = $request->input('next_call');
-            $call->save();
+            $call->notices_id = $request->input('notices_id', 0);
+            $call->products_id = 0;
+            try{
+                $call->save();
+            }catch(Exception $e){
+
+            }
+        }else {
+            foreach($request->input('products_id') as $products_id ){
+                $call = new Call;
+                $call->title = 'تماس';
+                $call->students_id = $students_id;
+                $call->users_id = Auth::user()->id;
+                $call->description = $request->input('description');
+                $call->call_results_id = $request->input('call_results_id');
+                $call->replier = $request->input('replier');
+                $call->products_id = $products_id;
+                $call->next_to_call = $request->input('next_to_call');
+                $call->next_call = $request->input('next_call');
+                $call->notices_id = $request->input('notices_id', 0);
+                try{
+                    $call->save();
+                }catch(Exception $e){
+
+                }
+            }
         }
 
         return [
