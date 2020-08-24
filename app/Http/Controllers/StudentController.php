@@ -250,7 +250,7 @@ class StudentController extends Controller
         return redirect()->route('students');
     }
 
-    public function edit(Request $request, $id)
+    public function edit(Request $request, $call_back, $id)
     {
         $student = Student::where('is_deleted', false)->where('id', $id)->first();
         if($student==null){
@@ -299,7 +299,7 @@ class StudentController extends Controller
         $student->save();
 
         $request->session()->flash("msg_success", "دانش آموز با موفقیت بروز شد.");
-        return redirect()->route('students');
+        return redirect()->route($call_back);
     }
 
     public function delete(Request $request, $id)

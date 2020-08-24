@@ -299,7 +299,7 @@ $egucation_levels = [
                                         onclick="$('#students_index2').val({{ $index }});preloadTemperatureModal();$('#temperature_modal').modal('show'); return false;">
                                         داغ/سرد
                                     </a>
-                                    <a class="btn btn-primary" href="{{ route('student_edit', $item->id) }}">
+                                    <a class="btn btn-primary" href="{{ route('student_edit', ["call_back"=>'supporter_students', "id"=>$item->id]) }}">
                                         ویرایش
                                     </a>
                                     <a class="btn btn-danger" href="{{ route('student_delete', $item->id) }}">
@@ -355,7 +355,7 @@ $egucation_levels = [
                                         </div>
                                         <div class="row">
                                             <div class="col">
-                                                <a href="{{ route('student_edit', $item->id) }}">
+                                                <a href="{{ route('student_edit', ["call_back"=>'supporter_students', "id"=>$item->id]) }}">
                                                     ویرایش مشخصات
                                                 </a>
                                             </div>

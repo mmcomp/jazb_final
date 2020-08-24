@@ -213,11 +213,6 @@
                                 </div>
                                 <div class="row">
                                     <div class="col">
-                                        <!--
-                                        <a href="{{ route('student_edit', $item->id) }}">
-                                            ویرایش مشخصات
-                                        </a>
-                                        -->
                                     </div>
                                     <div class="col">
                                         تاریخ ثبت دانش آموز :
