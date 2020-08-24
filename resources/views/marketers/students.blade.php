@@ -147,7 +147,7 @@
                                 </div>
                                 <div class="row">
                                     <div class="col">
-                                        <a href="{{ route('student_edit', $item->id) }}">
+                                        <a href="{{ route('student_edit', 'students', $item->id) }}">
                                             ویرایش مشخصات
                                         </a>
                                     </div>

@@ -119,7 +119,9 @@ $egucation_levels = [
                             </div>
                         </div>
                         <input type="hidden" id="has_collection" name="has_collection" value="{{ isset($has_collection)?$has_collection:'false' }}" />
-                        <input type="hidden" id="has_the_product" name="has_the_product" value="{{ isset($has_the_product)?$has_the_product:'' }}" />
+                        <input type="hidden" id="has_the_product" name="has_the_product" value="{{ isset($has_the_product[0])?implode(',', $has_the_product):'' }}" />
+                        <input type="hidden" id="has_the_tags" name="has_the_tags" value="{{ isset($has_the_tags[0])?implode(',', $has_the_tags):'' }}" />
+                        <input type="hidden" id="has_call_result" name="has_call_result" value="{{ isset($has_call_result)?$has_call_result:'' }}" />
                         <input type="hidden" id="has_site" name="has_site" value="{{ isset($has_site)?$has_site:'false' }}" />
                         <input type="hidden" id="order_collection" name="order_collection" value="{{ isset($order_collection)?$order_collection:'false' }}" />
                         <input type="hidden" id="has_reminder" name="has_reminder" value="{{ isset($has_reminder)?$has_reminder:'false' }}" />
@@ -138,18 +140,38 @@ $egucation_levels = [
                         </div>
                         <div class="col text-center p-1">
                             <!--<a class="btn btn-warning btn-block" href="#">محصول</a>-->
-                            <select id="has_product" class="form-control select2" onchange="return selectProduct();">
-                                @if(isset($has_the_product) && $has_the_product>0)
+                            <!--
+                            <label>
+                                محصول:
+                            </label>
+                            -->
+                            <select id="has_product" class="form-control select2" multiple onchange="return selectProduct();">
+                                @if(isset($has_the_product[0]))
                                 <option value="" disabled>محصول</option>
                                 @else
                                 <option selected value="" disabled>محصول</option>
                                 @endif
                                 <option value="">همه</option>
                                 @foreach($products as $product)
-                                @if(isset($has_the_product) && $has_the_product==$product->id)
-                                <option value="{{ $product->id }}" selected>{{ $product->name }}</option>
+                                @if(isset($has_the_product[0]) && in_array($product->id,$has_the_product))
+                                <option value="{{ $product->id }}">{{($product->parents!='-')?$product->parents . '->':''}} {{ $product->name }}</option>
                                 @else
-                                <option value="{{ $product->id }}">{{ $product->name }}</option>
+                                <option value="{{ $product->id }}">{{($product->parents!='-')?$product->parents . '->':''}} {{ $product->name }}</option>
+                                @endif
+                                @endforeach
+                            </select>
+                            <select id="has_cal_result" class="form-control select2" onchange="return selectCallResult();">
+                                @if(isset($has_call_result) && $has_call_result>0)
+                                <option value="" disabled>نتیجه تماس</option>
+                                @else
+                                <option selected value="" disabled>نتیجه تماس</option>
+                                @endif
+                                <option value="">همه</option>
+                                @foreach($callResults as $callResult)
+                                @if(isset($has_call_result) && $has_call_result==$callResult->id)
+                                <option value="{{ $callResult->id }}" selected>{{ $callResult->title }}</option>
+                                @else
+                                <option value="{{ $callResult->id }}">{{ $callResult->title }}</option>
                                 @endif
                                 @endforeach
                             </select>
@@ -179,10 +201,29 @@ $egucation_levels = [
                         </div>
                         <div class="col text-center p-1">
                             @if(isset($has_tag) && $has_tag=='true')
-                            <a class="btn btn-success btn-block" href="#" onclick="return StudentTag();">برچسب اخلاقی</a>
+                            <!-- <a class="btn btn-success btn-block" href="#" onclick="return StudentTag();">برچسب اخلاقی دارد؟</a> -->
                             @else
-                            <a class="btn btn-warning btn-block" href="#" onclick="return StudentTag();">برچسب اخلاقی</a>
+                            <!-- <a class="btn btn-warning btn-block" href="#" onclick="return StudentTag();">برچسب اخلاقی دارد؟</a> -->
                             @endif
+                            <a class="btn btn-warning btn-block" href="#" onclick="preloadFilterTagModal();$('#tag_modal_filter').modal('show');return false;">
+                                برچسب اخلاقی
+                            </a>
+
+                            <select id="has_the_tag" class="form-control select22" style="display: none;" multiple> <!--onchange="return selectTag();">-->
+                                @if(isset($has_the_tags[0]))
+                                <option value="" disabled>برچسب اخلاقی</option>
+                                @else
+                                <option selected value="" disabled>برچسب اخلاقی</option>
+                                @endif
+                                <option value="">همه</option>
+                                @foreach($moralTags as $tag)
+                                @if(isset($has_the_tags[0]) && in_array($tag->id,$has_the_tags))
+                                <option value="{{ $tag->id }}" selected>{{ $tag->name }}</option>
+                                @else
+                                <option value="{{ $tag->id }}">{{ $tag->name }}</option>
+                                @endif
+                                @endforeach
+                            </select>
                         </div>
                     </div>
                     <!--<div class="row">
@@ -258,7 +299,7 @@ $egucation_levels = [
                                         onclick="$('#students_index2').val({{ $index }});preloadTemperatureModal();$('#temperature_modal').modal('show'); return false;">
                                         داغ/سرد
                                     </a>
-                                    <a class="btn btn-primary" href="{{ route('student_edit', $item->id) }}">
+                                    <a class="btn btn-primary" href="{{ route('student_edit', ["call_back"=>'supporter_students', "id"=>$item->id]) }}">
                                         ویرایش
                                     </a>
                                     <a class="btn btn-danger" href="{{ route('student_delete', $item->id) }}">
@@ -314,7 +355,7 @@ $egucation_levels = [
                                         </div>
                                         <div class="row">
                                             <div class="col">
-                                                <a href="{{ route('student_edit', $item->id) }}">
+                                                <a href="{{ route('student_edit', ["call_back"=>'supporter_students', "id"=>$item->id]) }}">
                                                     ویرایش مشخصات
                                                 </a>
                                             </div>
@@ -369,6 +410,7 @@ $egucation_levels = [
                                                         <th>ردیف</th>
                                                         <th>کد</th>
                                                         <th>محصول</th>
+                                                        <th>اطلاع رسانی</th>
                                                         <th>پاسخگو</th>
                                                         <th>نتیجه</th>
                                                         <th>یادآور</th>
@@ -382,7 +424,8 @@ $egucation_levels = [
                                                     <tr>
                                                         <td>{{ $cindex + 1 }}</td>
                                                         <td>{{ $call->id }}</td>
-                                                        <td>{{ $call->product->name }}</td>
+                                                        <td>{{ ($call->product)?$call->product->name:'-' }}</td>
+                                                        <td>{{ ($call->notice)?$call->notice->name:'-' }}</td>
                                                         <td>{{ $persons[$call->replier] }}</td>
                                                         <td>{{ $call->callresult?$call->callresult->title:'-' }}</td>
                                                         <td>{{ $call->next_call }}</td>
@@ -445,6 +488,37 @@ $egucation_levels = [
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" onclick="saveTags();">اعمال</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">انصراف</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal" id="tag_modal_filter" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">برچسب</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>
+                    <input type="hidden" id="students_index" />
+                    <h3 class="text-center">
+                        اخلاقی
+                    </h3>
+                    <input type="checkbox" class="filter-tag-checkbox" id="filter-tag_all" value="" onclick="selectFilterAll();" />
+                    همه
+                    @foreach ($moralTags as $index => $item)
+                    <input type="checkbox" class="filter-tag-checkbox" id="filter-tag_{{ $item->id }}" value="{{ $item->id }}" />
+                    {{ $item->name }}
+                    <br/>
+                    @endforeach
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="saveFilterTags();">اعمال</button>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">انصراف</button>
             </div>
         </div>
@@ -523,10 +597,19 @@ $egucation_levels = [
                     </div>
                     <div class="form-group">
                         <label for="products_id">محصول</label>
-                        <select class="form-control" id="products_id" name="products_id">
+                        <select class="form-control select2" id="products_id" name="products_id[]" style="width: 100% !important;" multiple>
                             <option value=""></option>
                             @foreach ($products as $item)
-                        <option value="{{ $item->id }}">{{($item->parents!='-')?$item->parents . '->':''}} {{ $item->name }}</option>
+                            <option value="{{ $item->id }}">{{($item->parents!='-')?$item->parents . '->':''}} {{ $item->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="products_id">اطلاع رسانی</label>
+                        <select class="form-control select2" id="notices_id" name="notices_id" style="width: 100% !important;">
+                            <option value=""></option>
+                            @foreach ($notices as $item)
+                            <option value="{{ $item->id }}">{{ $item->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -593,6 +676,42 @@ $egucation_levels = [
             });
         }
         return false;
+    }
+
+    function preloadFilterTagModal() {
+        $("input.filter-tag-checkbox").prop('checked', false);
+        var selecteds = $("#has_the_tag").val();
+        console.log(selecteds);
+        for(var i of selecteds) {
+            if(i=='') {
+                $("input.filter-tag-checkbox").prop('checked', true);
+            }
+            $("#filter-tag_" + i).prop('checked', true);
+        }
+    }
+
+    function saveFilterTags() {
+        console.log('SAVE')
+        $(`#has_the_tag option`).prop('selected', false);
+        $("input.filter-tag-checkbox:checked").each(function (id, field) {
+            console.log(`#has_the_tag option[value='${$(field).val()}']`);
+            $(`#has_the_tag option[value='${$(field).val()}']`).prop('selected', true);
+        });
+        $('#tag_modal_filter').modal('hide');
+        console.log($("#has_the_tag").val());
+        $("#has_the_tags").val($("#has_the_tag").val().join(','));
+    }
+
+    function selectFilterAll() {
+        var state = $("#filter-tag_all").prop('checked');
+        console.log('State', state);
+        $("input.filter-tag-checkbox").each(function(id, field){
+            console.log(field);
+            if(field.id!="filter-tag_all") {
+                console.log('set', field.id, state);
+                $(field).prop('checked', state);
+            }
+        });
     }
 
     function preloadTagModal() {
@@ -693,17 +812,18 @@ $egucation_levels = [
                 result: $("#result").val(),
                 replier: $("#replier").val(),
                 products_id: $("#products_id").val(),
+                notices_id: $("#notices_id").val(),
                 next_to_call: $("#next_to_call").val(),
                 next_call: $("#next_call").val()
-            },
-            function (result) {
+        },
+        function (result) {
                 console.log('Result', result);
                 if (result.error != null) {
                     alert('خطای بروز رسانی');
                 } else {
                     window.location.reload();
                 }
-            }).fail(function () {
+        }).fail(function () {
             alert('خطای بروز رسانی');
         });
     }
@@ -768,7 +888,16 @@ $egucation_levels = [
     }
 
     function selectProduct(){
-        $("#has_the_product").val($("#has_product").val());
+        $("#has_the_product").val($("#has_product").val().join(','));
+        // $("#search-frm").submit();
+    }
+
+    function selectTag(){
+        $("#has_the_tags").val($("#has_the_tag").val().join(','));
+    }
+
+    function selectCallResult(){
+        $("#has_call_result").val($("#has_cal_result").val());
         $("#search-frm").submit();
     }
 

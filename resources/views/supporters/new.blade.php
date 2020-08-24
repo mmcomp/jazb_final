@@ -51,9 +51,7 @@
             <div class="card">
               <div class="card-header">
                 <h3 class="card-title">
-                    <!--
-                    <a class="btn btn-success" href="{{ route('student_create') }}">دانش آموز جدید</a>
-                    -->
+                    <a class="btn btn-success" href="{{ route('supporter_student_create') }}">دانش آموز جدید</a>
                 </h3>
               </div>
               <!-- /.card-header -->
@@ -203,13 +201,14 @@
                             <a class="btn btn-danger" href="#" onclick="seenStudent({{ $item->id }}); return false;">
                                 مشاهده شد!
                             </a>
+                            <a class="btn btn-primary" href="{{ route('student_edit', ["call_back"=>'supporter_student_new', "id"=>$item->id]) }}">
+                                ویرایش
+                            </a>
                         <!--
                             <a class="btn btn-warning" href="#" onclick="$('#students_index').val({{ $index }});preloadTagModal();$('#tag_modal').modal('show'); return false;">
                                 برچسب
                             </a>
-                            <a class="btn btn-primary" href="{{ route('student_edit', $item->id) }}">
-                                ویرایش
-                            </a>
+
                             <a class="btn btn-danger" href="{{ route('student_delete', $item->id) }}">
                                 حذف
                             </a>
@@ -265,11 +264,11 @@
                                 </div>
                                 <div class="row">
                                     <div class="col">
-                                        <!--
-                                        <a href="{{ route('student_edit', $item->id) }}">
+
+                                        <a href="{{ route('student_edit', ["call_back"=>'supporter_student_new', "id"=>$item->id]) }}">
                                             ویرایش مشخصات
                                         </a>
-                                        -->
+
                                     </div>
                                     <div class="col">
                                         تاریخ ثبت دانش آموز :

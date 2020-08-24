@@ -53,7 +53,10 @@ class PurchaseController extends Controller
             ]);
         }
 
+        $student = Student::find($request->input('students_id'));
+
         $purchase->students_id = $request->input('students_id');
+        $purchase->supporters_id = $student->supporters_id;
         $purchase->users_id = Auth::user()->id;
         $purchase->products_id = $request->input('products_id');
         $purchase->description = $request->input('description');
@@ -84,7 +87,10 @@ class PurchaseController extends Controller
             ]);
         }
 
+        $student = Student::find($request->input('students_id'));
+
         $purchase->students_id = $request->input('students_id');
+        $purchase->supporters_id = $student->supporters_id;
         $purchase->users_id = Auth::user()->id;
         $purchase->products_id = $request->input('products_id');
         $purchase->description = $request->input('description');
@@ -130,6 +136,7 @@ class PurchaseController extends Controller
             }
             $purchaseObject->products_id = $product->id;
             $purchaseObject->students_id = $student->id;
+            $purchaseObject->supporters_id = $student->supporters_id;
             $purchaseObject->price = isset($purchase['price'])?$purchase['price']:0;
             $purchaseObject->users_id = 0;
             try{

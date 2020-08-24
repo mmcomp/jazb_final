@@ -76,16 +76,20 @@ class StudentController extends Controller
             // ->with('parent_four')
             ->where('type', 'moral')
             ->get();
-        $parentOnes = TagParentOne::has('tags')->get();
-        $parentTwos = TagParentTwo::has('tags')->get();
-        $parentThrees = TagParentThree::has('tags')->get();
-        $parentFours = TagParentFour::has('tags')->get();
+        $parentOnes = TagParentOne::where('is_deleted', false)->has('tags')->get();
+        $parentTwos = TagParentTwo::where('is_deleted', false)->has('tags')->get();
+        $parentThrees = TagParentThree::where('is_deleted', false)->has('tags')->get();
+        $parentFours = TagParentFour::where('is_deleted', false)->has('tags')->get();
         $collections = Collection::where('is_deleted', false)->get();
         $firstCollections = Collection::where('is_deleted', false)->where('parent_id', 0)->get();
         $secondCollections = Collection::where('is_deleted', false)->whereIn('parent_id', $firstCollections->pluck('id'))->get();
         $thirdCollections = Collection::where('is_deleted', false)->with('parent')->whereIn('parent_id', $secondCollections->pluck('id'))->get();
         $hotTemperatures = Temperature::where('is_deleted', false)->where('status', 'hot')->get();
         $coldTemperatures = Temperature::where('is_deleted', false)->where('status', 'cold')->get();
+
+        foreach($students as $index => $student) {
+            $students[$index]->pcreated_at = jdate(strtotime($student->created_at))->format("Y/m/d");
+        }
 
         return view('students.index',[
             'students' => $students,
@@ -173,6 +177,10 @@ class StudentController extends Controller
         $hotTemperatures = Temperature::where('is_deleted', false)->where('status', 'hot')->get();
         $coldTemperatures = Temperature::where('is_deleted', false)->where('status', 'cold')->get();
 
+        foreach($students as $index => $student) {
+            $students[$index]->pcreated_at = jdate(strtotime($student->created_at))->format("Y/m/d");
+        }
+
         return view('students.index',[
             'students' => $students,
             'supports' => $supports,
@@ -242,7 +250,7 @@ class StudentController extends Controller
         return redirect()->route('students');
     }
 
-    public function edit(Request $request, $id)
+    public function edit(Request $request, $call_back, $id)
     {
         $student = Student::where('is_deleted', false)->where('id', $id)->first();
         if($student==null){
@@ -291,7 +299,7 @@ class StudentController extends Controller
         $student->save();
 
         $request->session()->flash("msg_success", "دانش آموز با موفقیت بروز شد.");
-        return redirect()->route('students');
+        return redirect()->route($call_back);
     }
 
     public function delete(Request $request, $id)
@@ -336,7 +344,8 @@ class StudentController extends Controller
 
                     // dump($line);
                     $student = new Student;
-                    $student->phone = '0' . $line[0];
+                    $student->users_id = Auth::user()->id;
+                    $student->phone = ((strpos($line[0], '0')!==0)?'0':'') . $line[0];
                     $student->first_name = $line[1]=="NULL"?null:$line[1];
                     $student->last_name = $line[2];
                     $student->egucation_level = $line[3];
@@ -355,19 +364,21 @@ class StudentController extends Controller
                     $student->introducing = $line[11]=="NULL"?null:$line[11];
                     $student->student_phone = $line[12]=="NULL"?null:$line[12];
                     $student->sources_id = $sources_id;
-                    if(count($line)==15){
-                        if($line[13]=="NULL" && $line[13]=="" && (int)$line[13]>0){
-                            $student->sources_id = (int)$line[13];
+                    if(count($line)==17){
+                        if($line[14]!="NULL" && $line[14]!="" && (int)$line[14]>0){
+                            $student->sources_id = (int)$line[14];
                         }
-                        if($line[14]=="NULL" && $line[14]=="" && (int)$line[14]>0){
-                            $student->supporters_id = (int)$line[14];
-                        }
-                    }
-                    if(isset($line[15])){
-                        if($line[15]=="NULL" && $line[15]==""){
-                            $student->description = (int)$line[15];
+                        if($line[15]!="NULL" && $line[15]!="" && (int)$line[15]>0){
+                            $student->supporters_id = (int)$line[15];
                         }
                     }
+                    if(isset($line[16])){
+                        $line[16] = trim($line[16]);
+                        if($line[16]!="NULL" && $line[16]!=""){
+                            $student->description = $line[16];
+                        }
+                    }
+                    // dd($student);
                     try{
                         $student->save();
                     }catch(Exception $e){
@@ -495,6 +506,7 @@ class StudentController extends Controller
 
         $student->supporters_id = $supporters_id;
         $student->supporter_seen = false;
+        $student->supporter_start_date = date("Y-m-d H:i:s");
         $student->save();
 
         return [

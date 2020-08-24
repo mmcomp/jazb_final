@@ -117,7 +117,7 @@ Route::group(['middleware' => ['auth', 'message']], function () {
         Route::any('/', 'StudentController@index')->name('students');
         Route::any('/all', 'StudentController@indexAll')->name('student_all');
         Route::any('/create', 'StudentController@create')->name('student_create');
-        Route::any('/edit/{id}', 'StudentController@edit')->name('student_edit');
+        Route::any('/edit/{call_back}/{id}', 'StudentController@edit')->name('student_edit');
         Route::get('/delete/{id}', 'StudentController@delete')->name('student_delete');
         Route::get('/call/{id}', 'StudentController@call')->name('student_call');
         Route::post('/tag', 'StudentController@tag')->name('student_tag');
@@ -200,14 +200,21 @@ Route::group(['middleware' => ['auth', 'message']], function () {
         Route::get('/delete/{id}', 'CallResultController@delete')->name('call_result_delete');
     });
 
+    Route::group(['prefix' => '/notices'], function () {
+        Route::get('/', 'NoticeController@index')->name('notices');
+        Route::any('/create', 'NoticeController@create')->name('notice_create');
+        Route::any('/edit/{id}', 'NoticeController@edit')->name('notice_edit');
+        Route::get('/delete/{id}', 'NoticeController@delete')->name('notice_delete');
+    });
+
     Route::group(['prefix' => '/supporter_students'], function () {
         Route::any('/', 'SupporterController@student')->name('supporter_students');
         Route::any('/students', 'SupporterController@newStudents')->name('supporter_student_new');
         Route::post('/call', 'SupporterController@call')->name('supporter_student_call');
         Route::post('/seen', 'SupporterController@seen')->name('supporter_student_seen');
         Route::any('/calls/{id}', 'SupporterController@calls')->name('supporter_student_allcall');
-        // Route::any('/create', 'SupporterController@create')->name('supporter_student_create');
-        // Route::get('/delete/{id}', 'SupporterController@delete')->name('supporter_student_delete');
+        Route::any('/create', 'SupporterController@studentCreate')->name('supporter_student_create');
+        Route::get('/purchases', 'SupporterController@purchases')->name('supporter_student_purchases');
     });
 
     Route::group(['prefix' => '/circulars'], function () {
