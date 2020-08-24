@@ -625,6 +625,7 @@
                                 </a>
                         </li>
                         @endif
+                        @if (!Gate::allows('marketers'))
                         <li class="nav-item">
                             @if(strpos(\Request::route()->getName(), 'circular')===0)
                             <a href="{{ route('circulars') }}" class="nav-link active">
@@ -657,6 +658,7 @@
                                 <p>آموزش و راهنما</p>
                             </a>
                         </li>
+                        @endif
                         <!--
           <li class="nav-item has-treeview menu-open">
             <a href="#" class="nav-link active">
