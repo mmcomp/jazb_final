@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Collection;
 use App\Group;
+use App\Marketer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -525,17 +526,30 @@ class StudentController extends Controller
                 $fails[] = $student;
                 continue;
             }
-            $studentObject = new Student;
-            foreach($student as $key=>$value){
-                $studentObject->$key = $value;
+            $studentObject = Student::where('phone', $student['phone'])->first();
+            if($studentObject && isset($student['marketers_id']) && $studentObject->marketers_id<=0){
+                $marketer = Marketer::find($student['marketers_id']);
+                if($marketer){
+                    $studentObject->marketers_id = $student['marketers_id'];
+                    $studentObject->save();
+                    $ids[] = $studentObject->id;
+                }else{
+                    $fails[] = $student;
+                }
+            }else {
+                $studentObject = new Student;
+                foreach($student as $key=>$value){
+                    $studentObject->$key = $value;
+                }
+                $studentObject->is_from_site = true;
+                try{
+                    $studentObject->save();
+                    $ids[] = $studentObject->id;
+                }catch(Exception $e){
+                    $fails[] = $student;
+                }
             }
-            $studentObject->is_from_site = true;
-            try{
-                $studentObject->save();
-                $ids[] = $studentObject->id;
-            }catch(Exception $e){
-                $fails[] = $student;
-            }
+
         }
         return [
             "added_ids" => $ids,
