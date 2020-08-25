@@ -179,6 +179,6 @@ class MarketerController extends Controller
     }
 
     public function code(){
-        return view('marketers.code', ['code' =>Auth::user()->id]);
+        return view('marketers.code', ['code' => Auth::user()->id]);
     }
 }
