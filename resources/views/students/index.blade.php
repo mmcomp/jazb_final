@@ -432,7 +432,7 @@
     function showMorePanel(index){
         // $('.morepanel').hide();
         // $('#morepanel-' + index).show();
-        var editRoute = `{{ route('student_edit', 'students', -1) }}`;
+        var editRoute = `{{ route('student_edit', ['call_back'=>'student_all', 'id'=>-1]) }}`;
         var purchaseRoute = `{{ route('student_purchases', -1) }}`;
         var test = `<table style="width: 100%">
             <tr>
