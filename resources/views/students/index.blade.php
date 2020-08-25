@@ -613,7 +613,7 @@
         $("#collection-two").find('option[value=""]').prop('selected', true);
         if($(dobj).val()!=''){
             $("#collection-two").find('option').each(function(id, field){
-                if($(field).data('parent_id')!=$(dobj).val()){
+                if($(field).data('parent_id')!=$(dobj).val() && $(field).val()!=''){
                     $(field).hide();
                 }else{
                     $(field).show();
@@ -663,18 +663,28 @@
         }
 
 
-        parents.push(parseInt($("#collection-one").val(), 10));
+
 
         if(collectionParents==''){
+            parents.push(parseInt($("#collection-one").val(), 10));
             $("#collection-two").find('option').each(function(id, field){
                 if($(field).css('display')!='none'){
                     parents.push(parseInt($(field).val(), 10));
                 }
             });
+            $("input.collection-checkbox").each(function (id, field){
+                let collectionId = parseInt($(field).val(), 10);
+                if(parents.indexOf(collectionId)<0){
+                    $(field).hide();
+                    $("#collection-title-" + collectionId).hide();
+                    $("#collection-br-" + collectionId).hide();
+                }
+            });
+            return false;
         }else {
             parents.push(parseInt(collectionParents, 10))
         }
-        console.log(parents);
+        console.log('parents:', parents);
 
         $("input.collection-checkbox").each(function (id, field){
             // console.log('checking', field)
