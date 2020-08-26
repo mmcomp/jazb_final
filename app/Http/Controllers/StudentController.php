@@ -167,10 +167,10 @@ class StudentController extends Controller
             // ->with('parent_four')
             ->where('type', 'moral')
             ->get();
-        $parentOnes = TagParentOne::has('tags')->get();
-        $parentTwos = TagParentTwo::has('tags')->get();
-        $parentThrees = TagParentThree::has('tags')->get();
-        $parentFours = TagParentFour::has('tags')->get();
+        $parentOnes = TagParentOne::where('is_deleted', false)->has('tags')->get();
+        $parentTwos = TagParentTwo::where('is_deleted', false)->has('tags')->get();
+        $parentThrees = TagParentThree::where('is_deleted', false)->has('tags')->get();
+        $parentFours = TagParentFour::where('is_deleted', false)->has('tags')->get();
         $collections = Collection::where('is_deleted', false)->get();
         $firstCollections = Collection::where('is_deleted', false)->where('parent_id', 0)->get();
         $secondCollections = Collection::where('is_deleted', false)->whereIn('parent_id', $firstCollections->pluck('id'))->get();
