@@ -783,8 +783,8 @@ $egucation_levels = [
             mother:"مادر",
             other:"غیره"
         };
-        var editRoute = `{{ route('student_edit', ['call_back'=>'student_all', 'id'=>-1]) }}`;
-        var purchaseRoute = `{{ route('student_purchases', -1) }}`;
+        var editRoute = `{{ route('student_edit', ['call_back'=>'supporter_students', 'id'=>-1]) }}`;
+        var purchaseRoute = `{{ route('supporter_student_purchases', -1) }}`;
         var supporterStudentAllCallRoute = `{{ route('supporter_student_allcall', -1) }}`;
         var tmpCall = `
             <tr>
