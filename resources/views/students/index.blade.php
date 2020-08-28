@@ -192,7 +192,12 @@
                             @for($i = 0; $i < count($item->studenttags);$i++)
                             <span class="alert alert-info p-1">
                                 {{ $item->studenttags[$i]->tag->name }}
-                            </span>
+                            </span><br/>
+                            @endfor
+                            @for($i = 0; $i < count($item->studentcollections);$i++)
+                            <span class="alert alert-warning p-1">
+                                {{ ($item->studentcollections[$i]->collection->parent) ? $item->studentcollections[$i]->collection->parent->name . '->' : '' }} {{ $item->studentcollections[$i]->collection->name }}
+                            </span><br/>
                             @endfor
                         </td>
                         @else

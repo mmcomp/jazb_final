@@ -62,7 +62,7 @@ class StudentController extends Controller
         $students = $students
             ->with('user')
             ->with('studenttags.tag')
-            ->with('studentcollections.collection')
+            ->with('studentcollections.collection.parent')
             ->with('studenttemperatures.temperature')
             ->with('source')
             ->with('consultant')
@@ -92,6 +92,7 @@ class StudentController extends Controller
             $students[$index]->pcreated_at = jdate(strtotime($student->created_at))->format("Y/m/d");
         }
 
+        // dd($students[123]);
         return view('students.index',[
             'students' => $students,
             'supports' => $supports,
@@ -152,7 +153,7 @@ class StudentController extends Controller
         $students = $students
             ->with('user')
             ->with('studenttags.tag')
-            ->with('studentcollections.collection')
+            ->with('studentcollections.collection.parent')
             ->with('studenttemperatures.temperature')
             ->with('source')
             ->with('consultant')
