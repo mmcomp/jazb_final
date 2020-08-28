@@ -526,12 +526,11 @@ class SupporterController extends Controller
             $call->replier = $request->input('replier');
             $call->next_to_call = $request->input('next_to_call');
             $call->next_call = $request->input('next_call');
-            $call->notices_id = $request->input('notices_id', 0);
+            $call->notices_id = ($request->input('notices_id')==null)?0:$request->input('notices_id');
             $call->products_id = 0;
             try{
                 $call->save();
             }catch(Exception $e){
-
             }
         }else {
             foreach($request->input('products_id') as $products_id ){
@@ -545,11 +544,10 @@ class SupporterController extends Controller
                 $call->products_id = $products_id;
                 $call->next_to_call = $request->input('next_to_call');
                 $call->next_call = $request->input('next_call');
-                $call->notices_id = $request->input('notices_id', 0);
+                $call->notices_id = ($request->input('notices_id')==null)?0:$request->input('notices_id');
                 try{
                     $call->save();
                 }catch(Exception $e){
-
                 }
             }
         }
