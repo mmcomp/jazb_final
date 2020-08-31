@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Collection;
 use App\Group;
+use App\Marketer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -61,7 +62,7 @@ class StudentController extends Controller
         $students = $students
             ->with('user')
             ->with('studenttags.tag')
-            ->with('studentcollections.collection')
+            ->with('studentcollections.collection.parent')
             ->with('studenttemperatures.temperature')
             ->with('source')
             ->with('consultant')
@@ -91,6 +92,7 @@ class StudentController extends Controller
             $students[$index]->pcreated_at = jdate(strtotime($student->created_at))->format("Y/m/d");
         }
 
+        // dd($students[123]);
         return view('students.index',[
             'students' => $students,
             'supports' => $supports,
@@ -151,7 +153,7 @@ class StudentController extends Controller
         $students = $students
             ->with('user')
             ->with('studenttags.tag')
-            ->with('studentcollections.collection')
+            ->with('studentcollections.collection.parent')
             ->with('studenttemperatures.temperature')
             ->with('source')
             ->with('consultant')
@@ -166,10 +168,10 @@ class StudentController extends Controller
             // ->with('parent_four')
             ->where('type', 'moral')
             ->get();
-        $parentOnes = TagParentOne::has('tags')->get();
-        $parentTwos = TagParentTwo::has('tags')->get();
-        $parentThrees = TagParentThree::has('tags')->get();
-        $parentFours = TagParentFour::has('tags')->get();
+        $parentOnes = TagParentOne::where('is_deleted', false)->has('tags')->get();
+        $parentTwos = TagParentTwo::where('is_deleted', false)->has('tags')->get();
+        $parentThrees = TagParentThree::where('is_deleted', false)->has('tags')->get();
+        $parentFours = TagParentFour::where('is_deleted', false)->has('tags')->get();
         $collections = Collection::where('is_deleted', false)->get();
         $firstCollections = Collection::where('is_deleted', false)->where('parent_id', 0)->get();
         $secondCollections = Collection::where('is_deleted', false)->whereIn('parent_id', $firstCollections->pluck('id'))->get();
@@ -525,17 +527,30 @@ class StudentController extends Controller
                 $fails[] = $student;
                 continue;
             }
-            $studentObject = new Student;
-            foreach($student as $key=>$value){
-                $studentObject->$key = $value;
+            $studentObject = Student::where('phone', $student['phone'])->first();
+            if($studentObject && isset($student['marketers_id']) && $studentObject->marketers_id<=0){
+                $marketer = Marketer::find($student['marketers_id']);
+                if($marketer){
+                    $studentObject->marketers_id = $student['marketers_id'];
+                    $studentObject->save();
+                    $ids[] = $studentObject->id;
+                }else{
+                    $fails[] = $student;
+                }
+            }else {
+                $studentObject = new Student;
+                foreach($student as $key=>$value){
+                    $studentObject->$key = $value;
+                }
+                $studentObject->is_from_site = true;
+                try{
+                    $studentObject->save();
+                    $ids[] = $studentObject->id;
+                }catch(Exception $e){
+                    $fails[] = $student;
+                }
             }
-            $studentObject->is_from_site = true;
-            try{
-                $studentObject->save();
-                $ids[] = $studentObject->id;
-            }catch(Exception $e){
-                $fails[] = $student;
-            }
+
         }
         return [
             "added_ids" => $ids,

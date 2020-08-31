@@ -30,7 +30,7 @@ class MarketerController extends Controller
 			$out=$miladi[0]."-".$miladi[1]."-".$miladi[2];
 		}
 		return $out;
-	}  
+	}
     public function profile(Request $request){
         $user = Auth::user();
         $marketer = Marketer::where('users_id', $user->id)->first();
@@ -75,7 +75,7 @@ class MarketerController extends Controller
     public function dashboard(){
         return view('marketers.dashboard');
     }
-    
+
     public function mystudents(){
         $students = Student::where('is_deleted', false)->where('marketers_id',Auth::user()->id);
         $students = $students
@@ -180,5 +180,28 @@ class MarketerController extends Controller
 
     public function code(){
         return view('marketers.code', ['code' => Auth::user()->id]);
+    }
+
+    //---------------------API------------------------------------
+    public function apiCheckMarketer(Request $request){
+        $id = $request->input('id');
+        if($id == null){
+            return [
+                "error" => "`id` is required!",
+                "data" => null
+            ];
+        }
+
+        $marketer = Marketer::find($id);
+        if($marketer==null){
+            return [
+                "error" => "`id` not found!",
+                "data" => null
+            ];
+        }
+        return [
+            "error" => null,
+            "data" => $marketer
+        ];
     }
 }

@@ -235,7 +235,7 @@ $egucation_levels = [
                         <div class="col text-center p-1">
                         </div>
                     </div>-->
-                    <table id="example2" class="table table-bordered table-hover _datatables">
+                    <table id="example2" class="table table-bordered table-hover">
                         <thead>
                             <tr>
                                 <th>ردیف</th>
@@ -251,7 +251,7 @@ $egucation_levels = [
                         </thead>
                         <tbody>
                             @foreach ($students as $index => $item)
-                            <tr>
+                            <tr id="tr-{{ $index }}">
                                 <td onclick="showMorePanel({{ $index }});">
                                     {{ $index + 1 }}</td>
                                 <td onclick="showMorePanel({{ $index }});">
@@ -307,6 +307,7 @@ $egucation_levels = [
                                     </a>
                                 </td>
                             </tr>
+                            <!--
                             <tr class="morepanel" id="morepanel-{{ $index }}">
                                 <td colspan="9">
                                     <div class="container">
@@ -441,6 +442,7 @@ $egucation_levels = [
                                 </td>
                                 <td style="display: none;"></td><td style="display: none;"></td><td style="display: none;"></td><td style="display: none;"></td><td style="display: none;"></td><td style="display: none;"></td><td style="display: none;"></td><td style="display: none;"></td>
                             </tr>
+                            -->
                             @endforeach
                         </tbody>
                     </table>
@@ -457,6 +459,7 @@ $egucation_levels = [
 @endsection
 
 @section('js')
+<!--
 <div class="modal" id="tag_modal" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -491,6 +494,103 @@ $egucation_levels = [
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">انصراف</button>
             </div>
         </div>
+    </div>
+</div>
+-->
+<div class="modal" id="tag_modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">برچسب</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <p>
+                <input type="hidden" id="students_index" />
+                <div class="morals">
+                <h3 class="text-center">
+                    اخلاقی
+                </h3>
+                <div>
+                    <select id="parent-one" onchange="selectParentOne(this);">
+                        <option value="">همه</option>
+                        @foreach ($parentOnes as $item)
+                        <option value="{{ $item->id }}">{{$item->name}}</option>
+                        @endforeach
+                    </select>
+
+                    <select id="parent-two" onchange="selectParentTwo(this);">
+                        <option value="">همه</option>
+                        @foreach ($parentTwos as $item)
+                        <option value="{{ $item->id }}">{{$item->name}}</option>
+                        @endforeach
+                    </select>
+
+                    <select id="parent-three" onchange="selectParentThree(this);">
+                        <option value="">همه</option>
+                        @foreach ($parentThrees as $item)
+                        <option value="{{ $item->id }}">{{$item->name}}</option>
+                        @endforeach
+                    </select>
+
+                    <select id="parent-four" onchange="selectParentFour(this);">
+                        <option value="">همه</option>
+                        @foreach ($parentFours as $item)
+                        <option value="{{ $item->id }}">{{$item->name}}</option>
+                        @endforeach
+                    </select>
+                </div>
+                @foreach ($moralTags as $index => $item)
+                    <input type="checkbox" class="tag-checkbox" id="tag_{{ $item->id }}" value="{{ $item->id }}" />
+                    <span class="tag-title" id="tag-title-{{ $item->id }}">
+                    {{ $item->name }}
+                    </span>
+                    <br class="tag-br" id="tag-br-{{ $item->id }}"/>
+                @endforeach
+                </div>
+                <div class="needs">
+                <h3 class="text-center">
+                    نیازسنجی
+                </h3>
+                <div>
+                    <select id="collection-one" onchange="selectCollectionOne(this);">
+                        <option value="">همه</option>
+                        @foreach ($firstCollections as $item)
+                        <option value="{{ $item->id }}">{{$item->name}}</option>
+                        @endforeach
+                    </select>
+
+                    <select id="collection-two" onchange="selectCollectionTwo(this);">
+                        <option value="">همه</option>
+                        @foreach ($secondCollections as $item)
+                        <option value="{{ $item->id }}" data-parent_id="{{$item->parent_id}}">{{$item->name}}</option>
+                        @endforeach
+                    </select>
+
+                    <select id="collection-three" onchange="selectCollectionThree(this);">
+                        <option value="">همه</option>
+                        @foreach ($thirdCollections as $item)
+                        <option value="{{ $item->id }}" data-parent_id="{{$item->parent_id}}" data-parent_parent_id="{{$item->parent->parent_id}}">{{$item->name}}</option>
+                        @endforeach
+                    </select>
+                </div>
+                @foreach ($needTags as $index => $item)
+                    <input type="checkbox" class="collection-checkbox" id="collection_{{ $item->id }}" value="{{ $item->id }}" />
+                    <span class="collection-title" id="collection-title-{{ $item->id }}">
+                    {{ $item->name }}
+                    </span>
+                    <br class="collection-br" id="collection-br-{{ $item->id }}"/>
+                @endforeach
+                </div>
+            </p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" onclick="saveTags();">اعمال</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">انصراف</button>
+        </div>
+      </div>
     </div>
 </div>
 <div class="modal" id="tag_modal_filter" tabindex="-1" role="dialog">
@@ -650,10 +750,200 @@ $egucation_levels = [
 <!-- page script -->
 <script>
     let students = @JSON($students);
+    let parentOnes = @JSON($parentOnes);
+    let parentTwos = @JSON($parentTwos);
+    let parentThrees = @JSON($parentThrees);
+    let parentFours = @JSON($parentFours);
+    let tmpTags = @JSON($moralTags);
+    let tmpCollections = @JSON($needTags);
+    let egucation_levels = @JSON($egucation_levels);
+    let majors = @JSON($majors);
+    let tags = {};
+    let collections = {};
+    var table;
+    for(let tg of tmpTags){
+        tags[tg.id] = tg;
+    }
+    for(let cl of tmpCollections){
+        collections[cl.id] = cl;
+    }
+    let filterParents = {
+        parent1: '',
+        parent2: '',
+        parent3: '',
+        parent4: ''
+    }
     let students_id;
     function showMorePanel(index){
-        $('.morepanel').hide();
-        $('#morepanel-' + index).show();
+        // $('.morepanel').hide();
+        // $('#morepanel-' + index).show();
+        var persons = {
+            student:"دانش آموز",
+            father:"پدر",
+            mother:"مادر",
+            other:"غیره"
+        };
+        var editRoute = `{{ route('student_edit', ['call_back'=>'supporter_students', 'id'=>-1]) }}`;
+        var purchaseRoute = `{{ route('supporter_student_purchases', -1) }}`;
+        var supporterStudentAllCallRoute = `{{ route('supporter_student_allcall', -1) }}`;
+        var tmpCall = `
+            <tr>
+                <td>#index#</td>
+                <td>#id#</td>
+                <td>#product#</td>
+                <td>#notice#</td>
+                <td>#replier#</td>
+                <td>#callresult#</td>
+                <td>#next_call#</td>
+                <td>#next_to_call#</td>
+                <td>#description#</td>
+            </tr>`;
+        var calls = '';
+        var callIndex = 1;
+        for(var call of students[index].calls) {
+            if(callIndex<=5) {
+                calls += tmpCall.replace('#index#', callIndex)
+                            .replace('#id#', call.id)
+                            .replace('#product#', (call.product)?call.product.name:'-')
+                            .replace('#notice#', (call.notice)?call.notice.name:'-')
+                            .replace('#replier#', persons[call.replier])
+                            .replace('#callresult#', (call.callresult)?call.callresult.title:'-')
+                            .replace('#next_call#', (call.next_call)?call.next_call:'-')
+                            .replace('#next_to_call#', persons[call.next_to_call])
+                            .replace('#description#', (call.next_call)?call.next_call:'-');
+            }else {
+                continue;
+            }
+            callIndex++;
+        }
+        var test = `<table style="width: 100%">
+            <tr>
+                <td>
+                    <div class="container">
+                        <div class="row">
+                            <div class="col">
+                                تراز یا رتبه سال قبل :
+                                ${ (students[index].last_year_grade!=null)?students[index].last_year_grade:'' }
+                            </div>
+                            <div class="col">
+                                مشاور :
+                                ${ (students[index].consultant)?students[index].consultant.first_name + ' ' + students[index].consultant.last_name:'' }
+                            </div>
+                            <div class="col">
+                                شغل پدر یا مادر :
+                                ${ (students[index].parents_job_title!=null)?students[index].parents_job_title:'' }
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                شماره منزل :
+                                ${ (students[index].home_phone!=null)?students[index].home_phone:'' }
+                            </div>
+                            <div class="col">
+                                مقطع :
+                                ${ (students[index].egucation_level!=null)?((egucation_levels[students[index].egucation_level])?egucation_levels[students[index].egucation_level]:students[index].egucation_level):'' }
+                            </div>
+                            <div class="col">
+                                شماره موبایل والدین :
+                                ${ (students[index].father_phone!=null)?students[index].father_phone:'' }
+                                ${ (students[index].mother_phone!=null)?students[index].mother_phone:'' }
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                مدرسه :
+                                ${ (students[index].school)!=null?students[index].school:'' }
+                            </div>
+                            <div class="col">
+                                معدل :
+                                ${ (students[index].average!=null)?students[index].average:'' }
+                            </div>
+                            <div class="col">
+                                رشته تحصیلی :
+                                ${ (majors[students[index].major])?majors[students[index].major]:'-' }
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <a href="${ editRoute.replace('-1', students[index].id) }">
+                                    ویرایش مشخصات
+                                </a>
+                            </div>
+                            <div class="col">
+                                تاریخ ثبت دانش آموز :
+                                ${ students[index].pcreated_at }
+                            </div>
+                            <div class="col">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <a href="#" onclick="$('#students_index').val(${ index });preloadTagModal('moral');$('#tag_modal').modal('show'); return false;">
+                                    برچسب روحیات اخلاقی
+                                </a>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <a href="#" onclick="$('#students_index').val(${ index });preloadTagModal('need');$('#tag_modal').modal('show'); return false;">
+                                    برچسب نیازهای دانش آموز
+                                </a>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <a target="_blank" href="${ purchaseRoute.replace('-1', students[index].id) }">
+                                    گزارش خریدهای قطعی دانش آموز
+                                </a>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <a target="_blank" href="${ supporterStudentAllCallRoute.replace('-1', students[index].id) }">
+                                    گزارش تماس ها
+                                </a>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <a class="btn btn-success" href="#" onclick="students_id = ${ students[index].id };$('#call_modal').modal('show');return false;">
+                                    ثبت تماس
+                                </a>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <table class="table table-bordered table-hover datatables-all datatables" style="width: 100%;">
+                                <thead>
+                                    <tr>
+                                        <th>ردیف</th>
+                                        <th>کد</th>
+                                        <th>محصول</th>
+                                        <th>اطلاع رسانی</th>
+                                        <th>پاسخگو</th>
+                                        <th>نتیجه</th>
+                                        <th>یادآور</th>
+                                        <th>پاسخگو بعد</th>
+                                        <th>توضیحات</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${ calls }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </table>`;
+
+        var tr = $("#tr-" + index)[0];
+        var row = table.row(tr);
+        if ( row.child.isShown() ) {
+            row.child.hide();
+        }
+        else {
+            row.child( test ).show();
+        }
     }
     function changeSupporter(studentsIndex) {
         if (students[studentsIndex]) {
@@ -677,7 +967,158 @@ $egucation_levels = [
         }
         return false;
     }
+    function selectParentOne(dobj){
+        filterParents.parent1 = ($(dobj).val()!='')?parseInt($(dobj).val(), 10):'';
+        filterTagsByParent()
+    }
+    function selectParentTwo(dobj){
+        filterParents.parent2 = ($(dobj).val()!='')?parseInt($(dobj).val(), 10):'';
+        filterTagsByParent()
+    }
+    function selectParentThree(dobj){
+        filterParents.parent3 = ($(dobj).val()!='')?parseInt($(dobj).val(), 10):'';
+        filterTagsByParent()
+    }
+    function selectParentFour(dobj){
+        filterParents.parent4 = ($(dobj).val()!='')?parseInt($(dobj).val(), 10):'';
+        filterTagsByParent()
+    }
+    function filterTagsByParent(){
+        $("input.tag-checkbox").show();
+        $("span.tag-title").show();
+        $("br.tag-br").show();
+        $("input.tag-checkbox").each(function (id, field){
+            console.log('checking', field)
+            let tagId = parseInt($(field).val(), 10);
+            let theTag = tags[tagId];
+            console.log(tagId, theTag)
+            if(theTag){
+                if(filterParents.parent1!=''){
+                    if(filterParents.parent1!=theTag.parent1){
+                        $(field).hide();
+                        $("#tag-title-" + tagId).hide();
+                        $("#tag-br-" + tagId).hide();
+                    }
+                }
+                if(filterParents.parent2!=''){
+                    if(filterParents.parent2!=theTag.parent2){
+                        $(field).hide();
+                        $("#tag-title-" + tagId).hide();
+                        $("#tag-br-" + tagId).hide();
+                    }
+                }
+                if(filterParents.parent3!=''){
+                    if(filterParents.parent3!=theTag.parent3){
+                        $(field).hide();
+                        $("#tag-title-" + tagId).hide();
+                        $("#tag-br-" + tagId).hide();
+                    }
+                }
+                if(filterParents.parent4!=''){
+                    if(filterParents.parent4!=theTag.parent4){
+                        $(field).hide();
+                        $("#tag-title-" + tagId).hide();
+                        $("#tag-br-" + tagId).hide();
+                    }
+                }
+            }
 
+        });
+    }
+    function selectCollectionOne(dobj){
+        $("#collection-two").find('option').show();
+        $("#collection-two").find('option[value=""]').prop('selected', true);
+        if($(dobj).val()!=''){
+            $("#collection-two").find('option').each(function(id, field){
+                if($(field).data('parent_id')!=$(dobj).val() && $(field).val()!=''){
+                    $(field).hide();
+                }else{
+                    $(field).show();
+                }
+            });
+        }
+        $("#collection-three").find('option').show();
+        $("#collection-three").find('option[value=""]').prop('selected', true);
+        if($(dobj).val()!=''){
+            $("#collection-three").find('option').each(function(id, field){
+                if($(field).data('parent_parent_id')!=$(dobj).val()){
+                    $(field).hide();
+                }else{
+                    $(field).show();
+                }
+            });
+        }
+        filterCollectionsByParent();
+    }
+    function selectCollectionTwo(dobj){
+        console.log('hey');
+        $("#collection-three").find('option').show();
+        $("#collection-three").find('option[value=""]').prop('selected', true);
+        if($(dobj).val()!=''){
+            $("#collection-three").find('option').each(function(id, field){
+                if($(field).data('parent_id')!=$(dobj).val()){
+                    $(field).hide();
+                }else{
+                    $(field).show();
+                }
+            });
+        }
+        filterCollectionsByParent();
+    }
+    function selectCollectionThree(dobj){
+        console.log('hey3');
+        filterCollectionsByParent();
+    }
+    function filterCollectionsByParent(){
+        $("input.collection-checkbox").show();
+        $("span.collection-title").show();
+        $("br.collection-br").show();
+        let collectionParents = $("#collection-two").val();
+        let parents = [];
+        if($("#collection-one").val()=='' && collectionParents==''){
+            return false;
+        }
+
+
+
+
+        if(collectionParents==''){
+            parents.push(parseInt($("#collection-one").val(), 10));
+            $("#collection-two").find('option').each(function(id, field){
+                if($(field).css('display')!='none'){
+                    parents.push(parseInt($(field).val(), 10));
+                }
+            });
+            $("input.collection-checkbox").each(function (id, field){
+                let collectionId = parseInt($(field).val(), 10);
+                if(parents.indexOf(collectionId)<0){
+                    $(field).hide();
+                    $("#collection-title-" + collectionId).hide();
+                    $("#collection-br-" + collectionId).hide();
+                }
+            });
+            return false;
+        }else {
+            parents.push(parseInt(collectionParents, 10))
+        }
+        console.log('parents:', parents);
+
+        $("input.collection-checkbox").each(function (id, field){
+            // console.log('checking', field)
+            let collectionId = parseInt($(field).val(), 10);
+            let theCollection = collections[collectionId];
+            console.log(collectionId, theCollection)
+            if(theCollection){
+                console.log(parents.indexOf(theCollection.id), parents.indexOf(theCollection.parent_id));
+                if(parents.indexOf(theCollection.id)<0 && parents.indexOf(theCollection.parent_id)<0){
+                    $(field).hide();
+                    $("#collection-title-" + collectionId).hide();
+                    $("#collection-br-" + collectionId).hide();
+                }
+            }
+
+        });
+    }
     function preloadFilterTagModal() {
         $("input.filter-tag-checkbox").prop('checked', false);
         var selecteds = $("#has_the_tag").val();
@@ -714,20 +1155,28 @@ $egucation_levels = [
         });
     }
 
-    function preloadTagModal() {
+    function preloadTagModal(mode){
+        if(mode=='need'){
+            $("div.needs").show();
+            $("div.morals").hide();
+        }else{
+            $("div.needs").hide();
+            $("div.morals").show();
+        }
         $("input.tag-checkbox").prop('checked', false);
         $("input.collection-checkbox").prop('checked', false);
         var studentsIndex = parseInt($("#students_index").val(), 10);
-        if (!isNaN(studentsIndex)) {
-            if (students[studentsIndex]) {
+        if(!isNaN(studentsIndex)){
+            if(students[studentsIndex]){
                 console.log(students[studentsIndex].studenttags);
-                for (studenttag of students[studentsIndex].studenttags) {
+                for(studenttag of students[studentsIndex].studenttags){
                     $("#tag_" + studenttag.tags_id).prop("checked", true);
                 }
                 console.log(students[studentsIndex].studentcollections);
-                for (studentcollection of students[studentsIndex].studentcollections) {
+                for(studentcollection of students[studentsIndex].studentcollections){
                     $("#collection_" + studentcollection.collections_id).prop("checked", true);
                 }
+
             }
         }
     }
@@ -919,6 +1368,23 @@ $egucation_levels = [
         $('select.select2').select2();
 
         $("table.datatables").DataTable({
+            "paging": true,
+            "lengthChange": false,
+            "searching": false,
+            "ordering": true,
+            "info": true,
+            "autoWidth": true,
+            "language": {
+                "paginate": {
+                    "previous": "قبل",
+                    "next": "بعد"
+                },
+                "emptyTable": "داده ای برای نمایش وجود ندارد",
+                "info": "نمایش _START_ تا _END_ از _TOTAL_ داده",
+                "infoEmpty": "نمایش 0 تا 0 از 0 داده",
+            }
+        });
+        table = $("#example2").DataTable({
             "paging": true,
             "lengthChange": false,
             "searching": false,

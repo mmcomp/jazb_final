@@ -21,3 +21,4 @@ use Illuminate\Support\Facades\Route;
 Route::post('/students', 'StudentController@apiAddStudents')->name('api_add_students');
 Route::post('/products', 'ProductController@apiAddProducts')->name('api_add_products');
 Route::post('/purchases', 'PurchaseController@apiAddPurchases')->name('api_add_purchases');
+Route::post('/marketers', 'MarketerController@apiCheckMarketer')->name('api_check_marketer');

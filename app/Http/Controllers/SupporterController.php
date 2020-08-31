@@ -230,12 +230,25 @@ class SupporterController extends Controller
                 }, SORT_REGULAR, true);
             }
         }
+        $parentOnes = TagParentOne::has('tags')->get();
+        $parentTwos = TagParentTwo::has('tags')->get();
+        $parentThrees = TagParentThree::has('tags')->get();
+        $parentFours = TagParentFour::has('tags')->get();
+        $collections = Collection::where('is_deleted', false)->get();
+        $firstCollections = Collection::where('is_deleted', false)->where('parent_id', 0)->get();
+        $secondCollections = Collection::where('is_deleted', false)->whereIn('parent_id', $firstCollections->pluck('id'))->get();
+        $thirdCollections = Collection::where('is_deleted', false)->with('parent')->whereIn('parent_id', $secondCollections->pluck('id'))->get();
 
         $moralTags = Tag::where('is_deleted', false)->where('type', 'moral')->get();
         // $needTags = Tag::where('is_deleted', false)->where('type', 'need')->get();
         $hotTemperatures = Temperature::where('is_deleted', false)->where('status', 'hot')->get();
         $coldTemperatures = Temperature::where('is_deleted', false)->where('status', 'cold')->get();
         $collections = Collection::where('is_deleted', false)->get();
+
+        foreach($students as $index => $student) {
+            $students[$index]->pcreated_at = jdate(strtotime($student->created_at))->format("Y/m/d");
+        }
+
         // dd($has_the_product);
         return view('supporters.student',[
             'user'=>$user,
@@ -248,6 +261,13 @@ class SupporterController extends Controller
             'needTags'=>$collections,
             'hotTemperatures'=>$hotTemperatures,
             'coldTemperatures'=>$coldTemperatures,
+            "parentOnes"=>$parentOnes,
+            "parentTwos"=>$parentTwos,
+            "parentThrees"=>$parentThrees,
+            "parentFours"=>$parentFours,
+            "firstCollections"=>$firstCollections,
+            "secondCollections"=>$secondCollections,
+            "thirdCollections"=>$thirdCollections,
             'products'=>$products,
             'notices'=>$notices,
             'callResults'=>$callResults,
@@ -506,12 +526,11 @@ class SupporterController extends Controller
             $call->replier = $request->input('replier');
             $call->next_to_call = $request->input('next_to_call');
             $call->next_call = $request->input('next_call');
-            $call->notices_id = $request->input('notices_id', 0);
+            $call->notices_id = ($request->input('notices_id')==null)?0:$request->input('notices_id');
             $call->products_id = 0;
             try{
                 $call->save();
             }catch(Exception $e){
-
             }
         }else {
             foreach($request->input('products_id') as $products_id ){
@@ -525,11 +544,10 @@ class SupporterController extends Controller
                 $call->products_id = $products_id;
                 $call->next_to_call = $request->input('next_to_call');
                 $call->next_call = $request->input('next_call');
-                $call->notices_id = $request->input('notices_id', 0);
+                $call->notices_id = ($request->input('notices_id')==null)?0:$request->input('notices_id');
                 try{
                     $call->save();
                 }catch(Exception $e){
-
                 }
             }
         }

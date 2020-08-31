@@ -192,7 +192,12 @@
                             @for($i = 0; $i < count($item->studenttags);$i++)
                             <span class="alert alert-info p-1">
                                 {{ $item->studenttags[$i]->tag->name }}
-                            </span>
+                            </span><br/>
+                            @endfor
+                            @for($i = 0; $i < count($item->studentcollections);$i++)
+                            <span class="alert alert-warning p-1">
+                                {{ ($item->studentcollections[$i]->collection->parent) ? $item->studentcollections[$i]->collection->parent->name . '->' : '' }} {{ $item->studentcollections[$i]->collection->name }}
+                            </span><br/>
                             @endfor
                         </td>
                         @else
@@ -432,7 +437,7 @@
     function showMorePanel(index){
         // $('.morepanel').hide();
         // $('#morepanel-' + index).show();
-        var editRoute = `{{ route('student_edit', 'students', -1) }}`;
+        var editRoute = `{{ route('student_edit', ['call_back'=>'student_all', 'id'=>-1]) }}`;
         var purchaseRoute = `{{ route('student_purchases', -1) }}`;
         var test = `<table style="width: 100%">
             <tr>
@@ -613,7 +618,7 @@
         $("#collection-two").find('option[value=""]').prop('selected', true);
         if($(dobj).val()!=''){
             $("#collection-two").find('option').each(function(id, field){
-                if($(field).data('parent_id')!=$(dobj).val()){
+                if($(field).data('parent_id')!=$(dobj).val() && $(field).val()!=''){
                     $(field).hide();
                 }else{
                     $(field).show();
@@ -663,18 +668,28 @@
         }
 
 
-        parents.push(parseInt($("#collection-one").val(), 10));
+
 
         if(collectionParents==''){
+            parents.push(parseInt($("#collection-one").val(), 10));
             $("#collection-two").find('option').each(function(id, field){
                 if($(field).css('display')!='none'){
                     parents.push(parseInt($(field).val(), 10));
                 }
             });
+            $("input.collection-checkbox").each(function (id, field){
+                let collectionId = parseInt($(field).val(), 10);
+                if(parents.indexOf(collectionId)<0){
+                    $(field).hide();
+                    $("#collection-title-" + collectionId).hide();
+                    $("#collection-br-" + collectionId).hide();
+                }
+            });
+            return false;
         }else {
             parents.push(parseInt(collectionParents, 10))
         }
-        console.log(parents);
+        console.log('parents:', parents);
 
         $("input.collection-checkbox").each(function (id, field){
             // console.log('checking', field)
