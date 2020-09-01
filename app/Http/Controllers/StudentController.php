@@ -357,6 +357,7 @@ class StudentController extends Controller
                             'sources'=>$sources
                         ]);
                     }
+                    dd($e);
                     return view('students.csv', [
                         'msg_success' => null,
                         'msg_error' => 'امکان بررسی اکسل مورد نظر نبود لطفا مطابق مثال بفرستید',
