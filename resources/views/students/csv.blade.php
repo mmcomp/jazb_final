@@ -64,6 +64,7 @@
                     <div class="col">
                         <div class="form-group">
                             <label for="attachment">فایل CSV <a target="_blank" href="/students.csv">مثال</a></label>
+                            <label for="attachment"> یا فایل xlsx <a target="_blank" href="/students.xlsx">مثال</a></label>
                             <input type="file" class="form-control" id="attachment" name="attachment" required />
                         </div>
                     </div>

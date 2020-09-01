@@ -8,7 +8,9 @@ use App\Marketer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
+use App\Imports\StudentsImport;
 use App\Student;
 use App\User;
 use App\Source;
@@ -335,9 +337,39 @@ class StudentController extends Controller
             'art' => 'art',
             'other' => 'other'
         ];
+        $sources = Source::where('is_deleted', false)->get();
         if($request->getMethod()=='POST'){
             $msg = 'بروز رسانی با موفقیت انجام شد';
             $csvPath = $request->file('attachment')->getPathname();
+            if($request->file('attachment')->extension()=='xlsx'){
+                $importer = new StudentsImport;
+                try{
+                    $importer->import($csvPath);
+                    // $array = $importer->toArray($csvPath);
+                }catch(Exception $e){
+                    if($e->getCode()=="23000") {
+                        $message = explode("'", $e->getMessage());
+                        $mobile = $message[1];
+                        return view('students.csv', [
+                            'msg_success' => null,
+                            'msg_error' => 'شماره ' . $mobile . 'تکراری است',
+                            'fails'=>$fails,
+                            'sources'=>$sources
+                        ]);
+                    }
+                    return view('students.csv', [
+                        'msg_success' => null,
+                        'msg_error' => 'امکان بررسی اکسل مورد نظر نبود لطفا مطابق مثال بفرستید',
+                        'fails'=>$fails,
+                        'sources'=>$sources
+                    ]);
+                }
+                return view('students.csv', [
+                    'msg_success' => $msg,
+                    'fails'=>$fails,
+                    'sources'=>$sources
+                ]);
+            }
             $csv = explode("\n", file_get_contents($csvPath));
             $sources_id = $request->input('sources_id');
             foreach($csv as $index => $line){
@@ -391,7 +423,6 @@ class StudentController extends Controller
             }
         }
         // die();
-        $sources = Source::where('is_deleted', false)->get();
         return view('students.csv', [
             'msg_success' => $msg,
             'fails'=>$fails,
