@@ -344,7 +344,7 @@ class StudentController extends Controller
             if($request->file('attachment')->extension()=='xlsx'){
                 $importer = new StudentsImport;
                 try{
-                    $importer->import($csvPath);
+                    $importer->import($csvPath, null, \Maatwebsite\Excel\Excel::XLSX);
                     // $array = $importer->toArray($csvPath);
                 }catch(Exception $e){
                     if($e->getCode()=="23000") {
