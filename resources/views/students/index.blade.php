@@ -187,7 +187,7 @@
                         <td onclick="showMorePanel({{ $index }});">-</td>
                         @endif
                         <td onclick="showMorePanel({{ $index }});">{{ ($item->source)?$item->source->name:'-' }}</td>
-                        @if($item->studenttags && count($item->studenttags)>0)
+                        @if(($item->studenttags && count($item->studenttags)>0) || ($item->studentcollections && count($item->studentcollections)>0))
                         <td>
                             @for($i = 0; $i < count($item->studenttags);$i++)
                             <span class="alert alert-info p-1">
