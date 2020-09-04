@@ -94,7 +94,7 @@ class StudentController extends Controller
             $students[$index]->pcreated_at = jdate(strtotime($student->created_at))->format("Y/m/d");
         }
 
-        dd($students);
+        // dd($students);
         return view('students.index',[
             'students' => $students,
             'supports' => $supports,
