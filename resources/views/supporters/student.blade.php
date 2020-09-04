@@ -270,7 +270,7 @@ $egucation_levels = [
                                         <span class="alert alert-info p-1">
                                             {{ $item->studenttags[$i]->tag->name }}
                                         </span>
-                                        @endfor
+                                    @endfor
                                 </td>
                                 @else
                                 <td onclick="showMorePanel({{ $index }});"></td>
