@@ -120,7 +120,7 @@ class SupporterController extends Controller
         // Student::where('is_deleted', false)->where('supporters_id', $id)->where('viewed', false)->update([
         //     'viewed'=>true
         // ]);
-        $students = Student::where('is_deleted', false)->where('supporters_id', $id);
+        $students = Student::where('is_deleted', false)->where('banned', false)->where('supporters_id', $id);
         $sources = Source::where('is_deleted', false)->get();
         $products = Product::where('is_deleted', false)->with('collection')->orderBy('name')->get();
         // $callResults = CallResult::where('is_deleted', false)->get();
@@ -285,7 +285,7 @@ class SupporterController extends Controller
     }
 
     public function newStudents(){
-        $students = Student::where('is_deleted', false)->where('supporter_seen', false)->where('supporters_id', Auth::user()->id);
+        $students = Student::where('is_deleted', false)->where('banned', false)->where('supporter_seen', false)->where('supporters_id', Auth::user()->id);
         $sources = Source::where('is_deleted', false)->get();
         $name = null;
         $sources_id = null;
@@ -360,7 +360,7 @@ class SupporterController extends Controller
     }
 
     public function purchases(){
-        $students = Student::where('is_deleted', false)->where('supporter_seen', false)->where('supporters_id', Auth::user()->id);
+        $students = Student::where('is_deleted', false)->where('banned', false)->where('supporter_seen', false)->where('supporters_id', Auth::user()->id);
         $sources = Source::where('is_deleted', false)->get();
         $name = null;
         $sources_id = null;
@@ -443,7 +443,7 @@ class SupporterController extends Controller
     }
 
     public function calls($id) {
-        $student = Student::where('id', $id)->with('calls.product')->with('calls.product.collection')->with('calls.callresult')->first();
+        $student = Student::where('id', $id)->where('banned', false)->with('calls.product')->with('calls.product.collection')->with('calls.callresult')->first();
         if($student->calls)
             foreach($student->calls as $index=>$call){
                 if($student->calls[$index]->product){
@@ -508,7 +508,7 @@ class SupporterController extends Controller
     public function call(Request $request){
         $students_id = $request->input('students_id');
 
-        $student = Student::where('id', $students_id)->where('is_deleted', false)->first();
+        $student = Student::where('id', $students_id)->where('banned', false)->where('is_deleted', false)->first();
         if($student==null){
             return [
                 "error"=>"student_not_found",

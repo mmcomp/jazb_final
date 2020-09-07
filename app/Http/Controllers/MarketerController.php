@@ -77,7 +77,7 @@ class MarketerController extends Controller
     }
 
     public function mystudents(){
-        $students = Student::where('is_deleted', false)->where('marketers_id',Auth::user()->id);
+        $students = Student::where('is_deleted', false)->where('banned', false)->where('marketers_id',Auth::user()->id);
         $students = $students
             ->with('user')
             ->with('studentcollections.collection')
@@ -107,7 +107,7 @@ class MarketerController extends Controller
                 "student"=>$student
             ]);
         }
-        $tmp = Student::where('phone', $request->input('phone'))->select('id')->first();
+        $tmp = Student::where('phone', $request->input('phone'))->where('banned', false)->select('id')->first();
         $student->users_id = Auth::user()->id;
         $student->marketers_id = $student->users_id ;
         $student->first_name = $request->input('first_name');
@@ -147,7 +147,7 @@ class MarketerController extends Controller
         return redirect()->route('marketermystudents');
     }
     public function students(){
-        $students = Student::where('is_deleted', false)->where('marketers_id',Auth::user()->id);
+        $students = Student::where('is_deleted', false)->where('banned', false)->where('marketers_id',Auth::user()->id);
         $students = $students
             ->with('user')
             ->with('studentcollections.collection')

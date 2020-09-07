@@ -35,7 +35,7 @@ class PurchaseController extends Controller
     public function create(Request $request)
     {
         $purchase = new Purchase();
-        $students = Student::where('is_deleted', false)->get();
+        $students = Student::where('is_deleted', false)->where('banned', false)->get();
         $products = Product::where('is_deleted', false)->with('collection')->orderBy('name')->get();
         foreach($products as $index => $product){
             $products[$index]->parents = "-";
@@ -77,7 +77,7 @@ class PurchaseController extends Controller
             return redirect()->route('purchases');
         }
 
-        $students = Student::where('is_deleted', false)->get();
+        $students = Student::where('is_deleted', false)->where('banned', false)->get();
         $products = Product::where('is_deleted', false)->get();
         if($request->getMethod()=='GET'){
             return view('purchases.create', [
@@ -129,7 +129,7 @@ class PurchaseController extends Controller
             }
             $purchaseObject = new Purchase;
             $product = Product::where('woo_id', $purchase['woo_id'])->first();
-            $student = Student::where('phone', $purchase['phone'])->first();
+            $student = Student::where('phone', $purchase['phone'])->where('banned', false)->first();
             if($product == null || $student == null){
                 $fails[] = $purchase;
                 continue;

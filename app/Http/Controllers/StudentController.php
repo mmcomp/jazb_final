@@ -29,7 +29,7 @@ use Exception;
 class StudentController extends Controller
 {
     public function indexAll(){
-        $students = Student::where('is_deleted', false);
+        $students = Student::where('is_deleted', false)->where('banned', false);
         $supportGroupId = Group::getSupport();
         if($supportGroupId)
             $supportGroupId = $supportGroupId->id;
@@ -120,7 +120,7 @@ class StudentController extends Controller
     }
 
     public function index(){
-        $students = Student::where('is_deleted', false)->where('supporters_id', 0);
+        $students = Student::where('is_deleted', false)->where('banned', false)->where('supporters_id', 0);
         $supportGroupId = Group::getSupport();
         if($supportGroupId)
             $supportGroupId = $supportGroupId->id;
@@ -257,7 +257,7 @@ class StudentController extends Controller
 
     public function edit(Request $request, $call_back, $id)
     {
-        $student = Student::where('is_deleted', false)->where('id', $id)->first();
+        $student = Student::where('is_deleted', false)->where('banned', false)->where('id', $id)->first();
         if($student==null){
             $request->session()->flash("msg_error", "دانش آموز مورد نظر پیدا نشد!");
             return redirect()->route('students');
@@ -309,7 +309,7 @@ class StudentController extends Controller
 
     public function delete(Request $request, $id)
     {
-        $student = Student::where('is_deleted', false)->where('id', $id)->first();
+        $student = Student::where('is_deleted', false)->where('banned', false)->where('id', $id)->first();
         if($student==null){
             $request->session()->flash("msg_error", "دانش آموز مورد نظر پیدا نشد!");
             return redirect()->route('students');
@@ -433,7 +433,7 @@ class StudentController extends Controller
     }
 
     public function purchases(Request $request, $id){
-        $student = Student::where('is_deleted', false)->where('id', $id)->first();
+        $student = Student::where('is_deleted', false)->where('banned', false)->where('id', $id)->first();
         if($student == null){
             $request->session()->flash("msg_error", "دانش آموز پیدا نشد!");
             return redirect()->route('students');
@@ -452,7 +452,7 @@ class StudentController extends Controller
         $selectedTags = $request->input('selectedTags');
         $selectedCollections = $request->input('selectedColllections');
 
-        $student = Student::where('id', $students_id)->where('is_deleted', false)->first();
+        $student = Student::where('id', $students_id)->where('banned', false)->where('is_deleted', false)->first();
         if($student==null){
             return [
                 "error"=>"student_not_found",
@@ -498,7 +498,7 @@ class StudentController extends Controller
         $students_id = $request->input('students_id');
         $selectedTemperatures = $request->input('selectedTemperatures');
 
-        $student = Student::where('id', $students_id)->where('is_deleted', false)->first();
+        $student = Student::where('id', $students_id)->where('banned', false)->where('is_deleted', false)->first();
         if($student==null){
             return [
                 "error"=>"student_not_found",
@@ -531,7 +531,7 @@ class StudentController extends Controller
         $students_id = $request->input('students_id');
         $supporters_id = $request->input('supporters_id');
 
-        $student = Student::where('id', $students_id)->where('is_deleted', false)->first();
+        $student = Student::where('id', $students_id)->where('banned', false)->where('is_deleted', false)->first();
         if($student==null){
             return [
                 "error"=>"student_not_found",
@@ -560,7 +560,7 @@ class StudentController extends Controller
                 $fails[] = $student;
                 continue;
             }
-            $studentObject = Student::where('phone', $student['phone'])->first();
+            $studentObject = Student::where('phone', $student['phone'])->where('banned', false)->first();
             if($studentObject && isset($student['marketers_id']) && $studentObject->marketers_id<=0){
                 $marketer = Marketer::find($student['marketers_id']);
                 if($marketer){
