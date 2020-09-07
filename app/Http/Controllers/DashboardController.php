@@ -77,7 +77,7 @@ class DashboardController extends Controller
         $supporters = [];
         if($supportGroupId){
             $supportGroupId = $supportGroupId->id;
-            $supporters = User::where('is_deleted', false)->where('banned', false)->where('groups_id', $supportGroupId)->with('students')->get()->sortBy(function($hackathon)
+            $supporters = User::where('is_deleted', false)->where('groups_id', $supportGroupId)->with('students')->get()->sortBy(function($hackathon)
             {
                 return $hackathon->students->count();
             }, SORT_REGULAR, true);

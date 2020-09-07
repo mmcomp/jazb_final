@@ -304,6 +304,16 @@
                                 @endforeach
                             </select>
                         </div>
+                        @if (isset($student) && isset($student->id))
+                        <div class="form-group">
+                            <label for="supporters_id">لیست سیاه</label><br/>
+                            <input type="checkbox" id="banned" name="banned"
+                                @if($student->banned)
+                                checked
+                                @endif
+                            />
+                        </div>
+                        @endif
                     </div>
                 </div>
                 <div class="row">

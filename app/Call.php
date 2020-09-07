@@ -14,6 +14,10 @@ class Call extends Model
         return $this->hasOne('App\Notice', 'id', 'notices_id');
     }
 
+    public function student(){
+        return $this->hasOne('App\Student', 'id', 'students_id');
+    }
+
     public function user(){
         return $this->hasOne('App\User', 'id', 'users_id');
     }

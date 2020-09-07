@@ -257,7 +257,7 @@ class StudentController extends Controller
 
     public function edit(Request $request, $call_back, $id)
     {
-        $student = Student::where('is_deleted', false)->where('banned', false)->where('id', $id)->first();
+        $student = Student::where('is_deleted', false)->where('id', $id)->first();
         if($student==null){
             $request->session()->flash("msg_error", "دانش آموز مورد نظر پیدا نشد!");
             return redirect()->route('students');
@@ -301,6 +301,7 @@ class StudentController extends Controller
             $student->supporter_seen = false;
         }
         $student->supporters_id = $request->input('supporters_id');
+        $student->banned = ($request->input('banned')!=null)?true:false;
         $student->save();
 
         $request->session()->flash("msg_success", "دانش آموز با موفقیت بروز شد.");
@@ -309,7 +310,7 @@ class StudentController extends Controller
 
     public function delete(Request $request, $id)
     {
-        $student = Student::where('is_deleted', false)->where('banned', false)->where('id', $id)->first();
+        $student = Student::where('is_deleted', false)->where('id', $id)->first();
         if($student==null){
             $request->session()->flash("msg_error", "دانش آموز مورد نظر پیدا نشد!");
             return redirect()->route('students');

@@ -33,6 +33,8 @@
     <link rel="stylesheet" href="/dist/css/bootstrap.min.css">
     <!-- Custom style for RTL -->
     <link rel="stylesheet" href="/dist/css/custom.css">
+    <!-- PersianCalender -->
+    <link href="/plugins/persiancalender/jquery.md.bootstrap.datetimepicker.style.css" rel="stylesheet"/>
     @yield('css')
 </head>
 
@@ -442,14 +444,24 @@
                         @endif
                         @if (Gate::allows('users'))
                         <li class="nav-item">
-                            @if(strpos(\Request::route()->getName(), 'user_supporter')===0)
+                            @if(strpos(\Request::route()->getName(), 'user_supporters')===0)
                             <a href="{{ route('user_supporters') }}" class="nav-link active">
-                                @else
-                                <a href="{{ route('user_supporters') }}" class="nav-link">
-                                    @endif
-                                    <p>لیست کامل پشتیبان ها</p>
-                                </a>
+                            @else
+                            <a href="{{ route('user_supporters') }}" class="nav-link">
+                            @endif
+                                <p>لیست کامل پشتیبان ها</p>
+                            </a>
                         </li>
+                        <li class="nav-item">
+                            @if(strpos(\Request::route()->getName(), 'user_supporter_call')===0)
+                            <a href="{{ route('user_supporter_calls') }}" class="nav-link active">
+                            @else
+                            <a href="{{ route('user_supporter_calls') }}" class="nav-link">
+                            @endif
+                                <p>لیست تماس پشتیبان ها</p>
+                            </a>
+                        </li>
+
                         @endif
                         @if (Gate::allows('sale_suggestions'))
                         <!--
@@ -1203,8 +1215,21 @@
     <script src="/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script>
     <!-- AdminLTE App -->
     <script src="/dist/js/adminlte.js"></script>
+    <!-- PersianCalender -->
+    <script src="/plugins/persiancalender/jquery.md.bootstrap.datetimepicker.js"></script>
 
     @yield('js')
+
+    <script>
+        $(document).ready(function(){
+            $("input.pdate").each(function(id, field){
+                $(field).MdPersianDateTimePicker({
+                    targetTextSelector: '#' + field.id
+                });
+            });
+        });
+    </script>
+
 </body>
 
 </html>

@@ -174,6 +174,8 @@ Route::group(['middleware' => ['auth', 'message']], function () {
 
     Route::group(['prefix' => '/user_supporters'], function () {
         Route::get('/', 'SupporterController@index')->name('user_supporters');
+        Route::any('/calls', 'SupporterController@callIndex')->name('user_supporter_calls');
+        Route::post('/call', 'SupporterController@acallIndex')->name('user_supporter_acall');
         Route::any('/students/{id}', 'SupporterController@students')->name('supporter_allstudents');
         Route::any('/create', 'SupporterController@create')->name('user_supporter_create');
         Route::post('/change_pass', 'SupporterController@changePass')->name('user_supporter_changepass');
