@@ -441,6 +441,17 @@
                                 <p>فهرست دانش آموزان</p>
                             </a>
                         </li>
+
+                        <li class="nav-item">
+                            @if(strpos(\Request::route()->getName(), 'student_banned')===0)
+                            <a href="{{ route('student_banned') }}" class="nav-link active">
+                            @else
+                            <a href="{{ route('student_banned') }}" class="nav-link">
+                            @endif
+                                <!-- <i class="far fa-circle nav-icon"></i> -->
+                                <p>فهرست سیاه دانش آموزان</p>
+                            </a>
+                        </li>
                         @endif
                         @if (Gate::allows('users'))
                         <li class="nav-item">
