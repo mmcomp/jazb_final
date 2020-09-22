@@ -192,7 +192,7 @@ class MarketerController extends Controller
             ];
         }
 
-        $marketer = Marketer::find($id);
+        $marketer = Marketer::where("users_id", $id)->first();
         if($marketer==null){
             return [
                 "error" => "`id` not found!",
