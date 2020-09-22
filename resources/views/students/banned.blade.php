@@ -30,7 +30,7 @@
         <div class="container-fluid">
           <div class="row mb-2">
             <div class="col-sm-6">
-              <h1>دانش آموزان</h1>
+              <h1>دانش آموزان لیست سیاه</h1>
             </div>
             <div class="col-sm-6">
               <!--
@@ -51,7 +51,6 @@
             <div class="card">
               <div class="card-header">
                 <h3 class="card-title">
-                    <a class="btn btn-success" href="{{ route('student_create') }}">دانش آموز جدید</a>
                 </h3>
               </div>
               <!-- /.card-header -->
@@ -165,9 +164,9 @@
                     <th>منبع ورودی شماره</th>
                     <th>برچسب</th>
                     <th>داغ/سرد</th>
-                    <th>پشتیبان</th>
+                    <!--<th>پشتیبان</th>-->
                     <th>توضیحات</th>
-                    <th>#</th>
+                    <!--<th>#</th>-->
                   </tr>
                   </thead>
                   <tbody>
@@ -218,8 +217,8 @@
                         @else
                         <td></td>
                         @endif
+                        <!--
                         <td>
-                            <!-- {{ ($item->supporter)?$item->supporter->first_name . ' ' . $item->supporter->last_name:'-' }} -->
                             <select id="supporters_id_{{ $index }}" class="form-control select2">
                                 <option>-</option>
                                 @foreach ($supports as $sitem)
@@ -238,12 +237,15 @@
                             <br/>
                             <img id="loading-{{ $index }}" src="/dist/img/loading.gif" style="height: 20px;display: none;" />
                         </td>
+                        -->
                         <td onclick="showMorePanel({{ $index }});">{{ $item->description }}</td>
+                        <!--
                         <td>
                             <a class="btn btn-warning" href="#" onclick="$('#students_index2').val({{ $index }});preloadTemperatureModal();$('#temperature_modal').modal('show'); return false;">
                                 داغ/سرد
                             </a>
                         </td>
+                        -->
                       </tr>
                       @endforeach
                   </tbody>
@@ -437,7 +439,7 @@
     function showMorePanel(index){
         // $('.morepanel').hide();
         // $('#morepanel-' + index).show();
-        var editRoute = `{{ route('student_edit', ['call_back'=>'student_all', 'id'=>-1]) }}`;
+        var editRoute = `{{ route('student_edit', ['call_back'=>'student_banned', 'id'=>-1]) }}`;
         var purchaseRoute = `{{ route('student_purchases', -1) }}`;
         var test = `<table style="width: 100%">
             <tr>
@@ -499,6 +501,7 @@
                             <div class="col">
                             </div>
                         </div>
+                        <!--
                         <div class="row">
                             <div class="col">
                                 <a href="#" onclick="$('#students_index').val(${ index });preloadTagModal('moral');$('#tag_modal').modal('show'); return false;">
@@ -513,6 +516,7 @@
                                 </a>
                             </div>
                         </div>
+                        -->
                         <div class="row">
                             <div class="col">
                                 <a target="_blank" href="${ purchaseRoute.replace('-1', students[index].id) }">

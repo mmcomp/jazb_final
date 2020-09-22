@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Gate;
+use Morilog\Jalali\CalendarUtils;
 
 use App\Group;
 use App\Student;
@@ -29,6 +30,39 @@ use Exception;
 
 class SupporterController extends Controller
 {
+    public static function persianToEnglishDigits($pnumber) {
+        $number = str_replace('۰', '0', $pnumber);
+        $number = str_replace('۱', '1', $number);
+        $number = str_replace('۲', '2', $number);
+        $number = str_replace('۳', '3', $number);
+        $number = str_replace('۴', '4', $number);
+        $number = str_replace('۵', '5', $number);
+        $number = str_replace('۶', '6', $number);
+        $number = str_replace('۷', '7', $number);
+        $number = str_replace('۸', '8', $number);
+        $number = str_replace('۹', '9', $number);
+        return $number;
+    }
+
+    public static function jalaliToGregorian($pdate){
+		$pdate = explode('/', SupporterController::persianToEnglishDigits($pdate));
+		$date = "";
+		if(count($pdate)==3){
+			$y = (int)$pdate[0];
+			$m = (int)$pdate[1];
+			$d = (int)$pdate[2];
+			if($d > $y)
+			{
+				$tmp = $d;
+				$d = $y;
+				$y = $tmp;
+			}
+			$y = (($y<1000)?$y+1300:$y);
+			$gregorian = CalendarUtils::toGregorian($y,$m,$d);
+			$gregorian = $gregorian[0]."-".$gregorian[1]."-".$gregorian[2];
+		}
+		return $gregorian;
+	}
     public function index(){
         $supportGroupId = Group::getSupport();
         if($supportGroupId)
@@ -39,6 +73,160 @@ class SupporterController extends Controller
             'supporters' => $supporters,
             'msg_success' => request()->session()->get('msg_success'),
             'msg_error' => request()->session()->get('msg_error')
+        ]);
+    }
+
+    public function callIndex(){
+        $supportGroupId = Group::getSupport();
+        if($supportGroupId)
+            $supportGroupId = $supportGroupId->id;
+        $supporters_id = null;
+        $supporters = User::where('is_deleted', false)->where('groups_id', $supportGroupId);
+        if(request()->getMethod()=='POST'){
+            if(request()->input('supporters_id')){
+                $supporters_id = request()->input('supporters_id');
+                $supporters = $supporters->where('id', $supporters_id);
+            }
+        }
+        $supporters = $supporters->with('students.purchases')->with('students.studenttags.tag')->orderBy('max_student', 'desc')->get();
+
+        $callResults = CallResult::where('is_deleted', false)->get();
+
+        $from_date = null;
+        $to_date = null;
+        $products_id = null;
+        $notices_id = null;
+        $replier_id = null;
+        $sources_id = null;
+
+        foreach($supporters as $index=>$supporter) {
+            $call = Call::where("users_id", $supporter->id);
+            $supporterCallResults = $callResults->ToArray();
+            foreach($supporterCallResults as $sindex => $supporterCallResult){
+                $supporterCallResults[$sindex]['count'] = 0;
+            }
+
+
+            if(request()->getMethod()=='POST'){
+                if(request()->input('from_date')){
+                    $from_date = SupporterController::jalaliToGregorian(request()->input('from_date'));
+                    if($from_date != '')
+                        $call->where('created_at', '>=', $from_date);
+                }
+                if(request()->input('to_date')){
+                    $to_date = SupporterController::jalaliToGregorian(request()->input('to_date'));
+                    if($to_date != '')
+                        $call->where('created_at', '<=', $to_date);
+                }
+                if(request()->input('products_id')){
+                    $products_id = (int)request()->input('products_id');
+                    if($products_id > 0)
+                        $call->where('products_id', $products_id);
+                }
+                if(request()->input('notices_id')){
+                    $notices_id = (int)request()->input('notices_id');
+                    if($notices_id > 0)
+                        $call->where('notices_id', $notices_id);
+                }
+                if(request()->input('sources_id')){
+                    $sources_id = (int)request()->input('sources_id');
+                    if($sources_id > 0){
+                        $students = Student::where('sources_id', $sources_id)->where('is_deleted', false)->where('banned', false)->pluck('id');
+                        $call->whereIn('students_id', $students);
+                    }
+                }
+            }
+            if($from_date == null && $to_date == null) {
+                $call->where('created_at', '<=', date("Y-m-d 23:59:59"))->where('created_at', '>=', date("Y-m-d 00:00:00"));
+            }
+            $calls = $call->get();
+            foreach($calls as $theCall){
+                foreach($supporterCallResults as $sindex => $supporterCallResult){
+                    if($supporterCallResult['id'] == $theCall->call_results_id){
+                        $supporterCallResults[$sindex]['count']++;
+                    }
+                }
+            }
+            $supporters[$index]->callCount = count($calls);
+            $supporters[$index]->supporterCallResults = $supporterCallResults;
+        }
+        $products = Product::where('is_deleted', false)->with('collection')->orderBy('name')->get();
+        foreach($products as $index => $product){
+            $products[$index]->parents = "-";
+            if($product->collection) {
+                $parents = $product->collection->parents();
+                $name = ($parents!='')?$parents . "->" . $product->collection->name : $product->collection->name;
+                $products[$index]->parents = $name;
+            }
+        }
+        $notices = Notice::where('is_deleted', false)->get();
+        $sources = Source::where('is_deleted', false)->get();
+        // dd($supporters);
+        return view('supporters.calls',[
+            'supporters' => $supporters,
+            'products' => $products,
+            'notices' => $notices,
+            'sources' => $sources,
+            'from_date' => $from_date,
+            'to_date' => $to_date,
+            'products_id' => $products_id,
+            'notices_id' => $notices_id,
+            'supporters_id' => $supporters_id,
+            'replier_id' => $replier_id,
+            'sources_id' => $sources_id,
+            'callResults' => $callResults,
+            'msg_success' => request()->session()->get('msg_success'),
+            'msg_error' => request()->session()->get('msg_error')
+        ]);
+    }
+
+    public function acallIndex(Request $request) {
+        $supporter = User::find($request->input("id"));
+        $calls = Call::where("users_id", $supporter->id);
+        if(request()->input('from_date')){
+            $from_date = request()->input('from_date');
+            if($from_date != '')
+                $calls->where('created_at', '>=', $from_date);
+        }
+        if(request()->input('to_date')){
+            $to_date = request()->input('to_date');
+            if($to_date != '')
+                $calls->where('created_at', '<=', $to_date);
+        }
+        if(request()->input('products_id')){
+            $products_id = (int)request()->input('products_id');
+            if($products_id > 0)
+                $calls->where('products_id', $products_id);
+        }
+        if(request()->input('notices_id')){
+            $notices_id = (int)request()->input('notices_id');
+            if($notices_id > 0)
+                $calls->where('notices_id', $notices_id);
+        }
+        if(request()->input('sources_id')){
+            $sources_id = (int)request()->input('sources_id');
+            if($sources_id > 0){
+                $students = Student::where('sources_id', $sources_id)->where('is_deleted', false)->where('banned', false)->pluck('id');
+                $calls->whereIn('students_id', $students);
+            }
+        }
+        $calls = $calls->with('student')->with('product.collection')->with('notice')->get();
+        foreach($calls as $index=>$call) {
+            if($call->product) {
+                $product = $call->product;
+                $product->parents = "-";
+                if($product->collection) {
+                    $parents = $product->collection->parents();
+                    $name = ($parents!='')?$parents . "->" . $product->collection->name : $product->collection->name;
+                    $product->parents = $name;
+                }
+                $calls[$index]->product = $product;
+            }
+        }
+        // dd($calls);
+        return view("supporters.supportercalls", [
+            "supporter"=>$supporter,
+            "calls"=>$calls
         ]);
     }
 
@@ -120,7 +308,7 @@ class SupporterController extends Controller
         // Student::where('is_deleted', false)->where('supporters_id', $id)->where('viewed', false)->update([
         //     'viewed'=>true
         // ]);
-        $students = Student::where('is_deleted', false)->where('supporters_id', $id);
+        $students = Student::where('is_deleted', false)->where('banned', false)->where('supporters_id', $id);
         $sources = Source::where('is_deleted', false)->get();
         $products = Product::where('is_deleted', false)->with('collection')->orderBy('name')->get();
         // $callResults = CallResult::where('is_deleted', false)->get();
@@ -285,7 +473,7 @@ class SupporterController extends Controller
     }
 
     public function newStudents(){
-        $students = Student::where('is_deleted', false)->where('supporter_seen', false)->where('supporters_id', Auth::user()->id);
+        $students = Student::where('is_deleted', false)->where('banned', false)->where('supporter_seen', false)->where('supporters_id', Auth::user()->id);
         $sources = Source::where('is_deleted', false)->get();
         $name = null;
         $sources_id = null;
@@ -360,7 +548,7 @@ class SupporterController extends Controller
     }
 
     public function purchases(){
-        $students = Student::where('is_deleted', false)->where('supporter_seen', false)->where('supporters_id', Auth::user()->id);
+        $students = Student::where('is_deleted', false)->where('banned', false)->where('supporter_seen', false)->where('supporters_id', Auth::user()->id);
         $sources = Source::where('is_deleted', false)->get();
         $name = null;
         $sources_id = null;
@@ -443,7 +631,7 @@ class SupporterController extends Controller
     }
 
     public function calls($id) {
-        $student = Student::where('id', $id)->with('calls.product')->with('calls.product.collection')->with('calls.callresult')->first();
+        $student = Student::where('id', $id)->where('banned', false)->with('calls.product')->with('calls.product.collection')->with('calls.callresult')->first();
         if($student->calls)
             foreach($student->calls as $index=>$call){
                 if($student->calls[$index]->product){
@@ -508,7 +696,7 @@ class SupporterController extends Controller
     public function call(Request $request){
         $students_id = $request->input('students_id');
 
-        $student = Student::where('id', $students_id)->where('is_deleted', false)->first();
+        $student = Student::where('id', $students_id)->where('banned', false)->where('is_deleted', false)->first();
         if($student==null){
             return [
                 "error"=>"student_not_found",

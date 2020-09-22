@@ -116,6 +116,7 @@ Route::group(['middleware' => ['auth', 'message']], function () {
     Route::group(['prefix' => '/students'], function () {
         Route::any('/', 'StudentController@index')->name('students');
         Route::any('/all', 'StudentController@indexAll')->name('student_all');
+        Route::any('/banned', 'StudentController@banned')->name('student_banned');
         Route::any('/create', 'StudentController@create')->name('student_create');
         Route::any('/edit/{call_back}/{id}', 'StudentController@edit')->name('student_edit');
         Route::get('/delete/{id}', 'StudentController@delete')->name('student_delete');
@@ -174,6 +175,8 @@ Route::group(['middleware' => ['auth', 'message']], function () {
 
     Route::group(['prefix' => '/user_supporters'], function () {
         Route::get('/', 'SupporterController@index')->name('user_supporters');
+        Route::any('/calls', 'SupporterController@callIndex')->name('user_supporter_calls');
+        Route::post('/call', 'SupporterController@acallIndex')->name('user_supporter_acall');
         Route::any('/students/{id}', 'SupporterController@students')->name('supporter_allstudents');
         Route::any('/create', 'SupporterController@create')->name('user_supporter_create');
         Route::post('/change_pass', 'SupporterController@changePass')->name('user_supporter_changepass');

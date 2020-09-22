@@ -6,6 +6,25 @@ use Illuminate\Database\Eloquent\Model;
 
 class Student extends Model
 {
+    protected $fillable = [
+        'phone',
+        'first_name',
+        'last_name',
+        'egucation_level',
+        'parents_job_title',
+        'home_phone',
+        'father_phone',
+        'mother_phone',
+        'school',
+        'average' ,
+        'major',
+        'introducing',
+        'student_phone',
+        'citys_id',
+        'sources_id',
+        'supporters_id'
+    ];
+
     public function user(){
         return $this->hasOne('App\User', 'id', 'users_id');
     }

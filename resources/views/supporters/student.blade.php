@@ -264,13 +264,18 @@ $egucation_levels = [
                                     {{ ($item->user)?$item->user->first_name . ' ' . $item->user->last_name:'-' }}</td>
                                 <td onclick="showMorePanel({{ $index }});">
                                     {{ ($item->source)?$item->source->name:'-' }}</td>
-                                @if($item->studenttags && count($item->studenttags)>0)
-                                <td onclick="showMorePanel({{ $index }});">
+                                @if(($item->studenttags && count($item->studenttags)>0) || ($item->studentcollections && count($item->studentcollections)>0))
+                                <td>
                                     @for($i = 0; $i < count($item->studenttags);$i++)
-                                        <span class="alert alert-info p-1">
-                                            {{ $item->studenttags[$i]->tag->name }}
-                                        </span>
-                                        @endfor
+                                    <span class="alert alert-info p-1">
+                                        {{ $item->studenttags[$i]->tag->name }}
+                                    </span><br/>
+                                    @endfor
+                                    @for($i = 0; $i < count($item->studentcollections);$i++)
+                                    <span class="alert alert-warning p-1">
+                                        {{ ($item->studentcollections[$i]->collection->parent) ? $item->studentcollections[$i]->collection->parent->name . '->' : '' }} {{ $item->studentcollections[$i]->collection->name }}
+                                    </span><br/>
+                                    @endfor
                                 </td>
                                 @else
                                 <td onclick="showMorePanel({{ $index }});"></td>

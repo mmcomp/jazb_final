@@ -33,6 +33,8 @@
     <link rel="stylesheet" href="/dist/css/bootstrap.min.css">
     <!-- Custom style for RTL -->
     <link rel="stylesheet" href="/dist/css/custom.css">
+    <!-- PersianCalender -->
+    <link href="/plugins/persiancalender/jquery.md.bootstrap.datetimepicker.style.css" rel="stylesheet"/>
     @yield('css')
 </head>
 
@@ -439,17 +441,38 @@
                                 <p>فهرست دانش آموزان</p>
                             </a>
                         </li>
+
+                        <li class="nav-item">
+                            @if(strpos(\Request::route()->getName(), 'student_banned')===0)
+                            <a href="{{ route('student_banned') }}" class="nav-link active">
+                            @else
+                            <a href="{{ route('student_banned') }}" class="nav-link">
+                            @endif
+                                <!-- <i class="far fa-circle nav-icon"></i> -->
+                                <p>فهرست سیاه دانش آموزان</p>
+                            </a>
+                        </li>
                         @endif
                         @if (Gate::allows('users'))
                         <li class="nav-item">
-                            @if(strpos(\Request::route()->getName(), 'user_supporter')===0)
+                            @if(strpos(\Request::route()->getName(), 'user_supporters')===0)
                             <a href="{{ route('user_supporters') }}" class="nav-link active">
-                                @else
-                                <a href="{{ route('user_supporters') }}" class="nav-link">
-                                    @endif
-                                    <p>لیست کامل پشتیبان ها</p>
-                                </a>
+                            @else
+                            <a href="{{ route('user_supporters') }}" class="nav-link">
+                            @endif
+                                <p>لیست کامل پشتیبان ها</p>
+                            </a>
                         </li>
+                        <li class="nav-item">
+                            @if(strpos(\Request::route()->getName(), 'user_supporter_call')===0)
+                            <a href="{{ route('user_supporter_calls') }}" class="nav-link active">
+                            @else
+                            <a href="{{ route('user_supporter_calls') }}" class="nav-link">
+                            @endif
+                                <p>لیست تماس پشتیبان ها</p>
+                            </a>
+                        </li>
+
                         @endif
                         @if (Gate::allows('sale_suggestions'))
                         <!--
@@ -1203,8 +1226,21 @@
     <script src="/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script>
     <!-- AdminLTE App -->
     <script src="/dist/js/adminlte.js"></script>
+    <!-- PersianCalender -->
+    <script src="/plugins/persiancalender/jquery.md.bootstrap.datetimepicker.js"></script>
 
     @yield('js')
+
+    <script>
+        $(document).ready(function(){
+            $("input.pdate").each(function(id, field){
+                $(field).MdPersianDateTimePicker({
+                    targetTextSelector: '#' + field.id
+                });
+            });
+        });
+    </script>
+
 </body>
 
 </html>
