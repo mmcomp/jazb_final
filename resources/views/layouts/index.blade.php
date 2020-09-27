@@ -241,7 +241,9 @@
                         strpos(\Request::route()->getName(), 'source')===0 ||
                         strpos(\Request::route()->getName(), 'user_all')===0 ||
                         strpos(\Request::route()->getName(), 'call_result')===0 ||
-                        strpos(\Request::route()->getName(), 'notice')===0))
+                        strpos(\Request::route()->getName(), 'notice')===0 ||
+                        strpos(\Request::route()->getName(), 'province')===0 ||
+                        strpos(\Request::route()->getName(), 'cit')===0))
                         <li class="nav-item has-treeview menu-open">
                             @else
                         <li class="nav-item has-treeview">
@@ -405,6 +407,26 @@
                                     @endif
                                         -
                                         <p>تعریف شروط</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    @if(strpos(\Request::route()->getName(), 'province')===0)
+                                    <a href="{{ route('provinces') }}" class="nav-link active">
+                                    @else
+                                    <a href="{{ route('provinces') }}" class="nav-link">
+                                    @endif
+                                        -
+                                        <p>تعریف استان</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    @if(strpos(\Request::route()->getName(), 'cit')===0)
+                                    <a href="{{ route('cities') }}" class="nav-link active">
+                                    @else
+                                    <a href="{{ route('cities') }}" class="nav-link">
+                                    @endif
+                                        -
+                                        <p>تعریف شهر</p>
                                     </a>
                                 </li>
                             </ul>

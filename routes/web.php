@@ -231,6 +231,20 @@ Route::group(['middleware' => ['auth', 'message']], function () {
         Route::any('/', 'ReminderController@index')->name('reminders');
     });
 
+    Route::group(['prefix' => '/cities'], function () {
+        Route::get('/', 'CityController@index')->name('cities');
+        Route::any('/create', 'CityController@create')->name('city_create');
+        Route::any('/edit/{id}', 'CityController@edit')->name('city_edit');
+        Route::get('/delete/{id}', 'CityController@delete')->name('city_delete');
+    });
+
+    Route::group(['prefix' => '/provinces'], function () {
+        Route::get('/', 'ProvinceController@index')->name('provinces');
+        Route::any('/create', 'ProvinceController@create')->name('province_create');
+        Route::any('/edit/{id}', 'ProvinceController@edit')->name('province_edit');
+        Route::get('/delete/{id}', 'ProvinceController@delete')->name('province_delete');
+    });
+
     Route::group(['prefix' => '/helps'], function () {
         Route::get('/', 'HelpController@index')->name('helps');
         Route::get('/grid', 'HelpController@grid')->name('grid');
