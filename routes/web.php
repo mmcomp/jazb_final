@@ -227,6 +227,10 @@ Route::group(['middleware' => ['auth', 'message']], function () {
         Route::get('/delete/{id}', 'CircularController@delete')->name('circular_delete');
     });
 
+    Route::group(['prefix' => '/reminders'], function () {
+        Route::any('/', 'ReminderController@index')->name('reminders');
+    });
+
     Route::group(['prefix' => '/helps'], function () {
         Route::get('/', 'HelpController@index')->name('helps');
         Route::get('/grid', 'HelpController@grid')->name('grid');
