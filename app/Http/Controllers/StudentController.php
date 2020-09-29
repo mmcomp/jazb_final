@@ -693,29 +693,27 @@ class StudentController extends Controller
                 continue;
             }
             $studentObject = Student::where('phone', $student['phone'])->where('banned', false)->first();
-            if($studentObject){
-                if(isset($student['marketers_id'])) {
-                    $marketer = Marketer::where('users_id', $student['marketers_id'])->first();
-                    if($marketer){
-                        $studentObject->marketers_id = $student['marketers_id'];
-                    }
+            if($studentObject==null){
+                $studentObject = new Student;
+            }
+            if(isset($student['marketers_id'])) {
+                $marketer = Marketer::where('users_id', $student['marketers_id'])->first();
+                if($marketer){
+                    $studentObject->marketers_id = $student['marketers_id'];
                 }
-
-                foreach($student as $key=>$value){
-                    if($key!='marketers_id')
-                        $studentObject->$key = $value;
-                }
-                $studentObject->is_from_site = true;
-                try{
-                    $studentObject->save();
-                    $ids[] = $studentObject->id;
-                }catch(Exception $e){
-                    $fails[] = $student;
-                }
-            }else {
-                $fails[] = $student;
             }
 
+            foreach($student as $key=>$value){
+                if($key!='marketers_id')
+                    $studentObject->$key = $value;
+            }
+            $studentObject->is_from_site = true;
+            try{
+                $studentObject->save();
+                $ids[] = $studentObject->id;
+            }catch(Exception $e){
+                $fails[] = $student;
+            }
         }
         return [
             "added_ids" => $ids,
