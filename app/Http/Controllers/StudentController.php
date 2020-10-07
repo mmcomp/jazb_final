@@ -648,7 +648,8 @@ class StudentController extends Controller
         $ids = [];
         $fails = [];
         foreach($students as $student){
-            if(!isset($student['phone']) || !isset($student['last_name'])){
+            if(!isset($student['phone'])){
+                $student['error'] = "No Phone";
                 $fails[] = $student;
                 continue;
             }
@@ -672,6 +673,7 @@ class StudentController extends Controller
                     $studentObject->save();
                     $ids[] = $studentObject->id;
                 }catch(Exception $e){
+                    $student['error'] = $e->getMessage();
                     $fails[] = $student;
                 }
             }
@@ -688,7 +690,8 @@ class StudentController extends Controller
         $ids = [];
         $fails = [];
         foreach($students as $student){
-            if(!isset($student['phone']) || !isset($student['last_name'])){
+            if(!isset($student['phone'])){
+                $student['error'] = "No Phone";
                 $fails[] = $student;
                 continue;
             }
@@ -712,6 +715,8 @@ class StudentController extends Controller
                 $studentObject->save();
                 $ids[] = $studentObject->id;
             }catch(Exception $e){
+                // dump($e);
+                $student['error'] = $e->getMessage();
                 $fails[] = $student;
             }
         }
