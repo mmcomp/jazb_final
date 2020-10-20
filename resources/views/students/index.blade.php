@@ -171,6 +171,12 @@
                   </tr>
                   </thead>
                   <tbody>
+                      <tr>
+                          <td colspan="11">
+                              Loading ....
+                          </td>
+                      </tr>
+                      <!--
                       @foreach ($students as $index => $item)
                       <tr id="tr-{{ $index }}">
                         <td onclick="showMorePanel({{ $index }});">{{ $index + 1 }}</td>
@@ -219,7 +225,6 @@
                         <td></td>
                         @endif
                         <td>
-                            <!-- {{ ($item->supporter)?$item->supporter->first_name . ' ' . $item->supporter->last_name:'-' }} -->
                             <select id="supporters_id_{{ $index }}" class="form-control select2">
                                 <option>-</option>
                                 @foreach ($supports as $sitem)
@@ -246,6 +251,7 @@
                         </td>
                       </tr>
                       @endforeach
+                      -->
                   </tbody>
                   <!--
                   <tfoot>
@@ -828,6 +834,74 @@
                 "emptyTable":     "داده ای برای نمایش وجود ندارد",
                 "info":           "نمایش _START_ تا _END_ از _TOTAL_ داده",
                 "infoEmpty":      "نمایش 0 تا 0 از 0 داده",
+            },
+            serverSide: true,
+            ajax: function ( data, callback, settings ){
+                $.post('{{ route('api_filter_students') }}', {}, function(result){
+                    console.log('Result', result);
+                    callback(result);
+                }).fail(function(){
+                    alert('خطای بروز رسانی');
+                });
+                // callback({
+                //     draw: 3,
+                //     data: [
+                //         [
+                //         "1",
+                //         "90-2",
+                //         "90-3",
+                //         "90-4",
+                //         "90-5",
+                //         "90-1",
+                //         "90-2",
+                //         "90-3",
+                //         "90-4",
+                //         "90-5",
+                //         "="
+                //         ],
+                //         [
+                //         "2",
+                //         "90-2",
+                //         "90-3",
+                //         "90-4",
+                //         "90-5",
+                //         "90-1",
+                //         "90-2",
+                //         "90-3",
+                //         "90-4",
+                //         "90-5",
+                //         "="
+                //         ],
+                //         [
+                //         "3",
+                //         "90-2",
+                //         "90-3",
+                //         "90-4",
+                //         "90-5",
+                //         "90-1",
+                //         "90-2",
+                //         "90-3",
+                //         "90-4",
+                //         "90-5",
+                //         "="
+                //         ],
+                //         [
+                //         "4",
+                //         "90-2",
+                //         "90-3",
+                //         "90-4",
+                //         "90-5",
+                //         "90-1",
+                //         "90-2",
+                //         "90-3",
+                //         "90-4",
+                //         "90-5",
+                //         "="
+                //         ],
+                //     ],
+                //     recordsTotal: 4,
+                //     recordsFiltered: 4
+                // });
             }
         });
 

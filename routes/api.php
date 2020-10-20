@@ -23,3 +23,4 @@ Route::post('/update_students', 'StudentController@apiUpdateStudents')->name('ap
 Route::post('/products', 'ProductController@apiAddProducts')->name('api_add_products');
 Route::post('/purchases', 'PurchaseController@apiAddPurchases')->name('api_add_purchases');
 Route::post('/marketers', 'MarketerController@apiCheckMarketer')->name('api_check_marketer');
+Route::post('/filter_students', 'StudentController@apiFilterStudents')->name('api_filter_students');

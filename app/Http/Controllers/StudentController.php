@@ -725,4 +725,142 @@ class StudentController extends Controller
             "fails" => $fails
         ];
     }
+
+    public function apiFilterStudents(){
+        $students = Student::where('is_deleted', false)->where('banned', false);
+        $supportGroupId = Group::getSupport();
+        if($supportGroupId)
+            $supportGroupId = $supportGroupId->id;
+        $supports = User::where('is_deleted', false)->where('groups_id', $supportGroupId)->get();
+        $sources = Source::where('is_deleted', false)->get();
+        $supporters_id = null;
+        $name = null;
+        $sources_id = null;
+        $phone = null;
+
+        if(request()->input('supporters_id')!=null){
+            $supporters_id = (int)request()->input('supporters_id');
+            $students = $students->where('supporters_id', $supporters_id);
+        }
+        if(request()->input('name')!=null){
+            $name = trim(request()->input('name'));
+            $students = $students->where(function ($query) use ($name) {
+                $query->where('first_name', 'like', '%' . $name . '%')->orWhere('last_name', 'like', '%' . $name . '%');
+            });
+        }
+        if(request()->input('sources_id')!=null){
+            $sources_id = (int)request()->input('sources_id');
+            $students = $students->where('sources_id', $sources_id);
+        }
+        if(request()->input('phone')!=null){
+            $phone = (int)request()->input('phone');
+            $students = $students->where('phone', $phone);
+        }
+
+        $students = $students
+            ->with('user')
+            ->with('studenttags.tag')
+            ->with('studentcollections.collection.parent')
+            ->with('studenttemperatures.temperature')
+            ->with('source')
+            ->with('consultant')
+            ->with('supporter')
+            ->orderBy('created_at', 'desc')
+            ->get();
+        // dd(DB::getQueryLog());
+        $moralTags = Tag::where('is_deleted', false)
+            // ->with('parent_one')
+            // ->with('parent_two')
+            // ->with('parent_three')
+            // ->with('parent_four')
+            ->where('type', 'moral')
+            ->get();
+        $parentOnes = TagParentOne::where('is_deleted', false)->has('tags')->get();
+        $parentTwos = TagParentTwo::where('is_deleted', false)->has('tags')->get();
+        $parentThrees = TagParentThree::where('is_deleted', false)->has('tags')->get();
+        $parentFours = TagParentFour::where('is_deleted', false)->has('tags')->get();
+        $collections = Collection::where('is_deleted', false)->get();
+        $firstCollections = Collection::where('is_deleted', false)->where('parent_id', 0)->get();
+        $secondCollections = Collection::where('is_deleted', false)->whereIn('parent_id', $firstCollections->pluck('id'))->get();
+        $thirdCollections = Collection::where('is_deleted', false)->with('parent')->whereIn('parent_id', $secondCollections->pluck('id'))->get();
+        $hotTemperatures = Temperature::where('is_deleted', false)->where('status', 'hot')->get();
+        $coldTemperatures = Temperature::where('is_deleted', false)->where('status', 'cold')->get();
+
+        foreach($students as $index => $student) {
+            $students[$index]->pcreated_at = jdate(strtotime($student->created_at))->format("Y/m/d");
+        }
+
+        $data = [];
+        foreach($students as $index => $item){
+            $tags = "";
+            if(($item->studenttags && count($item->studenttags)>0) || ($item->studentcollections && count($item->studentcollections)>0)){
+                for($i = 0; $i < count($item->studenttags);$i++){
+                    $tags .= '<span class="alert alert-info p-1">
+                    ' . $item->studenttags[$i]->tag->name . '
+                </span><br/>';
+                }
+                for($i = 0; $i < count($item->studentcollections);$i++){
+                    $tags .= '<span class="alert alert-warning p-1">
+                        '. (($item->studentcollections[$i]->collection->parent) ? $item->studentcollections[$i]->collection->parent->name . '->' : '' ) . ' ' . $item->studentcollections[$i]->collection->name .'
+                    </span><br/>';
+                }
+            }
+            $registerer = "-";
+            if($item->user)
+                $registerer =  $item->user->first_name . ' ' . $item->user->last_name;
+            elseif($item->is_from_site)
+                $registerer =  'سایت';
+            elseif($item->saloon)
+                $registerer = $item->saloon;
+            $temps = "";
+            if($item->studenttemperatures && count($item->studenttemperatures)>0) {
+                foreach ($item->studenttemperatures as $sitem){
+                    if($sitem->temperature->status=='hot')
+                        $temps .= '<span class="alert alert-danger p-1">';
+                    else
+                        $temps .= '<span class="alert alert-info p-1">';
+                    $temps .= $sitem->temperature->name . '</span>';
+                }
+            }
+            $supportersToSelect = "";
+            foreach ($supports as $sitem){
+                $supportersToSelect .= '<option value="' . $sitem->id . '"';
+                if ($sitem->id==$item->supporters_id)
+                    $supportersToSelect .= ' selected';
+                $supportersToSelect .= '>' . $sitem->first_name . ' ' . $sitem->last_name . '</option>';
+            }
+            $data[] = [
+                $index+1,
+                $item->id,
+                $item->first_name,
+                $item->last_name,
+                $registerer,
+                ($item->source)?$item->source->name:'-',
+                $tags,
+                $temps,
+                '<select id="supporters_id_' . $index . '" class="form-control select2">
+                    <option>-</option>
+                    ' . $supportersToSelect . '
+                    </select>
+                    <a class="btn btn-success btn-sm" href="#" onclick="return changeSupporter(' . $index . ');">
+                        ذخیره
+                    </a>
+                    <br/>
+                    <img id="loading-' . $index . '" src="/dist/img/loading.gif" style="height: 20px;display: none;" />',
+                $item->description,
+                '<a class="btn btn-warning" href="#" onclick="$(\'#students_index2\').val(' . $index . ');preloadTemperatureModal();$(\'#temperature_modal\').modal(\'show\'); return false;">
+                    داغ/سرد
+                </a>'
+            ];
+        }
+
+        $result = [
+            "draw" => 1,
+            "data" => $data,
+            "recordsTotal" => count($students),
+            "recordsFiltered" => count($students)
+        ];
+
+        return $result;
+    }
 }
