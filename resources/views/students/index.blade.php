@@ -110,49 +110,12 @@
                             </div>
                         </div>
                         <div class="col" style="padding-top: 32px;">
-                            <button class="btn btn-success">
+                            <a class="btn btn-success" onclick="table.ajax.reload(); return false;" href="#">
                                 جستجو
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </form>
-                <!--
-                <h3 class="text-center">
-                    مرتب سازی
-                </h3>
-                <div class="row">
-                  <div class="col text-center p-1">
-                    <a class="btn btn-warning btn-block" href="#">سطح بندی</a>
-                  </div>
-                  <div class="col text-center p-1">
-                    <a class="btn btn-warning btn-block" href="#">پیشنهاد فروش</a>
-                  </div>
-                  <div class="col text-center p-1">
-                    <a class="btn btn-warning btn-block" href="#">محصول</a>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col text-center p-1">
-                    <a class="btn btn-warning btn-block" href="#">سایت</a>
-                  </div>
-                  <div class="col text-center p-1">
-                    <a class="btn btn-warning btn-block" href="#">تعداد پیشنهاد فروش</a>
-                  </div>
-                  <div class="col text-center p-1">
-                    <a class="btn btn-warning btn-block" href="#">یادآور</a>
-                  </div>
-                </div>
-                <div class="row">
-                    <div class="col text-center p-1">
-                      <a class="btn btn-warning btn-block" href="#">برچسب اخلاقی</a>
-                    </div>
-                    <div class="col text-center p-1">
-                      <a class="btn btn-warning btn-block" href="#">برچسب ارزیابی</a>
-                    </div>
-                    <div class="col text-center p-1">
-                    </div>
-                </div>
-                -->
 
                 <table id="example2" class="table table-bordered table-hover">
                   <thead>
@@ -171,99 +134,7 @@
                   </tr>
                   </thead>
                   <tbody>
-                      <tr>
-                          <td colspan="11">
-                              Loading ....
-                          </td>
-                      </tr>
-                      <!--
-                      @foreach ($students as $index => $item)
-                      <tr id="tr-{{ $index }}">
-                        <td onclick="showMorePanel({{ $index }});">{{ $index + 1 }}</td>
-                        <td onclick="showMorePanel({{ $index }});">{{ $item->id }}</td>
-                        <td onclick="showMorePanel({{ $index }});">{{ $item->first_name }}</td>
-                        <td onclick="showMorePanel({{ $index }});">{{ $item->last_name }}</td>
-                        @if($item->user)
-                        <td onclick="showMorePanel({{ $index }});">{{ $item->user->first_name . ' ' . $item->user->last_name }}</td>
-                        @elseif($item->is_from_site)
-                        <td onclick="showMorePanel({{ $index }});">سایت</td>
-                        @elseif($item->saloon)
-                        <td onclick="showMorePanel({{ $index }});">{{ $item->saloon }}</td>
-                        @else
-                        <td onclick="showMorePanel({{ $index }});">-</td>
-                        @endif
-                        <td onclick="showMorePanel({{ $index }});">{{ ($item->source)?$item->source->name:'-' }}</td>
-                        @if(($item->studenttags && count($item->studenttags)>0) || ($item->studentcollections && count($item->studentcollections)>0))
-                        <td>
-                            @for($i = 0; $i < count($item->studenttags);$i++)
-                            <span class="alert alert-info p-1">
-                                {{ $item->studenttags[$i]->tag->name }}
-                            </span><br/>
-                            @endfor
-                            @for($i = 0; $i < count($item->studentcollections);$i++)
-                            <span class="alert alert-warning p-1">
-                                {{ ($item->studentcollections[$i]->collection->parent) ? $item->studentcollections[$i]->collection->parent->name . '->' : '' }} {{ $item->studentcollections[$i]->collection->name }}
-                            </span><br/>
-                            @endfor
-                        </td>
-                        @else
-                        <td></td>
-                        @endif
-                        @if($item->studenttemperatures && count($item->studenttemperatures)>0)
-                        <td>
-                            @foreach ($item->studenttemperatures as $sitem)
-                            @if($sitem->temperature->status=='hot')
-                            <span class="alert alert-danger p-1">
-                            @else
-                            <span class="alert alert-info p-1">
-                            @endif
-                                {{ $sitem->temperature->name }}
-                            </span>
-                            @endforeach
-                        </td>
-                        @else
-                        <td></td>
-                        @endif
-                        <td>
-                            <select id="supporters_id_{{ $index }}" class="form-control select2">
-                                <option>-</option>
-                                @foreach ($supports as $sitem)
-                                    @if ($sitem->id==$item->supporters_id)
-                                    <option value="{{ $sitem->id }}" selected>
-                                    @else
-                                    <option value="{{ $sitem->id }}">
-                                    @endif
-                                    {{ $sitem->first_name }} {{ $sitem->last_name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            <a class="btn btn-success btn-sm" href="#" onclick="return changeSupporter({{ $index }});">
-                                ذخیره
-                            </a>
-                            <br/>
-                            <img id="loading-{{ $index }}" src="/dist/img/loading.gif" style="height: 20px;display: none;" />
-                        </td>
-                        <td onclick="showMorePanel({{ $index }});">{{ $item->description }}</td>
-                        <td>
-                            <a class="btn btn-warning" href="#" onclick="$('#students_index2').val({{ $index }});preloadTemperatureModal();$('#temperature_modal').modal('show'); return false;">
-                                داغ/سرد
-                            </a>
-                        </td>
-                      </tr>
-                      @endforeach
-                      -->
                   </tbody>
-                  <!--
-                  <tfoot>
-                  <tr>
-                    <th>Rendering engine</th>
-                    <th>Browser</th>
-                    <th>Platform(s)</th>
-                    <th>Engine version</th>
-                    <th>CSS grade</th>
-                  </tr>
-                  </tfoot>
-                  -->
                 </table>
               </div>
               <!-- /.card-body -->
@@ -440,7 +311,7 @@
         parent3: '',
         parent4: ''
     }
-    function showMorePanel(index){
+    function showMorePanel(index, tr){
         // $('.morepanel').hide();
         // $('#morepanel-' + index).show();
         var editRoute = `{{ route('student_edit', ['call_back'=>'student_all', 'id'=>-1]) }}`;
@@ -531,7 +402,7 @@
             </tr>
         </table>`;
 
-        var tr = $("#tr-" + index)[0];
+        // var tr = $("#tr-" + index)[0];
         var row = table.row(tr);
         if ( row.child.isShown() ) {
             row.child.hide();
@@ -834,76 +705,62 @@
                 "emptyTable":     "داده ای برای نمایش وجود ندارد",
                 "info":           "نمایش _START_ تا _END_ از _TOTAL_ داده",
                 "infoEmpty":      "نمایش 0 تا 0 از 0 داده",
+                "proccessing": "در حال بروزرسانی"
             },
             serverSide: true,
-            ajax: function ( data, callback, settings ){
-                $.post('{{ route('api_filter_students') }}', {}, function(result){
-                    console.log('Result', result);
-                    callback(result);
-                }).fail(function(){
-                    alert('خطای بروز رسانی');
-                });
-                // callback({
-                //     draw: 3,
-                //     data: [
-                //         [
-                //         "1",
-                //         "90-2",
-                //         "90-3",
-                //         "90-4",
-                //         "90-5",
-                //         "90-1",
-                //         "90-2",
-                //         "90-3",
-                //         "90-4",
-                //         "90-5",
-                //         "="
-                //         ],
-                //         [
-                //         "2",
-                //         "90-2",
-                //         "90-3",
-                //         "90-4",
-                //         "90-5",
-                //         "90-1",
-                //         "90-2",
-                //         "90-3",
-                //         "90-4",
-                //         "90-5",
-                //         "="
-                //         ],
-                //         [
-                //         "3",
-                //         "90-2",
-                //         "90-3",
-                //         "90-4",
-                //         "90-5",
-                //         "90-1",
-                //         "90-2",
-                //         "90-3",
-                //         "90-4",
-                //         "90-5",
-                //         "="
-                //         ],
-                //         [
-                //         "4",
-                //         "90-2",
-                //         "90-3",
-                //         "90-4",
-                //         "90-5",
-                //         "90-1",
-                //         "90-2",
-                //         "90-3",
-                //         "90-4",
-                //         "90-5",
-                //         "="
-                //         ],
-                //     ],
-                //     recordsTotal: 4,
-                //     recordsFiltered: 4
-                // });
+            processing: true,
+            ajax: {
+                "type": "POST",
+                "url": "{{ route($route) }}",
+                "dataType": "json",
+                "contentType": 'application/json; charset=utf-8',
+
+                "data": function (data) {
+                    // console.log(data);
+                    // Grab form values containing user options
+                    // var form = {};
+                    // $.each($("form").serializeArray(), function (i, field) {
+                    //     form[field.name] = field.value || "";
+                    // });
+                    // Add options used by Datatables
+                    // var info = { "start": 0, "length": 10, "draw": 1 };
+                    // $.extend(form, info);
+                    data['supporters_id'] = $("#supporters_id").val();
+                    data['sources_id'] = $("#sources_id").val();
+                    data['name'] = $("#name").val();
+                    data['phone'] = $("#phone").val();
+                    return JSON.stringify(data);
+                },
+                "complete": function(response) {
+                    console.log(response);
+                    $('#example2 tr').click(function() {
+                        var tr = this;
+                        var studentId = parseInt($(tr).find('td')[1].innerText, 10);
+                        if(!isNaN(studentId)){
+                            for(var index in students){
+                                // console.log('check', students[index].id, studentId);
+                                if(students[index].id==studentId){
+                                    // console.log(students[index]);
+                                    showMorePanel(index, tr);
+                                    // break;
+                                }
+                            }
+                        }
+                        console.log(this, $(this).find('td')[1].innerText);
+                    });
+                }
+
             }
+            // ajax: function ( data, callback, settings ){
+            //     $.post('{{ route('api_filter_students') }}', {}, function(result){
+            //         console.log('Result', result);
+            //         callback(result);
+            //     }).fail(function(){
+            //         alert('خطای بروز رسانی');
+            //     });
+            // }
         });
+
 
     });
   </script>

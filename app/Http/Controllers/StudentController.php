@@ -95,28 +95,118 @@ class StudentController extends Controller
         }
 
         // dd($students);
-        return view('students.index',[
-            'students' => $students,
-            'supports' => $supports,
-            'sources' => $sources,
-            'supporters_id' => $supporters_id,
-            'name' => $name,
-            'sources_id' => $sources_id,
-            'phone' => $phone,
-            'moralTags'=>$moralTags,
-            'needTags'=>$collections,
-            'hotTemperatures'=>$hotTemperatures,
-            'coldTemperatures'=>$coldTemperatures,
-            "parentOnes"=>$parentOnes,
-            "parentTwos"=>$parentTwos,
-            "parentThrees"=>$parentThrees,
-            "parentFours"=>$parentFours,
-            "firstCollections"=>$firstCollections,
-            "secondCollections"=>$secondCollections,
-            "thirdCollections"=>$thirdCollections,
-            'msg_success' => request()->session()->get('msg_success'),
-            'msg_error' => request()->session()->get('msg_error')
-        ]);
+        if(request()->getMethod()=='GET'){
+            return view('students.index',[
+                'route' => 'student_all',
+                'students' => $students,
+                'supports' => $supports,
+                'sources' => $sources,
+                'supporters_id' => $supporters_id,
+                'name' => $name,
+                'sources_id' => $sources_id,
+                'phone' => $phone,
+                'moralTags'=>$moralTags,
+                'needTags'=>$collections,
+                'hotTemperatures'=>$hotTemperatures,
+                'coldTemperatures'=>$coldTemperatures,
+                "parentOnes"=>$parentOnes,
+                "parentTwos"=>$parentTwos,
+                "parentThrees"=>$parentThrees,
+                "parentFours"=>$parentFours,
+                "firstCollections"=>$firstCollections,
+                "secondCollections"=>$secondCollections,
+                "thirdCollections"=>$thirdCollections,
+                'msg_success' => request()->session()->get('msg_success'),
+                'msg_error' => request()->session()->get('msg_error')
+            ]);
+        }else {
+            $req =  request()->all();
+            // dd($req);
+            if(!isset($req['start'])){
+                $req['start'] = 0;
+                $req['length'] = 10;
+                $req['draw'] = 1;
+            }
+            $data = [];
+            foreach($students as $index => $item){
+                $tags = "";
+                if(($item->studenttags && count($item->studenttags)>0) || ($item->studentcollections && count($item->studentcollections)>0)){
+                    for($i = 0; $i < count($item->studenttags);$i++){
+                        $tags .= '<span class="alert alert-info p-1">
+                        ' . $item->studenttags[$i]->tag->name . '
+                    </span><br/>';
+                    }
+                    for($i = 0; $i < count($item->studentcollections);$i++){
+                        $tags .= '<span class="alert alert-warning p-1">
+                            '. (($item->studentcollections[$i]->collection->parent) ? $item->studentcollections[$i]->collection->parent->name . '->' : '' ) . ' ' . $item->studentcollections[$i]->collection->name .'
+                        </span><br/>';
+                    }
+                }
+                $registerer = "-";
+                if($item->user)
+                    $registerer =  $item->user->first_name . ' ' . $item->user->last_name;
+                elseif($item->is_from_site)
+                    $registerer =  'سایت';
+                elseif($item->saloon)
+                    $registerer = $item->saloon;
+                $temps = "";
+                if($item->studenttemperatures && count($item->studenttemperatures)>0) {
+                    foreach ($item->studenttemperatures as $sitem){
+                        if($sitem->temperature->status=='hot')
+                            $temps .= '<span class="alert alert-danger p-1">';
+                        else
+                            $temps .= '<span class="alert alert-info p-1">';
+                        $temps .= $sitem->temperature->name . '</span>';
+                    }
+                }
+                $supportersToSelect = "";
+                foreach ($supports as $sitem){
+                    $supportersToSelect .= '<option value="' . $sitem->id . '"';
+                    if ($sitem->id==$item->supporters_id)
+                        $supportersToSelect .= ' selected';
+                    $supportersToSelect .= '>' . $sitem->first_name . ' ' . $sitem->last_name . '</option>';
+                }
+                $data[] = [
+                    $index+1,
+                    $item->id,
+                    $item->first_name,
+                    $item->last_name,
+                    $registerer,
+                    ($item->source)?$item->source->name:'-',
+                    $tags,
+                    $temps,
+                    '<select id="supporters_id_' . $index . '" class="form-control select2">
+                        <option>-</option>
+                        ' . $supportersToSelect . '
+                        </select>
+                        <a class="btn btn-success btn-sm" href="#" onclick="return changeSupporter(' . $index . ');">
+                            ذخیره
+                        </a>
+                        <br/>
+                        <img id="loading-' . $index . '" src="/dist/img/loading.gif" style="height: 20px;display: none;" />',
+                    $item->description,
+                    '<a class="btn btn-warning" href="#" onclick="$(\'#students_index2\').val(' . $index . ');preloadTemperatureModal();$(\'#temperature_modal\').modal(\'show\'); return false;">
+                        داغ/سرد
+                    </a>'
+                ];
+            }
+
+
+            $outdata = [];
+            for($i = $req['start'];$i<min($req['length']+$req['start'], count($data));$i++){
+                $outdata[] = $data[$i];
+            }
+
+            $result = [
+                "draw" => $req['draw'],
+                "data" => $outdata,
+                "recordsTotal" => count($students),
+                "recordsFiltered" => count($students)
+            ];
+
+            return $result;
+        }
+
     }
 
     public function banned(){
@@ -276,29 +366,118 @@ class StudentController extends Controller
             $students[$index]->pcreated_at = jdate(strtotime($student->created_at))->format("Y/m/d");
         }
 
-        // dd($students);
-        return view('students.index',[
-            'students' => $students,
-            'supports' => $supports,
-            'sources' => $sources,
-            'supporters_id' => $supporters_id,
-            'name' => $name,
-            'sources_id' => $sources_id,
-            'phone' => $phone,
-            'moralTags'=>$moralTags,
-            'needTags'=>$collections,
-            'hotTemperatures'=>$hotTemperatures,
-            'coldTemperatures'=>$coldTemperatures,
-            "parentOnes"=>$parentOnes,
-            "parentTwos"=>$parentTwos,
-            "parentThrees"=>$parentThrees,
-            "parentFours"=>$parentFours,
-            "firstCollections"=>$firstCollections,
-            "secondCollections"=>$secondCollections,
-            "thirdCollections"=>$thirdCollections,
-            'msg_success' => request()->session()->get('msg_success'),
-            'msg_error' => request()->session()->get('msg_error')
-        ]);
+        if(request()->getMethod()=='GET'){
+            // dd($students);
+            return view('students.index',[
+                'route' => 'students',
+                'students' => $students,
+                'supports' => $supports,
+                'sources' => $sources,
+                'supporters_id' => $supporters_id,
+                'name' => $name,
+                'sources_id' => $sources_id,
+                'phone' => $phone,
+                'moralTags'=>$moralTags,
+                'needTags'=>$collections,
+                'hotTemperatures'=>$hotTemperatures,
+                'coldTemperatures'=>$coldTemperatures,
+                "parentOnes"=>$parentOnes,
+                "parentTwos"=>$parentTwos,
+                "parentThrees"=>$parentThrees,
+                "parentFours"=>$parentFours,
+                "firstCollections"=>$firstCollections,
+                "secondCollections"=>$secondCollections,
+                "thirdCollections"=>$thirdCollections,
+                'msg_success' => request()->session()->get('msg_success'),
+                'msg_error' => request()->session()->get('msg_error')
+            ]);
+        }else {
+            $req =  request()->all();
+            // dd($req);
+            if(!isset($req['start'])){
+                $req['start'] = 0;
+                $req['length'] = 10;
+                $req['draw'] = 1;
+            }
+            $data = [];
+            foreach($students as $index => $item){
+                $tags = "";
+                if(($item->studenttags && count($item->studenttags)>0) || ($item->studentcollections && count($item->studentcollections)>0)){
+                    for($i = 0; $i < count($item->studenttags);$i++){
+                        $tags .= '<span class="alert alert-info p-1">
+                        ' . $item->studenttags[$i]->tag->name . '
+                    </span><br/>';
+                    }
+                    for($i = 0; $i < count($item->studentcollections);$i++){
+                        $tags .= '<span class="alert alert-warning p-1">
+                            '. (($item->studentcollections[$i]->collection->parent) ? $item->studentcollections[$i]->collection->parent->name . '->' : '' ) . ' ' . $item->studentcollections[$i]->collection->name .'
+                        </span><br/>';
+                    }
+                }
+                $registerer = "-";
+                if($item->user)
+                    $registerer =  $item->user->first_name . ' ' . $item->user->last_name;
+                elseif($item->is_from_site)
+                    $registerer =  'سایت';
+                elseif($item->saloon)
+                    $registerer = $item->saloon;
+                $temps = "";
+                if($item->studenttemperatures && count($item->studenttemperatures)>0) {
+                    foreach ($item->studenttemperatures as $sitem){
+                        if($sitem->temperature->status=='hot')
+                            $temps .= '<span class="alert alert-danger p-1">';
+                        else
+                            $temps .= '<span class="alert alert-info p-1">';
+                        $temps .= $sitem->temperature->name . '</span>';
+                    }
+                }
+                $supportersToSelect = "";
+                foreach ($supports as $sitem){
+                    $supportersToSelect .= '<option value="' . $sitem->id . '"';
+                    if ($sitem->id==$item->supporters_id)
+                        $supportersToSelect .= ' selected';
+                    $supportersToSelect .= '>' . $sitem->first_name . ' ' . $sitem->last_name . '</option>';
+                }
+                $data[] = [
+                    $index+1,
+                    $item->id,
+                    $item->first_name,
+                    $item->last_name,
+                    $registerer,
+                    ($item->source)?$item->source->name:'-',
+                    $tags,
+                    $temps,
+                    '<select id="supporters_id_' . $index . '" class="form-control select2">
+                        <option>-</option>
+                        ' . $supportersToSelect . '
+                        </select>
+                        <a class="btn btn-success btn-sm" href="#" onclick="return changeSupporter(' . $index . ');">
+                            ذخیره
+                        </a>
+                        <br/>
+                        <img id="loading-' . $index . '" src="/dist/img/loading.gif" style="height: 20px;display: none;" />',
+                    $item->description,
+                    '<a class="btn btn-warning" href="#" onclick="$(\'#students_index2\').val(' . $index . ');preloadTemperatureModal();$(\'#temperature_modal\').modal(\'show\'); return false;">
+                        داغ/سرد
+                    </a>'
+                ];
+            }
+
+
+            $outdata = [];
+            for($i = $req['start'];$i<min($req['length']+$req['start'], count($data));$i++){
+                $outdata[] = $data[$i];
+            }
+
+            $result = [
+                "draw" => $req['draw'],
+                "data" => $outdata,
+                "recordsTotal" => count($students),
+                "recordsFiltered" => count($students)
+            ];
+
+            return $result;
+        }
     }
 
     public function create(Request $request)
@@ -727,6 +906,7 @@ class StudentController extends Controller
     }
 
     public function apiFilterStudents(){
+        $req =  request()->all();
         $students = Student::where('is_deleted', false)->where('banned', false);
         $supportGroupId = Group::getSupport();
         if($supportGroupId)
@@ -854,9 +1034,15 @@ class StudentController extends Controller
             ];
         }
 
+
+        $outdata = [];
+        for($i = $req['start'];$i<min($req['length']+$req['start'], count($data));$i++){
+            $outdata[] = $data[$i];
+        }
+
         $result = [
-            "draw" => 1,
-            "data" => $data,
+            "draw" => $req['draw'],
+            "data" => $outdata,
             "recordsTotal" => count($students),
             "recordsFiltered" => count($students)
         ];
