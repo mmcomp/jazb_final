@@ -429,6 +429,16 @@
                                         <p>تعریف شهر</p>
                                     </a>
                                 </li>
+                                <li class="nav-item">
+                                    @if(strpos(\Request::route()->getName(), 'class_room')===0)
+                                    <a href="{{ route('class_rooms') }}" class="nav-link active">
+                                    @else
+                                    <a href="{{ route('class_rooms') }}" class="nav-link">
+                                    @endif
+                                        -
+                                        <p>تعریف کلاس</p>
+                                    </a>
+                                </li>
                             </ul>
                         </li>
                         @endif
