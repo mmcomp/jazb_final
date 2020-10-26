@@ -29,7 +29,7 @@ use Exception;
 class StudentController extends Controller
 {
     public function indexAll(){
-        $students = Student::where('is_deleted', false)->where('banned', false);
+        $students = Student::where('is_deleted', false)->where('banned', false)->where('archived', false);
         $supportGroupId = Group::getSupport();
         if($supportGroupId)
             $supportGroupId = $supportGroupId->id;
@@ -145,10 +145,11 @@ class StudentController extends Controller
                 $registerer = "-";
                 if($item->user)
                     $registerer =  $item->user->first_name . ' ' . $item->user->last_name;
-                elseif($item->is_from_site)
-                    $registerer =  'سایت';
                 elseif($item->saloon)
                     $registerer = $item->saloon;
+                elseif($item->is_from_site)
+                    $registerer =  'سایت';
+
                 $temps = "";
                 if($item->studenttemperatures && count($item->studenttemperatures)>0) {
                     foreach ($item->studenttemperatures as $sitem){
@@ -301,7 +302,7 @@ class StudentController extends Controller
     }
 
     public function index(){
-        $students = Student::where('is_deleted', false)->where('banned', false)->where('supporters_id', 0);
+        $students = Student::where('is_deleted', false)->where('banned', false)->where('archived', false)->where('supporters_id', 0);
         $supportGroupId = Group::getSupport();
         if($supportGroupId)
             $supportGroupId = $supportGroupId->id;
@@ -417,10 +418,10 @@ class StudentController extends Controller
                 $registerer = "-";
                 if($item->user)
                     $registerer =  $item->user->first_name . ' ' . $item->user->last_name;
-                elseif($item->is_from_site)
-                    $registerer =  'سایت';
                 elseif($item->saloon)
                     $registerer = $item->saloon;
+                elseif($item->is_from_site)
+                    $registerer =  'سایت';
                 $temps = "";
                 if($item->studenttemperatures && count($item->studenttemperatures)>0) {
                     foreach ($item->studenttemperatures as $sitem){

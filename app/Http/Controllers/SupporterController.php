@@ -308,7 +308,7 @@ class SupporterController extends Controller
         // Student::where('is_deleted', false)->where('supporters_id', $id)->where('viewed', false)->update([
         //     'viewed'=>true
         // ]);
-        $students = Student::where('is_deleted', false)->where('banned', false)->where('supporters_id', $id);
+        $students = Student::where('is_deleted', false)->where('banned', false)->where('archived', false)->where('supporters_id', $id);
         $sources = Source::where('is_deleted', false)->get();
         $products = Product::where('is_deleted', false)->with('collection')->orderBy('name')->get();
         // $callResults = CallResult::where('is_deleted', false)->get();
@@ -497,10 +497,11 @@ class SupporterController extends Controller
                 $registerer = "-";
                 if($item->user)
                     $registerer =  $item->user->first_name . ' ' . $item->user->last_name;
-                elseif($item->is_from_site)
-                    $registerer =  'سایت';
                 elseif($item->saloon)
                     $registerer = $item->saloon;
+                elseif($item->is_from_site)
+                    $registerer =  'سایت';
+
                 $temps = "";
                 if($item->studenttemperatures && count($item->studenttemperatures)>0) {
                     foreach ($item->studenttemperatures as $sitem){
@@ -541,7 +542,7 @@ class SupporterController extends Controller
     }
 
     public function newStudents(){
-        $students = Student::where('is_deleted', false)->where('banned', false)->where('supporter_seen', false)->where('supporters_id', Auth::user()->id);
+        $students = Student::where('is_deleted', false)->where('banned', false)->where('archived', false)->where('supporter_seen', false)->where('supporters_id', Auth::user()->id);
         $sources = Source::where('is_deleted', false)->get();
         $name = null;
         $sources_id = null;
@@ -640,10 +641,11 @@ class SupporterController extends Controller
                 $registerer = "-";
                 if($item->user)
                     $registerer =  $item->user->first_name . ' ' . $item->user->last_name;
-                elseif($item->is_from_site)
-                    $registerer =  'سایت';
                 elseif($item->saloon)
                     $registerer = $item->saloon;
+                elseif($item->is_from_site)
+                    $registerer =  'سایت';
+
                 $temps = "";
                 if($item->studenttemperatures && count($item->studenttemperatures)>0) {
                     foreach ($item->studenttemperatures as $sitem){
@@ -824,7 +826,17 @@ class SupporterController extends Controller
         $student->sources_id = request()->input('sources_id');
         $student->supporters_id = $student->users_id;
         $student->supporter_seen = false;
-        $student->save();
+        try{
+            $student->save();
+        }catch(Exception $e){
+            dd($e);
+            $msg = "خطا در ثبت رخ داد است";
+            if($e->getCode() == 23000)
+                $msg = "شماره تلفن تکراری است!";
+
+            request()->session()->flash("msg_error", $msg);
+            return redirect()->route('supporter_student_new');
+        }
 
         request()->session()->flash("msg_success", "دانش آموز با موفقیت افزوده شد.");
         return redirect()->route('supporter_student_new');
