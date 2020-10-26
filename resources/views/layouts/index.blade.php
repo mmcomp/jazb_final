@@ -474,6 +474,17 @@
                                 <p>فهرست سیاه دانش آموزان</p>
                             </a>
                         </li>
+
+                        <li class="nav-item">
+                            @if(strpos(\Request::route()->getName(), 'student_archived')===0)
+                            <a href="{{ route('student_archived') }}" class="nav-link active">
+                            @else
+                            <a href="{{ route('student_archived') }}" class="nav-link">
+                            @endif
+                                <!-- <i class="far fa-circle nav-icon"></i> -->
+                                <p>فهرست آرشیو دانش آموزان</p>
+                            </a>
+                        </li>
                         @endif
                         @if (Gate::allows('users'))
                         <li class="nav-item">

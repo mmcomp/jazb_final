@@ -117,6 +117,7 @@ Route::group(['middleware' => ['auth', 'message']], function () {
         Route::any('/', 'StudentController@index')->name('students');
         Route::any('/all', 'StudentController@indexAll')->name('student_all');
         Route::any('/banned', 'StudentController@banned')->name('student_banned');
+        Route::any('/archived', 'StudentController@archived')->name('student_archived');
         Route::any('/create', 'StudentController@create')->name('student_create');
         Route::any('/edit/{call_back}/{id}', 'StudentController@edit')->name('student_edit');
         Route::get('/delete/{id}', 'StudentController@delete')->name('student_delete');
