@@ -253,5 +253,12 @@ Route::group(['middleware' => ['auth', 'message']], function () {
         Route::any('/edit/{id}', 'HelpController@edit')->name('help_edit');
         Route::get('/delete/{id}', 'HelpController@delete')->name('help_delete');
     });
+
+    Route::group(['prefix' => '/class_rooms'], function () {
+        Route::get('/', 'ClassRoomController@index')->name('class_rooms');
+        Route::any('/create', 'ClassRoomController@create')->name('class_room_create');
+        Route::any('/edit/{id}', 'ClassRoomController@edit')->name('class_room_edit');
+        Route::get('/delete/{id}', 'ClassRoomController@delete')->name('class_room_delete');
+    });
 });
 
