@@ -310,7 +310,7 @@
         parent4: ''
     }
     function showMorePanel(index, tr){
-        var editRoute = `{{ route('student_edit', ['call_back'=>'student_all', 'id'=>-1]) }}`;
+        var editRoute = `{{ route('student_edit', ['call_back'=>'student_archived', 'id'=>-1]) }}`;
         var purchaseRoute = `{{ route('student_purchases', -1) }}`;
         var test = `<table style="width: 100%">
             <tr>
@@ -365,6 +365,9 @@
                                 ${ students[index].pcreated_at }
                             </div>
                             <div class="col">
+                                <a href="${ editRoute.replace('-1', students[index].id) }">
+                                    ویرایش مشخصات
+                                </a>
                             </div>
                             <div class="col">
                             </div>

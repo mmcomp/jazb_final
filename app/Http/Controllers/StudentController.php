@@ -211,7 +211,8 @@ class StudentController extends Controller
     }
 
     public function archived(){
-        $students = Student::where('is_deleted', false)->where('archived', true)->where('supporters_id', 0);
+        $students = Student::where('is_deleted', false)->where('archived', true);
+
         $supportGroupId = Group::getSupport();
         if($supportGroupId)
             $supportGroupId = $supportGroupId->id;
@@ -741,6 +742,7 @@ class StudentController extends Controller
         }
         $student->supporters_id = $request->input('supporters_id');
         $student->banned = ($request->input('banned')!=null)?true:false;
+        $student->archived = ($request->input('archived')!=null)?true:false;
         $student->save();
 
         $request->session()->flash("msg_success", "دانش آموز با موفقیت بروز شد.");

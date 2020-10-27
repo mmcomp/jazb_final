@@ -306,9 +306,19 @@
                         </div>
                         @if (isset($student) && isset($student->id))
                         <div class="form-group">
-                            <label for="supporters_id">لیست سیاه</label><br/>
+                            <label for="banned">لیست سیاه</label><br/>
                             <input type="checkbox" id="banned" name="banned"
                                 @if($student->banned)
+                                checked
+                                @endif
+                            />
+                        </div>
+                        @endif
+                        @if (isset($student) && isset($student->id))
+                        <div class="form-group">
+                            <label for="archived">آرشیو</label><br/>
+                            <input type="checkbox" id="archived" name="archived"
+                                @if($student->archived)
                                 checked
                                 @endif
                             />
