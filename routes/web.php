@@ -260,5 +260,12 @@ Route::group(['middleware' => ['auth', 'message']], function () {
         Route::any('/edit/{id}', 'ClassRoomController@edit')->name('class_room_edit');
         Route::get('/delete/{id}', 'ClassRoomController@delete')->name('class_room_delete');
     });
+
+    Route::group(['prefix' => '/lessons'], function () {
+        Route::get('/', 'LessonController@index')->name('lessons');
+        Route::any('/create', 'LessonController@create')->name('lesson_create');
+        Route::any('/edit/{id}', 'LessonController@edit')->name('lesson_edit');
+        Route::get('/delete/{id}', 'LessonController@delete')->name('lesson_delete');
+    });
 });
 

@@ -439,6 +439,16 @@
                                         <p>تعریف کلاس</p>
                                     </a>
                                 </li>
+                                <li class="nav-item">
+                                    @if(strpos(\Request::route()->getName(), 'lesson')===0)
+                                    <a href="{{ route('lessons') }}" class="nav-link active">
+                                    @else
+                                    <a href="{{ route('lessons') }}" class="nav-link">
+                                    @endif
+                                        -
+                                        <p>تعریف درس</p>
+                                    </a>
+                                </li>
                             </ul>
                         </li>
                         @endif
