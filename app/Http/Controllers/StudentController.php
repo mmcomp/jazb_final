@@ -14,6 +14,7 @@ use App\Imports\StudentsImport;
 use App\Student;
 use App\User;
 use App\Source;
+use App\StudentClassRoom;
 use App\StudentTag;
 use App\StudentTemperature;
 use App\Tag;
@@ -23,11 +24,79 @@ use App\TagParentThree;
 use App\TagParentFour;
 use App\Temperature;
 use App\StudentCollection;
+use App\ClassRoom;
 
 use Exception;
 
 class StudentController extends Controller
 {
+    public function class(Request $request, $id) {
+        $student = Student::where('is_deleted', false)->where('banned', false)->where('archived', false)->where('id', $id)->with('studentclasses.class')->first();
+        if($student==null){
+            $request->session()->flash("msg_error", "دانش آموز مورد نظر پیدا نشد!");
+            return redirect()->route('student_all');
+        }
+
+        // dd($student);
+        $classes = ClassRoom::where('is_deleted', false)->get();
+
+        if($request->getMethod()=='GET'){
+            return view('students.class', [
+                "student"=>$student,
+                "classes"=>$classes,
+                'msg_success' => request()->session()->get('msg_success'),
+                'msg_error' => request()->session()->get('msg_error')
+            ]);
+        }
+    }
+
+    public function classDelete(Request $request, $student_id, $id) {
+        $student = Student::where('is_deleted', false)->where('banned', false)->where('archived', false)->where('id', $student_id)->with('studentclasses.class')->first();
+        if($student==null){
+            $request->session()->flash("msg_error", "دانش آموز مورد نظر پیدا نشد!");
+            return redirect()->route('student_all');
+        }
+
+        $studentClass = StudentClassRoom::find($id);
+        if($studentClass == null){
+            $request->session()->flash("msg_error", "کلاس دانش آموز مورد نظر پیدا نشد!");
+            return redirect()->route('student_class', ["id" => $student_id]);
+        }
+
+        $studentClass->delete();
+
+        $request->session()->flash("msg_success", "کلاس دانش آموز مورد نظر حذف شد!");
+        return redirect()->route('student_class', ["id" => $student_id]);
+    }
+
+
+    public function classAdd(Request $request, $student_id) {
+        $student = Student::where('is_deleted', false)->where('banned', false)->where('archived', false)->where('id', $student_id)->with('studentclasses.class')->first();
+        if($student==null){
+            $request->session()->flash("msg_error", "دانش آموز مورد نظر پیدا نشد!");
+            return redirect()->route('student_all');
+        }
+
+        $class_rooms_id = $request->input('class_rooms_id');
+        $class = ClassRoom::find($class_rooms_id);
+        if($class==null){
+            $request->session()->flash("msg_error", "کلاس مورد نظر پیدا نشد!");
+            return redirect()->route('student_class', ["id" => $student_id]);
+        }
+
+        $studentClass = StudentClassRoom::where("students_id", $student_id)->where('class_rooms_id', $class_rooms_id)->first();
+        if($studentClass == null){
+            $studentClass = new StudentClassRoom();
+            $studentClass->students_id = $student_id;
+            $studentClass->class_rooms_id = $class_rooms_id;
+            $studentClass->users_id = Auth::user()->id;
+            $studentClass->save();
+        }
+
+        $request->session()->flash("msg_success", "کلاس دانش آموز مورد نظر افزوده شد!");
+        return redirect()->route('student_class', ["id" => $student_id]);
+    }
+
     public function indexAll(){
         $students = Student::where('is_deleted', false)->where('banned', false)->where('archived', false);
         $supportGroupId = Group::getSupport();
@@ -188,6 +257,9 @@ class StudentController extends Controller
                     $item->description,
                     '<a class="btn btn-warning" href="#" onclick="$(\'#students_index2\').val(' . $index . ');preloadTemperatureModal();$(\'#temperature_modal\').modal(\'show\'); return false;">
                         داغ/سرد
+                    </a>
+                    <a class="btn btn-danger" href="' . route('student_class', ['id'=>$item->id]) . '" >
+                        تخصیص کلاس
                     </a>'
                 ];
             }

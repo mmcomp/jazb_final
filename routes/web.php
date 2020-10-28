@@ -127,6 +127,9 @@ Route::group(['middleware' => ['auth', 'message']], function () {
         Route::any('/csv', 'StudentController@csv')->name('student_csv');
         Route::post('/supporter', 'StudentController@supporter')->name('student_supporter');
         Route::get('/purchases/{id}', 'StudentController@purchases')->name('student_purchases');
+        Route::any('/class/{id}', 'StudentController@class')->name('student_class');
+        Route::get('/class/{student_id}/delete/{id}', 'StudentController@classDelete')->name('student_class_delete');
+        Route::post('/class/{student_id}/add', 'StudentController@classAdd')->name('student_class_add');
     });
 
     Route::group(['prefix' => '/marketer'], function () {
