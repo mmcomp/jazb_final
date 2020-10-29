@@ -739,7 +739,9 @@ class StudentController extends Controller
                 "supports"=>$supports,
                 "consultants"=>$consultants,
                 "sources"=>$sources,
-                "student"=>$student
+                "student"=>$student,
+                'msg_success' => request()->session()->get('msg_success'),
+                'msg_error' => request()->session()->get('msg_error')
             ]);
         }
 
@@ -761,8 +763,17 @@ class StudentController extends Controller
         $student->student_phone = $request->input('student_phone');
         $student->sources_id = $request->input('sources_id');
         $student->supporters_id = $request->input('supporters_id');
-        $student->save();
+        try{
+            $student->save();
+        }catch(Exception $e){
+            // dd($e);
+            if($e->getCode()==23000)
+                $request->session()->flash("msg_error", "شماره دانش آموز تکراری است");
+            else
+                $request->session()->flash("msg_error", "خطا در ثبت دانش آموز");
 
+            return redirect()->route('student_create');
+        }
         $request->session()->flash("msg_success", "دانش آموز با موفقیت افزوده شد.");
         return redirect()->route('students');
     }
@@ -788,7 +799,9 @@ class StudentController extends Controller
                 "supports"=>$supports,
                 "consultants"=>$consultants,
                 "sources"=>$sources,
-                "student"=>$student
+                "student"=>$student,
+                'msg_success' => request()->session()->get('msg_success'),
+                'msg_error' => request()->session()->get('msg_error')
             ]);
         }
 
@@ -815,7 +828,17 @@ class StudentController extends Controller
         $student->supporters_id = $request->input('supporters_id');
         $student->banned = ($request->input('banned')!=null)?true:false;
         $student->archived = ($request->input('archived')!=null)?true:false;
-        $student->save();
+        try{
+            $student->save();
+        }catch(Exception $e){
+            // dd($e);
+            if($e->getCode()==23000)
+                $request->session()->flash("msg_error", "شماره دانش آموز تکراری است");
+            else
+                $request->session()->flash("msg_error", "خطا در ثبت دانش آموز");
+
+            return redirect()->route('student_create');
+        }
 
         $request->session()->flash("msg_success", "دانش آموز با موفقیت بروز شد.");
         return redirect()->route($call_back);
