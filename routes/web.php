@@ -270,5 +270,12 @@ Route::group(['middleware' => ['auth', 'message']], function () {
         Route::any('/edit/{id}', 'LessonController@edit')->name('lesson_edit');
         Route::get('/delete/{id}', 'LessonController@delete')->name('lesson_delete');
     });
+
+    Route::group(['prefix' => '/exams'], function () {
+        Route::get('/', 'ExamController@index')->name('exams');
+        Route::any('/create', 'ExamController@create')->name('exam_create');
+        Route::any('/edit/{id}', 'ExamController@edit')->name('exam_edit');
+        Route::get('/delete/{id}', 'ExamController@delete')->name('exam_delete');
+    });
 });
 

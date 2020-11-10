@@ -243,7 +243,10 @@
                         strpos(\Request::route()->getName(), 'call_result')===0 ||
                         strpos(\Request::route()->getName(), 'notice')===0 ||
                         strpos(\Request::route()->getName(), 'province')===0 ||
-                        strpos(\Request::route()->getName(), 'cit')===0))
+                        strpos(\Request::route()->getName(), 'class_room')===0 ||
+                        strpos(\Request::route()->getName(), 'cit')===0 ||
+                        strpos(\Request::route()->getName(), 'lesson')===0 ||
+                        strpos(\Request::route()->getName(), 'exam')===0)
                         <li class="nav-item has-treeview menu-open">
                             @else
                         <li class="nav-item has-treeview">
@@ -447,6 +450,16 @@
                                     @endif
                                         -
                                         <p>تعریف درس</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    @if(strpos(\Request::route()->getName(), 'exam')===0)
+                                    <a href="{{ route('exams') }}" class="nav-link active">
+                                    @else
+                                    <a href="{{ route('exams') }}" class="nav-link">
+                                    @endif
+                                        -
+                                        <p>تعریف آزمون</p>
                                     </a>
                                 </li>
                             </ul>
