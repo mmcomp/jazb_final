@@ -217,6 +217,22 @@
                                 @endforeach
                             </select>
                         </div>
+
+                        <div class="form-group">
+                            <label for="cities_id">شهر</label>
+                            <select  id="cities_id" name="cities_id" class="form-control">
+                                <option value="0"></option>
+                                @foreach ($cities as $item)
+                                    @if (isset($student) && isset($student->cities_id) && $student->cities_id == $item->id)
+                                    <option value="{{ $item->id }}" selected>
+                                    @else
+                                    <option value="{{ $item->id }}" >
+                                    @endif
+                                    {{ $item->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
                     </div>
                     <div class="col">
                         <div class="form-group">

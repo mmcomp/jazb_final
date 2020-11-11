@@ -25,6 +25,7 @@ use App\TagParentFour;
 use App\Temperature;
 use App\StudentCollection;
 use App\ClassRoom;
+use App\City;
 
 use Exception;
 
@@ -734,11 +735,13 @@ class StudentController extends Controller
         $supports = User::where('is_deleted', false)->where('groups_id', $supportGroupId)->get();
         $consultants = User::where('is_deleted', false)->where('groups_id', $consultantGroupId)->get();
         $sources = Source::where('is_deleted', false)->get();
+        $cities = City::where('is_deleted', false)->get();
         if($request->getMethod()=='GET'){
             return view('students.create', [
                 "supports"=>$supports,
                 "consultants"=>$consultants,
                 "sources"=>$sources,
+                "cities"=>$cities,
                 "student"=>$student,
                 'msg_success' => request()->session()->get('msg_success'),
                 'msg_error' => request()->session()->get('msg_error')
@@ -763,6 +766,7 @@ class StudentController extends Controller
         $student->student_phone = $request->input('student_phone');
         $student->sources_id = $request->input('sources_id');
         $student->supporters_id = $request->input('supporters_id');
+        $student->cities_id = $request->input('cities_id');
         try{
             $student->save();
         }catch(Exception $e){
@@ -794,11 +798,13 @@ class StudentController extends Controller
         $supports = User::where('is_deleted', false)->where('groups_id', $supportGroupId)->get();
         $consultants = User::where('is_deleted', false)->where('groups_id', $consultantGroupId)->get();
         $sources = Source::where('is_deleted', false)->get();
+        $cities = City::where('is_deleted', false)->get();
         if($request->getMethod()=='GET'){
             return view('students.create', [
                 "supports"=>$supports,
                 "consultants"=>$consultants,
                 "sources"=>$sources,
+                "cities"=>$cities,
                 "student"=>$student,
                 'msg_success' => request()->session()->get('msg_success'),
                 'msg_error' => request()->session()->get('msg_error')
@@ -822,6 +828,7 @@ class StudentController extends Controller
         $student->introducing = $request->input('introducing');
         $student->student_phone = $request->input('student_phone');
         $student->sources_id = $request->input('sources_id');
+        $student->cities_id = $request->input('cities_id');
         if($student->supporters_id != $request->input('supporters_id') && $student->supporter_seen){
             $student->supporter_seen = false;
         }
