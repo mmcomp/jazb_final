@@ -42,6 +42,6 @@ class User extends Authenticatable
     }
 
     public function students(){
-        return $this->hasMany('App\Student', 'supporters_id', 'id')->where('is_deleted', false);
+        return $this->hasMany('App\Student', 'supporters_id', 'id')->where('is_deleted', false)->where('banned', false)->where('archived', false);
     }
 }
