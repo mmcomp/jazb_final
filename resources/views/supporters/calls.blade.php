@@ -46,13 +46,13 @@ $persons = [
                 <div class="col-3">
                     <div class="form-group">
                         <label for="from_date">از تاریخ</label>
-                        <input type="text" id="from_date" name="from_date" class="form-control pdate" value="{{ ($from_date)?jdate($from_date)->format("Y/m/d"):'' }}" />
+                        <input type="text" id="from_date" name="from_date" class="form-control pdate" value="{{ ($from_date)?jdate($from_date)->format("Y/m/d"):jdate()->format("Y/m/d") }}" />
                     </div>
                 </div>
                 <div class="col-3">
                     <div class="form-group">
                         <label for="to_date">تا تاریخ</label>
-                        <input type="text" id="to_date" name="to_date" class="form-control pdate" value="{{ ($to_date)?jdate($to_date)->format("Y/m/d"):'' }}" />
+                        <input type="text" id="to_date" name="to_date" class="form-control pdate" value="{{ ($to_date)?jdate($to_date)->format("Y/m/d"):jdate()->format("Y/m/d") }}" />
                     </div>
                 </div>
                 <div class="col-3">
