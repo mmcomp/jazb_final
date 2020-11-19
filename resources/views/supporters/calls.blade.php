@@ -203,7 +203,7 @@ $persons = [
                                 <input type="hidden" name="replier_id" value="{{ ($replier_id)?$replier_id:'' }}" />
                                 <input type="hidden" name="sources_id" value="{{ ($sources_id)?$sources_id:'' }}" />
                                 <input type="hidden" name="id" value="{{ $item->id }}" />
-                                <button class="btn">
+                                <button class="btn btn-link">
                                     {{ $item->callCount }}
                                 </button>
                             </form>
