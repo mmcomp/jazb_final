@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\ClassRoom;
+use App\Product;
 
 
 class ClassRoomController extends Controller
@@ -22,14 +23,27 @@ class ClassRoomController extends Controller
     public function create(Request $request)
     {
         $classRoom = new ClassRoom;
+        $products = Product::where('is_deleted', false)->get();
+        foreach($products as $index => $product){
+            $products[$index]->parents = "-";
+            if($product->collection) {
+                $parents = $product->collection->parents();
+                $name = ($parents!='')?$parents . "->" . $product->collection->name : $product->collection->name;
+                $products[$index]->parents = $name;
+            }
+        }
         if($request->getMethod()=='GET'){
             return view('class_rooms.create', [
-                "classRoom"=>$classRoom
+                "classRoom"=>$classRoom,
+                "products"=>$products
             ]);
         }
 
         $classRoom->name = $request->input('name', '');
         $classRoom->description = $request->input('description');
+        if($request->input('products_id') && (int)$request->input('products_id')>0) {
+            $classRoom->products_id = (int)$request->input('products_id');
+        }
         $classRoom->save();
 
         $request->session()->flash("msg_success", "کلاس با موفقیت افزوده شد.");
@@ -44,14 +58,27 @@ class ClassRoomController extends Controller
             return redirect()->route('class_rooms');
         }
 
+        $products = Product::where('is_deleted', false)->get();
+        foreach($products as $index => $product){
+            $products[$index]->parents = "-";
+            if($product->collection) {
+                $parents = $product->collection->parents();
+                $name = ($parents!='')?$parents . "->" . $product->collection->name : $product->collection->name;
+                $products[$index]->parents = $name;
+            }
+        }
         if($request->getMethod()=='GET'){
             return view('class_rooms.create', [
-                "classRoom"=>$classRoom
+                "classRoom"=>$classRoom,
+                "products"=>$products
             ]);
         }
 
         $classRoom->name = $request->input('name', '');
         $classRoom->description = $request->input('description');
+        if($request->input('products_id') && (int)$request->input('products_id')>0) {
+            $classRoom->products_id = (int)$request->input('products_id');
+        }
         $classRoom->save();
 
         $request->session()->flash("msg_success", "کلاس با موفقیت ویرایش شد.");

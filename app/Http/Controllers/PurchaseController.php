@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Product;
 use App\Purchase;
 use App\Student;
+use App\StudentClassRoom;
 
 use Exception;
 
@@ -128,7 +129,7 @@ class PurchaseController extends Controller
                 continue;
             }
             $purchaseObject = new Purchase;
-            $product = Product::where('woo_id', $purchase['woo_id'])->first();
+            $product = Product::where('woo_id', $purchase['woo_id'])->with('classrooms')->first();
             $student = Student::where('phone', $purchase['phone'])->where('banned', false)->first();
             if($product == null || $student == null){
                 $fails[] = $purchase;
@@ -139,11 +140,31 @@ class PurchaseController extends Controller
             $purchaseObject->supporters_id = $student->supporters_id;
             $purchaseObject->price = isset($purchase['price'])?$purchase['price']:0;
             $purchaseObject->users_id = 0;
+            $purchaseSaved = false;
             try{
                 $purchaseObject->save();
                 $ids[] = $purchaseObject->id;
+                $purchaseSaved = true;
             }catch(Exception $e){
                 $fails[] = $purchase;
+            }
+            if($purchaseSaved) {
+                if($product->classrooms) {
+                    foreach($product->classrooms as $classroom) {
+                        $studentClassRoom = StudentClassRoom::where('students_id', $student->id)->where("class_rooms_id", $classroom->id)->first();
+                        if($studentClassRoom==null) {
+                            $studentClassRoom = new StudentClassRoom();
+                            $studentClassRoom->students_id = $student->id;
+                            $studentClassRoom->class_rooms_id = $classroom->id;
+                            $studentClassRoom->users_id = -1;
+                            try{
+                                $studentClassRoom->save();
+                            }catch(Exception $e){
+                                // dd($e);
+                            }
+                        }
+                    }
+                }
             }
         }
         return [

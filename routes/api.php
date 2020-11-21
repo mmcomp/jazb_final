@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\Route;
 Route::post('/students', 'StudentController@apiAddStudents')->name('api_add_students');
 Route::post('/update_students', 'StudentController@apiUpdateStudents')->name('api_update_students');
 Route::post('/products', 'ProductController@apiAddProducts')->name('api_add_products');
+Route::post('/delete_products', 'ProductController@apiDeleteProducts')->name('api_delete_products');
 Route::post('/purchases', 'PurchaseController@apiAddPurchases')->name('api_add_purchases');
 Route::post('/marketers', 'MarketerController@apiCheckMarketer')->name('api_check_marketer');
 Route::get('/filter_students', 'StudentController@apiFilterStudents')->name('api_filter_students');

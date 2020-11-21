@@ -45,6 +45,20 @@
                             <input type="text" class="form-control" id="name" name="name" placeholder="نام"  />
                             @endif
                         </div>
+
+                        <div class="form-group">
+                            <label for="products_id">محصول</label>
+                            <select class="form-control select2" id="products_id" name="products_id" >
+                                @foreach ($products as $item)
+                                    <option value=""></option>
+                                    @if (isset($classRoom) && isset($classRoom->id) && $classRoom->products_id==$item->id)
+                                    <option value="{{ $item->id }}" selected>{{ (($item->parents!='-')?$item->parents . '->':'') . $item->name }}</option>
+                                    @else
+                                    <option value="{{ $item->id }}">{{ (($item->parents!='-')?$item->parents . '->':'') . $item->name }}</option>
+                                    @endif
+                                @endforeach
+                            </select>
+                        </div>
                     </div>
                     <div class="col">
                         <div class="form-group">
