@@ -767,6 +767,8 @@ class StudentController extends Controller
         $student->sources_id = $request->input('sources_id');
         $student->supporters_id = $request->input('supporters_id');
         $student->cities_id = $request->input('cities_id');
+        $student->outside_consultants = $request->input('outside_consultants');
+        $student->description = $request->input('description');
         try{
             $student->save();
         }catch(Exception $e){
@@ -835,6 +837,8 @@ class StudentController extends Controller
         $student->supporters_id = $request->input('supporters_id');
         $student->banned = ($request->input('banned')!=null)?true:false;
         $student->archived = ($request->input('archived')!=null)?true:false;
+        $student->outside_consultants = $request->input('outside_consultants');
+        $student->description = $request->input('description');
         try{
             $student->save();
         }catch(Exception $e){

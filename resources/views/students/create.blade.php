@@ -320,6 +320,25 @@
                                 @endforeach
                             </select>
                         </div>
+
+                        <div class="form-group">
+                            <label for="outside_consultants">مشاور بیرونی</label>
+                            @if (isset($student) && isset($student->outside_consultants_id))
+                            <input type="text" class="form-control" id="outside_consultants" name="outside_consultants" placeholder="مشاور بیرونی" value="{{ $student->outside_consultants }}" />
+                            @else
+                            <input type="text" class="form-control" id="outside_consultants" name="outside_consultants" placeholder="مشاور بیرونی"  />
+                            @endif
+                        </div>
+
+                        <div class="form-group">
+                            <label for="description">توضیحات</label>
+                            @if (isset($student) && isset($student->outside_consultants_id))
+                            <input type="text" class="form-control" id="description" name="description" placeholder="توضیحات" value="{{ $student->description }}" />
+                            @else
+                            <input type="text" class="form-control" id="description" name="description" placeholder="توضیحات"  />
+                            @endif
+                        </div>
+
                         @if (isset($student) && isset($student->id))
                         <div class="form-group">
                             <label for="banned">لیست سیاه</label><br/>
