@@ -7,6 +7,13 @@
         "other"=>"دیگر"
     ];
     $egucation_levels = [
+        "6" => "6",
+        "7" => "7",
+        "8" => "8",
+        "9" => "9",
+        "10" => "10",
+        "11" => "11",
+        "12" => "12",
         "13" => "فارغ التحصیل",
         "14" => "دانشجو",
         null => ""
@@ -107,6 +114,67 @@
                             <div class="form-group">
                                 <label for="phone">تلفن</label>
                                 <input type="number" class="form-control" id="phone" name="phone" placeholder="تلفن"  value="{{ isset($phone)?$phone:'' }}" />
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="cities_id">شهر</label>
+                                <select  id="cities_id" name="cities_id" class="form-control">
+                                    <option value="">همه</option>
+                                    @foreach ($cities as $item)
+                                        @if(isset($cities_id) && $cities_id==$item->id)
+                                        <option value="{{ $item->id }}" selected >
+                                        @else
+                                        <option value="{{ $item->id }}" >
+                                        @endif
+                                        {{ $item->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="egucation_level">مقطع</label>
+                                <select  id="egucation_level" name="egucation_level" class="form-control">
+                                    <option value="">همه</option>
+                                    @foreach ($egucation_levels as $key => $item)
+                                        @if($key!=null)
+                                        @if(isset($egucation_level) && $egucation_level==$key)
+                                        <option value="{{ $key }}" selected >
+                                        @else
+                                        <option value="{{ $key }}" >
+                                        @endif
+                                        {{ $item }}
+                                        </option>
+                                        @endif
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="major">رشته</label>
+                                <select  id="major" name="major" class="form-control">
+                                    <option value="">همه</option>
+                                    @foreach ($majors as $key => $item)
+                                        @if(isset($egucation_level) && $egucation_level==$key)
+                                        <option value="{{ $key }}" selected >
+                                        @else
+                                        <option value="{{ $key }}" >
+                                        @endif
+                                        {{ $item }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="school">مدرسه</label>
+                                <input type="text" class="form-control" id="school" name="school" placeholder="مدرسه"  value="{{ isset($school)?$school:'' }}" />
                             </div>
                         </div>
                         <div class="col" style="padding-top: 32px;">
@@ -725,8 +793,13 @@
                     // $.extend(form, info);
                     data['supporters_id'] = $("#supporters_id").val();
                     data['sources_id'] = $("#sources_id").val();
+                    data['cities_id'] = $("#cities_id").val();
+                    data['egucation_level'] = $("#egucation_level").val();
+                    data['major'] = $("#major").val();
+                    data['school'] = $("#school").val();
                     data['name'] = $("#name").val();
                     data['phone'] = $("#phone").val();
+
                     return JSON.stringify(data);
                 },
                 "complete": function(response) {
