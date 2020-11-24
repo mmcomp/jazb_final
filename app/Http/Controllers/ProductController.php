@@ -109,7 +109,14 @@ class ProductController extends Controller
                 $fails[] = $product;
                 continue;
             }
-            $productObject = new Product;
+            if(isset($product['woo_id']) && (int)$product['woo_id']>0) {
+                $productObject = Product::where('woo_id', (int)$product['woo_id'])->first();
+                if($productObject == null) {
+                    $productObject = new Product;
+                }
+            }else {
+                $productObject = new Product;
+            }
             foreach($product as $key=>$value){
                 $productObject->$key = $value;
             }
