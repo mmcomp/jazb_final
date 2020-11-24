@@ -599,6 +599,22 @@ class StudentController extends Controller
                 $phone = (int)request()->input('phone');
                 $students = $students->where('phone', $phone);
             }
+            if(request()->input('cities_id')!=null){
+                $cities_id = (int)request()->input('cities_id');
+                $students = $students->where('cities_id', $cities_id);
+            }
+            if(request()->input('egucation_level')!=null){
+                $egucation_level = request()->input('egucation_level');
+                $students = $students->where('egucation_level', $egucation_level);
+            }
+            if(request()->input('major')!=null){
+                $major = request()->input('major');
+                $students = $students->where('major', $major);
+            }
+            if(request()->input('school')!=null){
+                $school = request()->input('school');
+                $students = $students->where('school', 'like',  '%' . $school . '%');
+            }
         }
         // DB::enableQueryLog();
         $students = $students
@@ -629,6 +645,7 @@ class StudentController extends Controller
         $thirdCollections = Collection::where('is_deleted', false)->with('parent')->whereIn('parent_id', $secondCollections->pluck('id'))->get();
         $hotTemperatures = Temperature::where('is_deleted', false)->where('status', 'hot')->get();
         $coldTemperatures = Temperature::where('is_deleted', false)->where('status', 'cold')->get();
+        $cities = City::where('is_deleted', false)->get();
 
         foreach($students as $index => $student) {
             $students[$index]->pcreated_at = jdate(strtotime($student->created_at))->format("Y/m/d");
@@ -656,6 +673,7 @@ class StudentController extends Controller
                 "firstCollections"=>$firstCollections,
                 "secondCollections"=>$secondCollections,
                 "thirdCollections"=>$thirdCollections,
+                "cities"=>$cities,
                 'msg_success' => request()->session()->get('msg_success'),
                 'msg_error' => request()->session()->get('msg_error')
             ]);
