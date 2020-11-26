@@ -119,6 +119,37 @@ class PurchaseController extends Controller
     }
 
     //---------------------API------------------------------------
+    public function apiDeletePurchases(Request $request) {
+        $purchases = $request->input('purchases', []);
+        $ids = [];
+        $fails = [];
+        foreach($purchases as $purchase){
+            if(!isset($purchase['factor_number'])){
+                $fails[] = $purchase;
+                continue;
+            }
+
+            $purchaseObject = Purchase::where("factor_number", $purchase['factor_number'])->first();
+            if(!$purchaseObject){
+                $fails[] = $purchase;
+                continue;
+            }
+            $purchaseObject->is_deleted = true;
+            $purchaseObject->save();
+
+            try{
+                $purchaseObject->save();
+                $ids[] = $purchaseObject->id;
+            }catch(Exception $e){
+                $fails[] = $purchase;
+            }
+        }
+        return [
+            "deleted_ids" => $ids,
+            "fails" => $fails
+        ];
+    }
+
     public function apiAddPurchases(Request $request){
         $purchases = $request->input('purchases', []);
         $ids = [];
