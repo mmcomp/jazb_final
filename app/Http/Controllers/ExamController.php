@@ -43,7 +43,7 @@ class ExamController extends Controller
             $cmd = str_replace('$pdfAddress', $pdfAddress, $cmd);
             $cmd = str_replace('$imageDirectory', $imageDirectory, $cmd);
             mkdir($imageDirectory);
-            shell_exec($cmd);
+            exec($cmd);
         }
         if($request->file('answer_pdf')){
             $filenameNoextension = now()->timestamp;
