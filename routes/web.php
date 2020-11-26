@@ -276,6 +276,9 @@ Route::group(['middleware' => ['auth', 'message']], function () {
         Route::any('/create', 'ExamController@create')->name('exam_create');
         Route::any('/edit/{id}', 'ExamController@edit')->name('exam_edit');
         Route::get('/delete/{id}', 'ExamController@delete')->name('exam_delete');
+        Route::any('/question/{exam_id}', 'ExamController@questions')->name('exam_questions');
+        Route::any('/question/{exam_id}/create', 'ExamController@questionCreate')->name('exam_question_create');
+        Route::get('/question/{exam_id}/delete/{id}', 'ExamController@questionDelete')->name('exam_question_delete');
     });
 });
 

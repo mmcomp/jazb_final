@@ -6,7 +6,7 @@
         <div class="container-fluid">
           <div class="row mb-2">
             <div class="col-sm-6">
-              <h1>آزمون ها</h1>
+              <h1>سوالات آزمون {{ $exam->name }}</h1>
             </div>
             <div class="col-sm-6">
               <!--
@@ -27,7 +27,7 @@
             <div class="card">
               <div class="card-header">
                 <h3 class="card-title">
-                    <a class="btn btn-success" href="{{ route('exam_create') }}">آزمون جدید</a>
+                    <a class="btn btn-success" href="{{ route('exam_question_create', ['exam_id'=>$exam->id]) }}">سوال جدید</a>
                 </h3>
               </div>
               <!-- /.card-header -->
@@ -37,26 +37,24 @@
                   <tr>
                     <th>ردیف</th>
                     <th>کد</th>
-                    <th>نام</th>
+                    <th>ترتیب</th>
+                    <th>ضریب</th>
                     <th>توضیحات</th>
+                    <th>تصویر</th>
                     <th>#</th>
                   </tr>
                   </thead>
                   <tbody>
-                      @foreach ($exams as $index => $item)
+                      @foreach ($questions as $index => $item)
                       <tr>
                         <td>{{ $index + 1 }}</td>
                         <td>{{ $item->id }}</td>
-                        <td>{{ $item->name }}</td>
+                        <td>{{ $item->order }}</td>
+                        <td>{{ $item->factor }}</td>
                         <td>{{ $item->description }}</td>
+                        <td><a href="/uploads/{{ $item->image_path }}" target="_blank"><img src="/uploads/{{ $item->image_path }}" style="width: 100px;" /></a></td>
                         <td>
-                            <a class="btn btn-success" href="{{ route('exam_questions', $item->id) }}">
-                                سوال
-                            </a>
-                            <a class="btn btn-primary" href="{{ route('exam_edit', $item->id) }}">
-                                ویرایش
-                            </a>
-                            <a class="btn btn-danger" href="{{ route('exam_delete', $item->id) }}">
+                            <a class="btn btn-danger" href="{{ route('exam_question_delete', ["exam_id"=>$exam->id, "id" =>$item->id]) }}">
                                 حذف
                             </a>
                         </td>
