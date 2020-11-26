@@ -36,7 +36,7 @@ class ExamController extends Controller
             $filenameNoextension = now()->timestamp;
             $filename = $filenameNoextension . '.' . $request->file('question_pdf')->extension();
             $exam->question_pdf = $request->file('question_pdf')->storeAs('examp_questions', $filename, 'public_uploads');
-            $imageDirectory = public_path('uploads') . DIRECTORY_SEPARATOR . 'examp_questions' . DIRECTORY_SEPARATOR . $filenameNoextension;
+            $imageDirectory = public_path('uploads') . DIRECTORY_SEPARATOR . 'examp_questions' . DIRECTORY_SEPARATOR . $filenameNoextension . DIRECTORY_SEPARATOR;
             $pdfAddress = str_replace('/', DIRECTORY_SEPARATOR, public_path('uploads') . DIRECTORY_SEPARATOR . $exam->question_pdf);
             $pdfAddress = str_replace('\\', DIRECTORY_SEPARATOR, $pdfAddress);
             $cmd = env('PDF2JPG');
