@@ -418,10 +418,10 @@ class SupporterController extends Controller
                 }, SORT_REGULAR, true);
             }
         }
-        $parentOnes = TagParentOne::has('tags')->get();
-        $parentTwos = TagParentTwo::has('tags')->get();
-        $parentThrees = TagParentThree::has('tags')->get();
-        $parentFours = TagParentFour::has('tags')->get();
+        $parentOnes = TagParentOne::has('tags')->where('is_deleted', false)->get();
+        $parentTwos = TagParentTwo::has('tags')->where('is_deleted', false)->get();
+        $parentThrees = TagParentThree::has('tags')->where('is_deleted', false)->get();
+        $parentFours = TagParentFour::has('tags')->where('is_deleted', false)->get();
         $collections = Collection::where('is_deleted', false)->get();
         $firstCollections = Collection::where('is_deleted', false)->where('parent_id', 0)->get();
         $secondCollections = Collection::where('is_deleted', false)->whereIn('parent_id', $firstCollections->pluck('id'))->get();
