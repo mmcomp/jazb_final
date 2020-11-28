@@ -695,9 +695,10 @@ class StudentController extends Controller
                     </span><br/>';
                     }
                     for($i = 0; $i < count($item->studentcollections);$i++){
-                        $tags .= '<span class="alert alert-warning p-1">
-                            '. (($item->studentcollections[$i]->collection->parent) ? $item->studentcollections[$i]->collection->parent->name . '->' : '' ) . ' ' . $item->studentcollections[$i]->collection->name .'
-                        </span><br/>';
+                        if(isset($item->studentcollections[$i]->collection))
+                            $tags .= '<span class="alert alert-warning p-1">
+                                '. (($item->studentcollections[$i]->collection->parent) ? $item->studentcollections[$i]->collection->parent->name . '->' : '' ) . ' ' . $item->studentcollections[$i]->collection->name .'
+                            </span><br/>';
                     }
                 }
                 $registerer = "-";
