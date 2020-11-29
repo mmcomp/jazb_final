@@ -52,6 +52,7 @@ $persons = [
                   <tr>
                     <th>ردیف</th>
                     <th>کد</th>
+                    <th>دانش آموز</th>
                     <th>محصول</th>
                     <th>پاسخگو</th>
                     <th>نتیجه</th>
@@ -65,6 +66,7 @@ $persons = [
                       <tr>
                         <td>{{ $index + 1 }}</td>
                         <td>{{ $item->id }}</td>
+                        <td>{{ ($item->student)?$item->student->first_name . ' ' . $item->student->last_name:'-' }}</td>
                         <td>{{ ($item->product)?(($item->product->parents!='-')?$item->product->parents . '->':'') . $item->product->name:'-' }}</td>
                         <td>{{ $persons[$item->replier] }}</td>
                         <td>{{ ($item->callresult)?$item->callresult->title:'-' }}</td>
