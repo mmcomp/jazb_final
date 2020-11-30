@@ -26,6 +26,7 @@ use App\Collection;
 use App\Notice;
 use App\Purchase;
 use App\StudentTag;
+use App\City;
 use Exception;
 
 class SupporterController extends Controller
@@ -799,9 +800,11 @@ class SupporterController extends Controller
         $supports = User::where('is_deleted', false)->where('groups_id', $supportGroupId)->get();
         $consultants = User::where('is_deleted', false)->where('groups_id', $consultantGroupId)->get();
         $sources = Source::where('is_deleted', false)->get();
+        $cities = City::where('is_deleted', false)->get();
         if(request()->getMethod()=='GET'){
             return view('students.create', [
                 "supports"=>$supports,
+                "cities"=>$cities,
                 "consultants"=>$consultants,
                 "sources"=>$sources,
                 "student"=>$student
