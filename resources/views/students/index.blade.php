@@ -572,7 +572,7 @@
         $("#collection-three").find('option[value=""]').prop('selected', true);
         if($(dobj).val()!=''){
             $("#collection-three").find('option').each(function(id, field){
-                if($(field).data('parent_parent_id')!=$(dobj).val()){
+                if($(field).data('parent_parent_id')!=$(dobj).val() && $(field).val()!=''){
                     $(field).hide();
                 }else{
                     $(field).show();
@@ -616,10 +616,11 @@
         if(collectionParents==''){
             parents.push(parseInt($("#collection-one").val(), 10));
             $("#collection-two").find('option').each(function(id, field){
-                if($(field).css('display')!='none'){
+                if($(field).css('display')!='none' && !isNaN(parseInt($(field).val(), 10))){
                     parents.push(parseInt($(field).val(), 10));
                 }
             });
+            console.log('p1', parents);
             $("input.collection-checkbox").each(function (id, field){
                 let collectionId = parseInt($(field).val(), 10);
                 if(parents.indexOf(collectionId)<0){
