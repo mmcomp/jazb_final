@@ -833,7 +833,7 @@ class SupporterController extends Controller
         try{
             $student->save();
         }catch(Exception $e){
-            dd($e);
+            // dd($e);
             $msg = "خطا در ثبت رخ داد است";
             if($e->getCode() == 23000)
                 $msg = "شماره تلفن تکراری است!";
