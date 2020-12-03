@@ -177,6 +177,7 @@ class StudentController extends Controller
         $firstCollections = Collection::where('is_deleted', false)->where('parent_id', 0)->get();
         $secondCollections = Collection::where('is_deleted', false)->whereIn('parent_id', $firstCollections->pluck('id'))->get();
         $thirdCollections = Collection::where('is_deleted', false)->with('parent')->whereIn('parent_id', $secondCollections->pluck('id'))->get();
+        // $fourthCollections = Collection::where('is_deleted', false)->with('parent')->whereIn('parent_id', $thirdCollections->pluck('id'))->get();
         $hotTemperatures = Temperature::where('is_deleted', false)->where('status', 'hot')->get();
         $coldTemperatures = Temperature::where('is_deleted', false)->where('status', 'cold')->get();
         $cities = City::where('is_deleted', false)->get();
@@ -207,6 +208,7 @@ class StudentController extends Controller
                 "firstCollections"=>$firstCollections,
                 "secondCollections"=>$secondCollections,
                 "thirdCollections"=>$thirdCollections,
+                // "fourthCollections"=>$fourthCollections,
                 "cities"=>$cities,
                 "cities_id"=>$cities_id,
                 "egucation_level"=>$egucation_level,

@@ -633,6 +633,29 @@
         }else {
             parents.push(parseInt(collectionParents, 10))
         }
+
+
+        if($("#collection-three").val()==''){
+            parents.push(parseInt($("#collection-two").val(), 10));
+            $("#collection-three").find('option').each(function(id, field){
+                if($(field).css('display')!='none' && !isNaN(parseInt($(field).val(), 10))){
+                    parents.push(parseInt($(field).val(), 10));
+                }
+            });
+            console.log('p2', parents);
+            $("input.collection-checkbox").each(function (id, field){
+                let collectionId = parseInt($(field).val(), 10);
+                if(parents.indexOf(collectionId)<0){
+                    $(field).hide();
+                    $("#collection-title-" + collectionId).hide();
+                    $("#collection-br-" + collectionId).hide();
+                }
+            });
+            return false;
+        }else {
+            parents.push(parseInt($("#collection-three").val(), 10))
+        }
+
         console.log('parents:', parents);
 
         $("input.collection-checkbox").each(function (id, field){

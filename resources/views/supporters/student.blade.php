@@ -941,6 +941,56 @@ $egucation_levels = [
         console.log('hey3');
         filterCollectionsByParent();
     }
+    // function filterCollectionsByParent(){
+    //     $("input.collection-checkbox").show();
+    //     $("span.collection-title").show();
+    //     $("br.collection-br").show();
+    //     let collectionParents = $("#collection-two").val();
+    //     let parents = [];
+    //     if($("#collection-one").val()=='' && collectionParents==''){
+    //         return false;
+    //     }
+
+
+
+
+    //     if(collectionParents==''){
+    //         parents.push(parseInt($("#collection-one").val(), 10));
+    //         $("#collection-two").find('option').each(function(id, field){
+    //             if($(field).css('display')!='none'){
+    //                 parents.push(parseInt($(field).val(), 10));
+    //             }
+    //         });
+    //         $("input.collection-checkbox").each(function (id, field){
+    //             let collectionId = parseInt($(field).val(), 10);
+    //             if(parents.indexOf(collectionId)<0){
+    //                 $(field).hide();
+    //                 $("#collection-title-" + collectionId).hide();
+    //                 $("#collection-br-" + collectionId).hide();
+    //             }
+    //         });
+    //         return false;
+    //     }else {
+    //         parents.push(parseInt(collectionParents, 10))
+    //     }
+    //     console.log('parents:', parents);
+
+    //     $("input.collection-checkbox").each(function (id, field){
+    //         // console.log('checking', field)
+    //         let collectionId = parseInt($(field).val(), 10);
+    //         let theCollection = collections[collectionId];
+    //         console.log(collectionId, theCollection)
+    //         if(theCollection){
+    //             console.log(parents.indexOf(theCollection.id), parents.indexOf(theCollection.parent_id));
+    //             if(parents.indexOf(theCollection.id)<0 && parents.indexOf(theCollection.parent_id)<0){
+    //                 $(field).hide();
+    //                 $("#collection-title-" + collectionId).hide();
+    //                 $("#collection-br-" + collectionId).hide();
+    //             }
+    //         }
+
+    //     });
+    // }
     function filterCollectionsByParent(){
         $("input.collection-checkbox").show();
         $("span.collection-title").show();
@@ -957,10 +1007,11 @@ $egucation_levels = [
         if(collectionParents==''){
             parents.push(parseInt($("#collection-one").val(), 10));
             $("#collection-two").find('option').each(function(id, field){
-                if($(field).css('display')!='none'){
+                if($(field).css('display')!='none' && !isNaN(parseInt($(field).val(), 10))){
                     parents.push(parseInt($(field).val(), 10));
                 }
             });
+            console.log('p1', parents);
             $("input.collection-checkbox").each(function (id, field){
                 let collectionId = parseInt($(field).val(), 10);
                 if(parents.indexOf(collectionId)<0){
@@ -973,6 +1024,29 @@ $egucation_levels = [
         }else {
             parents.push(parseInt(collectionParents, 10))
         }
+
+
+        if($("#collection-three").val()==''){
+            parents.push(parseInt($("#collection-two").val(), 10));
+            $("#collection-three").find('option').each(function(id, field){
+                if($(field).css('display')!='none' && !isNaN(parseInt($(field).val(), 10))){
+                    parents.push(parseInt($(field).val(), 10));
+                }
+            });
+            console.log('p2', parents);
+            $("input.collection-checkbox").each(function (id, field){
+                let collectionId = parseInt($(field).val(), 10);
+                if(parents.indexOf(collectionId)<0){
+                    $(field).hide();
+                    $("#collection-title-" + collectionId).hide();
+                    $("#collection-br-" + collectionId).hide();
+                }
+            });
+            return false;
+        }else {
+            parents.push(parseInt($("#collection-three").val(), 10))
+        }
+
         console.log('parents:', parents);
 
         $("input.collection-checkbox").each(function (id, field){
