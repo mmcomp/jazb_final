@@ -332,7 +332,7 @@
 
                         <div class="form-group">
                             <label for="description">توضیحات</label>
-                            @if (isset($student) && isset($student->outside_consultants_id))
+                            @if (isset($student) && isset($student->description))
                             <input type="text" class="form-control" id="description" name="description" placeholder="توضیحات" value="{{ $student->description }}" />
                             @else
                             <input type="text" class="form-control" id="description" name="description" placeholder="توضیحات"  />
