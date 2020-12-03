@@ -600,6 +600,10 @@ class SupporterController extends Controller
         $hotTemperatures = Temperature::where('is_deleted', false)->where('status', 'hot')->get();
         $coldTemperatures = Temperature::where('is_deleted', false)->where('status', 'cold')->get();
 
+        foreach($students as $index => $student) {
+            $students[$index]->pcreated_at = jdate(strtotime($student->created_at))->format("Y/m/d");
+        }
+
         if(request()->getMethod()=='GET'){
             return view('supporters.new',[
                 'students' => $students,
@@ -672,7 +676,9 @@ class SupporterController extends Controller
                     $tags,
                     $temps,
                     $item->description,
-                    ""
+                    '<a class="btn btn-success btn-sm" href="#" onclick="return seeStudent(this, ' . $item->id . ');">
+                    مشاهده شد
+                    </a>'
                 ];
             }
 

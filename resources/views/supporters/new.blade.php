@@ -658,7 +658,14 @@
             alert('خطای بروز رسانی');
         });
     }
-
+    function seeStudent(dobj, student_id) {
+        $(dobj).prop('disabled', true).addClass('');
+        $.post('{{ route('supporter_student_seen') }}', {student_id}, res => {
+            $(dobj).prop('disabled', false);
+            console.log(res);
+            table.ajax.reload();
+        });
+    }
     function selectParentOne(dobj){
         filterParents.parent1 = ($(dobj).val()!='')?parseInt($(dobj).val(), 10):'';
         filterTagsByParent()

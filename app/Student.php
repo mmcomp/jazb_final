@@ -58,7 +58,7 @@ class Student extends Model
     }
 
     public function calls(){
-        return $this->hasMany('App\Call', 'students_id', 'id');
+        return $this->hasMany('App\Call', 'students_id', 'id')->orderBy('created_at', 'desc');
     }
 
     public function remindercalls(){
