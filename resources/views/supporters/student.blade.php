@@ -133,9 +133,9 @@ $egucation_levels = [
                     <div class="row">
                         <div class="col text-center p-1">
                             @if(isset($has_collection) && $has_collection=='true')
-                            <a class="btn btn-success btn-block" href="#" onclick="return StudentCollection();">پیشنهاد فروش</a>
+                            <a id="student-collection-btn" class="btn btn-success btn-block" href="#" onclick="return StudentCollection();">پیشنهاد فروش</a>
                             @else
-                            <a class="btn btn-warning btn-block" href="#" onclick="return StudentCollection();">پیشنهاد فروش</a>
+                            <a id="student-collection-btn" class="btn btn-warning btn-block" href="#" onclick="return StudentCollection();">پیشنهاد فروش</a>
                             @endif
                         </div>
                         <div class="col text-center p-1">
@@ -178,25 +178,25 @@ $egucation_levels = [
                         </div>
                         <div class="col text-center p-1">
                             @if(isset($has_site) && $has_site=='true')
-                            <a class="btn btn-success btn-block" href="#" onclick="return StudentSite();">سایت</a>
+                            <a id="student-site-btn" class="btn btn-success btn-block" href="#" onclick="return StudentSite();">سایت</a>
                             @else
-                            <a class="btn btn-warning btn-block" href="#" onclick="return StudentSite();">سایت</a>
+                            <a id="student-site-btn" class="btn btn-warning btn-block" href="#" onclick="return StudentSite();">سایت</a>
                             @endif
                         </div>
                     </div>
                     <div class="row">
                         <div class="col text-center p-1">
                             @if(isset($order_collection) && $order_collection=='true')
-                            <a class="btn btn-success btn-block" href="#" onclick="return OrderCollection();">تعداد پیشنهاد فروش</a>
+                            <a id="order-collection-btn" class="btn btn-success btn-block" href="#" onclick="return OrderCollection();">تعداد پیشنهاد فروش</a>
                             @else
-                            <a class="btn btn-warning btn-block" href="#" onclick="return OrderCollection();">تعداد پیشنهاد فروش</a>
+                            <a id="order-collection-btn" class="btn btn-warning btn-block" href="#" onclick="return OrderCollection();">تعداد پیشنهاد فروش</a>
                             @endif
                         </div>
                         <div class="col text-center p-1">
                             @if(isset($has_reminder) && $has_reminder=='true')
-                            <a class="btn btn-success btn-block" href="#" onclick="return StudentReminder();">یادآور</a>
+                            <a id="student-reminder-btn" class="btn btn-success btn-block" href="#" onclick="return StudentReminder();">یادآور</a>
                             @else
-                            <a class="btn btn-warning btn-block" href="#" onclick="return StudentReminder();">یادآور</a>
+                            <a id="student-reminder-btn" class="btn btn-warning btn-block" href="#" onclick="return StudentReminder();">یادآور</a>
                             @endif
                         </div>
                         <div class="col text-center p-1">
@@ -1231,6 +1231,10 @@ $egucation_levels = [
             has_collection = 'false';
         }
         $("#has_collection").val(has_collection);
+        if(has_collection == 'false')
+            $("#student-collection-btn").removeClass('btn-success').addClass('btn-warning');
+        else
+            $("#student-collection-btn").removeClass('btn-warning').addClass('btn-success');
         // $("#search-frm").submit();
         table.ajax.reload();
         return false;
@@ -1257,6 +1261,10 @@ $egucation_levels = [
             has_reminder = 'false';
         }
         $("#has_reminder").val(has_reminder);
+        if(has_reminder == 'false')
+            $("#student-reminder-btn").removeClass('btn-success').addClass('btn-warning');
+        else
+            $("#student-reminder-btn").removeClass('btn-warning').addClass('btn-success');
         // $("#search-frm").submit();
         table.ajax.reload();
         return false;
@@ -1270,6 +1278,10 @@ $egucation_levels = [
             has_site = 'false';
         }
         $("#has_site").val(has_site);
+        if(has_site == 'false')
+            $("#student-site-btn").removeClass('btn-success').addClass('btn-warning');
+        else
+            $("#student-site-btn").removeClass('btn-warning').addClass('btn-success');
         // $("#search-frm").submit();
         table.ajax.reload();
         return false;
@@ -1283,6 +1295,10 @@ $egucation_levels = [
             order_collection = 'false';
         }
         $("#order_collection").val(order_collection);
+        if(order_collection == 'false')
+            $("#order-collection-btn").removeClass('btn-success').addClass('btn-warning');
+        else
+            $("#order-collection-btn").removeClass('btn-warning').addClass('btn-success');
         // $("#search-frm").submit();
         table.ajax.reload();
         return false;
