@@ -400,7 +400,7 @@ class SupporterController extends Controller
         $students = $students
         ->with('user')
         ->with('studentcollections.collection')
-        ->with('studenttags.tag')
+        ->with('studenttags.tag.parent_four')
         ->with('studenttemperatures.temperature')
         ->with('source')
         ->with('consultant')
@@ -436,6 +436,10 @@ class SupporterController extends Controller
 
         foreach($students as $index => $student) {
             $students[$index]->pcreated_at = jdate(strtotime($student->created_at))->format("Y/m/d");
+            if($students[$index]->calls)
+                foreach($students[$index]->calls as $cindex => $call) {
+                    $students[$index]->calls[$cindex]->next_call = ($students[$index]->calls[$cindex]->next_call) ? jdate(strtotime($students[$index]->calls[$cindex]->next_call))->format("Y/m/d"):null;
+                }
         }
 
         if(request()->getMethod()=='GET'){
@@ -486,8 +490,8 @@ class SupporterController extends Controller
                 if(($item->studenttags && count($item->studenttags)>0) || ($item->studentcollections && count($item->studentcollections)>0)){
                     for($i = 0; $i < count($item->studenttags);$i++){
                         $tags .= '<span class="alert alert-info p-1">
-                        ' . $item->studenttags[$i]->tag->name . '
-                    </span><br/>';
+                        ' . (($item->studenttags[$i]->tag->parent_four) ? $item->studenttags[$i]->tag->parent_four->name . '->' : '' ) . ' ' . $item->studenttags[$i]->tag->name . '
+                        </span><br/>';
                     }
                     for($i = 0; $i < count($item->studentcollections);$i++){
                         if(isset($item->studentcollections[$i]->collection))

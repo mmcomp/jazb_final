@@ -682,7 +682,7 @@ $egucation_levels = [
                             .replace('#callresult#', (call.callresult)?call.callresult.title:'-')
                             .replace('#next_call#', (call.next_call)?call.next_call:'-')
                             .replace('#next_to_call#', persons[call.next_to_call])
-                            .replace('#description#', (call.next_call)?call.next_call:'-');
+                            .replace('#description#', (call.description)?call.description:'-');
             }else {
                 continue;
             }
