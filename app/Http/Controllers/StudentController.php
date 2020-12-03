@@ -99,6 +99,9 @@ class StudentController extends Controller
     }
 
     public function indexAll(){
+        // $tag = Tag::where('id', 1)->with('parent_four')->first();
+        // dd($tag->);
+
         $students = Student::where('is_deleted', false)->where('banned', false)->where('archived', false);
         $supportGroupId = Group::getSupport();
         if($supportGroupId)
@@ -153,7 +156,7 @@ class StudentController extends Controller
         // DB::enableQueryLog();
         $students = $students
             ->with('user')
-            ->with('studenttags.tag')
+            ->with('studenttags.tag.parent_four')
             ->with('studentcollections.collection.parent')
             ->with('studenttemperatures.temperature')
             ->with('source')
@@ -230,7 +233,7 @@ class StudentController extends Controller
                 if(($item->studenttags && count($item->studenttags)>0) || ($item->studentcollections && count($item->studentcollections)>0)){
                     for($i = 0; $i < count($item->studenttags);$i++){
                         $tags .= '<span class="alert alert-info p-1">
-                        ' . $item->studenttags[$i]->tag->name . '
+                        ' . (($item->studenttags[$i]->tag->parent_four) ? $item->studenttags[$i]->tag->parent_four->name . '->' : '' ) . ' ' . $item->studenttags[$i]->tag->name . '
                     </span><br/>';
                     }
                     for($i = 0; $i < count($item->studentcollections);$i++){
