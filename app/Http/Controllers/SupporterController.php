@@ -183,6 +183,12 @@ class SupporterController extends Controller
 
     public function acallIndex(Request $request) {
         $supporter = User::find($request->input("id"));
+        if(request()->input('call_id')) {
+            $call =  Call::where("users_id", $supporter->id)->where('id', request()->input('call_id'))->first();
+            if($call) {
+                $call->delete();
+            }
+        }
         $calls = Call::where("users_id", $supporter->id);
         if(request()->input('from_date')){
             $from_date = request()->input('from_date');
@@ -227,7 +233,8 @@ class SupporterController extends Controller
         // dd($calls);
         return view("supporters.supportercalls", [
             "supporter"=>$supporter,
-            "calls"=>$calls
+            "calls"=>$calls,
+            "request"=>request()->all()
         ]);
     }
 
@@ -783,6 +790,14 @@ class SupporterController extends Controller
             'msg_success' => request()->session()->get('msg_success'),
             'msg_error' => request()->session()->get('msg_error')
         ]);
+    }
+
+    public function deleteCall($users_id, $id)
+    {
+        $call = Call::find($id);
+        if($call)
+            $call->delete();
+        return redirect()->route('supporter_student_allcall', ["id"=>$users_id]);
     }
 
     public function calls($id) {
