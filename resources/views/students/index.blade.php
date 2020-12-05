@@ -491,9 +491,11 @@
                 if(result.error!=null){
                     alert('خطای بروز رسانی');
                 }
+                table.ajax.reload();
             }).fail(function(){
                 $("#loading-" + studentsIndex).hide();
                 alert('خطای بروز رسانی');
+                table.ajax.reload();
             });
         }
         return false;

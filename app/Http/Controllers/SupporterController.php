@@ -339,7 +339,11 @@ class SupporterController extends Controller
             if(request()->input('name')!=null){
                 $name = trim(request()->input('name'));
                 $students = $students->where(function ($query) use ($name) {
-                    $query->where('first_name', 'like', '%' . $name . '%')->orWhere('last_name', 'like', '%' . $name . '%');
+                    $tmpNames = explode(' ', $name);
+                    foreach($tmpNames as $tmpName) {
+                        $tmpName = trim($tmpName);
+                        $query->orWhere('first_name', 'like', '%' . $tmpName . '%')->orWhere('last_name', 'like', '%' . $tmpName . '%');
+                    }
                 });
             }
             if(request()->input('sources_id')!=null){
