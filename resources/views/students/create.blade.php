@@ -323,7 +323,7 @@
 
                         <div class="form-group">
                             <label for="outside_consultants">مشاور بیرونی</label>
-                            @if (isset($student) && isset($student->outside_consultants_id))
+                            @if (isset($student) && isset($student->outside_consultants))
                             <input type="text" class="form-control" id="outside_consultants" name="outside_consultants" placeholder="مشاور بیرونی" value="{{ $student->outside_consultants }}" />
                             @else
                             <input type="text" class="form-control" id="outside_consultants" name="outside_consultants" placeholder="مشاور بیرونی"  />
