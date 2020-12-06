@@ -1209,7 +1209,8 @@ $egucation_levels = [
                 products_id: $("#products_id").val(),
                 notices_id: $("#notices_id").val(),
                 next_to_call: $("#next_to_call").val(),
-                next_call: $("#next_call").val()
+                next_call: $("#next_call").val(),
+                call_results_id: $("#call_results_id").val()
         },
         function (result) {
                 console.log('Result', result);
