@@ -46,7 +46,11 @@
                   </thead>
                   <tbody>
                       @foreach ($circulars as $index => $item)
+                      @if(!in_array($item->id, $seenCirculars))
+                      <tr  class="table-warning">
+                      @else
                       <tr>
+                      @endif
                         <td>{{ $index + 1 }}</td>
                         <td>{{ $item->id }}</td>
                         <td>{{ $item->title }}</td>

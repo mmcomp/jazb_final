@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Circular;
+use App\CircularUsers;
 
 use Exception;
 
@@ -12,9 +13,19 @@ class CircularController extends Controller
 {
     public function index(){
         $circulars = Circular::where('is_deleted', false)->orderBy('created_at', 'desc')->get();
-
+        $seenCirculars = CircularUsers::where('users_id', Auth::user()->id)->whereIn('circulars_id', $circulars->pluck('id'))->pluck('circulars_id')->toArray();
+        foreach($circulars as $circular){
+            if(!in_array($circular->id, $seenCirculars)){
+                $unseen = new CircularUsers();
+                $unseen->circulars_id = $circular->id;
+                $unseen->users_id = Auth::user()->id;
+                $unseen->save();
+            }
+        }
+        // dd($seenCirculars);
         return view('circulars.index',[
             'circulars' => $circulars,
+            'seenCirculars'=>$seenCirculars,
             'msg_success' => request()->session()->get('msg_success'),
             'msg_error' => request()->session()->get('msg_error')
         ]);
