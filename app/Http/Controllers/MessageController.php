@@ -29,6 +29,24 @@ class MessageController extends Controller
         ]);
     }
 
+    public function indexOutbox($id = null){
+        $user = null;
+        if($id==null){
+            $id = Auth::user()->id;
+        }else{
+            $user = User::find($id);
+        }
+        $messageIds = MessageFlow::where('sender_id', $id)->pluck('messages_id');
+        $messages = Message::where('is_deleted', false)->whereIn('id', $messageIds)->with('flows.user')->with('user')->get();
+        // dd(Str::limit($messages[0]->message, 10));
+        return view('messages.outbox',[
+            'user'=>$user,
+            'messages' => $messages,
+            'msg_success' => request()->session()->get('msg_success'),
+            'msg_error' => request()->session()->get('msg_error')
+        ]);
+    }
+
     public function create(Request $request, $id = null)
     {
         $users = User::where('is_deleted', false)->orderBy('last_name')->get();

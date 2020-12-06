@@ -14,7 +14,7 @@ table tr {
         <div class="container-fluid">
           <div class="row mb-2">
             <div class="col-sm-6">
-              <h1>صندوق دریافت</h1>
+              <h1>صندوق ارسال</h1>
             </div>
             <div class="col-sm-6">
               <!--
@@ -39,7 +39,7 @@ table tr {
                     <a class="btn btn-success" href="{{ route('message_user_create', $user->id) }}">پیام جدید</a>
                     @else
                     <a class="btn btn-success" href="{{ route('message_create') }}">پیام جدید</a>
-                    <a class="btn btn-success" href="{{ route('messages_outbox') }}">صندوق ارسال</a>
+                    <a class="btn btn-success" href="{{ route('messages') }}">صندوق دریافت</a>
                     @endif
                 </h3>
               </div>
