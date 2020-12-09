@@ -129,12 +129,43 @@ class PurchaseController extends Controller
                 continue;
             }
 
-            $purchaseObject = Purchase::where("factor_number", $purchase['factor_number'])->first();
+            $purchaseObject = Purchase::where("factor_number", $purchase['factor_number'])->where('is_deleted', false)->first();
             if(!$purchaseObject){
                 $fails[] = $purchase;
                 continue;
             }
             $purchaseObject->is_deleted = true;
+            $purchaseObject->save();
+
+            try{
+                $purchaseObject->save();
+                $ids[] = $purchaseObject->id;
+            }catch(Exception $e){
+                $fails[] = $purchase;
+            }
+        }
+        return [
+            "deleted_ids" => $ids,
+            "fails" => $fails
+        ];
+    }
+
+    public function apiUnDeletePurchases(Request $request) {
+        $purchases = $request->input('purchases', []);
+        $ids = [];
+        $fails = [];
+        foreach($purchases as $purchase){
+            if(!isset($purchase['factor_number'])){
+                $fails[] = $purchase;
+                continue;
+            }
+
+            $purchaseObject = Purchase::where("factor_number", $purchase['factor_number'])->where('is_deleted', false)->first();
+            if(!$purchaseObject){
+                $fails[] = $purchase;
+                continue;
+            }
+            $purchaseObject->is_deleted = false;
             $purchaseObject->save();
 
             try{
