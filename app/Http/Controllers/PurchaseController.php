@@ -166,6 +166,10 @@ class PurchaseController extends Controller
                 $fails[] = $purchase;
                 continue;
             }
+            foreach($purchase as $key=>$value){
+                if($key != 'woo_id' && $key != 'phone')
+                    $purchaseObject->$key = $value;
+            }
             $purchaseObject->products_id = $product->id;
             $purchaseObject->students_id = $student->id;
             $purchaseObject->supporters_id = $student->supporters_id;
