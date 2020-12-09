@@ -78,7 +78,7 @@ class StudentsImport implements ToModel, WithChunkReading, ShouldQueue
             'major' => ($row[10]!='' && strtoupper($row[10])!='NULL' && isset($majors[$row[10]]))?$majors[$row[10]]: null,
             'introducing' => $row[11],
             'student_phone' => $row[12],
-            'citys_id' => (int)$row[13],
+            'cities_id' => (int)$row[13],
             'sources_id' => $row[14],
             'supporters_id' => $row[15]
         ]);

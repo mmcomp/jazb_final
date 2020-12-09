@@ -954,6 +954,7 @@ class StudentController extends Controller
                 }catch(Exception $e){
                     if($e->getCode()=="23000") {
                         $message = explode("'", $e->getMessage());
+                        // dd($message);
                         $mobile = $message[1];
                         return view('students.csv', [
                             'msg_success' => null,
@@ -1023,7 +1024,7 @@ class StudentController extends Controller
                         $student->save();
                     }catch(Exception $e){
                         $fails[] = $line[0];
-                        // dump($e->getMessage());
+                        dump($e->getMessage());
                     }
                 }
             }
