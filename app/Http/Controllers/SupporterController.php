@@ -18,6 +18,10 @@ use App\TagParentOne;
 use App\TagParentTwo;
 use App\TagParentThree;
 use App\TagParentFour;
+use App\NeedTagParentOne;
+use App\NeedTagParentTwo;
+use App\NeedTagParentThree;
+use App\NeedTagParentFour;
 use App\Temperature;
 use App\Call;
 use App\CallResult;
@@ -438,9 +442,13 @@ class SupporterController extends Controller
         $firstCollections = Collection::where('is_deleted', false)->where('parent_id', 0)->get();
         $secondCollections = Collection::where('is_deleted', false)->whereIn('parent_id', $firstCollections->pluck('id'))->get();
         $thirdCollections = Collection::where('is_deleted', false)->with('parent')->whereIn('parent_id', $secondCollections->pluck('id'))->get();
+        $needTagParentOnes = NeedTagParentOne::where('is_deleted', false)->has('tags')->get();
+        $needTagParentTwos = NeedTagParentTwo::where('is_deleted', false)->has('tags')->get();
+        $needTagParentThrees = NeedTagParentThree::where('is_deleted', false)->has('tags')->get();
+        $needTagParentFours = NeedTagParentFour::where('is_deleted', false)->has('tags')->get();
 
         $moralTags = Tag::where('is_deleted', false)->where('type', 'moral')->get();
-        // $needTags = Tag::where('is_deleted', false)->where('type', 'need')->get();
+        $needTags = Tag::where('is_deleted', false)->where('type', 'need')->get();
         $hotTemperatures = Temperature::where('is_deleted', false)->where('status', 'hot')->get();
         $coldTemperatures = Temperature::where('is_deleted', false)->where('status', 'cold')->get();
         $collections = Collection::where('is_deleted', false)->get();
@@ -463,7 +471,7 @@ class SupporterController extends Controller
                 'sources_id' => $sources_id,
                 'phone' => $phone,
                 'moralTags'=>$moralTags,
-                'needTags'=>$collections,
+                'needTags'=>$needTags,
                 'hotTemperatures'=>$hotTemperatures,
                 'coldTemperatures'=>$coldTemperatures,
                 "parentOnes"=>$parentOnes,
@@ -484,6 +492,10 @@ class SupporterController extends Controller
                 'order_collection'=>$order_collection,
                 'has_reminder'=>$has_reminder,
                 'has_tag'=>$has_tag,
+                "needTagParentOnes"=>$needTagParentOnes,
+                "needTagParentTwos"=>$needTagParentTwos,
+                "needTagParentThrees"=>$needTagParentThrees,
+                "needTagParentFours"=>$needTagParentFours,
                 'msg_success' => request()->session()->get('msg_success'),
                 'msg_error' => request()->session()->get('msg_error')
             ]);
@@ -500,16 +512,16 @@ class SupporterController extends Controller
                 $tags = "";
                 if(($item->studenttags && count($item->studenttags)>0) || ($item->studentcollections && count($item->studentcollections)>0)){
                     for($i = 0; $i < count($item->studenttags);$i++){
-                        $tags .= '<span class="alert alert-info p-1">
+                        $tags .= '<span class="alert alert-' . (($item->studenttags[$i]->tag->type=='moral')?'info':'warning') . ' p-1">
                         ' . (($item->studenttags[$i]->tag->parent_four) ? $item->studenttags[$i]->tag->parent_four->name . '->' : '' ) . ' ' . $item->studenttags[$i]->tag->name . '
                         </span><br/>';
                     }
-                    for($i = 0; $i < count($item->studentcollections);$i++){
-                        if(isset($item->studentcollections[$i]->collection))
-                            $tags .= '<span class="alert alert-warning p-1">
-                                '. (($item->studentcollections[$i]->collection->parent) ? $item->studentcollections[$i]->collection->parent->name . '->' : '' ) . ' ' . $item->studentcollections[$i]->collection->name .'
-                            </span><br/>';
-                    }
+                    // for($i = 0; $i < count($item->studentcollections);$i++){
+                    //     if(isset($item->studentcollections[$i]->collection))
+                    //         $tags .= '<span class="alert alert-warning p-1">
+                    //             '. (($item->studentcollections[$i]->collection->parent) ? $item->studentcollections[$i]->collection->parent->name . '->' : '' ) . ' ' . $item->studentcollections[$i]->collection->name .'
+                    //         </span><br/>';
+                    // }
                 }
                 $registerer = "-";
                 if($item->user)
@@ -600,10 +612,21 @@ class SupporterController extends Controller
             // ->with('parent_four')
             ->where('type', 'moral')
             ->get();
+        $needTags = Tag::where('is_deleted', false)
+            // ->with('parent_one')
+            // ->with('parent_two')
+            // ->with('parent_three')
+            // ->with('parent_four')
+            ->where('type', 'need')
+            ->get();
         $parentOnes = TagParentOne::has('tags')->get();
         $parentTwos = TagParentTwo::has('tags')->get();
         $parentThrees = TagParentThree::has('tags')->get();
         $parentFours = TagParentFour::has('tags')->get();
+        $needTagParentOnes = NeedTagParentOne::where('is_deleted', false)->has('tags')->get();
+        $needTagParentTwos = NeedTagParentTwo::where('is_deleted', false)->has('tags')->get();
+        $needTagParentThrees = NeedTagParentThree::where('is_deleted', false)->has('tags')->get();
+        $needTagParentFours = NeedTagParentFour::where('is_deleted', false)->has('tags')->get();
         $collections = Collection::where('is_deleted', false)->get();
         $firstCollections = Collection::where('is_deleted', false)->where('parent_id', 0)->get();
         $secondCollections = Collection::where('is_deleted', false)->whereIn('parent_id', $firstCollections->pluck('id'))->get();
@@ -623,7 +646,7 @@ class SupporterController extends Controller
                 'sources_id' => $sources_id,
                 'phone' => $phone,
                 'moralTags'=>$moralTags,
-                'needTags'=>$collections,
+                'needTags'=>$needTags,
                 'hotTemperatures'=>$hotTemperatures,
                 'coldTemperatures'=>$coldTemperatures,
                 "parentOnes"=>$parentOnes,
@@ -633,6 +656,10 @@ class SupporterController extends Controller
                 "firstCollections"=>$firstCollections,
                 "secondCollections"=>$secondCollections,
                 "thirdCollections"=>$thirdCollections,
+                "needTagParentOnes"=>$needTagParentOnes,
+                "needTagParentTwos"=>$needTagParentTwos,
+                "needTagParentThrees"=>$needTagParentThrees,
+                "needTagParentFours"=>$needTagParentFours,
                 'msg_success' => request()->session()->get('msg_success'),
                 'msg_error' => request()->session()->get('msg_error')
             ]);
@@ -649,15 +676,15 @@ class SupporterController extends Controller
                 $tags = "";
                 if(($item->studenttags && count($item->studenttags)>0) || ($item->studentcollections && count($item->studentcollections)>0)){
                     for($i = 0; $i < count($item->studenttags);$i++){
-                        $tags .= '<span class="alert alert-info p-1">
+                        $tags .= '<span class="alert alert-' . (($item->studenttags[$i]->tag->type=='moral')?'info':'warning') . ' p-1">
                         ' . (($item->studenttags[$i]->tag->parent_four) ? $item->studenttags[$i]->tag->parent_four->name . '->' : '' ) . ' ' . $item->studenttags[$i]->tag->name . '
                     </span><br/>';
                     }
-                    for($i = 0; $i < count($item->studentcollections);$i++){
-                        $tags .= '<span class="alert alert-warning p-1">
-                            '. (($item->studentcollections[$i]->collection->parent) ? $item->studentcollections[$i]->collection->parent->name . '->' : '' ) . ' ' . $item->studentcollections[$i]->collection->name .'
-                        </span><br/>';
-                    }
+                    // for($i = 0; $i < count($item->studentcollections);$i++){
+                    //     $tags .= '<span class="alert alert-warning p-1">
+                    //         '. (($item->studentcollections[$i]->collection->parent) ? $item->studentcollections[$i]->collection->parent->name . '->' : '' ) . ' ' . $item->studentcollections[$i]->collection->name .'
+                    //     </span><br/>';
+                    // }
                 }
                 $registerer = "-";
                 if($item->user)

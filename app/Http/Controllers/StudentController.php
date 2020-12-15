@@ -22,6 +22,10 @@ use App\TagParentOne;
 use App\TagParentTwo;
 use App\TagParentThree;
 use App\TagParentFour;
+use App\NeedTagParentOne;
+use App\NeedTagParentTwo;
+use App\NeedTagParentThree;
+use App\NeedTagParentFour;
 use App\Temperature;
 use App\StudentCollection;
 use App\ClassRoom;
@@ -176,10 +180,22 @@ class StudentController extends Controller
             // ->with('parent_four')
             ->where('type', 'moral')
             ->get();
+        $needTags = Tag::where('is_deleted', false)
+            // ->with('parent_one')
+            // ->with('parent_two')
+            // ->with('parent_three')
+            // ->with('parent_four')
+            ->where('type', 'need')
+            ->get();
+        // dd($needTags);
         $parentOnes = TagParentOne::where('is_deleted', false)->has('tags')->get();
         $parentTwos = TagParentTwo::where('is_deleted', false)->has('tags')->get();
         $parentThrees = TagParentThree::where('is_deleted', false)->has('tags')->get();
         $parentFours = TagParentFour::where('is_deleted', false)->has('tags')->get();
+        $needTagParentOnes = NeedTagParentOne::where('is_deleted', false)->has('tags')->get();
+        $needTagParentTwos = NeedTagParentTwo::where('is_deleted', false)->has('tags')->get();
+        $needTagParentThrees = NeedTagParentThree::where('is_deleted', false)->has('tags')->get();
+        $needTagParentFours = NeedTagParentFour::where('is_deleted', false)->has('tags')->get();
         $collections = Collection::where('is_deleted', false)->get();
         $firstCollections = Collection::where('is_deleted', false)->where('parent_id', 0)->get();
         $secondCollections = Collection::where('is_deleted', false)->whereIn('parent_id', $firstCollections->pluck('id'))->get();
@@ -205,7 +221,7 @@ class StudentController extends Controller
                 'sources_id' => $sources_id,
                 'phone' => $phone,
                 'moralTags'=>$moralTags,
-                'needTags'=>$collections,
+                'needTags'=>$needTags,
                 'hotTemperatures'=>$hotTemperatures,
                 'coldTemperatures'=>$coldTemperatures,
                 "parentOnes"=>$parentOnes,
@@ -220,6 +236,10 @@ class StudentController extends Controller
                 "cities_id"=>$cities_id,
                 "egucation_level"=>$egucation_level,
                 "major"=>$major,
+                "needTagParentOnes"=>$needTagParentOnes,
+                "needTagParentTwos"=>$needTagParentTwos,
+                "needTagParentThrees"=>$needTagParentThrees,
+                "needTagParentFours"=>$needTagParentFours,
                 'msg_success' => request()->session()->get('msg_success'),
                 'msg_error' => request()->session()->get('msg_error')
             ]);
@@ -236,15 +256,15 @@ class StudentController extends Controller
                 $tags = "";
                 if(($item->studenttags && count($item->studenttags)>0) || ($item->studentcollections && count($item->studentcollections)>0)){
                     for($i = 0; $i < count($item->studenttags);$i++){
-                        $tags .= '<span class="alert alert-info p-1">
+                        $tags .= '<span class="alert alert-' . (($item->studenttags[$i]->tag->type=='moral')?'info':'warning') . ' p-1">
                         ' . (($item->studenttags[$i]->tag->parent_four) ? $item->studenttags[$i]->tag->parent_four->name . '->' : '' ) . ' ' . $item->studenttags[$i]->tag->name . '
                     </span><br/>';
                     }
-                    for($i = 0; $i < count($item->studentcollections);$i++){
-                        $tags .= '<span class="alert alert-warning p-1">
-                            '. (($item->studentcollections[$i]->collection->parent) ? $item->studentcollections[$i]->collection->parent->name . '->' : '' ) . ' ' . $item->studentcollections[$i]->collection->name .'
-                        </span><br/>';
-                    }
+                    // for($i = 0; $i < count($item->studentcollections);$i++){
+                    //     $tags .= '<span class="alert alert-warning p-1">
+                    //         '. (($item->studentcollections[$i]->collection->parent) ? $item->studentcollections[$i]->collection->parent->name . '->' : '' ) . ' ' . $item->studentcollections[$i]->collection->name .'
+                    //     </span><br/>';
+                    // }
                 }
                 $registerer = "-";
                 if($item->user)
@@ -647,10 +667,22 @@ class StudentController extends Controller
             // ->with('parent_four')
             ->where('type', 'moral')
             ->get();
+        $needTags = Tag::where('is_deleted', false)
+            // ->with('parent_one')
+            // ->with('parent_two')
+            // ->with('parent_three')
+            // ->with('parent_four')
+            ->where('type', 'need')
+            ->get();
+        // dd($needTags);
         $parentOnes = TagParentOne::where('is_deleted', false)->has('tags')->get();
         $parentTwos = TagParentTwo::where('is_deleted', false)->has('tags')->get();
         $parentThrees = TagParentThree::where('is_deleted', false)->has('tags')->get();
         $parentFours = TagParentFour::where('is_deleted', false)->has('tags')->get();
+        $needTagParentOnes = NeedTagParentOne::where('is_deleted', false)->has('tags')->get();
+        $needTagParentTwos = NeedTagParentTwo::where('is_deleted', false)->has('tags')->get();
+        $needTagParentThrees = NeedTagParentThree::where('is_deleted', false)->has('tags')->get();
+        $needTagParentFours = NeedTagParentFour::where('is_deleted', false)->has('tags')->get();
         $collections = Collection::where('is_deleted', false)->get();
         $firstCollections = Collection::where('is_deleted', false)->where('parent_id', 0)->get();
         $secondCollections = Collection::where('is_deleted', false)->whereIn('parent_id', $firstCollections->pluck('id'))->get();
@@ -675,7 +707,7 @@ class StudentController extends Controller
                 'sources_id' => $sources_id,
                 'phone' => $phone,
                 'moralTags'=>$moralTags,
-                'needTags'=>$collections,
+                'needTags'=>$needTags,
                 'hotTemperatures'=>$hotTemperatures,
                 'coldTemperatures'=>$coldTemperatures,
                 "parentOnes"=>$parentOnes,
@@ -685,6 +717,10 @@ class StudentController extends Controller
                 "firstCollections"=>$firstCollections,
                 "secondCollections"=>$secondCollections,
                 "thirdCollections"=>$thirdCollections,
+                "needTagParentOnes"=>$needTagParentOnes,
+                "needTagParentTwos"=>$needTagParentTwos,
+                "needTagParentThrees"=>$needTagParentThrees,
+                "needTagParentFours"=>$needTagParentFours,
                 "cities"=>$cities,
                 'msg_success' => request()->session()->get('msg_success'),
                 'msg_error' => request()->session()->get('msg_error')
@@ -702,16 +738,16 @@ class StudentController extends Controller
                 $tags = "";
                 if(($item->studenttags && count($item->studenttags)>0) || ($item->studentcollections && count($item->studentcollections)>0)){
                     for($i = 0; $i < count($item->studenttags);$i++){
-                        $tags .= '<span class="alert alert-info p-1">
+                        $tags .= '<span class="alert alert-' . (($item->studenttags[$i]->tag->type=='moral')?'info':'warning') . ' p-1">
                         ' . $item->studenttags[$i]->tag->name . '
                     </span><br/>';
                     }
-                    for($i = 0; $i < count($item->studentcollections);$i++){
-                        if(isset($item->studentcollections[$i]->collection))
-                            $tags .= '<span class="alert alert-warning p-1">
-                                '. (($item->studentcollections[$i]->collection->parent) ? $item->studentcollections[$i]->collection->parent->name . '->' : '' ) . ' ' . $item->studentcollections[$i]->collection->name .'
-                            </span><br/>';
-                    }
+                    // for($i = 0; $i < count($item->studentcollections);$i++){
+                    //     if(isset($item->studentcollections[$i]->collection))
+                    //         $tags .= '<span class="alert alert-warning p-1">
+                    //             '. (($item->studentcollections[$i]->collection->parent) ? $item->studentcollections[$i]->collection->parent->name . '->' : '' ) . ' ' . $item->studentcollections[$i]->collection->name .'
+                    //         </span><br/>';
+                    // }
                 }
                 $registerer = "-";
                 if($item->user)
@@ -1084,12 +1120,19 @@ class StudentController extends Controller
         }
 
         if($selectedCollections){
-            foreach($selectedCollections as $theselectedCollection) {
-                $studentCollection = new StudentCollection();
-                $studentCollection->students_id = $students_id;
-                $studentCollection->collections_id = $theselectedCollection;
-                $studentCollection->users_id = Auth::user()->id;
-                $studentCollection->save();
+            // foreach($selectedCollections as $theselectedCollection) {
+            //     $studentCollection = new StudentCollection();
+            //     $studentCollection->students_id = $students_id;
+            //     $studentCollection->collections_id = $theselectedCollection;
+            //     $studentCollection->users_id = Auth::user()->id;
+            //     $studentCollection->save();
+            // }
+            foreach($selectedCollections as $theselectedTag) {
+                $studentTag = new StudentTag;
+                $studentTag->students_id = $students_id;
+                $studentTag->tags_id = $theselectedTag;
+                $studentTag->users_id = Auth::user()->id;
+                $studentTag->save();
             }
         }
 

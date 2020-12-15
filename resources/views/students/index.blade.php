@@ -275,6 +275,43 @@
                     نیازسنجی
                 </h3>
                 <div>
+                    <select id="need-parent-one" onchange="selectNeedParentOne(this);">
+                        <option value="">همه</option>
+                        @foreach ($needTagParentOnes as $item)
+                        <option value="{{ $item->id }}">{{$item->name}}</option>
+                        @endforeach
+                    </select>
+
+                    <select id="need-parent-two" onchange="selectNeedParentTwo(this);">
+                        <option value="">همه</option>
+                        @foreach ($needTagParentTwos as $item)
+                        <option value="{{ $item->id }}">{{$item->name}}</option>
+                        @endforeach
+                    </select>
+
+                    <select id="need-parent-three" onchange="selectNeedParentThree(this);">
+                        <option value="">همه</option>
+                        @foreach ($needTagParentThrees as $item)
+                        <option value="{{ $item->id }}">{{$item->name}}</option>
+                        @endforeach
+                    </select>
+
+                    <select id="need-parent-four" onchange="selectNeedParentFour(this);">
+                        <option value="">همه</option>
+                        @foreach ($needTagParentFours as $item)
+                        <option value="{{ $item->id }}">{{$item->name}}</option>
+                        @endforeach
+                    </select>
+                </div>
+                @foreach ($needTags as $index => $item)
+                    <input type="checkbox" class="needtag-checkbox" id="needtag_{{ $item->id }}" value="{{ $item->id }}" />
+                    <span class="needtag-title" id="needtag-title-{{ $item->id }}">
+                    {{ $item->name }}
+                    </span>
+                    <br class="needtag-br" id="needtag-br-{{ $item->id }}"/>
+                @endforeach
+                <!--
+                <div>
                     <select id="collection-one" onchange="selectCollectionOne(this);">
                         <option value="">همه</option>
                         @foreach ($firstCollections as $item)
@@ -303,6 +340,7 @@
                     </span>
                     <br class="collection-br" id="collection-br-{{ $item->id }}"/>
                 @endforeach
+                -->
                 </div>
             </p>
         </div>
@@ -377,7 +415,11 @@
         parent1: '',
         parent2: '',
         parent3: '',
-        parent4: ''
+        parent4: '',
+        need_parent1: '',
+        need_parent2: '',
+        need_parent3: '',
+        need_parent4: ''
     }
     function showMorePanel(index, tr){
         var editRoute = `{{ route('student_edit', ['call_back'=>'student_all', 'id'=>-1]) }}`;
@@ -558,6 +600,64 @@
 
         });
     }
+    function selectNeedParentOne(dobj){
+        filterParents.need_parent1 = ($(dobj).val()!='')?parseInt($(dobj).val(), 10):'';
+        filterNeedTagsByParent()
+    }
+    function selectNeedParentTwo(dobj){
+        filterParents.need_parent2 = ($(dobj).val()!='')?parseInt($(dobj).val(), 10):'';
+        filterNeedTagsByParent()
+    }
+    function selectNeedParentThree(dobj){
+        filterParents.need_parent3 = ($(dobj).val()!='')?parseInt($(dobj).val(), 10):'';
+        filterNeedTagsByParent()
+    }
+    function selectNeedParentFour(dobj){
+        filterParents.need_parent4 = ($(dobj).val()!='')?parseInt($(dobj).val(), 10):'';
+        filterNeedTagsByParent()
+    }
+    function filterNeedTagsByParent(){
+        $("input.needtag-checkbox").show();
+        $("span.needtag-title").show();
+        $("br.needtag-br").show();
+        $("input.needtag-checkbox").each(function (id, field){
+            console.log('checking', field)
+            let tagId = parseInt($(field).val(), 10);
+            let theTag = collections[tagId];
+            console.log(tagId, theTag)
+            if(theTag){
+                if(filterParents.need_parent1!=''){
+                    if(filterParents.need_parent1!=theTag.need_parent1){
+                        $(field).hide();
+                        $("#needtag-title-" + tagId).hide();
+                        $("#needtag-br-" + tagId).hide();
+                    }
+                }
+                if(filterParents.need_parent2!=''){
+                    if(filterParents.need_parent2!=theTag.need_parent2){
+                        $(field).hide();
+                        $("#needtag-title-" + tagId).hide();
+                        $("#needtag-br-" + tagId).hide();
+                    }
+                }
+                if(filterParents.need_parent3!=''){
+                    if(filterParents.need_parent3!=theTag.need_parent3){
+                        $(field).hide();
+                        $("#needtag-title-" + tagId).hide();
+                        $("#needtag-br-" + tagId).hide();
+                    }
+                }
+                if(filterParents.need_parent4!=''){
+                    if(filterParents.need_parent4!=theTag.need_parent4){
+                        $(field).hide();
+                        $("#needtag-title-" + tagId).hide();
+                        $("#needtag-br-" + tagId).hide();
+                    }
+                }
+            }
+
+        });
+    }
     function selectCollectionOne(dobj){
         $("#collection-two").find('option').show();
         $("#collection-two").find('option[value=""]').prop('selected', true);
@@ -692,6 +792,7 @@
                 console.log(students[studentsIndex].studenttags);
                 for(studenttag of students[studentsIndex].studenttags){
                     $("#tag_" + studenttag.tags_id).prop("checked", true);
+                    $("#needtag_" + studenttag.tags_id).prop("checked", true);
                 }
                 console.log(students[studentsIndex].studentcollections);
                 for(studentcollection of students[studentsIndex].studentcollections){
@@ -719,7 +820,7 @@
         $("input.tag-checkbox:checked").each(function (id , field){
             selectedTags.push(parseInt(field.value, 10));
         });
-        $("input.collection-checkbox:checked").each(function (id , field){
+        $("input.needtag-checkbox:checked").each(function (id , field){
             selectedColllections.push(parseInt(field.value, 10));
         });
         var studentsIndex = parseInt($("#students_index").val(), 10);
