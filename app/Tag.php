@@ -46,4 +46,8 @@ class Tag extends Model
     public function need_parent_four(){
         return $this->hasOne('App\NeedTagParentFour', 'id', 'need_parent4');
     }
+
+    public function product(){
+        return $this->hasOne('App\Product', 'id', 'products_id');
+    }
 }
