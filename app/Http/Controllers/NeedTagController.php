@@ -45,7 +45,12 @@ class NeedTagController extends Controller
             ]);
         }
 
-        $tag->name = $request->input('name', '');
+        $product =  Product::find($request->input('products_id'));
+        if(!$product) {
+            $request->session()->flash("msg_error", "برچسب با موفقیت افزوده نشد چون محصول پیدا نشد");
+            return redirect()->route('need_tags');
+        }
+        $tag->name = $product->name;
         $tag->products_id = $request->input('products_id');
         $tag->need_parent1 = (int)$request->input('need_parent1', 0);
         $tag->need_parent2 = (int)$request->input('need_parent2', 0);
