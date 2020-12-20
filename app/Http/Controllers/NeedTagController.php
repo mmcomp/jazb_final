@@ -66,7 +66,7 @@ class NeedTagController extends Controller
             $tag->save();
         }catch(Exception $error)
         {
-            dd($error);
+            // dd($error);
             $request->session()->flash("msg_error", "برچسب با موفقیت افزوده نشد.");
             return redirect()->route('need_tags');
         }
