@@ -40,8 +40,10 @@
                   <tr>
                     <th>ردیف</th>
                     <th>کد</th>
+                    <th>شماره فاکتور</th>
                     <th>محصول</th>
                     <th>مبلغ</th>
+                    <th>توضیحات</th>
                     <th>#</th>
                   </tr>
                   </thead>
@@ -50,8 +52,10 @@
                       <tr>
                         <td>{{ $index + 1 }}</td>
                         <td>{{ $item->id }}</td>
+                        <td>{{ $item->factor_number }}</td>
                         <td>{{ $item->product->name }}</td>
                         <td>{{ number_format($item->price) }}</td>
+                        <td>{{ $item->description }}</td>
                         <td>
                         </td>
                       </tr>

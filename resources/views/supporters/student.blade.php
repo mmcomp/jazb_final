@@ -113,9 +113,9 @@ $egucation_levels = [
                                 </div>
                             </div>
                             <div class="col" style="padding-top: 32px;">
-                                <button class="btn btn-success">
+                                <a class="btn btn-success" onclick="table.ajax.reload(); return false;" href="#">
                                     جستجو
-                                </button>
+                                </a>
                             </div>
                         </div>
                         <input type="hidden" id="has_collection" name="has_collection" value="{{ isset($has_collection)?$has_collection:'false' }}" />
@@ -133,9 +133,9 @@ $egucation_levels = [
                     <div class="row">
                         <div class="col text-center p-1">
                             @if(isset($has_collection) && $has_collection=='true')
-                            <a class="btn btn-success btn-block" href="#" onclick="return StudentCollection();">پیشنهاد فروش</a>
+                            <a id="student-collection-btn" class="btn btn-success btn-block" href="#" onclick="return StudentCollection();">پیشنهاد فروش</a>
                             @else
-                            <a class="btn btn-warning btn-block" href="#" onclick="return StudentCollection();">پیشنهاد فروش</a>
+                            <a id="student-collection-btn" class="btn btn-warning btn-block" href="#" onclick="return StudentCollection();">پیشنهاد فروش</a>
                             @endif
                         </div>
                         <div class="col text-center p-1">
@@ -178,25 +178,25 @@ $egucation_levels = [
                         </div>
                         <div class="col text-center p-1">
                             @if(isset($has_site) && $has_site=='true')
-                            <a class="btn btn-success btn-block" href="#" onclick="return StudentSite();">سایت</a>
+                            <a id="student-site-btn" class="btn btn-success btn-block" href="#" onclick="return StudentSite();">سایت</a>
                             @else
-                            <a class="btn btn-warning btn-block" href="#" onclick="return StudentSite();">سایت</a>
+                            <a id="student-site-btn" class="btn btn-warning btn-block" href="#" onclick="return StudentSite();">سایت</a>
                             @endif
                         </div>
                     </div>
                     <div class="row">
                         <div class="col text-center p-1">
                             @if(isset($order_collection) && $order_collection=='true')
-                            <a class="btn btn-success btn-block" href="#" onclick="return OrderCollection();">تعداد پیشنهاد فروش</a>
+                            <a id="order-collection-btn" class="btn btn-success btn-block" href="#" onclick="return OrderCollection();">تعداد پیشنهاد فروش</a>
                             @else
-                            <a class="btn btn-warning btn-block" href="#" onclick="return OrderCollection();">تعداد پیشنهاد فروش</a>
+                            <a id="order-collection-btn" class="btn btn-warning btn-block" href="#" onclick="return OrderCollection();">تعداد پیشنهاد فروش</a>
                             @endif
                         </div>
                         <div class="col text-center p-1">
                             @if(isset($has_reminder) && $has_reminder=='true')
-                            <a class="btn btn-success btn-block" href="#" onclick="return StudentReminder();">یادآور</a>
+                            <a id="student-reminder-btn" class="btn btn-success btn-block" href="#" onclick="return StudentReminder();">یادآور</a>
                             @else
-                            <a class="btn btn-warning btn-block" href="#" onclick="return StudentReminder();">یادآور</a>
+                            <a id="student-reminder-btn" class="btn btn-warning btn-block" href="#" onclick="return StudentReminder();">یادآور</a>
                             @endif
                         </div>
                         <div class="col text-center p-1">
@@ -251,6 +251,7 @@ $egucation_levels = [
                         </thead>
                         <tbody>
                             @foreach ($students as $index => $item)
+                            <!--
                             <tr id="tr-{{ $index }}">
                                 <td onclick="showMorePanel({{ $index }});">
                                     {{ $index + 1 }}</td>
@@ -272,9 +273,11 @@ $egucation_levels = [
                                     </span><br/>
                                     @endfor
                                     @for($i = 0; $i < count($item->studentcollections);$i++)
+                                    @if(isset($item->studentcollections[$i]->collection))
                                     <span class="alert alert-warning p-1">
                                         {{ ($item->studentcollections[$i]->collection->parent) ? $item->studentcollections[$i]->collection->parent->name . '->' : '' }} {{ $item->studentcollections[$i]->collection->name }}
                                     </span><br/>
+                                    @endif
                                     @endfor
                                 </td>
                                 @else
@@ -312,142 +315,7 @@ $egucation_levels = [
                                     </a>
                                 </td>
                             </tr>
-                            <!--
-                            <tr class="morepanel" id="morepanel-{{ $index }}">
-                                <td colspan="9">
-                                    <div class="container">
-                                        <div class="row">
-                                            <div class="col">
-                                                تراز یا رتبه سال قبل :
-                                                {{ $item->last_year_grade }}
-                                            </div>
-                                            <div class="col">
-                                                مشاور :
-                                                {{ ($item->consultant)?$item->consultant->first_name . ' ' . $item->consultant->last_name:'' }}
-                                            </div>
-                                            <div class="col">
-                                                شغل پدر یا مادر :
-                                                {{ $item->parents_job_title }}
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col">
-                                                شماره منزل :
-                                                {{ $item->home_phone }}
-                                            </div>
-                                            <div class="col">
-                                                مقطع :
-                                                {{ isset($egucation_levels[$item->egucation_level])?$egucation_levels[$item->egucation_level]:$item->egucation_level }}
-                                            </div>
-                                            <div class="col">
-                                                شماره موبایل والدین :
-                                                {{ $item->father_phone }}
-                                                {{ $item->mother_phone }}
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col">
-                                                مدرسه :
-                                                {{ $item->school }}
-                                            </div>
-                                            <div class="col">
-                                                معدل :
-                                                {{ $item->average }}
-                                            </div>
-                                            <div class="col">
-                                                رشته تحصیلی :
-                                                {{ isset($majors[$item->major])?$majors[$item->major]:'-' }}
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col">
-                                                <a href="{{ route('student_edit', ["call_back"=>'supporter_students', "id"=>$item->id]) }}">
-                                                    ویرایش مشخصات
-                                                </a>
-                                            </div>
-                                            <div class="col">
-                                                تاریخ ثبت دانش آموز :
-                                                {{ jdate(strtotime($item->created_at))->format("Y/m/d") }}
-                                            </div>
-                                            <div class="col">
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col">
-                                                <a href="#"
-                                                    onclick="$('#students_index').val({{ $index }});preloadTagModal();$('#tag_modal').modal('show'); return false;">
-                                                    برچسب روحیات اخلاقی
-                                                </a>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col">
-                                                <a href="#"
-                                                    onclick="$('#students_index').val({{ $index }});preloadTagModal();$('#tag_modal').modal('show'); return false;">
-                                                    برچسب نیازهای دانش آموز
-                                                </a>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col">
-                                                <a target="_blank" href="{{ route('student_purchases', $item->id) }}">
-                                                    گزارش خریدهای قطعی دانش آموز
-                                                </a>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col">
-                                                <a target="_blank" href="{{ route('supporter_student_allcall', $item->id) }}">
-                                                    گزارش تماس ها
-                                                </a>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col">
-                                                <a class="btn btn-success" href="#" onclick="students_id = {{ $item->id }};$('#call_modal').modal('show');return false;">
-                                                    ثبت تماس
-                                                </a>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <table class="table table-bordered table-hover datatables-all datatables-{{ $index }}" style="width: 100%;">
-                                                <thead>
-                                                    <tr>
-                                                        <th>ردیف</th>
-                                                        <th>کد</th>
-                                                        <th>محصول</th>
-                                                        <th>اطلاع رسانی</th>
-                                                        <th>پاسخگو</th>
-                                                        <th>نتیجه</th>
-                                                        <th>یادآور</th>
-                                                        <th>پاسخگو بعد</th>
-                                                        <th>توضیحات</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    @foreach($item->calls as $cindex => $call)
-                                                    @if($cindex < 5)
-                                                    <tr>
-                                                        <td>{{ $cindex + 1 }}</td>
-                                                        <td>{{ $call->id }}</td>
-                                                        <td>{{ ($call->product)?$call->product->name:'-' }}</td>
-                                                        <td>{{ ($call->notice)?$call->notice->name:'-' }}</td>
-                                                        <td>{{ $persons[$call->replier] }}</td>
-                                                        <td>{{ $call->callresult?$call->callresult->title:'-' }}</td>
-                                                        <td>{{ $call->next_call }}</td>
-                                                        <td>{{ ($call->next_call)?$persons[$call->next_to_call]:'' }}</td>
-                                                        <td>{{ $call->description }}</td>
-                                                    </tr>
-                                                    @endif
-                                                    @endforeach
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td style="display: none;"></td><td style="display: none;"></td><td style="display: none;"></td><td style="display: none;"></td><td style="display: none;"></td><td style="display: none;"></td><td style="display: none;"></td><td style="display: none;"></td>
-                            </tr>
-                            -->
+                             -->
                             @endforeach
                         </tbody>
                     </table>
@@ -560,6 +428,43 @@ $egucation_levels = [
                     نیازسنجی
                 </h3>
                 <div>
+                    <select id="need-parent-one" onchange="selectNeedParentOne(this);">
+                        <option value="">همه</option>
+                        @foreach ($needTagParentOnes as $item)
+                        <option value="{{ $item->id }}">{{$item->name}}</option>
+                        @endforeach
+                    </select>
+
+                    <select id="need-parent-two" onchange="selectNeedParentTwo(this);">
+                        <option value="">همه</option>
+                        @foreach ($needTagParentTwos as $item)
+                        <option value="{{ $item->id }}">{{$item->name}}</option>
+                        @endforeach
+                    </select>
+
+                    <select id="need-parent-three" onchange="selectNeedParentThree(this);">
+                        <option value="">همه</option>
+                        @foreach ($needTagParentThrees as $item)
+                        <option value="{{ $item->id }}">{{$item->name}}</option>
+                        @endforeach
+                    </select>
+
+                    <select id="need-parent-four" onchange="selectNeedParentFour(this);">
+                        <option value="">همه</option>
+                        @foreach ($needTagParentFours as $item)
+                        <option value="{{ $item->id }}">{{$item->name}}</option>
+                        @endforeach
+                    </select>
+                </div>
+                @foreach ($needTags as $index => $item)
+                    <input type="checkbox" class="needtag-checkbox" id="needtag_{{ $item->id }}" value="{{ $item->id }}" />
+                    <span class="needtag-title" id="needtag-title-{{ $item->id }}">
+                    {{ $item->name }}
+                    </span>
+                    <br class="needtag-br" id="needtag-br-{{ $item->id }}"/>
+                @endforeach
+                <!--
+                <div>
                     <select id="collection-one" onchange="selectCollectionOne(this);">
                         <option value="">همه</option>
                         @foreach ($firstCollections as $item)
@@ -588,6 +493,7 @@ $egucation_levels = [
                     </span>
                     <br class="collection-br" id="collection-br-{{ $item->id }}"/>
                 @endforeach
+                -->
                 </div>
             </p>
         </div>
@@ -776,12 +682,15 @@ $egucation_levels = [
         parent1: '',
         parent2: '',
         parent3: '',
-        parent4: ''
+        parent4: '',
+        need_parent1: '',
+        need_parent2: '',
+        need_parent3: '',
+        need_parent4: ''
     }
     let students_id;
-    function showMorePanel(index){
-        // $('.morepanel').hide();
-        // $('#morepanel-' + index).show();
+    function showMorePanel(index, tr){
+        console.log(index, tr);
         var persons = {
             student:"دانش آموز",
             father:"پدر",
@@ -789,7 +698,7 @@ $egucation_levels = [
             other:"غیره"
         };
         var editRoute = `{{ route('student_edit', ['call_back'=>'supporter_students', 'id'=>-1]) }}`;
-        var purchaseRoute = `{{ route('supporter_student_purchases', -1) }}`;
+        var purchaseRoute = `{{ route('student_purchases', -1) }}`;
         var supporterStudentAllCallRoute = `{{ route('supporter_student_allcall', -1) }}`;
         var tmpCall = `
             <tr>
@@ -815,7 +724,7 @@ $egucation_levels = [
                             .replace('#callresult#', (call.callresult)?call.callresult.title:'-')
                             .replace('#next_call#', (call.next_call)?call.next_call:'-')
                             .replace('#next_to_call#', persons[call.next_to_call])
-                            .replace('#description#', (call.next_call)?call.next_call:'-');
+                            .replace('#description#', (call.description)?call.description:'-');
             }else {
                 continue;
             }
@@ -941,7 +850,7 @@ $egucation_levels = [
             </tr>
         </table>`;
 
-        var tr = $("#tr-" + index)[0];
+        // var tr = $("#tr-" + index)[0];
         var row = table.row(tr);
         if ( row.child.isShown() ) {
             row.child.hide();
@@ -1030,6 +939,64 @@ $egucation_levels = [
 
         });
     }
+    function selectNeedParentOne(dobj){
+        filterParents.need_parent1 = ($(dobj).val()!='')?parseInt($(dobj).val(), 10):'';
+        filterNeedTagsByParent()
+    }
+    function selectNeedParentTwo(dobj){
+        filterParents.need_parent2 = ($(dobj).val()!='')?parseInt($(dobj).val(), 10):'';
+        filterNeedTagsByParent()
+    }
+    function selectNeedParentThree(dobj){
+        filterParents.need_parent3 = ($(dobj).val()!='')?parseInt($(dobj).val(), 10):'';
+        filterNeedTagsByParent()
+    }
+    function selectNeedParentFour(dobj){
+        filterParents.need_parent4 = ($(dobj).val()!='')?parseInt($(dobj).val(), 10):'';
+        filterNeedTagsByParent()
+    }
+    function filterNeedTagsByParent(){
+        $("input.needtag-checkbox").show();
+        $("span.needtag-title").show();
+        $("br.needtag-br").show();
+        $("input.needtag-checkbox").each(function (id, field){
+            console.log('checking', field)
+            let tagId = parseInt($(field).val(), 10);
+            let theTag = collections[tagId];
+            console.log(tagId, theTag)
+            if(theTag){
+                if(filterParents.need_parent1!=''){
+                    if(filterParents.need_parent1!=theTag.need_parent1){
+                        $(field).hide();
+                        $("#needtag-title-" + tagId).hide();
+                        $("#needtag-br-" + tagId).hide();
+                    }
+                }
+                if(filterParents.need_parent2!=''){
+                    if(filterParents.need_parent2!=theTag.need_parent2){
+                        $(field).hide();
+                        $("#needtag-title-" + tagId).hide();
+                        $("#needtag-br-" + tagId).hide();
+                    }
+                }
+                if(filterParents.need_parent3!=''){
+                    if(filterParents.need_parent3!=theTag.need_parent3){
+                        $(field).hide();
+                        $("#needtag-title-" + tagId).hide();
+                        $("#needtag-br-" + tagId).hide();
+                    }
+                }
+                if(filterParents.need_parent4!=''){
+                    if(filterParents.need_parent4!=theTag.need_parent4){
+                        $(field).hide();
+                        $("#needtag-title-" + tagId).hide();
+                        $("#needtag-br-" + tagId).hide();
+                    }
+                }
+            }
+
+        });
+    }
     function selectCollectionOne(dobj){
         $("#collection-two").find('option').show();
         $("#collection-two").find('option[value=""]').prop('selected', true);
@@ -1074,6 +1041,56 @@ $egucation_levels = [
         console.log('hey3');
         filterCollectionsByParent();
     }
+    // function filterCollectionsByParent(){
+    //     $("input.collection-checkbox").show();
+    //     $("span.collection-title").show();
+    //     $("br.collection-br").show();
+    //     let collectionParents = $("#collection-two").val();
+    //     let parents = [];
+    //     if($("#collection-one").val()=='' && collectionParents==''){
+    //         return false;
+    //     }
+
+
+
+
+    //     if(collectionParents==''){
+    //         parents.push(parseInt($("#collection-one").val(), 10));
+    //         $("#collection-two").find('option').each(function(id, field){
+    //             if($(field).css('display')!='none'){
+    //                 parents.push(parseInt($(field).val(), 10));
+    //             }
+    //         });
+    //         $("input.collection-checkbox").each(function (id, field){
+    //             let collectionId = parseInt($(field).val(), 10);
+    //             if(parents.indexOf(collectionId)<0){
+    //                 $(field).hide();
+    //                 $("#collection-title-" + collectionId).hide();
+    //                 $("#collection-br-" + collectionId).hide();
+    //             }
+    //         });
+    //         return false;
+    //     }else {
+    //         parents.push(parseInt(collectionParents, 10))
+    //     }
+    //     console.log('parents:', parents);
+
+    //     $("input.collection-checkbox").each(function (id, field){
+    //         // console.log('checking', field)
+    //         let collectionId = parseInt($(field).val(), 10);
+    //         let theCollection = collections[collectionId];
+    //         console.log(collectionId, theCollection)
+    //         if(theCollection){
+    //             console.log(parents.indexOf(theCollection.id), parents.indexOf(theCollection.parent_id));
+    //             if(parents.indexOf(theCollection.id)<0 && parents.indexOf(theCollection.parent_id)<0){
+    //                 $(field).hide();
+    //                 $("#collection-title-" + collectionId).hide();
+    //                 $("#collection-br-" + collectionId).hide();
+    //             }
+    //         }
+
+    //     });
+    // }
     function filterCollectionsByParent(){
         $("input.collection-checkbox").show();
         $("span.collection-title").show();
@@ -1090,10 +1107,11 @@ $egucation_levels = [
         if(collectionParents==''){
             parents.push(parseInt($("#collection-one").val(), 10));
             $("#collection-two").find('option').each(function(id, field){
-                if($(field).css('display')!='none'){
+                if($(field).css('display')!='none' && !isNaN(parseInt($(field).val(), 10))){
                     parents.push(parseInt($(field).val(), 10));
                 }
             });
+            console.log('p1', parents);
             $("input.collection-checkbox").each(function (id, field){
                 let collectionId = parseInt($(field).val(), 10);
                 if(parents.indexOf(collectionId)<0){
@@ -1106,6 +1124,29 @@ $egucation_levels = [
         }else {
             parents.push(parseInt(collectionParents, 10))
         }
+
+
+        if($("#collection-three").val()==''){
+            parents.push(parseInt($("#collection-two").val(), 10));
+            $("#collection-three").find('option').each(function(id, field){
+                if($(field).css('display')!='none' && !isNaN(parseInt($(field).val(), 10))){
+                    parents.push(parseInt($(field).val(), 10));
+                }
+            });
+            console.log('p2', parents);
+            $("input.collection-checkbox").each(function (id, field){
+                let collectionId = parseInt($(field).val(), 10);
+                if(parents.indexOf(collectionId)<0){
+                    $(field).hide();
+                    $("#collection-title-" + collectionId).hide();
+                    $("#collection-br-" + collectionId).hide();
+                }
+            });
+            return false;
+        }else {
+            parents.push(parseInt($("#collection-three").val(), 10))
+        }
+
         console.log('parents:', parents);
 
         $("input.collection-checkbox").each(function (id, field){
@@ -1176,6 +1217,7 @@ $egucation_levels = [
                 console.log(students[studentsIndex].studenttags);
                 for(studenttag of students[studentsIndex].studenttags){
                     $("#tag_" + studenttag.tags_id).prop("checked", true);
+                    $("#needtag_" + studenttag.tags_id).prop("checked", true);
                 }
                 console.log(students[studentsIndex].studentcollections);
                 for(studentcollection of students[studentsIndex].studentcollections){
@@ -1205,7 +1247,7 @@ $egucation_levels = [
         $("input.tag-checkbox:checked").each(function (id, field) {
             selectedTags.push(parseInt(field.value, 10));
         });
-        $("input.collection-checkbox:checked").each(function (id, field) {
+        $("input.needtag-checkbox:checked").each(function (id, field) {
             selectedColllections.push(parseInt(field.value, 10));
         });
         var studentsIndex = parseInt($("#students_index").val(), 10);
@@ -1268,7 +1310,8 @@ $egucation_levels = [
                 products_id: $("#products_id").val(),
                 notices_id: $("#notices_id").val(),
                 next_to_call: $("#next_to_call").val(),
-                next_call: $("#next_call").val()
+                next_call: $("#next_call").val(),
+                call_results_id: $("#call_results_id").val()
         },
         function (result) {
                 console.log('Result', result);
@@ -1290,7 +1333,13 @@ $egucation_levels = [
             has_collection = 'false';
         }
         $("#has_collection").val(has_collection);
-        $("#search-frm").submit();
+        if(has_collection == 'false')
+            $("#student-collection-btn").removeClass('btn-success').addClass('btn-warning');
+        else
+            $("#student-collection-btn").removeClass('btn-warning').addClass('btn-success');
+        // $("#search-frm").submit();
+        table.ajax.reload();
+        return false;
     }
 
     function StudentTag(){
@@ -1301,7 +1350,8 @@ $egucation_levels = [
             has_tag = 'false';
         }
         $("#has_tag").val(has_tag);
-        $("#search-frm").submit();
+        // $("#search-frm").submit();
+        table.ajax.reload();
         return false;
     }
 
@@ -1313,7 +1363,12 @@ $egucation_levels = [
             has_reminder = 'false';
         }
         $("#has_reminder").val(has_reminder);
-        $("#search-frm").submit();
+        if(has_reminder == 'false')
+            $("#student-reminder-btn").removeClass('btn-success').addClass('btn-warning');
+        else
+            $("#student-reminder-btn").removeClass('btn-warning').addClass('btn-success');
+        // $("#search-frm").submit();
+        table.ajax.reload();
         return false;
     }
 
@@ -1325,7 +1380,12 @@ $egucation_levels = [
             has_site = 'false';
         }
         $("#has_site").val(has_site);
-        $("#search-frm").submit();
+        if(has_site == 'false')
+            $("#student-site-btn").removeClass('btn-success').addClass('btn-warning');
+        else
+            $("#student-site-btn").removeClass('btn-warning').addClass('btn-success');
+        // $("#search-frm").submit();
+        table.ajax.reload();
         return false;
     }
 
@@ -1337,7 +1397,12 @@ $egucation_levels = [
             order_collection = 'false';
         }
         $("#order_collection").val(order_collection);
-        $("#search-frm").submit();
+        if(order_collection == 'false')
+            $("#order-collection-btn").removeClass('btn-success').addClass('btn-warning');
+        else
+            $("#order-collection-btn").removeClass('btn-warning').addClass('btn-success');
+        // $("#search-frm").submit();
+        table.ajax.reload();
         return false;
     }
 
@@ -1352,7 +1417,8 @@ $egucation_levels = [
 
     function selectCallResult(){
         $("#has_call_result").val($("#has_cal_result").val());
-        $("#search-frm").submit();
+        // $("#search-frm").submit();
+        table.ajax.reload();
     }
 
     $(function () {
@@ -1372,23 +1438,23 @@ $egucation_levels = [
         });
         $('select.select2').select2();
 
-        $("table.datatables").DataTable({
-            "paging": true,
-            "lengthChange": false,
-            "searching": false,
-            "ordering": true,
-            "info": true,
-            "autoWidth": true,
-            "language": {
-                "paginate": {
-                    "previous": "قبل",
-                    "next": "بعد"
-                },
-                "emptyTable": "داده ای برای نمایش وجود ندارد",
-                "info": "نمایش _START_ تا _END_ از _TOTAL_ داده",
-                "infoEmpty": "نمایش 0 تا 0 از 0 داده",
-            }
-        });
+        // $("table.datatables").DataTable({
+        //     "paging": true,
+        //     "lengthChange": false,
+        //     "searching": false,
+        //     "ordering": true,
+        //     "info": true,
+        //     "autoWidth": true,
+        //     "language": {
+        //         "paginate": {
+        //             "previous": "قبل",
+        //             "next": "بعد"
+        //         },
+        //         "emptyTable": "داده ای برای نمایش وجود ندارد",
+        //         "info": "نمایش _START_ تا _END_ از _TOTAL_ داده",
+        //         "infoEmpty": "نمایش 0 تا 0 از 0 داده",
+        //     }
+        // });
         table = $("#example2").DataTable({
             "paging": true,
             "lengthChange": false,
@@ -1404,6 +1470,44 @@ $egucation_levels = [
                 "emptyTable": "داده ای برای نمایش وجود ندارد",
                 "info": "نمایش _START_ تا _END_ از _TOTAL_ داده",
                 "infoEmpty": "نمایش 0 تا 0 از 0 داده",
+            },
+            serverSide: true,
+            processing: true,
+            ajax: {
+                "type": "POST",
+                "url": "{{ route('supporter_students') }}",
+                "dataType": "json",
+                "contentType": 'application/json; charset=utf-8',
+
+                "data": function (data) {
+                    data['sources_id'] = $("#sources_id").val();
+                    data['name'] = $("#name").val();
+                    data['phone'] = $("#phone").val();
+                    data['has_collection'] = $("#has_collection").val();
+                    data['has_the_product'] = $("#has_the_product").val();
+                    data['has_the_tags'] = $("#has_the_tags").val();
+                    data['has_call_result'] = $("#has_call_result").val();
+                    data['has_site'] = $("#has_site").val();
+                    data['order_collection'] = $("#order_collection").val();
+                    data['has_reminder'] = $("#has_reminder").val();
+                    data['has_tag'] = $("#has_tag").val();
+                    return JSON.stringify(data);
+                },
+                "complete": function(response) {
+                    console.log(response);
+                    $('#example2 tr').click(function() {
+                        var tr = this;
+                        var studentId = parseInt($(tr).find('td')[1].innerText, 10);
+                        if(!isNaN(studentId)){
+                            for(var index in students){
+                                if(students[index].id==studentId){
+                                    showMorePanel(index, tr);
+                                }
+                            }
+                        }
+                    });
+                }
+
             }
         });
     });

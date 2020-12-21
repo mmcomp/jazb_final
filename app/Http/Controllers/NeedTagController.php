@@ -9,12 +9,13 @@ use App\NeedTagParentOne;
 use App\NeedTagParentTwo;
 use App\NeedTagParentThree;
 use App\NeedTagParentFour;
+use App\Product;
 use Exception;
 
 class NeedTagController extends Controller
 {
     public function index(){
-        $tags = Tag::where('type', 'need')->where('is_deleted', false)->with('user')->with('user')->with('need_parent_one')->with('need_parent_two')->with('need_parent_three')->with('need_parent_four')->orderBy('name')->get();
+        $tags = Tag::where('type', 'need')->where('is_deleted', false)->with('user')->with('user')->with('need_parent_one')->with('need_parent_two')->with('need_parent_three')->with('need_parent_four')->with('product')->orderBy('name')->get();
 
         return view('need_tags.index',[
             'tags' => $tags,
@@ -30,6 +31,7 @@ class NeedTagController extends Controller
         $tagParentTwos = NeedTagParentTwo::where('is_deleted', false)->orderBy('name')->get();
         $tagParentThrees = NeedTagParentThree::where('is_deleted', false)->orderBy('name')->get();
         $tagParentFours = NeedTagParentFour::where('is_deleted', false)->orderBy('name')->get();
+        $products = Product::where('is_deleted', false)->get();
         $tag = new Tag;
         if($request->getMethod()=='GET'){
             return view('need_tags.create', [
@@ -38,11 +40,18 @@ class NeedTagController extends Controller
                 "tagParentTwos"=>$tagParentTwos,
                 "tagParentThrees"=>$tagParentThrees,
                 "tagParentFours"=>$tagParentFours,
+                "products"=>$products,
                 "tag"=>$tag
             ]);
         }
 
-        $tag->name = $request->input('name', '');
+        $product =  Product::find($request->input('products_id'));
+        if(!$product) {
+            $request->session()->flash("msg_error", "برچسب با موفقیت افزوده نشد چون محصول پیدا نشد");
+            return redirect()->route('need_tags');
+        }
+        $tag->name = $product->name;
+        $tag->products_id = $request->input('products_id');
         $tag->need_parent1 = (int)$request->input('need_parent1', 0);
         $tag->need_parent2 = (int)$request->input('need_parent2', 0);
         $tag->need_parent3 = (int)$request->input('need_parent3', 0);
@@ -78,6 +87,7 @@ class NeedTagController extends Controller
             $request->session()->flash("msg_error", "برچسب مورد نظر پیدا نشد!");
             return redirect()->route('need_tags');
         }
+        $products = Product::where('is_deleted', false)->get();
         if($request->getMethod()=='GET'){
             return view('need_tags.create', [
                 "tags"=>$tags,
@@ -85,12 +95,14 @@ class NeedTagController extends Controller
                 "tagParentTwos"=>$tagParentTwos,
                 "tagParentThrees"=>$tagParentThrees,
                 "tagParentFours"=>$tagParentFours,
+                "products"=>$products,
                 "tag"=>$tag
             ]);
         }
 
 
         $tag->name = $request->input('name', '');
+        $tag->products_id = $request->input('products_id');
         $tag->need_parent1 = (int)$request->input('need_parent1', 0);
         $tag->need_parent2 = (int)$request->input('need_parent2', 0);
         $tag->need_parent3 = (int)$request->input('need_parent3', 0);

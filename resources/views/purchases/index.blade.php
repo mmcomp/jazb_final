@@ -38,8 +38,10 @@
                     <th>ردیف</th>
                     <th>کد</th>
                     <th>نام و نام خانوادگی</th>
+                    <th>شماره فاکتور</th>
                     <th>محصول</th>
                     <th>مبلغ</th>
+                    <th>توضیحات</th>
                     <th>#</th>
                   </tr>
                   </thead>
@@ -49,8 +51,10 @@
                         <td>{{ $index + 1 }}</td>
                         <td>{{ $item->id }}</td>
                         <td>{{ $item->student->first_name }} {{ $item->student->last_name }} [{{ $item->student->phone }}]</td>
+                        <td>{{ $item->factor_number }}</td>
                         <td>{{ $item->product->name }}</td>
                         <td>{{ number_format($item->price) }}</td>
+                        <td>{{ $item->description }}</td>
                         <td>
                             <a class="btn btn-primary" href="{{ route('purchase_edit', $item->id) }}">
                                 ویرایش

@@ -82,15 +82,20 @@
                     </a>
                     <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
                         @foreach ($usermessages as $item)
-                        <a href="#" class="dropdown-item">
+                        <a href="{{ route('messages') }}" class="dropdown-item">
                             <div class="media">
+                                @if($item->themessage->user->image_path)
+                                <img src="/uploads/{{ $item->themessage->user->image_path }}" alt="User Avatar"
+                                    class="img-size-50 mr-3 img-circle">
+                                @else
                                 <img src="/dist/img/user1-128x128.jpg" alt="User Avatar"
                                     class="img-size-50 mr-3 img-circle">
+                                @endif
                                 <div class="media-body">
                                     <h3 class="dropdown-item-title">
                                         {{ $item->themessage->user->first_name }}
                                         {{ $item->themessage->user->last_name }}
-                                        <span class="float-right text-sm text-danger"><i class="fas fa-star"></i></span>
+                                        <!--<span class="float-right text-sm text-danger"><i class="fas fa-star"></i></span>-->
                                     </h3>
                                     <p class="text-sm">{{ $item->themessage->message }}</p>
                                     <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i>
@@ -99,84 +104,26 @@
                             </div>
                         </a>
                         <div class="dropdown-divider"></div>
+
                         @endforeach
-                        <!--
-          <a href="#" class="dropdown-item">
-            <div class="media">
-              <img src="/dist/img/user1-128x128.jpg" alt="User Avatar" class="img-size-50 mr-3 img-circle">
-              <div class="media-body">
-                <h3 class="dropdown-item-title">
-                  Brad Diesel
-                  <span class="float-right text-sm text-danger"><i class="fas fa-star"></i></span>
-                </h3>
-                <p class="text-sm">Call me whenever you can...</p>
-                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
-              </div>
-            </div>
-          </a>
-          <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item">
-            <div class="media">
-              <img src="/dist/img/user8-128x128.jpg" alt="User Avatar" class="img-size-50 img-circle mr-3">
-              <div class="media-body">
-                <h3 class="dropdown-item-title">
-                  John Pierce
-                  <span class="float-right text-sm text-muted"><i class="fas fa-star"></i></span>
-                </h3>
-                <p class="text-sm">I got your message bro</p>
-                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
-              </div>
-            </div>
-          </a>
-          <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item">
-            <div class="media">
-              <img src="/dist/img/user3-128x128.jpg" alt="User Avatar" class="img-size-50 img-circle mr-3">
-              <div class="media-body">
-                <h3 class="dropdown-item-title">
-                  Nora Silvester
-                  <span class="float-right text-sm text-warning"><i class="fas fa-star"></i></span>
-                </h3>
-                <p class="text-sm">The subject goes here</p>
-                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
-              </div>
-            </div>
-          </a>
-          <div class="dropdown-divider"></div>
-            -->
                         <a href="{{ route('messages') }}" class="dropdown-item dropdown-footer">صندوق پیام</a>
                     </div>
                 </li>
 
                 <!-- Notifications Dropdown Menu -->
-                <!--
-      <li class="nav-item dropdown">
-        <a class="nav-link" data-toggle="dropdown" href="#">
-          <i class="far fa-bell"></i>
-          <span class="badge badge-warning navbar-badge">15</span>
-        </a>
-        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-          <span class="dropdown-item dropdown-header">15 Notifications</span>
-          <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item">
-            <i class="fas fa-envelope mr-2"></i> 4 new messages
-            <span class="float-right text-muted text-sm">3 mins</span>
-          </a>
-          <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item">
-            <i class="fas fa-users mr-2"></i> 8 friend requests
-            <span class="float-right text-muted text-sm">12 hours</span>
-          </a>
-          <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item">
-            <i class="fas fa-file mr-2"></i> 3 new reports
-            <span class="float-right text-muted text-sm">2 days</span>
-          </a>
-          <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item dropdown-footer">See All Notifications</a>
-        </div>
-      </li>
-      -->
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link" data-toggle="dropdown" href="#">
+                    <i class="far fa-bell"></i>
+                    <span class="badge badge-warning navbar-badge">{{ count($usercircular) }}</span>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+                    <span class="dropdown-item dropdown-header">{{ count($usercircular) }} بخشنامه</span>
+                    <div class="dropdown-divider"></div>
+                    <a href="{{ route('circulars') }}" class="dropdown-item dropdown-footer">مشاهده همه</a>
+                    </div>
+                </li>
+
                 <!--
       <li class="nav-item">
         <a class="nav-link" data-widget="control-sidebar" data-slide="true" href="#">
@@ -202,7 +149,11 @@
                 <!-- Sidebar user panel (optional) -->
                 <div class="user-panel mt-3 pb-3 mb-3 d-flex">
                     <div class="image">
+                        @if(Auth::user()->image_path)
+                        <img src="/uploads/{{ Auth::user()->image_path }}" class="img-circle elevation-2" alt="User Image">
+                        @else
                         <img src="/dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
+                        @endif
                     </div>
                     <div class="info">
                         <a href="/login" class="d-block">
@@ -241,7 +192,12 @@
                         strpos(\Request::route()->getName(), 'source')===0 ||
                         strpos(\Request::route()->getName(), 'user_all')===0 ||
                         strpos(\Request::route()->getName(), 'call_result')===0 ||
-                        strpos(\Request::route()->getName(), 'notice')===0))
+                        strpos(\Request::route()->getName(), 'notice')===0 ||
+                        strpos(\Request::route()->getName(), 'province')===0 ||
+                        strpos(\Request::route()->getName(), 'class_room')===0 ||
+                        strpos(\Request::route()->getName(), 'cit')===0 ||
+                        strpos(\Request::route()->getName(), 'lesson')===0 ||
+                        strpos(\Request::route()->getName(), 'exam')===0)
                         <li class="nav-item has-treeview menu-open">
                             @else
                         <li class="nav-item has-treeview">
@@ -255,6 +211,61 @@
                                 </p>
                             </a>
                             <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    @if(strpos(\Request::route()->getName(), 'need_parent_tag_one')===0)
+                                    <a href="{{ route('need_parent_tag_ones') }}" class="nav-link active">
+                                    @else
+                                    <a href="{{ route('need_parent_tag_ones') }}" class="nav-link">
+                                    @endif
+                                        <!-- <i class="far fa-circle nav-icon"></i> -->
+                                        -
+                                        <p>برچسب اصلی نیازسنجی</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    @if(strpos(\Request::route()->getName(), 'need_parent_tag_two')===0)
+                                    <a href="{{ route('need_parent_tag_twos') }}" class="nav-link active">
+                                    @else
+                                    <a href="{{ route('need_parent_tag_twos') }}" class="nav-link">
+                                    @endif
+                                        <!-- <i class="far fa-circle nav-icon"></i> -->
+                                        -
+                                        <p>برچسب فرعی 1 نیازسنجی</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    @if(strpos(\Request::route()->getName(), 'need_parent_tag_three')===0)
+                                    <a href="{{ route('need_parent_tag_threes') }}" class="nav-link active">
+                                    @else
+                                    <a href="{{ route('need_parent_tag_threes') }}" class="nav-link">
+                                    @endif
+                                        <!-- <i class="far fa-circle nav-icon"></i> -->
+                                        -
+                                        <p>برچسب فرعی 2 نیازسنجی</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    @if(strpos(\Request::route()->getName(), 'need_parent_tag_four')===0)
+                                    <a href="{{ route('need_parent_tag_fours') }}" class="nav-link active">
+                                    @else
+                                    <a href="{{ route('need_parent_tag_fours') }}" class="nav-link">
+                                    @endif
+                                        <!-- <i class="far fa-circle nav-icon"></i> -->
+                                        -
+                                        <p>برچسب فرعی 3 نیازسنجی</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    @if(strpos(\Request::route()->getName(), 'need_tag')===0)
+                                    <a href="{{ route('need_tags') }}" class="nav-link active">
+                                    @else
+                                    <a href="{{ route('need_tags') }}" class="nav-link">
+                                    @endif
+                                        <!-- <i class="far fa-circle nav-icon"></i> -->
+                                        -
+                                        <p>نیازسنجی</p>
+                                    </a>
+                                </li>
                                 <li class="nav-item">
                                     @if(strpos(\Request::route()->getName(), 'parent_tag_one')===0)
                                     <a href="{{ route('parent_tag_ones') }}" class="nav-link active">
@@ -407,6 +418,56 @@
                                         <p>تعریف شروط</p>
                                     </a>
                                 </li>
+                                <li class="nav-item">
+                                    @if(strpos(\Request::route()->getName(), 'province')===0)
+                                    <a href="{{ route('provinces') }}" class="nav-link active">
+                                    @else
+                                    <a href="{{ route('provinces') }}" class="nav-link">
+                                    @endif
+                                        -
+                                        <p>تعریف استان</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    @if(strpos(\Request::route()->getName(), 'cit')===0)
+                                    <a href="{{ route('cities') }}" class="nav-link active">
+                                    @else
+                                    <a href="{{ route('cities') }}" class="nav-link">
+                                    @endif
+                                        -
+                                        <p>تعریف شهر</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    @if(strpos(\Request::route()->getName(), 'class_room')===0)
+                                    <a href="{{ route('class_rooms') }}" class="nav-link active">
+                                    @else
+                                    <a href="{{ route('class_rooms') }}" class="nav-link">
+                                    @endif
+                                        -
+                                        <p>تعریف کلاس</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    @if(strpos(\Request::route()->getName(), 'lesson')===0)
+                                    <a href="{{ route('lessons') }}" class="nav-link active">
+                                    @else
+                                    <a href="{{ route('lessons') }}" class="nav-link">
+                                    @endif
+                                        -
+                                        <p>تعریف درس</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    @if(strpos(\Request::route()->getName(), 'exam')===0)
+                                    <a href="{{ route('exams') }}" class="nav-link active">
+                                    @else
+                                    <a href="{{ route('exams') }}" class="nav-link">
+                                    @endif
+                                        -
+                                        <p>تعریف آزمون</p>
+                                    </a>
+                                </li>
                             </ul>
                         </li>
                         @endif
@@ -450,6 +511,17 @@
                             @endif
                                 <!-- <i class="far fa-circle nav-icon"></i> -->
                                 <p>فهرست سیاه دانش آموزان</p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            @if(strpos(\Request::route()->getName(), 'student_archived')===0)
+                            <a href="{{ route('student_archived') }}" class="nav-link active">
+                            @else
+                            <a href="{{ route('student_archived') }}" class="nav-link">
+                            @endif
+                                <!-- <i class="far fa-circle nav-icon"></i> -->
+                                <p>فهرست آرشیو دانش آموزان</p>
                             </a>
                         </li>
                         @endif
@@ -641,11 +713,20 @@
                         <li class="nav-item">
                             @if(strpos(\Request::route()->getName(), 'supporter_student_purchases')===0)
                             <a href="{{ route('supporter_student_purchases') }}" class="nav-link active">
-                                @else
-                                <a href="{{ route('supporter_student_purchases') }}" class="nav-link">
-                                    @endif
-                                    <p>خریدهای قطعی</p>
-                                </a>
+                            @else
+                            <a href="{{ route('supporter_student_purchases') }}" class="nav-link">
+                                @endif
+                                <p>خریدهای قطعی</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            @if(strpos(\Request::route()->getName(), 'reminder')===0)
+                            <a href="{{ route('reminders') }}" class="nav-link active">
+                            @else
+                            <a href="{{ route('reminders') }}" class="nav-link">
+                                @endif
+                                <p>یادآورها</p>
+                            </a>
                         </li>
                         @endif
                         @if (!Gate::allows('marketers'))

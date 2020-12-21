@@ -29,6 +29,24 @@ class MessageController extends Controller
         ]);
     }
 
+    public function indexOutbox($id = null){
+        $user = null;
+        if($id==null){
+            $id = Auth::user()->id;
+        }else{
+            $user = User::find($id);
+        }
+        $messageIds = MessageFlow::where('sender_id', $id)->pluck('messages_id');
+        $messages = Message::where('is_deleted', false)->whereIn('id', $messageIds)->with('flows.user')->with('user')->get();
+        // dd(Str::limit($messages[0]->message, 10));
+        return view('messages.outbox',[
+            'user'=>$user,
+            'messages' => $messages,
+            'msg_success' => request()->session()->get('msg_success'),
+            'msg_error' => request()->session()->get('msg_error')
+        ]);
+    }
+
     public function create(Request $request, $id = null)
     {
         $users = User::where('is_deleted', false)->orderBy('last_name')->get();
@@ -60,6 +78,11 @@ class MessageController extends Controller
         $message->attachment = $attachment;
         $message->save();
 
+        if($request->input('recievers_id')==null) {
+            $request->session()->flash("msg_error", "پیام گیرنده ندارد.");
+            return redirect()->route('messages');
+        }
+
         foreach($request->input('recievers_id') as $reciever_id){
             $messageFlow = new MessageFlow;
             $messageFlow->messages_id = $message->id;
@@ -69,15 +92,16 @@ class MessageController extends Controller
             $messageFlow->save();
         }
 
-        foreach($request->input('ccs_id') as $reciever_id){
-            $messageFlow = new MessageFlow;
-            $messageFlow->messages_id = $message->id;
-            $messageFlow->sender_id = $message->users_id;
-            $messageFlow->users_id = $reciever_id;
-            $messageFlow->type = 'cc';
-            $messageFlow->attachment = $attachment;
-            $messageFlow->save();
-        }
+        if($request->input('ccs_id'))
+            foreach($request->input('ccs_id') as $reciever_id){
+                $messageFlow = new MessageFlow;
+                $messageFlow->messages_id = $message->id;
+                $messageFlow->sender_id = $message->users_id;
+                $messageFlow->users_id = $reciever_id;
+                $messageFlow->type = 'cc';
+                $messageFlow->attachment = $attachment;
+                $messageFlow->save();
+            }
 
         $request->session()->flash("msg_success", "پیام با موفقیت ارسال شد.");
         return redirect()->route('messages');

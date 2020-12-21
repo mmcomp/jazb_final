@@ -37,6 +37,7 @@
                 @csrf
                 <div class="row">
                     <div class="col">
+                        <!--
                         <div class="form-group">
                             <label for="name">نام</label>
                             @if (isset($tag) && isset($tag->id))
@@ -44,6 +45,20 @@
                             @else
                             <input type="text" class="form-control" id="name" name="name" placeholder="نام"  />
                             @endif
+                        </div>
+                        -->
+                        <div class="form-group">
+                            <label for="products_id">محصول</label>
+                            <select class="form-control select2" id="products_id" name="products_id" >
+                                <option value="0"> - </option>
+                                @foreach ($products as $item)
+                                    @if (isset($tag) && isset($tag->id) && $tag->products_id == $item->id)
+                                    <option value="{{ $item->id }}" selected>{{ $item->name }}</option>
+                                    @else
+                                    <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                    @endif
+                                @endforeach
+                            </select>
                         </div>
 
                         <div class="form-group">

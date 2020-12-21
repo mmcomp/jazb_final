@@ -51,7 +51,7 @@
                       <tr>
                         <td>{{ $index + 1 }}</td>
                         <td>{{ $item->id }}</td>
-                        <td>{{ $item->name }}</td>
+                        <td>{{ ($item->product)?$item->product->name:'' }}</td>
                         <td>{{ ($item->need_parent_one)?$item->need_parent_one->name:'-' }}</td>
                         <td>{{ ($item->need_parent_two)?$item->need_parent_two->name:'-' }}</td>
                         <td>{{ ($item->need_parent_three)?$item->need_parent_three->name:'-' }}</td>

@@ -117,6 +117,7 @@ Route::group(['middleware' => ['auth', 'message']], function () {
         Route::any('/', 'StudentController@index')->name('students');
         Route::any('/all', 'StudentController@indexAll')->name('student_all');
         Route::any('/banned', 'StudentController@banned')->name('student_banned');
+        Route::any('/archived', 'StudentController@archived')->name('student_archived');
         Route::any('/create', 'StudentController@create')->name('student_create');
         Route::any('/edit/{call_back}/{id}', 'StudentController@edit')->name('student_edit');
         Route::get('/delete/{id}', 'StudentController@delete')->name('student_delete');
@@ -126,6 +127,9 @@ Route::group(['middleware' => ['auth', 'message']], function () {
         Route::any('/csv', 'StudentController@csv')->name('student_csv');
         Route::post('/supporter', 'StudentController@supporter')->name('student_supporter');
         Route::get('/purchases/{id}', 'StudentController@purchases')->name('student_purchases');
+        Route::any('/class/{id}', 'StudentController@class')->name('student_class');
+        Route::get('/class/{student_id}/delete/{id}', 'StudentController@classDelete')->name('student_class_delete');
+        Route::post('/class/{student_id}/add', 'StudentController@classAdd')->name('student_class_add');
     });
 
     Route::group(['prefix' => '/marketer'], function () {
@@ -160,6 +164,7 @@ Route::group(['middleware' => ['auth', 'message']], function () {
 
     Route::group(['prefix' => '/messages'], function () {
         Route::get('/', 'MessageController@index')->name('messages');
+        Route::get('/outbox', 'MessageController@indexOutbox')->name('messages_outbox');
         Route::any('/create', 'MessageController@create')->name('message_create');
         Route::get('/user/{id}', 'MessageController@userIndex')->name('message_user');
         Route::any('/user_create/{id}', 'MessageController@userCreate')->name('message_user_create');
@@ -216,6 +221,7 @@ Route::group(['middleware' => ['auth', 'message']], function () {
         Route::post('/call', 'SupporterController@call')->name('supporter_student_call');
         Route::post('/seen', 'SupporterController@seen')->name('supporter_student_seen');
         Route::any('/calls/{id}', 'SupporterController@calls')->name('supporter_student_allcall');
+        Route::any('/delete_call/{user_id}/{id}', 'SupporterController@deleteCall')->name('supporter_student_deletecall');
         Route::any('/create', 'SupporterController@studentCreate')->name('supporter_student_create');
         Route::any('/purchases', 'SupporterController@purchases')->name('supporter_student_purchases');
     });
@@ -227,12 +233,54 @@ Route::group(['middleware' => ['auth', 'message']], function () {
         Route::get('/delete/{id}', 'CircularController@delete')->name('circular_delete');
     });
 
+    Route::group(['prefix' => '/reminders'], function () {
+        Route::any('/', 'ReminderController@index')->name('reminders');
+    });
+
+    Route::group(['prefix' => '/cities'], function () {
+        Route::get('/', 'CityController@index')->name('cities');
+        Route::any('/create', 'CityController@create')->name('city_create');
+        Route::any('/edit/{id}', 'CityController@edit')->name('city_edit');
+        Route::get('/delete/{id}', 'CityController@delete')->name('city_delete');
+    });
+
+    Route::group(['prefix' => '/provinces'], function () {
+        Route::get('/', 'ProvinceController@index')->name('provinces');
+        Route::any('/create', 'ProvinceController@create')->name('province_create');
+        Route::any('/edit/{id}', 'ProvinceController@edit')->name('province_edit');
+        Route::get('/delete/{id}', 'ProvinceController@delete')->name('province_delete');
+    });
+
     Route::group(['prefix' => '/helps'], function () {
         Route::get('/', 'HelpController@index')->name('helps');
         Route::get('/grid', 'HelpController@grid')->name('grid');
         Route::any('/create', 'HelpController@create')->name('help_create');
         Route::any('/edit/{id}', 'HelpController@edit')->name('help_edit');
         Route::get('/delete/{id}', 'HelpController@delete')->name('help_delete');
+    });
+
+    Route::group(['prefix' => '/class_rooms'], function () {
+        Route::get('/', 'ClassRoomController@index')->name('class_rooms');
+        Route::any('/create', 'ClassRoomController@create')->name('class_room_create');
+        Route::any('/edit/{id}', 'ClassRoomController@edit')->name('class_room_edit');
+        Route::get('/delete/{id}', 'ClassRoomController@delete')->name('class_room_delete');
+    });
+
+    Route::group(['prefix' => '/lessons'], function () {
+        Route::get('/', 'LessonController@index')->name('lessons');
+        Route::any('/create', 'LessonController@create')->name('lesson_create');
+        Route::any('/edit/{id}', 'LessonController@edit')->name('lesson_edit');
+        Route::get('/delete/{id}', 'LessonController@delete')->name('lesson_delete');
+    });
+
+    Route::group(['prefix' => '/exams'], function () {
+        Route::get('/', 'ExamController@index')->name('exams');
+        Route::any('/create', 'ExamController@create')->name('exam_create');
+        Route::any('/edit/{id}', 'ExamController@edit')->name('exam_edit');
+        Route::get('/delete/{id}', 'ExamController@delete')->name('exam_delete');
+        Route::any('/question/{exam_id}', 'ExamController@questions')->name('exam_questions');
+        Route::any('/question/{exam_id}/create', 'ExamController@questionCreate')->name('exam_question_create');
+        Route::get('/question/{exam_id}/delete/{id}', 'ExamController@questionDelete')->name('exam_question_delete');
     });
 });
 

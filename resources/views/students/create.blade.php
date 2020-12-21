@@ -217,6 +217,22 @@
                                 @endforeach
                             </select>
                         </div>
+
+                        <div class="form-group">
+                            <label for="cities_id">شهر</label>
+                            <select  id="cities_id" name="cities_id" class="form-control">
+                                <option value="0"></option>
+                                @foreach ($cities as $item)
+                                    @if (isset($student) && isset($student->cities_id) && $student->cities_id == $item->id)
+                                    <option value="{{ $item->id }}" selected>
+                                    @else
+                                    <option value="{{ $item->id }}" >
+                                    @endif
+                                    {{ $item->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
                     </div>
                     <div class="col">
                         <div class="form-group">
@@ -304,11 +320,40 @@
                                 @endforeach
                             </select>
                         </div>
+
+                        <div class="form-group">
+                            <label for="outside_consultants">مشاور بیرونی</label>
+                            @if (isset($student) && isset($student->outside_consultants))
+                            <input type="text" class="form-control" id="outside_consultants" name="outside_consultants" placeholder="مشاور بیرونی" value="{{ $student->outside_consultants }}" />
+                            @else
+                            <input type="text" class="form-control" id="outside_consultants" name="outside_consultants" placeholder="مشاور بیرونی"  />
+                            @endif
+                        </div>
+
+                        <div class="form-group">
+                            <label for="description">توضیحات</label>
+                            @if (isset($student) && isset($student->description))
+                            <input type="text" class="form-control" id="description" name="description" placeholder="توضیحات" value="{{ $student->description }}" />
+                            @else
+                            <input type="text" class="form-control" id="description" name="description" placeholder="توضیحات"  />
+                            @endif
+                        </div>
+
                         @if (isset($student) && isset($student->id))
                         <div class="form-group">
-                            <label for="supporters_id">لیست سیاه</label><br/>
+                            <label for="banned">لیست سیاه</label><br/>
                             <input type="checkbox" id="banned" name="banned"
                                 @if($student->banned)
+                                checked
+                                @endif
+                            />
+                        </div>
+                        @endif
+                        @if (isset($student) && isset($student->id))
+                        <div class="form-group">
+                            <label for="archived">آرشیو</label><br/>
+                            <input type="checkbox" id="archived" name="archived"
+                                @if($student->archived)
                                 checked
                                 @endif
                             />

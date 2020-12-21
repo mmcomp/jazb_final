@@ -7,6 +7,13 @@
         "other"=>"دیگر"
     ];
     $egucation_levels = [
+        "6" => "6",
+        "7" => "7",
+        "8" => "8",
+        "9" => "9",
+        "10" => "10",
+        "11" => "11",
+        "12" => "12",
         "13" => "فارغ التحصیل",
         "14" => "دانشجو",
         null => ""
@@ -109,50 +116,74 @@
                                 <input type="number" class="form-control" id="phone" name="phone" placeholder="تلفن"  value="{{ isset($phone)?$phone:'' }}" />
                             </div>
                         </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="cities_id">شهر</label>
+                                <select  id="cities_id" name="cities_id" class="form-control">
+                                    <option value="">همه</option>
+                                    @foreach ($cities as $item)
+                                        @if(isset($cities_id) && $cities_id==$item->id)
+                                        <option value="{{ $item->id }}" selected >
+                                        @else
+                                        <option value="{{ $item->id }}" >
+                                        @endif
+                                        {{ $item->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="egucation_level">مقطع</label>
+                                <select  id="egucation_level" name="egucation_level" class="form-control">
+                                    <option value="">همه</option>
+                                    @foreach ($egucation_levels as $key => $item)
+                                        @if($key!=null)
+                                        @if(isset($egucation_level) && $egucation_level==$key)
+                                        <option value="{{ $key }}" selected >
+                                        @else
+                                        <option value="{{ $key }}" >
+                                        @endif
+                                        {{ $item }}
+                                        </option>
+                                        @endif
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="major">رشته</label>
+                                <select  id="major" name="major" class="form-control">
+                                    <option value="">همه</option>
+                                    @foreach ($majors as $key => $item)
+                                        @if(isset($egucation_level) && $egucation_level==$key)
+                                        <option value="{{ $key }}" selected >
+                                        @else
+                                        <option value="{{ $key }}" >
+                                        @endif
+                                        {{ $item }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="school">مدرسه</label>
+                                <input type="text" class="form-control" id="school" name="school" placeholder="مدرسه"  value="{{ isset($school)?$school:'' }}" />
+                            </div>
+                        </div>
                         <div class="col" style="padding-top: 32px;">
-                            <button class="btn btn-success">
+                            <a class="btn btn-success" onclick="table.ajax.reload(); return false;" href="#">
                                 جستجو
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </form>
-                <!--
-                <h3 class="text-center">
-                    مرتب سازی
-                </h3>
-                <div class="row">
-                  <div class="col text-center p-1">
-                    <a class="btn btn-warning btn-block" href="#">سطح بندی</a>
-                  </div>
-                  <div class="col text-center p-1">
-                    <a class="btn btn-warning btn-block" href="#">پیشنهاد فروش</a>
-                  </div>
-                  <div class="col text-center p-1">
-                    <a class="btn btn-warning btn-block" href="#">محصول</a>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col text-center p-1">
-                    <a class="btn btn-warning btn-block" href="#">سایت</a>
-                  </div>
-                  <div class="col text-center p-1">
-                    <a class="btn btn-warning btn-block" href="#">تعداد پیشنهاد فروش</a>
-                  </div>
-                  <div class="col text-center p-1">
-                    <a class="btn btn-warning btn-block" href="#">یادآور</a>
-                  </div>
-                </div>
-                <div class="row">
-                    <div class="col text-center p-1">
-                      <a class="btn btn-warning btn-block" href="#">برچسب اخلاقی</a>
-                    </div>
-                    <div class="col text-center p-1">
-                      <a class="btn btn-warning btn-block" href="#">برچسب ارزیابی</a>
-                    </div>
-                    <div class="col text-center p-1">
-                    </div>
-                </div>
-                -->
 
                 <table id="example2" class="table table-bordered table-hover">
                   <thead>
@@ -171,93 +202,7 @@
                   </tr>
                   </thead>
                   <tbody>
-                      @foreach ($students as $index => $item)
-                      <tr id="tr-{{ $index }}">
-                        <td onclick="showMorePanel({{ $index }});">{{ $index + 1 }}</td>
-                        <td onclick="showMorePanel({{ $index }});">{{ $item->id }}</td>
-                        <td onclick="showMorePanel({{ $index }});">{{ $item->first_name }}</td>
-                        <td onclick="showMorePanel({{ $index }});">{{ $item->last_name }}</td>
-                        @if($item->user)
-                        <td onclick="showMorePanel({{ $index }});">{{ $item->user->first_name . ' ' . $item->user->last_name }}</td>
-                        @elseif($item->is_from_site)
-                        <td onclick="showMorePanel({{ $index }});">سایت</td>
-                        @elseif($item->saloon)
-                        <td onclick="showMorePanel({{ $index }});">{{ $item->saloon }}</td>
-                        @else
-                        <td onclick="showMorePanel({{ $index }});">-</td>
-                        @endif
-                        <td onclick="showMorePanel({{ $index }});">{{ ($item->source)?$item->source->name:'-' }}</td>
-                        @if(($item->studenttags && count($item->studenttags)>0) || ($item->studentcollections && count($item->studentcollections)>0))
-                        <td>
-                            @for($i = 0; $i < count($item->studenttags);$i++)
-                            <span class="alert alert-info p-1">
-                                {{ $item->studenttags[$i]->tag->name }}
-                            </span><br/>
-                            @endfor
-                            @for($i = 0; $i < count($item->studentcollections);$i++)
-                            <span class="alert alert-warning p-1">
-                                {{ ($item->studentcollections[$i]->collection->parent) ? $item->studentcollections[$i]->collection->parent->name . '->' : '' }} {{ $item->studentcollections[$i]->collection->name }}
-                            </span><br/>
-                            @endfor
-                        </td>
-                        @else
-                        <td></td>
-                        @endif
-                        @if($item->studenttemperatures && count($item->studenttemperatures)>0)
-                        <td>
-                            @foreach ($item->studenttemperatures as $sitem)
-                            @if($sitem->temperature->status=='hot')
-                            <span class="alert alert-danger p-1">
-                            @else
-                            <span class="alert alert-info p-1">
-                            @endif
-                                {{ $sitem->temperature->name }}
-                            </span>
-                            @endforeach
-                        </td>
-                        @else
-                        <td></td>
-                        @endif
-                        <td>
-                            <!-- {{ ($item->supporter)?$item->supporter->first_name . ' ' . $item->supporter->last_name:'-' }} -->
-                            <select id="supporters_id_{{ $index }}" class="form-control select2">
-                                <option>-</option>
-                                @foreach ($supports as $sitem)
-                                    @if ($sitem->id==$item->supporters_id)
-                                    <option value="{{ $sitem->id }}" selected>
-                                    @else
-                                    <option value="{{ $sitem->id }}">
-                                    @endif
-                                    {{ $sitem->first_name }} {{ $sitem->last_name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            <a class="btn btn-success btn-sm" href="#" onclick="return changeSupporter({{ $index }});">
-                                ذخیره
-                            </a>
-                            <br/>
-                            <img id="loading-{{ $index }}" src="/dist/img/loading.gif" style="height: 20px;display: none;" />
-                        </td>
-                        <td onclick="showMorePanel({{ $index }});">{{ $item->description }}</td>
-                        <td>
-                            <a class="btn btn-warning" href="#" onclick="$('#students_index2').val({{ $index }});preloadTemperatureModal();$('#temperature_modal').modal('show'); return false;">
-                                داغ/سرد
-                            </a>
-                        </td>
-                      </tr>
-                      @endforeach
                   </tbody>
-                  <!--
-                  <tfoot>
-                  <tr>
-                    <th>Rendering engine</th>
-                    <th>Browser</th>
-                    <th>Platform(s)</th>
-                    <th>Engine version</th>
-                    <th>CSS grade</th>
-                  </tr>
-                  </tfoot>
-                  -->
                 </table>
               </div>
               <!-- /.card-body -->
@@ -330,6 +275,43 @@
                     نیازسنجی
                 </h3>
                 <div>
+                    <select id="need-parent-one" onchange="selectNeedParentOne(this);">
+                        <option value="">همه</option>
+                        @foreach ($needTagParentOnes as $item)
+                        <option value="{{ $item->id }}">{{$item->name}}</option>
+                        @endforeach
+                    </select>
+
+                    <select id="need-parent-two" onchange="selectNeedParentTwo(this);">
+                        <option value="">همه</option>
+                        @foreach ($needTagParentTwos as $item)
+                        <option value="{{ $item->id }}">{{$item->name}}</option>
+                        @endforeach
+                    </select>
+
+                    <select id="need-parent-three" onchange="selectNeedParentThree(this);">
+                        <option value="">همه</option>
+                        @foreach ($needTagParentThrees as $item)
+                        <option value="{{ $item->id }}">{{$item->name}}</option>
+                        @endforeach
+                    </select>
+
+                    <select id="need-parent-four" onchange="selectNeedParentFour(this);">
+                        <option value="">همه</option>
+                        @foreach ($needTagParentFours as $item)
+                        <option value="{{ $item->id }}">{{$item->name}}</option>
+                        @endforeach
+                    </select>
+                </div>
+                @foreach ($needTags as $index => $item)
+                    <input type="checkbox" class="needtag-checkbox" id="needtag_{{ $item->id }}" value="{{ $item->id }}" />
+                    <span class="needtag-title" id="needtag-title-{{ $item->id }}">
+                    {{ $item->name }}
+                    </span>
+                    <br class="needtag-br" id="needtag-br-{{ $item->id }}"/>
+                @endforeach
+                <!--
+                <div>
                     <select id="collection-one" onchange="selectCollectionOne(this);">
                         <option value="">همه</option>
                         @foreach ($firstCollections as $item)
@@ -358,6 +340,7 @@
                     </span>
                     <br class="collection-br" id="collection-br-{{ $item->id }}"/>
                 @endforeach
+                -->
                 </div>
             </p>
         </div>
@@ -432,11 +415,13 @@
         parent1: '',
         parent2: '',
         parent3: '',
-        parent4: ''
+        parent4: '',
+        need_parent1: '',
+        need_parent2: '',
+        need_parent3: '',
+        need_parent4: ''
     }
-    function showMorePanel(index){
-        // $('.morepanel').hide();
-        // $('#morepanel-' + index).show();
+    function showMorePanel(index, tr){
         var editRoute = `{{ route('student_edit', ['call_back'=>'student_all', 'id'=>-1]) }}`;
         var purchaseRoute = `{{ route('student_purchases', -1) }}`;
         var test = `<table style="width: 100%">
@@ -525,7 +510,7 @@
             </tr>
         </table>`;
 
-        var tr = $("#tr-" + index)[0];
+        // var tr = $("#tr-" + index)[0];
         var row = table.row(tr);
         if ( row.child.isShown() ) {
             row.child.hide();
@@ -548,9 +533,11 @@
                 if(result.error!=null){
                     alert('خطای بروز رسانی');
                 }
+                table.ajax.reload();
             }).fail(function(){
                 $("#loading-" + studentsIndex).hide();
                 alert('خطای بروز رسانی');
+                table.ajax.reload();
             });
         }
         return false;
@@ -613,6 +600,64 @@
 
         });
     }
+    function selectNeedParentOne(dobj){
+        filterParents.need_parent1 = ($(dobj).val()!='')?parseInt($(dobj).val(), 10):'';
+        filterNeedTagsByParent()
+    }
+    function selectNeedParentTwo(dobj){
+        filterParents.need_parent2 = ($(dobj).val()!='')?parseInt($(dobj).val(), 10):'';
+        filterNeedTagsByParent()
+    }
+    function selectNeedParentThree(dobj){
+        filterParents.need_parent3 = ($(dobj).val()!='')?parseInt($(dobj).val(), 10):'';
+        filterNeedTagsByParent()
+    }
+    function selectNeedParentFour(dobj){
+        filterParents.need_parent4 = ($(dobj).val()!='')?parseInt($(dobj).val(), 10):'';
+        filterNeedTagsByParent()
+    }
+    function filterNeedTagsByParent(){
+        $("input.needtag-checkbox").show();
+        $("span.needtag-title").show();
+        $("br.needtag-br").show();
+        $("input.needtag-checkbox").each(function (id, field){
+            console.log('checking', field)
+            let tagId = parseInt($(field).val(), 10);
+            let theTag = collections[tagId];
+            console.log(tagId, theTag)
+            if(theTag){
+                if(filterParents.need_parent1!=''){
+                    if(filterParents.need_parent1!=theTag.need_parent1){
+                        $(field).hide();
+                        $("#needtag-title-" + tagId).hide();
+                        $("#needtag-br-" + tagId).hide();
+                    }
+                }
+                if(filterParents.need_parent2!=''){
+                    if(filterParents.need_parent2!=theTag.need_parent2){
+                        $(field).hide();
+                        $("#needtag-title-" + tagId).hide();
+                        $("#needtag-br-" + tagId).hide();
+                    }
+                }
+                if(filterParents.need_parent3!=''){
+                    if(filterParents.need_parent3!=theTag.need_parent3){
+                        $(field).hide();
+                        $("#needtag-title-" + tagId).hide();
+                        $("#needtag-br-" + tagId).hide();
+                    }
+                }
+                if(filterParents.need_parent4!=''){
+                    if(filterParents.need_parent4!=theTag.need_parent4){
+                        $(field).hide();
+                        $("#needtag-title-" + tagId).hide();
+                        $("#needtag-br-" + tagId).hide();
+                    }
+                }
+            }
+
+        });
+    }
     function selectCollectionOne(dobj){
         $("#collection-two").find('option').show();
         $("#collection-two").find('option[value=""]').prop('selected', true);
@@ -629,7 +674,7 @@
         $("#collection-three").find('option[value=""]').prop('selected', true);
         if($(dobj).val()!=''){
             $("#collection-three").find('option').each(function(id, field){
-                if($(field).data('parent_parent_id')!=$(dobj).val()){
+                if($(field).data('parent_parent_id')!=$(dobj).val() && $(field).val()!=''){
                     $(field).hide();
                 }else{
                     $(field).show();
@@ -673,10 +718,11 @@
         if(collectionParents==''){
             parents.push(parseInt($("#collection-one").val(), 10));
             $("#collection-two").find('option').each(function(id, field){
-                if($(field).css('display')!='none'){
+                if($(field).css('display')!='none' && !isNaN(parseInt($(field).val(), 10))){
                     parents.push(parseInt($(field).val(), 10));
                 }
             });
+            console.log('p1', parents);
             $("input.collection-checkbox").each(function (id, field){
                 let collectionId = parseInt($(field).val(), 10);
                 if(parents.indexOf(collectionId)<0){
@@ -689,6 +735,29 @@
         }else {
             parents.push(parseInt(collectionParents, 10))
         }
+
+
+        if($("#collection-three").val()==''){
+            parents.push(parseInt($("#collection-two").val(), 10));
+            $("#collection-three").find('option').each(function(id, field){
+                if($(field).css('display')!='none' && !isNaN(parseInt($(field).val(), 10))){
+                    parents.push(parseInt($(field).val(), 10));
+                }
+            });
+            console.log('p2', parents);
+            $("input.collection-checkbox").each(function (id, field){
+                let collectionId = parseInt($(field).val(), 10);
+                if(parents.indexOf(collectionId)<0){
+                    $(field).hide();
+                    $("#collection-title-" + collectionId).hide();
+                    $("#collection-br-" + collectionId).hide();
+                }
+            });
+            return false;
+        }else {
+            parents.push(parseInt($("#collection-three").val(), 10))
+        }
+
         console.log('parents:', parents);
 
         $("input.collection-checkbox").each(function (id, field){
@@ -723,6 +792,7 @@
                 console.log(students[studentsIndex].studenttags);
                 for(studenttag of students[studentsIndex].studenttags){
                     $("#tag_" + studenttag.tags_id).prop("checked", true);
+                    $("#needtag_" + studenttag.tags_id).prop("checked", true);
                 }
                 console.log(students[studentsIndex].studentcollections);
                 for(studentcollection of students[studentsIndex].studentcollections){
@@ -750,7 +820,7 @@
         $("input.tag-checkbox:checked").each(function (id , field){
             selectedTags.push(parseInt(field.value, 10));
         });
-        $("input.collection-checkbox:checked").each(function (id , field){
+        $("input.needtag-checkbox:checked").each(function (id , field){
             selectedColllections.push(parseInt(field.value, 10));
         });
         var studentsIndex = parseInt($("#students_index").val(), 10);
@@ -828,8 +898,67 @@
                 "emptyTable":     "داده ای برای نمایش وجود ندارد",
                 "info":           "نمایش _START_ تا _END_ از _TOTAL_ داده",
                 "infoEmpty":      "نمایش 0 تا 0 از 0 داده",
+                "proccessing": "در حال بروزرسانی"
+            },
+            serverSide: true,
+            processing: true,
+            ajax: {
+                "type": "POST",
+                "url": "{{ route($route) }}",
+                "dataType": "json",
+                "contentType": 'application/json; charset=utf-8',
+
+                "data": function (data) {
+                    // console.log(data);
+                    // Grab form values containing user options
+                    // var form = {};
+                    // $.each($("form").serializeArray(), function (i, field) {
+                    //     form[field.name] = field.value || "";
+                    // });
+                    // Add options used by Datatables
+                    // var info = { "start": 0, "length": 10, "draw": 1 };
+                    // $.extend(form, info);
+                    data['supporters_id'] = $("#supporters_id").val();
+                    data['sources_id'] = $("#sources_id").val();
+                    data['cities_id'] = $("#cities_id").val();
+                    data['egucation_level'] = $("#egucation_level").val();
+                    data['major'] = $("#major").val();
+                    data['school'] = $("#school").val();
+                    data['name'] = $("#name").val();
+                    data['phone'] = $("#phone").val();
+
+                    return JSON.stringify(data);
+                },
+                "complete": function(response) {
+                    console.log(response);
+                    $('#example2 tr').click(function() {
+                        var tr = this;
+                        var studentId = parseInt($(tr).find('td')[1].innerText, 10);
+                        if(!isNaN(studentId)){
+                            for(var index in students){
+                                // console.log('check', students[index].id, studentId);
+                                if(students[index].id==studentId){
+                                    // console.log(students[index]);
+                                    showMorePanel(index, tr);
+                                    // break;
+                                }
+                            }
+                        }
+                        console.log(this, $(this).find('td')[1].innerText);
+                    });
+                }
+
             }
+            // ajax: function ( data, callback, settings ){
+            //     $.post('{{ route('api_filter_students') }}', {}, function(result){
+            //         console.log('Result', result);
+            //         callback(result);
+            //     }).fail(function(){
+            //         alert('خطای بروز رسانی');
+            //     });
+            // }
         });
+
 
     });
   </script>

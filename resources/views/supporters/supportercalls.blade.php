@@ -1,4 +1,5 @@
 @php
+// dd($request);
 $persons = [
     "student"=>"دانش آموز",
     "father"=>"پدر",
@@ -66,6 +67,7 @@ $persons = [
                     <th>یادآور</th>
                     <th>پاسخگو بعد</th>
                     <th>توضیحات</th>
+                    <th>#</th>
                   </tr>
                   </thead>
                   <tbody>
@@ -81,6 +83,22 @@ $persons = [
                         <td>{{ ($item->next_call)?jdate($item->next_call)->format("Y/m/d"):'-' }}</td>
                         <td>{{ ($item->next_to_call)?$persons[$item->next_to_call]:'-' }}</td>
                         <td>{{ $item->description }}</td>
+                        <td>
+                            <form method="POST" action="{{ route('user_supporter_acall') }}">
+                                @csrf
+                                <input type="hidden" name="from_date" value="{{ ($request['from_date'])?$request['from_date']:'' }}">
+                                <input type="hidden" name="to_date" value="{{ ($request['to_date'])?$request['to_date']:'' }}">
+                                <input type="hidden" name="products_id" value="{{ ($request['products_id'])?$request['products_id']:'' }}">
+                                <input type="hidden" name="notices_id" value="{{ ($request['notices_id'])?$request['notices_id']:'' }}">
+                                <input type="hidden" name="replier_id" value="{{ ($request['replier_id'])?$request['replier_id']:'' }}">
+                                <input type="hidden" name="sources_id" value="{{ ($request['sources_id'])?$request['sources_id']:'' }}">
+                                <input type="hidden" name="call_id" value="{{ $item->id }}">
+                                <input type="hidden" name="id" value="{{ $item->users_id }}">
+                                <button class="btn btn-danger">
+                                    حذف
+                                </button>
+                            </form>
+                        </td>
                       </tr>
                       @endforeach
                   </tbody>
