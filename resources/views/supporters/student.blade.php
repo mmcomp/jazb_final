@@ -600,7 +600,7 @@ $egucation_levels = [
                     <div class="form-group">
                         <label for="replier">پاسخگو</label>
                         <select class="form-control" id="replier" name="replier">
-                            <option value="student">داشن آموز</option>
+                            <option value="student">دانش آموز</option>
                             <option value="father">پدر</option>
                             <option value="mother">مادر</option>
                             <option value="other">غیره</option>
@@ -627,7 +627,7 @@ $egucation_levels = [
                     <div class="form-group">
                         <label for="next_to_call">تماس بعد</label>
                         <select class="form-control" id="next_to_call" name="next_to_call">
-                            <option value="student">داشن آموز</option>
+                            <option value="student">دانش آموز</option>
                             <option value="father">پدر</option>
                             <option value="mother">مادر</option>
                             <option value="other">غیره</option>
