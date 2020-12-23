@@ -32,6 +32,7 @@ use App\Purchase;
 use App\StudentTag;
 use App\City;
 use Exception;
+use Log;
 
 class SupporterController extends Controller
 {
@@ -460,7 +461,7 @@ class SupporterController extends Controller
                     $students[$index]->calls[$cindex]->next_call = ($students[$index]->calls[$cindex]->next_call) ? jdate(strtotime($students[$index]->calls[$cindex]->next_call))->format("Y/m/d"):null;
                 }
         }
-
+        // dd($students);
         if(request()->getMethod()=='GET'){
             // dd($has_the_product);
             return view('supporters.student',[
@@ -737,7 +738,8 @@ class SupporterController extends Controller
     }
 
     public function purchases(){
-        $students = Student::where('is_deleted', false)->where('banned', false)->where('supporter_seen', false)->where('supporters_id', Auth::user()->id);
+        $students = Student::where('is_deleted', false)->where('banned', false)->where('archived', false)->where('supporters_id', Auth::user()->id);
+        // $students = Student::where('is_deleted', false)->where('banned', false)/*->where('supporter_seen', false)*/->where('supporters_id', Auth::user()->id);
         $sources = Source::where('is_deleted', false)->get();
         $name = null;
         $sources_id = null;
@@ -764,6 +766,7 @@ class SupporterController extends Controller
             ->with('user')
             ->with('studenttags.tag')
             ->with('studentcollections.collection')
+            ->with('studenttags.tag.parent_four')
             ->with('studenttemperatures.temperature')
             ->with('source')
             ->with('consultant')
