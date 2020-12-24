@@ -24,7 +24,11 @@ $persons = [
         <div class="container-fluid">
           <div class="row mb-2">
             <div class="col-sm-6">
+              @if($isSingle)
+              <h1>تماس ها</h1>
+              @else
               <h1>تماس پشتیبان ها</h1>
+              @endif
             </div>
             <div class="col-sm-6">
               <!--
@@ -93,6 +97,7 @@ $persons = [
                         </select>
                     </div>
                 </div>
+                @if(!$isSingle)
                 <div class="col-3">
                     <div class="form-group">
                         <label for="supporters_id">پشتیبان</label>
@@ -112,6 +117,7 @@ $persons = [
                         </select>
                     </div>
                 </div>
+                @endif
                 <div class="col-3">
                     <div class="form-group">
                         <label for="replier_id">پاسخ دهنده</label>
@@ -171,9 +177,11 @@ $persons = [
                   <thead>
                   <tr>
                     <th>ردیف</th>
+                    @if(!$isSingle)
                     <th>کد</th>
                     <th>نام</th>
                     <th>نام خانوادگی</th>
+                    @endif
                     <th>تماس</th>
                     @foreach ($callResults as $item)
                         <th>
@@ -190,9 +198,11 @@ $persons = [
                       @endphp
                       <tr>
                         <td>{{ $index + 1 }}</td>
+                        @if(!$isSingle)
                         <td>{{ $item->id }}</td>
                         <td>{{ $item->first_name }}</td>
                         <td>{{ $item->last_name }}</td>
+                        @endif
                         <td>
                             <form method="POST" action="{{ route('user_supporter_acall') }}" >
                                 @csrf
