@@ -755,6 +755,7 @@ class SupporterController extends Controller
         $sources = Source::where('is_deleted', false)->get();
         $name = null;
         $sources_id = null;
+        $products_id = null;
         $phone = null;
         if(request()->getMethod()=='POST'){
             // dump(request()->all());
@@ -771,6 +772,9 @@ class SupporterController extends Controller
             if(request()->input('phone')!=null){
                 $phone = (int)request()->input('phone');
                 $students = $students->where('phone', $phone);
+            }
+            if(request()->input('products_id')!=null){
+                $products_id = (int)request()->input('products_id');
             }
         }
         // DB::enableQueryLog();
@@ -807,12 +811,25 @@ class SupporterController extends Controller
         $needTagParentTwos = NeedTagParentTwo::where('is_deleted', false)->has('tags')->get();
         $needTagParentThrees = NeedTagParentThree::where('is_deleted', false)->has('tags')->get();
         $needTagParentFours = NeedTagParentFour::where('is_deleted', false)->has('tags')->get();
+        $products = Product::where('is_deleted' , false)->get();
 
         $finalStudents = [];
-        foreach($students as $student) {
-            $student->ownPurchases = $student->purchases()->where('supporters_id', Auth::user()->id)->get();
-            $student->otherPurchases = $student->purchases()->where('supporters_id', '!=', Auth::user()->id)->get();
-            $student->todayPurchases = $student->purchases()->where('created_at', '>=', date("Y-m-d 00:00:00"))->get();
+        foreach($students as $student) {            
+            $student->ownPurchases = $student->purchases()->where('supporters_id', Auth::user()->id);
+            if($products_id!=null){
+                $student->ownPurchases = $student->ownPurchases->where('products_id', $products_id);
+            }
+            $student->ownPurchases = $student->ownPurchases->get();
+            $student->otherPurchases = $student->purchases()->where('supporters_id', '!=', Auth::user()->id);
+            if($products_id!=null){
+                $student->otherPurchases = $student->otherPurchases->where('products_id', $products_id);
+            }
+            $student->otherPurchases = $student->otherPurchases->get();
+            $student->todayPurchases = $student->purchases()->where('created_at', '>=', date("Y-m-d 00:00:00"));
+            if($products_id!=null){
+                $student->todayPurchases = $student->todayPurchases->where('products_id', $products_id);
+            }
+            $student->todayPurchases = $student->todayPurchases->get();
             $student->pcreated_at = jdate(strtotime($student->created_at))->format("Y/m/d");
             $finalStudents[] = $student;
         }
@@ -839,6 +856,7 @@ class SupporterController extends Controller
                 "needTagParentTwos"=>$needTagParentTwos,
                 "needTagParentThrees"=>$needTagParentThrees,
                 "needTagParentFours"=>$needTagParentFours,
+                "products"=>$products,
                 'msg_success' => request()->session()->get('msg_success'),
                 'msg_error' => request()->session()->get('msg_error')
             ]);
@@ -878,26 +896,6 @@ class SupporterController extends Controller
 
             return $result;
         }
-        // return view('supporters.purchase',[
-        //     'students' => $finalStudents,
-        //     'sources' => $sources,
-        //     'name' => $name,
-        //     'sources_id' => $sources_id,
-        //     'phone' => $phone,
-        //     'moralTags'=>$moralTags,
-        //     'needTags'=>$collections,
-        //     'hotTemperatures'=>$hotTemperatures,
-        //     'coldTemperatures'=>$coldTemperatures,
-        //     "parentOnes"=>$parentOnes,
-        //     "parentTwos"=>$parentTwos,
-        //     "parentThrees"=>$parentThrees,
-        //     "parentFours"=>$parentFours,
-        //     "firstCollections"=>$firstCollections,
-        //     "secondCollections"=>$secondCollections,
-        //     "thirdCollections"=>$thirdCollections,
-        //     'msg_success' => request()->session()->get('msg_success'),
-        //     'msg_error' => request()->session()->get('msg_error')
-        // ]);
     }
 
     public function deleteCall($users_id, $id)

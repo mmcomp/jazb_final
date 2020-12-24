@@ -94,10 +94,27 @@
                                 <input type="number" class="form-control" id="phone" name="phone" placeholder="تلفن"  value="{{ isset($phone)?$phone:'' }}" />
                             </div>
                         </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="products_id">محصول</label>
+                                <select  id="products_id" name="products_id" class="form-control">
+                                    <option value="">همه</option>
+                                    @foreach ($products as $item)
+                                        @if(isset($products_id) && $products_id==$item->id)
+                                        <option value="{{ $item->id }}" selected >
+                                        @else
+                                        <option value="{{ $item->id }}" >
+                                        @endif
+                                        {{ $item->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
                         <div class="col" style="padding-top: 32px;">
-                            <button class="btn btn-success">
+                            <a class="btn btn-success" onclick="table.ajax.reload(); return false;" href="#">
                                 جستجو
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </form>
@@ -1058,7 +1075,8 @@
                 "data": function (data) {
                     data['sources_id'] = $("#sources_id").val();
                     data['name'] = $("#name").val();
-                    data['phone'] = $("#phone").val();;
+                    data['phone'] = $("#phone").val();
+                    data['products_id'] = $("#products_id").val();
                     return JSON.stringify(data);
                 },
                 "complete": function(response) {
