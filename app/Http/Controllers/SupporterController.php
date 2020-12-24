@@ -775,6 +775,8 @@ class SupporterController extends Controller
             }
             if(request()->input('products_id')!=null){
                 $products_id = (int)request()->input('products_id');
+                $studentIds = Purchase::where('products_id', $products_id)->where('is_deleted', false)->where('type', '!=', 'site_failed')->where('supporters_id', Auth::user()->id)->pluck('students_id');
+                $students = $students->whereIn('id', $studentIds);
             }
         }
         // DB::enableQueryLog();
