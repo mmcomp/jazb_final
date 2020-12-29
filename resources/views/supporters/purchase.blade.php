@@ -134,7 +134,8 @@
                         <div class="col">
                             <div class="form-group">
                                 <label for="from_date">از تاریخ</label>
-                                <input type="text" class="form-control pdate" id="from_date" name="from_date" placeholder="از تاریخ"  value="{{ isset($from_date)?$from_date:'' }}" autocomplete="false" />
+                                <input type="text" class="form-control pdate" id="from_date_persian" placeholder="از تاریخ"  value="{{ isset($from_date)?$from_date:'' }}" readonly />
+                                <input type="hidden" id="from_date" name="from_date" />
                             </div>
                         </div>
                         <div class="col">
@@ -1052,6 +1053,10 @@
         }
     }
     $(function () {
+        $('#from_date_persian').MdPersianDateTimePicker({
+            targetTextSelector: '#from_date_persian',
+            targetDateSelector: '#from_date',
+        });
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

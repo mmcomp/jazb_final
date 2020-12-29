@@ -569,6 +569,7 @@
                                     <p>ثبت خرید های حضوری</p>
                                 </a>
                         </li>
+                        <!--
                         <li class="nav-item">
                             @if(strpos(\Request::route()->getName(), 'supporter_student_purchases')===0)
                             <a href="{{ route('supporter_student_purchases') }}" class="nav-link active">
@@ -578,6 +579,7 @@
                                     <p>گزارش خرید ها</p>
                                 </a>
                         </li>
+                        -->
                         @endif
                         @if(Gate::allows('parameters'))
                         <li class="nav-item">
