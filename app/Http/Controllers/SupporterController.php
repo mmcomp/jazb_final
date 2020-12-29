@@ -473,7 +473,7 @@ class SupporterController extends Controller
                     $students[$index]->calls[$cindex]->next_call = ($students[$index]->calls[$cindex]->next_call) ? jdate(strtotime($students[$index]->calls[$cindex]->next_call))->format("Y/m/d"):null;
                 }
         }
-        // dd($students);
+        // dd($callResults);
         if(request()->getMethod()=='GET'){
             // dd($has_the_product);
             return view('supporters.student',[

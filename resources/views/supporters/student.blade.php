@@ -593,7 +593,7 @@ $egucation_levels = [
                             <option value="rejected">رد شده</option>
                             -->
                             @foreach ($callResults as $item)
-                            <option value="{{ $item->id }}">{{ $item->title }}</option>
+                            <option value="{{ $item->id }}" data-nocall="{{ $item->no_call }}" data-noanswer="{{ $item->no_answer }}">{{ $item->title }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -1302,6 +1302,11 @@ $egucation_levels = [
     }
 
     function saveCall() {
+        const canSaveWithNoAlert = ($("#call_results_id option:selected").data('nocall') + $("#call_results_id option:selected").data('noanswer')) > 0;
+        if(!$("#next_call").val() && !canSaveWithNoAlert) {
+            alert('ثبت بدون یادآور ممنوع می باشد');
+            return;
+        }
         $.post('{{ route('supporter_student_call') }}', {
                 students_id,
                 description: $("#description").val(),
