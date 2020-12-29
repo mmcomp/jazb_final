@@ -134,14 +134,15 @@
                         <div class="col">
                             <div class="form-group">
                                 <label for="from_date">از تاریخ</label>
-                                <input type="text" class="form-control pdate" id="from_date_persian" placeholder="از تاریخ"  value="{{ isset($from_date)?$from_date:'' }}" readonly />
+                                <input type="text" class="form-control" id="from_date_persian" placeholder="از تاریخ"  value="{{ isset($from_date)?$from_date:'' }}" readonly />
                                 <input type="hidden" id="from_date" name="from_date" />
                             </div>
                         </div>
                         <div class="col">
                             <div class="form-group">
                                 <label for="to_date">تا تاریخ</label>
-                                <input type="text" class="form-control pdate" id="to_date" name="to_date" placeholder="تا تاریخ"  value="{{ isset($to_date)?$to_date:'' }}" autocomplete="false" />
+                                <input type="text" class="form-control" id="to_date_persian" placeholder="تا تاریخ"  value="{{ isset($to_date)?$to_date:'' }}" readonly />
+                                <input type="hidden" id="to_date" name="to_date" />
                             </div>
                         </div>
                         @endif
@@ -1057,6 +1058,10 @@
             targetTextSelector: '#from_date_persian',
             targetDateSelector: '#from_date',
         });
+        $('#to_date_persian').MdPersianDateTimePicker({
+            targetTextSelector: '#to_date_persian',
+            targetDateSelector: '#to_date',
+        });
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -1120,6 +1125,7 @@
                     data['from_date'] = $("#from_date").val();
                     data['to_date'] = $("#to_date").val();
                     @endif
+                    console.log(data);
                     return JSON.stringify(data);
                 },
                 "complete": function(response) {
