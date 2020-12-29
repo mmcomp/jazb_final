@@ -1307,6 +1307,10 @@ $egucation_levels = [
             alert('ثبت بدون یادآور ممنوع می باشد');
             return;
         }
+        if(canSaveWithNoAlert && $("#next_call").val()!='') {
+            alert('ثبت بدون یادآور باید می باشد');
+            return;
+        }
         $.post('{{ route('supporter_student_call') }}', {
                 students_id,
                 description: $("#description").val(),

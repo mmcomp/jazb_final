@@ -750,13 +750,25 @@ class SupporterController extends Controller
     }
 
     public function purchases(){
-        $students = Student::where('is_deleted', false)->where('banned', false)->where('archived', false)->where('supporters_id', Auth::user()->id);
+        $supports = [];
+        if(Gate::allows('purchases')){
+            $students = Student::where('is_deleted', false)->where('banned', false)->where('archived', false);
+            $supportGroupId = Group::getSupport();
+            if($supportGroupId)
+                $supportGroupId = $supportGroupId->id;
+            $supports = User::where('is_deleted', false)->where('groups_id', $supportGroupId)->get();
+        }else {
+            $students = Student::where('is_deleted', false)->where('banned', false)->where('archived', false)->where('supporters_id', Auth::user()->id);
+        }
         // $students = Student::where('is_deleted', false)->where('banned', false)/*->where('supporter_seen', false)*/->where('supporters_id', Auth::user()->id);
         $sources = Source::where('is_deleted', false)->get();
         $name = null;
         $sources_id = null;
         $products_id = null;
         $phone = null;
+        $supporters_id = null;
+        $from_date = null;
+        $to_date = null;
         if(request()->getMethod()=='POST'){
             // dump(request()->all());
             if(request()->input('name')!=null){
@@ -777,6 +789,22 @@ class SupporterController extends Controller
                 $products_id = (int)request()->input('products_id');
                 $studentIds = Purchase::where('products_id', $products_id)->where('is_deleted', false)->where('type', '!=', 'site_failed')->where('supporters_id', Auth::user()->id)->pluck('students_id');
                 $students = $students->whereIn('id', $studentIds);
+            }
+            if(Gate::allows('purchases')) {
+                if(request()->input('supporters_id')!=null){
+                    $supporters_id = (int)request()->input('supporters_id');
+                    $students = $students->where('supporters_id', $supporters_id);
+                }
+                if(request()->input('from_date')!=null){
+                    $from_date = request()->input('from_date');
+                    $studentIds = Purchase::where('created_at' ,'>=', $from_date)->where('is_deleted', false)->where('type', '!=', 'site_failed')->pluck('students_id');
+                    $students = $students->whereIn('id', $studentIds);
+                }
+                if(request()->input('to_date')!=null){
+                    $to_date = request()->input('to_date');
+                    $studentIds = Purchase::where('created_at' ,'<=', $to_date)->where('is_deleted', false)->where('type', '!=', 'site_failed')->pluck('students_id');
+                    $students = $students->whereIn('id', $studentIds);
+                }
             }
         }
         // DB::enableQueryLog();
@@ -817,12 +845,12 @@ class SupporterController extends Controller
 
         $finalStudents = [];
         foreach($students as $student) {            
-            $student->ownPurchases = $student->purchases()->where('supporters_id', Auth::user()->id);
+            $student->ownPurchases = $student->purchases()->where('supporters_id', $student->supporters_id);
             if($products_id!=null){
                 $student->ownPurchases = $student->ownPurchases->where('products_id', $products_id);
             }
             $student->ownPurchases = $student->ownPurchases->get();
-            $student->otherPurchases = $student->purchases()->where('supporters_id', '!=', Auth::user()->id);
+            $student->otherPurchases = $student->purchases()->where('supporters_id', '!=', $student->supporters_id);
             if($products_id!=null){
                 $student->otherPurchases = $student->otherPurchases->where('products_id', $products_id);
             }
@@ -858,6 +886,7 @@ class SupporterController extends Controller
                 "needTagParentTwos"=>$needTagParentTwos,
                 "needTagParentThrees"=>$needTagParentThrees,
                 "needTagParentFours"=>$needTagParentFours,
+                "supports"=>$supports,
                 "products"=>$products,
                 'msg_success' => request()->session()->get('msg_success'),
                 'msg_error' => request()->session()->get('msg_error')

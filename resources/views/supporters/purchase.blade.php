@@ -97,20 +97,53 @@
                         <div class="col">
                             <div class="form-group">
                                 <label for="products_id">محصول</label>
-                                <select  id="products_id" name="products_id" class="form-control">
+                                <select  id="products_id" name="products_id" class="form-control select2">
                                     <option value="">همه</option>
                                     @foreach ($products as $item)
                                         @if(isset($products_id) && $products_id==$item->id)
                                         <option value="{{ $item->id }}" selected >
                                         @else
                                         <option value="{{ $item->id }}" >
-                                        @endif
                                         {{ $item->name }}
+                                        @endif
                                         </option>
                                     @endforeach
                                 </select>
                             </div>
                         </div>
+                        @if(Gate::allows('purchases'))
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="supporters_id">پشتیبان</label>
+                                <select  id="supporters_id" name="supporters_id" class="form-control select2">
+                                    <option value="">همه</option>
+                                    @foreach ($supports as $item)
+                                        @if(isset($supporters_id) && $supporters_id==$item->id)
+                                        <option value="{{ $item->id }}" selected >
+                                        @else
+                                        <option value="{{ $item->id }}" >
+                                        @endif
+                                        {{ $item->first_name }} {{ $item->last_name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="from_date">از تاریخ</label>
+                                <input type="text" class="form-control pdate" id="from_date" name="from_date" placeholder="از تاریخ"  value="{{ isset($from_date)?$from_date:'' }}" autocomplete="false" />
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="to_date">تا تاریخ</label>
+                                <input type="text" class="form-control pdate" id="to_date" name="to_date" placeholder="تا تاریخ"  value="{{ isset($to_date)?$to_date:'' }}" autocomplete="false" />
+                            </div>
+                        </div>
+                        @endif
                         <div class="col" style="padding-top: 32px;">
                             <a class="btn btn-success" onclick="table.ajax.reload(); return false;" href="#">
                                 جستجو
@@ -1077,6 +1110,11 @@
                     data['name'] = $("#name").val();
                     data['phone'] = $("#phone").val();
                     data['products_id'] = $("#products_id").val();
+                    @if(Gate::allows('purchases'))
+                    data['supporters_id'] = $("#supporters_id").val();
+                    data['from_date'] = $("#from_date").val();
+                    data['to_date'] = $("#to_date").val();
+                    @endif
                     return JSON.stringify(data);
                 },
                 "complete": function(response) {
