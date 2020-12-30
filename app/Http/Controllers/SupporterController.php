@@ -808,17 +808,7 @@ class SupporterController extends Controller
             }
         }
         // DB::enableQueryLog();
-        $students = $students
-            ->with('user')
-            ->with('studenttags.tag')
-            ->with('studentcollections.collection')
-            ->with('studenttags.tag.parent_four')
-            ->with('studenttemperatures.temperature')
-            ->with('source')
-            ->with('consultant')
-            ->with('supporter')
-            ->orderBy('created_at', 'desc')
-            ->get();
+
         // dd(DB::getQueryLog());
         $moralTags = Tag::where('is_deleted', false)
             // ->with('parent_one')
@@ -844,25 +834,7 @@ class SupporterController extends Controller
         $products = Product::where('is_deleted' , false)->get();
 
         $finalStudents = [];
-        foreach($students as $student) {            
-            $student->ownPurchases = $student->purchases()->where('supporters_id', $student->supporters_id);
-            if($products_id!=null){
-                $student->ownPurchases = $student->ownPurchases->where('products_id', $products_id);
-            }
-            $student->ownPurchases = $student->ownPurchases->get();
-            $student->otherPurchases = $student->purchases()->where('supporters_id', '!=', $student->supporters_id);
-            if($products_id!=null){
-                $student->otherPurchases = $student->otherPurchases->where('products_id', $products_id);
-            }
-            $student->otherPurchases = $student->otherPurchases->get();
-            $student->todayPurchases = $student->purchases()->where('created_at', '>=', date("Y-m-d 00:00:00"));
-            if($products_id!=null){
-                $student->todayPurchases = $student->todayPurchases->where('products_id', $products_id);
-            }
-            $student->todayPurchases = $student->todayPurchases->get();
-            $student->pcreated_at = jdate(strtotime($student->created_at))->format("Y/m/d");
-            $finalStudents[] = $student;
-        }
+
 
         if(request()->getMethod()=='GET'){
             return view('supporters.purchase',[
@@ -892,6 +864,38 @@ class SupporterController extends Controller
                 'msg_error' => request()->session()->get('msg_error')
             ]);
         }else {
+
+            $students = $students
+                ->with('user')
+                ->with('studenttags.tag')
+                ->with('studentcollections.collection')
+                ->with('studenttags.tag.parent_four')
+                ->with('studenttemperatures.temperature')
+                ->with('source')
+                ->with('consultant')
+                ->with('supporter')
+                ->orderBy('created_at', 'desc')
+                ->get();
+            foreach($students as $student) {            
+                $student->ownPurchases = $student->purchases()->where('supporters_id', $student->supporters_id);
+                if($products_id!=null){
+                    $student->ownPurchases = $student->ownPurchases->where('products_id', $products_id);
+                }
+                $student->ownPurchases = $student->ownPurchases->get();
+                $student->otherPurchases = $student->purchases()->where('supporters_id', '!=', $student->supporters_id);
+                if($products_id!=null){
+                    $student->otherPurchases = $student->otherPurchases->where('products_id', $products_id);
+                }
+                $student->otherPurchases = $student->otherPurchases->get();
+                $student->todayPurchases = $student->purchases()->where('created_at', '>=', date("Y-m-d 00:00:00"));
+                if($products_id!=null){
+                    $student->todayPurchases = $student->todayPurchases->where('products_id', $products_id);
+                }
+                $student->todayPurchases = $student->todayPurchases->get();
+                $student->pcreated_at = jdate(strtotime($student->created_at))->format("Y/m/d");
+                $finalStudents[] = $student;
+            }
+            
             $req =  request()->all();
             // dd($req);
             if(!isset($req['start'])){
