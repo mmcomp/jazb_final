@@ -635,6 +635,7 @@ $egucation_levels = [
                     </div>
                     <div class="form-group">
                         <label for="description">زمان تماس بعد</label>
+                        <a class="btn btn-link" onclick="$('#next_call_persian').val('');$('#next_call').val('');return false;" href="#">خالی کردن</a>
                         <input type="text" class="form-control" id="next_call_persian"placeholder="زمان تماس بعد" readonly />
                         <input type="hidden" id="next_call" name="next_call" />
                     </div>
@@ -1308,7 +1309,7 @@ $egucation_levels = [
             return;
         }
         if(canSaveWithNoAlert && $("#next_call").val()!='') {
-            alert('ثبت بدون یادآور باید می باشد');
+            alert('ثبت بدون یادآور باید باشد');
             return;
         }
         $.post('{{ route('supporter_student_call') }}', {

@@ -339,11 +339,11 @@ class SupporterController extends Controller
         // $callResults = CallResult::where('is_deleted', false)->get();
         foreach($products as $index => $product){
             $products[$index]->parents = "-";
-            if($product->collection) {
-                $parents = $product->collection->parents();
-                $name = ($parents!='')?$parents . "->" . $product->collection->name : $product->collection->name;
-                $products[$index]->parents = $name;
-            }
+            // if($product->collection) {
+            //     $parents = $product->collection->parents();
+            //     $name = ($parents!='')?$parents . "->" . $product->collection->name : $product->collection->name;
+            //     $products[$index]->parents  = $name;
+            // }
         }
         $callResults = CallResult::where('is_deleted', false)->get();
         $notices = Notice::where('is_deleted', false)->get();
