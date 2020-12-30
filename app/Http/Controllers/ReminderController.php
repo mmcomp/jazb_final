@@ -11,17 +11,18 @@ use Exception;
 class ReminderController extends Controller
 {
     public function index(){
-        $calls = Call::where('next_call', '!=', null)->where('users_id', Auth::user()->id)->with('student')->with('product')->orderBy('next_call', 'desc')->get();
-        // foreach($calls as $index=>$call) {
-        //     $calls[$index]->product->parents = "-";
-        //     if($call->product->collection) {
-        //         $parents = $call->product->collection->parents();
-        //         $name = ($parents!='')?$parents . "->" . $call->product->collection->name : $call->product->collection->name;
-        //         $calls[$index]->product->parents = $name;
-        //     }
-        // }
+        $calls = Call::where('next_call', '!=', null)->where('users_id', Auth::user()->id);
+        $today = false;
+        if(request()->getMethod()=='POST') {
+            if(request()->input('today') && request()->input('today')=='true') {
+                $today = true;
+                $calls = $calls->where('next_call', '>=', date("Y-m-d 00:00:00"))->where('next_call', '<=', date("Y-m-d 23:59:59"));
+            }
+        }
+        $calls = $calls->with('student')->with('product')->orderBy('next_call', 'desc')->get();
         return view('reminders.index',[
             'calls' => $calls,
+            'today' => $today,
             'msg_success' => request()->session()->get('msg_success'),
             'msg_error' => request()->session()->get('msg_error')
         ]);

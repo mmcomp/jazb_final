@@ -24,12 +24,9 @@ $persons = [
             <div class="col-sm-6">
             </div>
             <div class="col-sm-6">
-              <!--
-              <ol class="breadcrumb float-sm-right">
-                <li class="breadcrumb-item"><a href="#">Home</a></li>
-                <li class="breadcrumb-item active">DataTables</li>
-              </ol>
-              -->
+              <h1>
+                یادآورها@if($today)ی امروز@endif
+              </h1>
             </div>
           </div>
         </div><!-- /.container-fluid -->
@@ -42,7 +39,16 @@ $persons = [
             <div class="card">
               <div class="card-header">
                 <h3 class="card-title">
-
+                  <form id="frm-today" method="post">
+                    @csrf
+                    <input type="hidden" id="today" name="today" value="true" />
+                    <a onclick="$('#today').val('true');$('#frm-today').submit();return false;" class="btn btn-success">
+                      امروز
+                    </a>
+                    <a onclick="$('#today').val('');$('#frm-today').submit();return false;" class="btn btn-warning">
+                      همه
+                    </a>
+                  </form>
                 </h3>
               </div>
               <!-- /.card-header -->
