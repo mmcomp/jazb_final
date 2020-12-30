@@ -26,4 +26,16 @@ class ReminderController extends Controller
             'msg_error' => request()->session()->get('msg_error')
         ]);
     }
+
+    public function delete($id)
+    {
+        $call = Call::find($id);
+        if($call==null) {
+            request()->session()->flash("msg_error", "تماس مورد نظر پیدا نشد!");
+            return redirect()->route('reminders');
+        }
+        $call->delete();
+        request()->session()->flash("msg_success", "تماس با موفقیت حذف شد.");
+        return redirect()->route('reminders');
+    }
 }

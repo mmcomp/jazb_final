@@ -236,6 +236,7 @@ Route::group(['middleware' => ['auth', 'message']], function () {
 
     Route::group(['prefix' => '/reminders'], function () {
         Route::any('/', 'ReminderController@index')->name('reminders');
+        Route::get('/delete/{id}', 'ReminderController@delete')->name('reminder_delete');
     });
 
     Route::group(['prefix' => '/cities'], function () {
