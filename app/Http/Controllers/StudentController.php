@@ -162,16 +162,7 @@ class StudentController extends Controller
             }
         }
         // DB::enableQueryLog();
-        $students = $students
-            ->with('user')
-            ->with('studenttags.tag.parent_four')
-            ->with('studentcollections.collection.parent')
-            ->with('studenttemperatures.temperature')
-            ->with('source')
-            ->with('consultant')
-            ->with('supporter')
-            ->orderBy('created_at', 'desc')
-            ->get();
+
         // dd(DB::getQueryLog());
         $moralTags = Tag::where('is_deleted', false)
             // ->with('parent_one')
@@ -205,9 +196,7 @@ class StudentController extends Controller
         $coldTemperatures = Temperature::where('is_deleted', false)->where('status', 'cold')->get();
         $cities = City::where('is_deleted', false)->get();
 
-        foreach($students as $index => $student) {
-            $students[$index]->pcreated_at = jdate(strtotime($student->created_at))->format("Y/m/d");
-        }
+
 
         // dd($students);
         if(request()->getMethod()=='GET'){
@@ -244,6 +233,19 @@ class StudentController extends Controller
                 'msg_error' => request()->session()->get('msg_error')
             ]);
         }else {
+            $students = $students
+                ->with('user')
+                ->with('studenttags.tag.parent_four')
+                ->with('studentcollections.collection.parent')
+                ->with('studenttemperatures.temperature')
+                ->with('source')
+                ->with('consultant')
+                ->with('supporter')
+                ->orderBy('created_at', 'desc')
+                ->get();
+            foreach($students as $index => $student) {
+                $students[$index]->pcreated_at = jdate(strtotime($student->created_at))->format("Y/m/d");
+            }
             $req =  request()->all();
             // dd($req);
             if(!isset($req['start'])){
