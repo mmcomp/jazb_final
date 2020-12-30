@@ -787,7 +787,7 @@ class SupporterController extends Controller
             }
             if(request()->input('products_id')!=null){
                 $products_id = (int)request()->input('products_id');
-                $studentIds = Purchase::where('products_id', $products_id)->where('is_deleted', false)->where('type', '!=', 'site_failed')->where('supporters_id', Auth::user()->id)->pluck('students_id');
+                $studentIds = Purchase::where('products_id', $products_id)->where('is_deleted', false)->where('type', '!=', 'site_failed')->pluck('students_id');
                 $students = $students->whereIn('id', $studentIds);
             }
             if(Gate::allows('purchases')) {
@@ -895,7 +895,7 @@ class SupporterController extends Controller
                 $student->pcreated_at = jdate(strtotime($student->created_at))->format("Y/m/d");
                 $finalStudents[] = $student;
             }
-            
+
             $req =  request()->all();
             // dd($req);
             if(!isset($req['start'])){
