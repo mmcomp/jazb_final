@@ -870,6 +870,15 @@
             }
         }
     }
+    function isEmpty(obj) {
+        for(var prop in obj) {
+            if(obj.hasOwnProperty(prop)) {
+            return false;
+            }
+        }
+
+        return JSON.stringify(obj) === JSON.stringify({});
+    }
     $(function () {
         $.ajaxSetup({
             headers: {
@@ -931,7 +940,8 @@
                 },
                 "complete": function(response) {
                     console.log(response);
-                    if(students && students.length==0)
+                    console.log('students', students);
+                    if(students && isEmpty(students))
                         students = JSON.parse(response.responseText).students;
                     $('#example2 tr').click(function() {
                         var tr = this;
