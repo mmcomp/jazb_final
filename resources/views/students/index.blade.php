@@ -931,6 +931,7 @@
                 },
                 "complete": function(response) {
                     console.log(response);
+                    students = JSON.parse(response.responseText).students;
                     $('#example2 tr').click(function() {
                         var tr = this;
                         var studentId = parseInt($(tr).find('td')[1].innerText, 10);

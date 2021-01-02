@@ -331,7 +331,8 @@ class StudentController extends Controller
                 "draw" => $req['draw'],
                 "data" => $outdata,
                 "recordsTotal" => count($students),
-                "recordsFiltered" => count($students)
+                "recordsFiltered" => count($students),
+                "students"=>$students
             ];
 
             return $result;
