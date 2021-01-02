@@ -19,7 +19,7 @@ class PurchaseController extends Controller
         }
 
         $purchases = Purchase::where('is_deleted', false)
-            ->where('type', 'manual')
+            ->where('type', '!=', 'site_failed')
             ->with('user')
             ->with('student')
             ->with('product')

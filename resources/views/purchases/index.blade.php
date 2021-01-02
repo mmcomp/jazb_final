@@ -37,6 +37,7 @@
                   <tr>
                     <th>ردیف</th>
                     <th>کد</th>
+                    <th>محل</th>
                     <th>نام و نام خانوادگی</th>
                     <th>شماره فاکتور</th>
                     <th>محصول</th>
@@ -50,6 +51,7 @@
                       <tr>
                         <td>{{ $index + 1 }}</td>
                         <td>{{ $item->id }}</td>
+                        <td>{{ ($item->type == 'manual')?'حضوری':'سایت' }}</td>
                         <td>{{ $item->student->first_name }} {{ $item->student->last_name }} [{{ $item->student->phone }}]</td>
                         <td>{{ $item->factor_number }}</td>
                         <td>{{ $item->product->name }}</td>
