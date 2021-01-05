@@ -672,6 +672,7 @@ $egucation_levels = [
     let majors = @JSON($majors);
     let tags = {};
     let collections = {};
+    let calls_id = {{isset($calls_id)?$calls_id:'null'}};
     var table;
     for(let tg of tmpTags){
         tags[tg.id] = tg;
@@ -689,7 +690,7 @@ $egucation_levels = [
         need_parent3: '',
         need_parent4: ''
     }
-    let students_id;
+    let students_id = {{isset($students_id)?$students_id:'null'}};
     function showMorePanel(index, tr){
         console.log(index, tr);
         var persons = {
@@ -701,6 +702,23 @@ $egucation_levels = [
         var editRoute = `{{ route('student_edit', ['call_back'=>'supporter_students', 'id'=>-1]) }}`;
         var purchaseRoute = `{{ route('student_purchases', -1) }}`;
         var supporterStudentAllCallRoute = `{{ route('supporter_student_allcall', -1) }}`;
+        var tmpCallWithRecall = `
+            <tr>
+                <td>#index#</td>
+                <td>#id#</td>
+                <td>#product#</td>
+                <td>#notice#</td>
+                <td>#replier#</td>
+                <td>#callresult#</td>
+                <td>#next_call#</td>
+                <td>#next_to_call#</td>
+                <td>#description#</td>
+                <td>
+                    <a class="btn btn-primary" href="#" onclick="calls_id = #id#;students_id = #students_id#;$('#call_modal').modal('show');return false;">
+                        ثبت تماس
+                    </a>
+                </td>
+            </tr>`;
         var tmpCall = `
             <tr>
                 <td>#index#</td>
@@ -712,20 +730,36 @@ $egucation_levels = [
                 <td>#next_call#</td>
                 <td>#next_to_call#</td>
                 <td>#description#</td>
+                <td></td>
             </tr>`;
         var calls = '';
         var callIndex = 1;
         for(var call of students[index].calls) {
             if(callIndex<=5) {
-                calls += tmpCall.replace('#index#', callIndex)
-                            .replace('#id#', call.id)
-                            .replace('#product#', (call.product)?call.product.name:'-')
-                            .replace('#notice#', (call.notice)?call.notice.name:'-')
-                            .replace('#replier#', persons[call.replier])
-                            .replace('#callresult#', (call.callresult)?call.callresult.title:'-')
-                            .replace('#next_call#', (call.next_call)?call.next_call:'-')
-                            .replace('#next_to_call#', persons[call.next_to_call])
-                            .replace('#description#', (call.description)?call.description:'-');
+                if(call.next_call) {
+                    calls += tmpCallWithRecall.replace('#index#', callIndex)
+                                .replace(/#id#/g, call.id)
+                                .replace('#product#', (call.product)?call.product.name:'-')
+                                .replace('#notice#', (call.notice)?call.notice.name:'-')
+                                .replace('#replier#', persons[call.replier])
+                                .replace('#callresult#', (call.callresult)?call.callresult.title:'-')
+                                .replace('#next_call#', (call.next_call)?call.next_call:'-')
+                                .replace('#next_to_call#', persons[call.next_to_call])
+                                .replace('#students_id#', call.students_id)
+                                .replace('#description#', (call.description)?call.description:'-');
+
+                }else {
+                    calls += tmpCall.replace('#index#', callIndex)
+                                .replace(/#id#/g, call.id)
+                                .replace('#product#', (call.product)?call.product.name:'-')
+                                .replace('#notice#', (call.notice)?call.notice.name:'-')
+                                .replace('#replier#', persons[call.replier])
+                                .replace('#callresult#', (call.callresult)?call.callresult.title:'-')
+                                .replace('#next_call#', (call.next_call)?call.next_call:'-')
+                                .replace('#next_to_call#', persons[call.next_to_call])
+                                .replace('#students_id#', call.students_id)
+                                .replace('#description#', (call.description)?call.description:'-');
+                }
             }else {
                 continue;
             }
@@ -821,7 +855,7 @@ $egucation_levels = [
                         </div>
                         <div class="row">
                             <div class="col">
-                                <a class="btn btn-success" href="#" onclick="students_id = ${ students[index].id };$('#call_modal').modal('show');return false;">
+                                <a class="btn btn-success" href="#" onclick="calls_id = null;students_id = ${ students[index].id };$('#call_modal').modal('show');return false;">
                                     ثبت تماس
                                 </a>
                             </div>
@@ -839,6 +873,7 @@ $egucation_levels = [
                                         <th>یادآور</th>
                                         <th>پاسخگو بعد</th>
                                         <th>توضیحات</th>
+                                        <th>#</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -1312,6 +1347,22 @@ $egucation_levels = [
             alert('ثبت بدون یادآور باید باشد');
             return;
         }
+        if($("#notices_id").val()=='' && $("#products_id").val().length==0) {
+            alert('انتخاب محصول یا اطلاع رسانی لازم است');
+            return;
+        }
+        console.log('request' , {
+                students_id,
+                description: $("#description").val(),
+                result: $("#result").val(),
+                replier: $("#replier").val(),
+                products_id: $("#products_id").val(),
+                notices_id: $("#notices_id").val(),
+                next_to_call: $("#next_to_call").val(),
+                next_call: $("#next_call").val(),
+                call_results_id: $("#call_results_id").val(),
+                calls_id
+        });
         $.post('{{ route('supporter_student_call') }}', {
                 students_id,
                 description: $("#description").val(),
@@ -1321,15 +1372,20 @@ $egucation_levels = [
                 notices_id: $("#notices_id").val(),
                 next_to_call: $("#next_to_call").val(),
                 next_call: $("#next_call").val(),
-                call_results_id: $("#call_results_id").val()
+                call_results_id: $("#call_results_id").val(),
+                calls_id
         },
         function (result) {
-                console.log('Result', result);
-                if (result.error != null) {
-                    alert('خطای بروز رسانی');
-                } else {
-                    window.location.reload();
-                }
+            console.log('Result', result);
+            if (result.error != null) {
+                alert('خطای بروز رسانی');
+            } else {
+                @if(isset($students_id) && $students_id!=null)
+                window.location.href = '{{ route("reminders") }}';
+                @else
+                window.location.reload();
+                @endif
+            }
         }).fail(function () {
             alert('خطای بروز رسانی');
         });
@@ -1485,7 +1541,7 @@ $egucation_levels = [
             processing: true,
             ajax: {
                 "type": "POST",
-                "url": "{{ route('supporter_students') }}",
+                "url": "{{ route('supporter_students') . ((isset($students_id) && $students_id!=null)?'?students_id=' . $students_id . '&calls_id=' . $calls_id:'') }}",
                 "dataType": "json",
                 "contentType": 'application/json; charset=utf-8',
 
@@ -1516,6 +1572,18 @@ $egucation_levels = [
                             }
                         }
                     });
+                    @if(isset($students_id) && $students_id!=null)
+                    var tr = $('#example2 tr')[1];
+                    var studentId = parseInt($(tr).find('td')[1].innerText, 10);
+                    if(!isNaN(studentId)){
+                        for(var index in students){
+                            if(students[index].id==studentId){
+                                showMorePanel(index, tr);
+                                $('#call_modal').modal('show');
+                            }
+                        }
+                    }
+                    @endif
                 }
 
             }

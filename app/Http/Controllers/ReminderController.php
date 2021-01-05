@@ -11,7 +11,8 @@ use Exception;
 class ReminderController extends Controller
 {
     public function index(){
-        $calls = Call::where('next_call', '!=', null)->where('users_id', Auth::user()->id);
+        $recalls = Call::where('calls_id', '!=', null)->pluck('calls_id');
+        $calls = Call::where('next_call', '!=', null)->where('users_id', Auth::user()->id)->whereNotIn('id', $recalls);
         $today = false;
         if(request()->getMethod()=='POST') {
             if(request()->input('today') && request()->input('today')=='true') {

@@ -350,6 +350,8 @@ class SupporterController extends Controller
         $name = null;
         $sources_id = null;
         $phone = null;
+        $students_id = null;
+        $calls_id = null;
         $has_collection = 'false';
         $has_the_product = '';
         $has_the_tags = '';
@@ -358,8 +360,14 @@ class SupporterController extends Controller
         $order_collection = 'false';
         $has_reminder = 'false';
         $has_tag = 'false';
+        if(request()->input('students_id')!=null){
+            $students_id = (int)request()->input('students_id');
+            $calls_id = (int)request()->input('calls_id');
+            $students = $students->where('id', $students_id);
+        }
         if(request()->getMethod()=='POST'){
             // dump(request()->all());
+
             if(request()->input('name')!=null){
                 $name = trim(request()->input('name'));
                 $students = $students->where(function ($query) use ($name) {
@@ -509,6 +517,8 @@ class SupporterController extends Controller
                 "needTagParentTwos"=>$needTagParentTwos,
                 "needTagParentThrees"=>$needTagParentThrees,
                 "needTagParentFours"=>$needTagParentFours,
+                "students_id"=>$students_id,
+                "calls_id"=>$calls_id,
                 'msg_success' => request()->session()->get('msg_success'),
                 'msg_error' => request()->session()->get('msg_error')
             ]);
@@ -1027,6 +1037,7 @@ class SupporterController extends Controller
             ];
         }
 
+        $ids = [];
         if($request->input('products_id')==null){
             $call = new Call;
             $call->title = 'تماس';
@@ -1039,9 +1050,12 @@ class SupporterController extends Controller
             $call->next_call = $request->input('next_call');
             $call->notices_id = ($request->input('notices_id')==null)?0:$request->input('notices_id');
             $call->products_id = 0;
+            $call->calls_id = $request->input('calls_id');
             try{
                 $call->save();
+                $ids[] = $call->id;
             }catch(Exception $e){
+                dump($e);
             }
         }else {
             foreach($request->input('products_id') as $products_id ){
@@ -1056,16 +1070,19 @@ class SupporterController extends Controller
                 $call->next_to_call = $request->input('next_to_call');
                 $call->next_call = $request->input('next_call');
                 $call->notices_id = ($request->input('notices_id')==null)?0:$request->input('notices_id');
+                $call->calls_id = $request->input('calls_id');
                 try{
                     $call->save();
+                    $ids[] = $call->id;
                 }catch(Exception $e){
+                    dump($e);
                 }
             }
         }
 
         return [
             "error"=>null,
-            "data"=>null
+            "data"=>$ids
         ];
     }
 

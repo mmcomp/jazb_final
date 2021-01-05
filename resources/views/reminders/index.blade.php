@@ -84,6 +84,13 @@ $persons = [
                           <a class="btn btn-danger" href="{{ route('reminder_delete', ['id'=>$item->id]) }}">
                               حذف
                           </a>
+                          <form method="get" action="{{ route('supporter_students') }}" >
+                            <input type="hidden" name="students_id" value="{{$item->students_id}}" />
+                            <input type="hidden" name="calls_id" value="{{$item->id}}" />
+                            <button class="btn btn-primary">
+                              تماس
+                            </button>
+                          </form>
                         </td>
                       </tr>
                       @endforeach
