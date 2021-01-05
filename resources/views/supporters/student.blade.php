@@ -1338,7 +1338,7 @@ $egucation_levels = [
     }
 
     function saveCall() {
-        const canSaveWithNoAlert = ($("#call_results_id option:selected").data('nocall') + $("#call_results_id option:selected").data('noanswer')) > 0;
+        const canSaveWithNoAlert = ($("#call_results_id option:selected").data('nocall')/* + $("#call_results_id option:selected").data('noanswer')*/) > 0;
         if(!$("#next_call").val() && !canSaveWithNoAlert) {
             alert('ثبت بدون یادآور ممنوع می باشد');
             return;
