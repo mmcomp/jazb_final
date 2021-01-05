@@ -32,6 +32,7 @@ use App\Purchase;
 use App\StudentTag;
 use App\City;
 use Exception;
+use Log;
 
 class SupporterController extends Controller
 {
@@ -81,19 +82,30 @@ class SupporterController extends Controller
         ]);
     }
 
-    public function callIndex(){
-        $supportGroupId = Group::getSupport();
-        if($supportGroupId)
-            $supportGroupId = $supportGroupId->id;
+    public function supporterCallIndex()
+    {
+        $theSupporters_id = Auth::user()->id;
+        return $this->callIndex($theSupporters_id);
+    }
+
+    public function callIndex($theSupporters_id = null){
         $supporters_id = null;
-        $supporters = User::where('is_deleted', false)->where('groups_id', $supportGroupId);
-        if(request()->getMethod()=='POST'){
-            if(request()->input('supporters_id')){
-                $supporters_id = request()->input('supporters_id');
-                $supporters = $supporters->where('id', $supporters_id);
+        if($theSupporters_id == null) {
+            $supportGroupId = Group::getSupport();
+            if($supportGroupId)
+                $supportGroupId = $supportGroupId->id;
+            $supporters_id = null;
+            $supporters = User::where('is_deleted', false)->where('groups_id', $supportGroupId);
+            if(request()->getMethod()=='POST'){
+                if(request()->input('supporters_id')){
+                    $supporters_id = request()->input('supporters_id');
+                    $supporters = $supporters->where('id', $supporters_id);
+                }
             }
+            $supporters = $supporters->with('students.purchases')->with('students.studenttags.tag')->orderBy('max_student', 'desc')->get();
+        }else {
+            $supporters = User::where('id', $theSupporters_id)->get();
         }
-        $supporters = $supporters->with('students.purchases')->with('students.studenttags.tag')->orderBy('max_student', 'desc')->get();
 
         $callResults = CallResult::where('is_deleted', false)->get();
 
@@ -180,6 +192,7 @@ class SupporterController extends Controller
             'replier_id' => $replier_id,
             'sources_id' => $sources_id,
             'callResults' => $callResults,
+            "isSingle"=>($theSupporters_id!=null),
             'msg_success' => request()->session()->get('msg_success'),
             'msg_error' => request()->session()->get('msg_error')
         ]);
@@ -326,17 +339,19 @@ class SupporterController extends Controller
         // $callResults = CallResult::where('is_deleted', false)->get();
         foreach($products as $index => $product){
             $products[$index]->parents = "-";
-            if($product->collection) {
-                $parents = $product->collection->parents();
-                $name = ($parents!='')?$parents . "->" . $product->collection->name : $product->collection->name;
-                $products[$index]->parents = $name;
-            }
+            // if($product->collection) {
+            //     $parents = $product->collection->parents();
+            //     $name = ($parents!='')?$parents . "->" . $product->collection->name : $product->collection->name;
+            //     $products[$index]->parents  = $name;
+            // }
         }
         $callResults = CallResult::where('is_deleted', false)->get();
         $notices = Notice::where('is_deleted', false)->get();
         $name = null;
         $sources_id = null;
         $phone = null;
+        $students_id = null;
+        $calls_id = null;
         $has_collection = 'false';
         $has_the_product = '';
         $has_the_tags = '';
@@ -345,8 +360,14 @@ class SupporterController extends Controller
         $order_collection = 'false';
         $has_reminder = 'false';
         $has_tag = 'false';
+        if(request()->input('students_id')!=null){
+            $students_id = (int)request()->input('students_id');
+            $calls_id = (int)request()->input('calls_id');
+            $students = $students->where('id', $students_id);
+        }
         if(request()->getMethod()=='POST'){
             // dump(request()->all());
+
             if(request()->input('name')!=null){
                 $name = trim(request()->input('name'));
                 $students = $students->where(function ($query) use ($name) {
@@ -460,7 +481,7 @@ class SupporterController extends Controller
                     $students[$index]->calls[$cindex]->next_call = ($students[$index]->calls[$cindex]->next_call) ? jdate(strtotime($students[$index]->calls[$cindex]->next_call))->format("Y/m/d"):null;
                 }
         }
-
+        // dd($callResults);
         if(request()->getMethod()=='GET'){
             // dd($has_the_product);
             return view('supporters.student',[
@@ -496,6 +517,8 @@ class SupporterController extends Controller
                 "needTagParentTwos"=>$needTagParentTwos,
                 "needTagParentThrees"=>$needTagParentThrees,
                 "needTagParentFours"=>$needTagParentFours,
+                "students_id"=>$students_id,
+                "calls_id"=>$calls_id,
                 'msg_success' => request()->session()->get('msg_success'),
                 'msg_error' => request()->session()->get('msg_error')
             ]);
@@ -737,11 +760,25 @@ class SupporterController extends Controller
     }
 
     public function purchases(){
-        $students = Student::where('is_deleted', false)->where('banned', false)->where('supporter_seen', false)->where('supporters_id', Auth::user()->id);
+        $supports = [];
+        if(Gate::allows('purchases')){
+            $students = Student::where('is_deleted', false)->where('banned', false)->where('archived', false);
+            $supportGroupId = Group::getSupport();
+            if($supportGroupId)
+                $supportGroupId = $supportGroupId->id;
+            $supports = User::where('is_deleted', false)->where('groups_id', $supportGroupId)->get();
+        }else {
+            $students = Student::where('is_deleted', false)->where('banned', false)->where('archived', false)->where('supporters_id', Auth::user()->id);
+        }
+        // $students = Student::where('is_deleted', false)->where('banned', false)/*->where('supporter_seen', false)*/->where('supporters_id', Auth::user()->id);
         $sources = Source::where('is_deleted', false)->get();
         $name = null;
         $sources_id = null;
+        $products_id = null;
         $phone = null;
+        $supporters_id = null;
+        $from_date = null;
+        $to_date = null;
         if(request()->getMethod()=='POST'){
             // dump(request()->all());
             if(request()->input('name')!=null){
@@ -758,18 +795,30 @@ class SupporterController extends Controller
                 $phone = (int)request()->input('phone');
                 $students = $students->where('phone', $phone);
             }
+            if(request()->input('products_id')!=null){
+                $products_id = (int)request()->input('products_id');
+                $studentIds = Purchase::where('products_id', $products_id)->where('is_deleted', false)->where('type', '!=', 'site_failed')->pluck('students_id');
+                $students = $students->whereIn('id', $studentIds);
+            }
+            if(Gate::allows('purchases')) {
+                if(request()->input('supporters_id')!=null){
+                    $supporters_id = (int)request()->input('supporters_id');
+                    $students = $students->where('supporters_id', $supporters_id);
+                }
+                if(request()->input('from_date')!=null){
+                    $from_date = request()->input('from_date');
+                    $studentIds = Purchase::where('created_at' ,'>=', $from_date)->where('is_deleted', false)->where('type', '!=', 'site_failed')->pluck('students_id');
+                    $students = $students->whereIn('id', $studentIds);
+                }
+                if(request()->input('to_date')!=null){
+                    $to_date = request()->input('to_date');
+                    $studentIds = Purchase::where('created_at' ,'<=', $to_date)->where('is_deleted', false)->where('type', '!=', 'site_failed')->pluck('students_id');
+                    $students = $students->whereIn('id', $studentIds);
+                }
+            }
         }
         // DB::enableQueryLog();
-        $students = $students
-            ->with('user')
-            ->with('studenttags.tag')
-            ->with('studentcollections.collection')
-            ->with('studenttemperatures.temperature')
-            ->with('source')
-            ->with('consultant')
-            ->with('supporter')
-            ->orderBy('created_at', 'desc')
-            ->get();
+
         // dd(DB::getQueryLog());
         $moralTags = Tag::where('is_deleted', false)
             // ->with('parent_one')
@@ -788,35 +837,110 @@ class SupporterController extends Controller
         $thirdCollections = Collection::where('is_deleted', false)->with('parent')->whereIn('parent_id', $secondCollections->pluck('id'))->get();
         $hotTemperatures = Temperature::where('is_deleted', false)->where('status', 'hot')->get();
         $coldTemperatures = Temperature::where('is_deleted', false)->where('status', 'cold')->get();
+        $needTagParentOnes = NeedTagParentOne::where('is_deleted', false)->has('tags')->get();
+        $needTagParentTwos = NeedTagParentTwo::where('is_deleted', false)->has('tags')->get();
+        $needTagParentThrees = NeedTagParentThree::where('is_deleted', false)->has('tags')->get();
+        $needTagParentFours = NeedTagParentFour::where('is_deleted', false)->has('tags')->get();
+        $products = Product::where('is_deleted' , false)->get();
 
         $finalStudents = [];
-        foreach($students as $student) {
-            $student->ownPurchases = $student->purchases()->where('supporters_id', Auth::user()->id)->get();
-            $student->otherPurchases = $student->purchases()->where('supporters_id', '!=', Auth::user()->id)->get();
-            $student->todayPurchases = $student->purchases()->where('created_at', '>=', date("Y-m-d 00:00:00"))->get();
-            $finalStudents[] = $student;
-        }
 
-        return view('supporters.purchase',[
-            'students' => $finalStudents,
-            'sources' => $sources,
-            'name' => $name,
-            'sources_id' => $sources_id,
-            'phone' => $phone,
-            'moralTags'=>$moralTags,
-            'needTags'=>$collections,
-            'hotTemperatures'=>$hotTemperatures,
-            'coldTemperatures'=>$coldTemperatures,
-            "parentOnes"=>$parentOnes,
-            "parentTwos"=>$parentTwos,
-            "parentThrees"=>$parentThrees,
-            "parentFours"=>$parentFours,
-            "firstCollections"=>$firstCollections,
-            "secondCollections"=>$secondCollections,
-            "thirdCollections"=>$thirdCollections,
-            'msg_success' => request()->session()->get('msg_success'),
-            'msg_error' => request()->session()->get('msg_error')
-        ]);
+
+        if(request()->getMethod()=='GET'){
+            return view('supporters.purchase',[
+                'students' => $finalStudents,
+                'sources' => $sources,
+                'name' => $name,
+                'sources_id' => $sources_id,
+                'phone' => $phone,
+                'moralTags'=>$moralTags,
+                'needTags'=>$collections,
+                'hotTemperatures'=>$hotTemperatures,
+                'coldTemperatures'=>$coldTemperatures,
+                "parentOnes"=>$parentOnes,
+                "parentTwos"=>$parentTwos,
+                "parentThrees"=>$parentThrees,
+                "parentFours"=>$parentFours,
+                "firstCollections"=>$firstCollections,
+                "secondCollections"=>$secondCollections,
+                "thirdCollections"=>$thirdCollections,
+                "needTagParentOnes"=>$needTagParentOnes,
+                "needTagParentTwos"=>$needTagParentTwos,
+                "needTagParentThrees"=>$needTagParentThrees,
+                "needTagParentFours"=>$needTagParentFours,
+                "supports"=>$supports,
+                "products"=>$products,
+                'msg_success' => request()->session()->get('msg_success'),
+                'msg_error' => request()->session()->get('msg_error')
+            ]);
+        }else {
+
+            $students = $students
+                ->with('user')
+                ->with('studenttags.tag')
+                ->with('studentcollections.collection')
+                ->with('studenttags.tag.parent_four')
+                ->with('studenttemperatures.temperature')
+                ->with('source')
+                ->with('consultant')
+                ->with('supporter')
+                ->orderBy('created_at', 'desc')
+                ->get();
+            foreach($students as $student) {            
+                $student->ownPurchases = $student->purchases()->where('supporters_id', $student->supporters_id);
+                if($products_id!=null){
+                    $student->ownPurchases = $student->ownPurchases->where('products_id', $products_id);
+                }
+                $student->ownPurchases = $student->ownPurchases->get();
+                $student->otherPurchases = $student->purchases()->where('supporters_id', '!=', $student->supporters_id);
+                if($products_id!=null){
+                    $student->otherPurchases = $student->otherPurchases->where('products_id', $products_id);
+                }
+                $student->otherPurchases = $student->otherPurchases->get();
+                $student->todayPurchases = $student->purchases()->where('created_at', '>=', date("Y-m-d 00:00:00"));
+                if($products_id!=null){
+                    $student->todayPurchases = $student->todayPurchases->where('products_id', $products_id);
+                }
+                $student->todayPurchases = $student->todayPurchases->get();
+                $student->pcreated_at = jdate(strtotime($student->created_at))->format("Y/m/d");
+                $finalStudents[] = $student;
+            }
+
+            $req =  request()->all();
+            // dd($req);
+            if(!isset($req['start'])){
+                $req['start'] = 0;
+                $req['length'] = 10;
+                $req['draw'] = 1;
+            }
+            $data = [];
+            foreach($students as $index => $item){
+                $data[] = [
+                    $index+1,
+                    $item->id,
+                    $item->first_name,
+                    $item->last_name,
+                    count($item->otherPurchases),
+                    count($item->ownPurchases),
+                    count($item->todayPurchases),
+                    ""
+                ];
+            }
+
+            $outdata = [];
+            for($i = $req['start'];$i<min($req['length']+$req['start'], count($data));$i++){
+                $outdata[] = $data[$i];
+            }
+
+            $result = [
+                "draw" => $req['draw'],
+                "data" => $outdata,
+                "recordsTotal" => count($students),
+                "recordsFiltered" => count($students)
+            ];
+
+            return $result;
+        }
     }
 
     public function deleteCall($users_id, $id)
@@ -913,6 +1037,7 @@ class SupporterController extends Controller
             ];
         }
 
+        $ids = [];
         if($request->input('products_id')==null){
             $call = new Call;
             $call->title = 'تماس';
@@ -925,9 +1050,12 @@ class SupporterController extends Controller
             $call->next_call = $request->input('next_call');
             $call->notices_id = ($request->input('notices_id')==null)?0:$request->input('notices_id');
             $call->products_id = 0;
+            $call->calls_id = $request->input('calls_id');
             try{
                 $call->save();
+                $ids[] = $call->id;
             }catch(Exception $e){
+                dump($e);
             }
         }else {
             foreach($request->input('products_id') as $products_id ){
@@ -942,16 +1070,19 @@ class SupporterController extends Controller
                 $call->next_to_call = $request->input('next_to_call');
                 $call->next_call = $request->input('next_call');
                 $call->notices_id = ($request->input('notices_id')==null)?0:$request->input('notices_id');
+                $call->calls_id = $request->input('calls_id');
                 try{
                     $call->save();
+                    $ids[] = $call->id;
                 }catch(Exception $e){
+                    dump($e);
                 }
             }
         }
 
         return [
             "error"=>null,
-            "data"=>null
+            "data"=>$ids
         ];
     }
 

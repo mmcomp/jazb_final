@@ -25,4 +25,8 @@ class Call extends Model
     public function callresult(){
         return $this->hasOne('App\CallResult', 'id', 'call_results_id');
     }
+
+    public function recall(){
+        return $this->hasOne('App\Call', 'id', 'calls_id');
+    }
 }

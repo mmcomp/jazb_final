@@ -32,6 +32,8 @@ class CallResultController extends Controller
         $callResult->title = $request->input('title');
         $callResult->description = $request->input('description');
         $callResult->users_id = Auth::user()->id;
+        $callResult->no_call = ($request->input('no_call')!=null)?true:false;
+        $callResult->no_answer = ($request->input('no_answer')!=null)?true:false;
         $callResult->save();
 
         $request->session()->flash("msg_success", "نتیجه با موفقیت افزوده شد.");
@@ -55,6 +57,8 @@ class CallResultController extends Controller
         $callResult->title = $request->input('title');
         $callResult->description = $request->input('description');
         $callResult->users_id = Auth::user()->id;
+        $callResult->no_call = ($request->input('no_call')!=null)?true:false;
+        $callResult->no_answer = ($request->input('no_answer')!=null)?true:false;
         $callResult->save();
 
         $request->session()->flash("msg_success", "محصول با موفقیت ویرایش شد.");

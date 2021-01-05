@@ -24,12 +24,9 @@ $persons = [
             <div class="col-sm-6">
             </div>
             <div class="col-sm-6">
-              <!--
-              <ol class="breadcrumb float-sm-right">
-                <li class="breadcrumb-item"><a href="#">Home</a></li>
-                <li class="breadcrumb-item active">DataTables</li>
-              </ol>
-              -->
+              <h1>
+                یادآورها@if($today)ی امروز@endif
+              </h1>
             </div>
           </div>
         </div><!-- /.container-fluid -->
@@ -42,7 +39,16 @@ $persons = [
             <div class="card">
               <div class="card-header">
                 <h3 class="card-title">
-
+                  <form id="frm-today" method="post">
+                    @csrf
+                    <input type="hidden" id="today" name="today" value="true" />
+                    <a onclick="$('#today').val('true');$('#frm-today').submit();return false;" class="btn btn-success">
+                      امروز
+                    </a>
+                    <a onclick="$('#today').val('');$('#frm-today').submit();return false;" class="btn btn-warning">
+                      همه
+                    </a>
+                  </form>
                 </h3>
               </div>
               <!-- /.card-header -->
@@ -59,6 +65,7 @@ $persons = [
                     <th>یادآور</th>
                     <th>پاسخگو بعد</th>
                     <th>توضیحات</th>
+                    <th>#</th>
                   </tr>
                   </thead>
                   <tbody>
@@ -73,6 +80,18 @@ $persons = [
                         <td>{{ ($item->next_call)?jdate($item->next_call)->format("Y/m/d"):'-' }}</td>
                         <td>{{ ($item->next_to_call)?$persons[$item->next_to_call]:'-' }}</td>
                         <td>{{ $item->description }}</td>
+                        <td>
+                          <a class="btn btn-danger" href="{{ route('reminder_delete', ['id'=>$item->id]) }}">
+                              حذف
+                          </a>
+                          <form method="get" action="{{ route('supporter_students') }}" >
+                            <input type="hidden" name="students_id" value="{{$item->students_id}}" />
+                            <input type="hidden" name="calls_id" value="{{$item->id}}" />
+                            <button class="btn btn-primary">
+                              تماس
+                            </button>
+                          </form>
+                        </td>
                       </tr>
                       @endforeach
                   </tbody>

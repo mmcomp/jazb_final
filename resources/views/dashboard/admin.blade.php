@@ -34,7 +34,7 @@
 
                     <p class="text-center">
                         <a href="{{ route('students') }}" class="text-light btn">
-                        تقسیم داشن آموز
+                        تقسیم دانش آموز
                         <span class="badge badge-warning right">{{ $devideStudents }}</span>
                         </a>
                     </p>

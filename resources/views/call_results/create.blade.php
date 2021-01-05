@@ -59,6 +59,25 @@
                 </div>
                 <div class="row">
                     <div class="col">
+                        <div class="form-group">
+                            <label for="no_call">بدون یادآور</label>
+                            @if (isset($callResult) && isset($callResult->id) && $callResult->no_call)
+                            <input type="checkbox" id="no_call" name="no_call" checked/>
+                            @else
+                            <input type="checkbox" id="no_call" name="no_call" />
+                            @endif
+                        <!-- </div>
+
+                        <div class="form-group"> -->
+                            <label for="no_answer">بدون پاسخ</label>
+                            @if (isset($callResult) && isset($callResult->id) && $callResult->no_answer)
+                            <input type="checkbox" id="no_answer" name="no_answer" checked/>
+                            @else
+                            <input type="checkbox" id="no_answer" name="no_answer" />
+                            @endif
+                        </div>
+                    </div>
+                    <div class="col">
                         <button class="btn btn-primary">
                             ذخیره
                         </button>

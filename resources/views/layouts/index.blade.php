@@ -569,6 +569,15 @@
                                     <p>ثبت خرید های حضوری</p>
                                 </a>
                         </li>
+                        <li class="nav-item">
+                            @if(strpos(\Request::route()->getName(), 'supporter_student_purchases')===0)
+                            <a href="{{ route('supporter_student_purchases') }}" class="nav-link active">
+                                @else
+                                <a href="{{ route('supporter_student_purchases') }}" class="nav-link">
+                                    @endif
+                                    <p>گزارش خرید ها</p>
+                                </a>
+                        </li>
                         @endif
                         @if(Gate::allows('parameters'))
                         <li class="nav-item">
@@ -726,6 +735,15 @@
                             <a href="{{ route('reminders') }}" class="nav-link">
                                 @endif
                                 <p>یادآورها</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            @if(strpos(\Request::route()->getName(), 'user_a_supporter_call')===0)
+                            <a href="{{ route('user_a_supporter_calls') }}" class="nav-link active">
+                            @else
+                            <a href="{{ route('user_a_supporter_calls') }}" class="nav-link">
+                            @endif
+                                <p>لیست تماس</p>
                             </a>
                         </li>
                         @endif
