@@ -324,6 +324,7 @@ class SupporterController extends Controller
 
     public function student($id = null){
         // dump(request()->all());
+        // ----
         $user = null;
         if($id==null){
             $id = Auth::user()->id;
@@ -435,6 +436,10 @@ class SupporterController extends Controller
             if(request()->input('education_level')!=null){
                 $egucation_level = request()->input('education_level');
                 $students = $students->where('egucation_level', $egucation_level);
+            }
+            if(request()->input('major')!= null){
+                $major = request()->input('major');
+                $students = $students->where('major',$major);
             }
         }
 
@@ -891,7 +896,7 @@ class SupporterController extends Controller
                 ->with('supporter')
                 ->orderBy('created_at', 'desc')
                 ->get();
-            foreach($students as $student) {            
+            foreach($students as $student) {
                 $student->ownPurchases = $student->purchases()->where('supporters_id', $student->supporters_id);
                 if($products_id!=null){
                     $student->ownPurchases = $student->ownPurchases->where('products_id', $products_id);

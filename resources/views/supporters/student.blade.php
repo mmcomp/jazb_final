@@ -84,7 +84,7 @@ $egucation_levels = [
                             <div class="col">
                                 <div class="form-group">
                                     <label for="sources_id">منبع</label>
-                                    <select id="sources_id" name="sources_id" class="form-control">
+                                    <select id="sources_id" name="sources_id" class="form-control" onchange="return selectSources();">
                                         <option value="">همه</option>
                                         @foreach ($sources as $item)
                                         @if(isset($sources_id) && $sources_id==$item->id)
@@ -228,7 +228,7 @@ $egucation_levels = [
                     </div>
                     <div class="row">
                         <div class="col text-center p-1">
-                            <select id="education_level" class="form-control select2">
+                            <select id="education_level" class="form-control select2" onchange="return selectEducationLevels();">
                                 <option selected value="" disabled>مقطع</option>
                                 <option value="">همه</option>
                                 @for($i = 6;$i < 15;$i++)
@@ -238,6 +238,19 @@ $egucation_levels = [
                                 <option value="{{ $i }}">{{ $i }}</option>
                                 @endif
                                 @endfor
+                            </select>
+                        </div>
+                        <div class="col text-center p-1">
+                            <select id="major" class="form-control select2" onchange="return selectMajors();">
+                                <option selected value="" disabled>رشته</option>
+                                <option value="">همه</option>
+                                @foreach($majors as $item => $value)
+                                //@if(isset($item))
+                                <option value="{{ $item }}">{{ $value }}</option>
+                                //@else
+                                //<option value="{{ $item }}">{{ $item }}</option>
+                                //@endif
+                                @endforeach
                             </select>
                         </div>
                     </div>
@@ -1514,8 +1527,27 @@ $egucation_levels = [
         // $("#search-frm").submit();
         table.ajax.reload();
     }
+    function selectMajors(){
+        $('#major').val($('#major').val());
+        table.ajax.reload();
+    }
+    function selectSources(){
+        $('#sources_id').val($('#sources_id').val());
+        table.ajax.reload();
+    }
+    function selectEducationLevels(){
+        $('#eduction_level').val($('#education_level').val());
+        table.ajax.reload();
+    }
 
     $(function () {
+        $('input').keypress(function(event){
+            var keycode = (event.keyCode ? event.keyCode : event.which);
+            if(keycode == '13'){
+               table.ajax.reload();
+            }
+        });
+
         $('#next_call_persian').MdPersianDateTimePicker({
             targetTextSelector: '#next_call_persian',
             targetDateSelector: '#next_call',
@@ -1586,6 +1618,7 @@ $egucation_levels = [
                     data['has_reminder'] = $("#has_reminder").val();
                     data['has_tag'] = $("#has_tag").val();
                     data['education_level'] = $("#education_level").val();
+                    data['major'] = $('#major').val();
                     return JSON.stringify(data);
                 },
                 "complete": function(response) {
