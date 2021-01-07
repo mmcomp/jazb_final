@@ -736,6 +736,18 @@ $egucation_levels = [
         var callIndex = 1;
         for(var call of students[index].calls) {
             if(callIndex<=5) {
+                @if(isset($students_id) && $students_id!=null)
+                calls += tmpCall.replace('#index#', callIndex)
+                            .replace(/#id#/g, call.id)
+                            .replace('#product#', (call.product)?call.product.name:'-')
+                            .replace('#notice#', (call.notice)?call.notice.name:'-')
+                            .replace('#replier#', persons[call.replier])
+                            .replace('#callresult#', (call.callresult)?call.callresult.title:'-')
+                            .replace('#next_call#', (call.next_call)?call.next_call:'-')
+                            .replace('#next_to_call#', persons[call.next_to_call])
+                            .replace('#students_id#', call.students_id)
+                            .replace('#description#', (call.description)?call.description:'-');
+                @else
                 if(call.next_call) {
                     calls += tmpCallWithRecall.replace('#index#', callIndex)
                                 .replace(/#id#/g, call.id)
@@ -760,6 +772,7 @@ $egucation_levels = [
                                 .replace('#students_id#', call.students_id)
                                 .replace('#description#', (call.description)?call.description:'-');
                 }
+                @endif
             }else {
                 continue;
             }
@@ -855,7 +868,7 @@ $egucation_levels = [
                         </div>
                         <div class="row">
                             <div class="col">
-                                <a class="btn btn-success" href="#" onclick="calls_id = null;students_id = ${ students[index].id };$('#call_modal').modal('show');return false;">
+                                <a class="btn btn-success" href="#" onclick="calls_id = {{(isset($students_id) && $students_id!=null)?$calls_id:'null'}};students_id = ${ students[index].id };$('#call_modal').modal('show');return false;">
                                     ثبت تماس
                                 </a>
                             </div>
