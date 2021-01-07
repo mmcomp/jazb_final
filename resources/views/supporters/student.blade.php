@@ -226,6 +226,21 @@ $egucation_levels = [
                             </select>
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="col text-center p-1">
+                            <select id="education_level" class="form-control select2">
+                                <option selected value="" disabled>مقطع</option>
+                                <option value="">همه</option>
+                                @for($i = 6;$i < 15;$i++)
+                                @if(isset($egucation_levels[$i]))
+                                <option value="{{ $i }}">{{ $egucation_levels[$i] }}</option>
+                                @else
+                                <option value="{{ $i }}">{{ $i }}</option>
+                                @endif
+                                @endfor
+                            </select>
+                        </div>
+                    </div>
                     <!--<div class="row">
                         <div class="col text-center p-1">
                             <a class="btn btn-warning btn-block" href="#">برچسب ارزیابی</a>
@@ -1570,6 +1585,7 @@ $egucation_levels = [
                     data['order_collection'] = $("#order_collection").val();
                     data['has_reminder'] = $("#has_reminder").val();
                     data['has_tag'] = $("#has_tag").val();
+                    data['education_level'] = $("#education_level").val();
                     return JSON.stringify(data);
                 },
                 "complete": function(response) {
