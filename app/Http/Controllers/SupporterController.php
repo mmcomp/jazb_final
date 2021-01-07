@@ -437,6 +437,10 @@ class SupporterController extends Controller
                 $egucation_level = request()->input('education_level');
                 $students = $students->where('egucation_level', $egucation_level);
             }
+            if(request()->input('major')!= null){
+                $major = request()->input('major');
+                $students = $students->where('major',$major);
+            }
         }
 
         $students = $students
