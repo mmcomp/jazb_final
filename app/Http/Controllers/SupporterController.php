@@ -352,6 +352,7 @@ class SupporterController extends Controller
         $phone = null;
         $students_id = null;
         $calls_id = null;
+        $education_level = null;
         $has_collection = 'false';
         $has_the_product = '';
         $has_the_tags = '';
@@ -430,6 +431,10 @@ class SupporterController extends Controller
                 if($has_tag=='true'){
                     $students = $students->has('studenttags');
                 }
+            }
+            if(request()->input('education_level')!=null){
+                $egucation_level = request()->input('education_level');
+                $students = $students->where('egucation_level', $egucation_level);
             }
         }
 
