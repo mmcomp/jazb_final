@@ -1516,6 +1516,7 @@ $egucation_levels = [
     function selectProduct(){
         $("#has_the_product").val($("#has_product").val().join(','));
         // $("#search-frm").submit();
+        table.ajax.reload();
     }
 
     function selectTag(){
