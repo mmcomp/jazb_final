@@ -971,7 +971,9 @@
             // }
         });
 
-
+        $("#input").keyup(e => {
+            console.log(e);
+        });
     });
   </script>
 @endsection

@@ -868,7 +868,7 @@ $egucation_levels = [
                         </div>
                         <div class="row">
                             <div class="col">
-                                <a class="btn btn-success" href="#" onclick="calls_id = {{(isset($students_id) && $students_id!=null)?$calls_id:null}};students_id = ${ students[index].id };$('#call_modal').modal('show');return false;">
+                                <a class="btn btn-success" href="#" onclick="calls_id = {{(isset($students_id) && $students_id!=null)?$calls_id:'null'}};students_id = ${ students[index].id };$('#call_modal').modal('show');return false;">
                                     ثبت تماس
                                 </a>
                             </div>
