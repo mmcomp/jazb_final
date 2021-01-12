@@ -1,27 +1,27 @@
 @php
 $majors = [
-    "mathematics"=>"ریاضی",
-    "experimental"=>"تجربی",
-    "humanities"=>"انسانی",
-    "art"=>"هنر",
-    "other"=>"دیگر"
+"mathematics"=>"ریاضی",
+"experimental"=>"تجربی",
+"humanities"=>"انسانی",
+"art"=>"هنر",
+"other"=>"دیگر"
 ];
 $persons = [
-    "student"=>"دانش آموز",
-    "father"=>"پدر",
-    "mother"=>"مادر",
-    "other"=>"غیره"
+"student"=>"دانش آموز",
+"father"=>"پدر",
+"mother"=>"مادر",
+"other"=>"غیره"
 ];
 $results = [
-    "no_answer"=>"بدون پاسخ",
-    "unsuccessful"=>"ناموفق",
-    "successful"=>"موفق",
-    "rejected"=>"در شده"
+"no_answer"=>"بدون پاسخ",
+"unsuccessful"=>"ناموفق",
+"successful"=>"موفق",
+"rejected"=>"در شده"
 ];
 $egucation_levels = [
-    "13" => "فارغ التحصیل",
-    "14" => "دانشجو",
-    null => ""
+"13" => "فارغ التحصیل",
+"14" => "دانشجو",
+null => ""
 ];
 @endphp
 @extends('layouts.index')
@@ -33,12 +33,17 @@ $egucation_levels = [
     .morepanel {
         display: none;
     }
+
     div.dataTables_wrapper {
-        width : 100% !important;
+        width: 100% !important;
     }
+    .cursor_pointer{
+        cursor:pointer;
+    }
+
 </style>
 <!-- Date Picker -->
-<link href="/plugins/persiancalender/jquery.md.bootstrap.datetimepicker.style.css" rel="stylesheet"/>
+<link href="/plugins/persiancalender/jquery.md.bootstrap.datetimepicker.style.css" rel="stylesheet" />
 @endsection
 
 @section('content')
@@ -101,15 +106,13 @@ $egucation_levels = [
                             <div class="col">
                                 <div class="form-group">
                                     <label for="name">نام و نام خانوادگی</label>
-                                    <input type="text" class="form-control" id="name" name="name"
-                                        placeholder="نام و نام خانوادگی" value="{{ isset($name)?$name:'' }}" />
+                                    <input type="text" class="form-control" id="name" name="name" placeholder="نام و نام خانوادگی" value="{{ isset($name)?$name:'' }}" />
                                 </div>
                             </div>
                             <div class="col">
                                 <div class="form-group">
                                     <label for="phone">تلفن</label>
-                                    <input type="number" class="form-control" id="phone" name="phone" placeholder="تلفن"
-                                        value="{{ isset($phone)?$phone:'' }}" />
+                                    <input type="number" class="form-control" id="phone" name="phone" placeholder="تلفن" value="{{ isset($phone)?$phone:'' }}" />
                                 </div>
                             </div>
                             <div class="col" style="padding-top: 32px;">
@@ -209,7 +212,8 @@ $egucation_levels = [
                                 برچسب اخلاقی
                             </a>
 
-                            <select id="has_the_tag" class="form-control select22" style="display: none;" multiple> <!--onchange="return selectTag();">-->
+                            <select id="has_the_tag" class="form-control select22" style="display: none;" multiple>
+                                <!--onchange="return selectTag();">-->
                                 @if(isset($has_the_tags[0]))
                                 <option value="" disabled>برچسب اخلاقی</option>
                                 @else
@@ -231,13 +235,11 @@ $egucation_levels = [
                             <select id="education_level" class="form-control select2" onchange="return selectEducationLevels();">
                                 <option selected value="" disabled>مقطع</option>
                                 <option value="">همه</option>
-                                @for($i = 6;$i < 15;$i++)
-                                @if(isset($egucation_levels[$i]))
-                                <option value="{{ $i }}">{{ $egucation_levels[$i] }}</option>
-                                @else
-                                <option value="{{ $i }}">{{ $i }}</option>
-                                @endif
-                                @endfor
+                                @for($i = 6;$i < 15;$i++) @if(isset($egucation_levels[$i])) <option value="{{ $i }}">{{ $egucation_levels[$i] }}</option>
+                                    @else
+                                    <option value="{{ $i }}">{{ $i }}</option>
+                                    @endif
+                                    @endfor
                             </select>
                         </div>
                         <div class="col text-center p-1">
@@ -400,98 +402,98 @@ $egucation_levels = [
 -->
 <div class="modal" id="tag_modal" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">برچسب</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-            <p>
-                <input type="hidden" id="students_index" />
-                <div class="morals">
-                <h3 class="text-center">
-                    اخلاقی
-                </h3>
-                <div>
-                    <select id="parent-one" onchange="selectParentOne(this);">
-                        <option value="">همه</option>
-                        @foreach ($parentOnes as $item)
-                        <option value="{{ $item->id }}">{{$item->name}}</option>
-                        @endforeach
-                    </select>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">برچسب</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>
+                    <input type="hidden" id="students_index" />
+                    <div class="morals">
+                        <h3 class="text-center">
+                            اخلاقی
+                        </h3>
+                        <div>
+                            <select id="parent-one" onchange="selectParentOne(this);">
+                                <option value="">همه</option>
+                                @foreach ($parentOnes as $item)
+                                <option value="{{ $item->id }}">{{$item->name}}</option>
+                                @endforeach
+                            </select>
 
-                    <select id="parent-two" onchange="selectParentTwo(this);">
-                        <option value="">همه</option>
-                        @foreach ($parentTwos as $item)
-                        <option value="{{ $item->id }}">{{$item->name}}</option>
-                        @endforeach
-                    </select>
+                            <select id="parent-two" onchange="selectParentTwo(this);">
+                                <option value="">همه</option>
+                                @foreach ($parentTwos as $item)
+                                <option value="{{ $item->id }}">{{$item->name}}</option>
+                                @endforeach
+                            </select>
 
-                    <select id="parent-three" onchange="selectParentThree(this);">
-                        <option value="">همه</option>
-                        @foreach ($parentThrees as $item)
-                        <option value="{{ $item->id }}">{{$item->name}}</option>
-                        @endforeach
-                    </select>
+                            <select id="parent-three" onchange="selectParentThree(this);">
+                                <option value="">همه</option>
+                                @foreach ($parentThrees as $item)
+                                <option value="{{ $item->id }}">{{$item->name}}</option>
+                                @endforeach
+                            </select>
 
-                    <select id="parent-four" onchange="selectParentFour(this);">
-                        <option value="">همه</option>
-                        @foreach ($parentFours as $item)
-                        <option value="{{ $item->id }}">{{$item->name}}</option>
+                            <select id="parent-four" onchange="selectParentFour(this);">
+                                <option value="">همه</option>
+                                @foreach ($parentFours as $item)
+                                <option value="{{ $item->id }}">{{$item->name}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        @foreach ($moralTags as $index => $item)
+                        <input type="checkbox" class="tag-checkbox" id="tag_{{ $item->id }}" value="{{ $item->id }}" />
+                        <span class="tag-title" id="tag-title-{{ $item->id }}">
+                            {{ $item->name }}
+                        </span>
+                        <br class="tag-br" id="tag-br-{{ $item->id }}" />
                         @endforeach
-                    </select>
-                </div>
-                @foreach ($moralTags as $index => $item)
-                    <input type="checkbox" class="tag-checkbox" id="tag_{{ $item->id }}" value="{{ $item->id }}" />
-                    <span class="tag-title" id="tag-title-{{ $item->id }}">
-                    {{ $item->name }}
-                    </span>
-                    <br class="tag-br" id="tag-br-{{ $item->id }}"/>
-                @endforeach
-                </div>
-                <div class="needs">
-                <h3 class="text-center">
-                    نیازسنجی
-                </h3>
-                <div>
-                    <select id="need-parent-one" onchange="selectNeedParentOne(this);">
-                        <option value="">همه</option>
-                        @foreach ($needTagParentOnes as $item)
-                        <option value="{{ $item->id }}">{{$item->name}}</option>
-                        @endforeach
-                    </select>
+                    </div>
+                    <div class="needs">
+                        <h3 class="text-center">
+                            نیازسنجی
+                        </h3>
+                        <div>
+                            <select id="need-parent-one" onchange="selectNeedParentOne(this);">
+                                <option value="">همه</option>
+                                @foreach ($needTagParentOnes as $item)
+                                <option value="{{ $item->id }}">{{$item->name}}</option>
+                                @endforeach
+                            </select>
 
-                    <select id="need-parent-two" onchange="selectNeedParentTwo(this);">
-                        <option value="">همه</option>
-                        @foreach ($needTagParentTwos as $item)
-                        <option value="{{ $item->id }}">{{$item->name}}</option>
-                        @endforeach
-                    </select>
+                            <select id="need-parent-two" onchange="selectNeedParentTwo(this);">
+                                <option value="">همه</option>
+                                @foreach ($needTagParentTwos as $item)
+                                <option value="{{ $item->id }}">{{$item->name}}</option>
+                                @endforeach
+                            </select>
 
-                    <select id="need-parent-three" onchange="selectNeedParentThree(this);">
-                        <option value="">همه</option>
-                        @foreach ($needTagParentThrees as $item)
-                        <option value="{{ $item->id }}">{{$item->name}}</option>
-                        @endforeach
-                    </select>
+                            <select id="need-parent-three" onchange="selectNeedParentThree(this);">
+                                <option value="">همه</option>
+                                @foreach ($needTagParentThrees as $item)
+                                <option value="{{ $item->id }}">{{$item->name}}</option>
+                                @endforeach
+                            </select>
 
-                    <select id="need-parent-four" onchange="selectNeedParentFour(this);">
-                        <option value="">همه</option>
-                        @foreach ($needTagParentFours as $item)
-                        <option value="{{ $item->id }}">{{$item->name}}</option>
+                            <select id="need-parent-four" onchange="selectNeedParentFour(this);">
+                                <option value="">همه</option>
+                                @foreach ($needTagParentFours as $item)
+                                <option value="{{ $item->id }}">{{$item->name}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        @foreach ($needTags as $index => $item)
+                        <input type="checkbox" class="needtag-checkbox" id="needtag_{{ $item->id }}" value="{{ $item->id }}" />
+                        <span class="needtag-title" id="needtag-title-{{ $item->id }}">
+                            {{ $item->name }}
+                        </span>
+                        <br class="needtag-br" id="needtag-br-{{ $item->id }}" />
                         @endforeach
-                    </select>
-                </div>
-                @foreach ($needTags as $index => $item)
-                    <input type="checkbox" class="needtag-checkbox" id="needtag_{{ $item->id }}" value="{{ $item->id }}" />
-                    <span class="needtag-title" id="needtag-title-{{ $item->id }}">
-                    {{ $item->name }}
-                    </span>
-                    <br class="needtag-br" id="needtag-br-{{ $item->id }}"/>
-                @endforeach
-                <!--
+                        <!--
                 <div>
                     <select id="collection-one" onchange="selectCollectionOne(this);">
                         <option value="">همه</option>
@@ -522,14 +524,14 @@ $egucation_levels = [
                     <br class="collection-br" id="collection-br-{{ $item->id }}"/>
                 @endforeach
                 -->
-                </div>
-            </p>
+                    </div>
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="saveTags();">اعمال</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">انصراف</button>
+            </div>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-primary" onclick="saveTags();">اعمال</button>
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">انصراف</button>
-        </div>
-      </div>
     </div>
 </div>
 <div class="modal" id="tag_modal_filter" tabindex="-1" role="dialog">
@@ -552,7 +554,7 @@ $egucation_levels = [
                     @foreach ($moralTags as $index => $item)
                     <input type="checkbox" class="filter-tag-checkbox" id="filter-tag_{{ $item->id }}" value="{{ $item->id }}" />
                     {{ $item->name }}
-                    <br/>
+                    <br />
                     @endforeach
                 </p>
             </div>
@@ -579,16 +581,14 @@ $egucation_levels = [
                         داغ
                     </h3>
                     @foreach ($hotTemperatures as $index => $item)
-                    <input type="checkbox" class="temperature-checkbox" id="temperature_{{ $item->id }}"
-                        value="{{ $item->id }}" />
+                    <input type="checkbox" class="temperature-checkbox" id="temperature_{{ $item->id }}" value="{{ $item->id }}" />
                     {{ $item->name }}
                     @endforeach
                     <h3 class="text-center">
                         سرد
                     </h3>
                     @foreach ($coldTemperatures as $index => $item)
-                    <input type="checkbox" class="temperature-checkbox" id="temperature_{{ $item->id }}"
-                        value="{{ $item->id }}" />
+                    <input type="checkbox" class="temperature-checkbox" id="temperature_{{ $item->id }}" value="{{ $item->id }}" />
                     {{ $item->name }}
                     @endforeach
                 </p>
@@ -664,12 +664,12 @@ $egucation_levels = [
                     <div class="form-group">
                         <label for="description">زمان تماس بعد</label>
                         <a class="btn btn-link" onclick="$('#next_call_persian').val('');$('#next_call').val('');return false;" href="#">خالی کردن</a>
-                        <input type="text" class="form-control" id="next_call_persian"placeholder="زمان تماس بعد" readonly />
+                        <input type="text" class="form-control" id="next_call_persian" placeholder="زمان تماس بعد" readonly />
                         <input type="hidden" id="next_call" name="next_call" />
                     </div>
                     <div class="form-group">
                         <label for="description">توضیحات</label>
-                        <input type="text" class="form-control" id="description" name="description" placeholder="توضیحات"  />
+                        <input type="text" class="form-control" id="description" name="description" placeholder="توضیحات" />
                     </div>
                 </p>
             </div>
@@ -700,32 +700,33 @@ $egucation_levels = [
     let majors = @JSON($majors);
     let tags = {};
     let collections = {};
-    let calls_id = {{isset($calls_id)?$calls_id:'null'}};
+    let calls_id = {{isset($calls_id) ? $calls_id : 'null'}};
     var table;
-    for(let tg of tmpTags){
+    for (let tg of tmpTags) {
         tags[tg.id] = tg;
     }
-    for(let cl of tmpCollections){
+    for (let cl of tmpCollections) {
         collections[cl.id] = cl;
     }
     let filterParents = {
-        parent1: '',
-        parent2: '',
-        parent3: '',
-        parent4: '',
-        need_parent1: '',
-        need_parent2: '',
-        need_parent3: '',
-        need_parent4: ''
+        parent1: ''
+        , parent2: ''
+        , parent3: ''
+        , parent4: ''
+        , need_parent1: ''
+        , need_parent2: ''
+        , need_parent3: ''
+        , need_parent4: ''
     }
-    let students_id = {{isset($students_id)?$students_id:'null'}};
-    function showMorePanel(index, tr){
-        console.log(index, tr);
+    let students_id = {{isset($students_id) ? $students_id : 'null'}};
+
+    function showMorePanel(index, tr) {
+        {{-- console.log(index, tr); --}}
         var persons = {
-            student:"دانش آموز",
-            father:"پدر",
-            mother:"مادر",
-            other:"غیره"
+            student: "دانش آموز"
+            , father: "پدر"
+            , mother: "مادر"
+            , other: "غیره"
         };
         var editRoute = `{{ route('student_edit', ['call_back'=>'supporter_students', 'id'=>-1]) }}`;
         var purchaseRoute = `{{ route('student_purchases', -1) }}`;
@@ -762,49 +763,79 @@ $egucation_levels = [
             </tr>`;
         var calls = '';
         var callIndex = 1;
-        for(var call of students[index].calls) {
-            if(callIndex<=5) {
-                @if(isset($students_id) && $students_id!=null)
+        for (var call of students[index].calls) {
+            if (callIndex <= 5) {
+                @if(isset($students_id) && $students_id != null)
                 calls += tmpCall.replace('#index#', callIndex)
-                            .replace(/#id#/g, call.id)
-                            .replace('#product#', (call.product)?call.product.name:'-')
-                            .replace('#notice#', (call.notice)?call.notice.name:'-')
-                            .replace('#replier#', persons[call.replier])
-                            .replace('#callresult#', (call.callresult)?call.callresult.title:'-')
-                            .replace('#next_call#', (call.next_call)?call.next_call:'-')
-                            .replace('#next_to_call#', persons[call.next_to_call])
-                            .replace('#students_id#', call.students_id)
-                            .replace('#description#', (call.description)?call.description:'-');
+                    .replace(/#id#/g, call.id)
+                    .replace('#product#', (call.product) ? call.product.name : '-')
+                    .replace('#notice#', (call.notice) ? call.notice.name : '-')
+                    .replace('#replier#', persons[call.replier])
+                    .replace('#callresult#', (call.callresult) ? call.callresult.title : '-')
+                    .replace('#next_call#', (call.next_call) ? call.next_call : '-')
+                    .replace('#next_to_call#', persons[call.next_to_call])
+                    .replace('#students_id#', call.students_id)
+                    .replace('#description#', (call.description) ? call.description : '-');
                 @else
-                if(call.next_call) {
+                if (call.next_call) {
                     calls += tmpCallWithRecall.replace('#index#', callIndex)
-                                .replace(/#id#/g, call.id)
-                                .replace('#product#', (call.product)?call.product.name:'-')
-                                .replace('#notice#', (call.notice)?call.notice.name:'-')
-                                .replace('#replier#', persons[call.replier])
-                                .replace('#callresult#', (call.callresult)?call.callresult.title:'-')
-                                .replace('#next_call#', (call.next_call)?call.next_call:'-')
-                                .replace('#next_to_call#', persons[call.next_to_call])
-                                .replace('#students_id#', call.students_id)
-                                .replace('#description#', (call.description)?call.description:'-');
+                        .replace(/#id#/g, call.id)
+                        .replace('#product#', (call.product) ? call.product.name : '-')
+                        .replace('#notice#', (call.notice) ? call.notice.name : '-')
+                        .replace('#replier#', persons[call.replier])
+                        .replace('#callresult#', (call.callresult) ? call.callresult.title : '-')
+                        .replace('#next_call#', (call.next_call) ? call.next_call : '-')
+                        .replace('#next_to_call#', persons[call.next_to_call])
+                        .replace('#students_id#', call.students_id)
+                        .replace('#description#', (call.description) ? call.description : '-');
 
-                }else {
+                } else {
                     calls += tmpCall.replace('#index#', callIndex)
-                                .replace(/#id#/g, call.id)
-                                .replace('#product#', (call.product)?call.product.name:'-')
-                                .replace('#notice#', (call.notice)?call.notice.name:'-')
-                                .replace('#replier#', persons[call.replier])
-                                .replace('#callresult#', (call.callresult)?call.callresult.title:'-')
-                                .replace('#next_call#', (call.next_call)?call.next_call:'-')
-                                .replace('#next_to_call#', persons[call.next_to_call])
-                                .replace('#students_id#', call.students_id)
-                                .replace('#description#', (call.description)?call.description:'-');
+                        .replace(/#id#/g, call.id)
+                        .replace('#product#', (call.product) ? call.product.name : '-')
+                        .replace('#notice#', (call.notice) ? call.notice.name : '-')
+                        .replace('#replier#', persons[call.replier])
+                        .replace('#callresult#', (call.callresult) ? call.callresult.title : '-')
+                        .replace('#next_call#', (call.next_call) ? call.next_call : '-')
+                        .replace('#next_to_call#', persons[call.next_to_call])
+                        .replace('#students_id#', call.students_id)
+                        .replace('#description#', (call.description) ? call.description : '-');
                 }
                 @endif
-            }else {
+            } else {
                 continue;
             }
             callIndex++;
+        }
+        var studentMergeData = ``;
+        var first = ``;
+        var second = ``;
+        var third = ``;
+        var merge = students[index].mergestudent;
+        if(merge) {
+            if(merge.auxilary_student){
+                first = `<p class="cursor_pointer" id="${merge.auxilary_student.id}"
+                onclick="searchAuxilary(${merge.auxilary_student.id})">
+                    ${merge.auxilary_student.first_name}
+                    ${merge.auxilary_student.last_name}
+                    [${merge.auxilary_student.phone}]</p>`;
+            }
+            if(merge.second_auxilary_student){
+                second = `<p class="cursor_pointer" id="${merge.second_auxilary_student.id}"
+                onclick="searchSecondAuxilary(${merge.second_auxilary_student.id})">
+                    ${merge.second_auxilary_student.first_name}
+                ${merge.second_auxilary_student.last_name}
+                [${merge.second_auxilary_student.phone}]</p>`;
+            }
+            if(merge.third_auxilary_student){
+                third = `<p class="cursor_pointer" id="${merge.third_auxilary_student.id}"
+                onclick="searchThirdAuxilary(${merge.third_auxilary_student.id})">${merge.third_auxilary_student.first_name}
+                ${merge.third_auxilary_student.last_name}
+                [${merge.third_auxilary_student.phone}]</p>`;
+            }
+            studentMergeData = `افراد مرتبط:<br>`+ first + second + third;
+        }else{
+            studentMergeData = `<p class="text-danger">هیچ دانش آموز مرتبطی پیدا نشد!</p>`;
         }
         var test = `<table style="width: 100%">
             <tr>
@@ -863,7 +894,9 @@ $egucation_levels = [
                                 تاریخ ثبت دانش آموز :
                                 ${ students[index].pcreated_at }
                             </div>
+
                             <div class="col">
+                               ${ studentMergeData}
                             </div>
                         </div>
                         <div class="row">
@@ -929,84 +962,111 @@ $egucation_levels = [
 
         // var tr = $("#tr-" + index)[0];
         var row = table.row(tr);
-        if ( row.child.isShown() ) {
+        if (row.child.isShown()) {
             row.child.hide();
-        }
-        else {
-            row.child( test ).show();
+        } else {
+            row.child(test).show();
         }
     }
+    let theAuxilary = null;
+    let theSecondAuxilary = null;
+    let theThirdAuxilary = null;
+    searchAuxilary = (id) => {
+        theAuxilary = id;
+        theSecondAuxilary = null;
+        theThirdAuxilary = null;
+        table.ajax.reload();
+    };
+    searchSecondAuxilary = (id) => {
+        theAuxilary = null;
+        theSecondAuxilary = id;
+        theThirdAuxilary = null;
+        table.ajax.reload();
+    };
+    searchThirdAuxilary = (id) => {
+        theAuxilary = null;
+        theSecondAuxilary = null;
+        theThirdAuxilary = id;
+        table.ajax.reload();
+    }
+
+
     function changeSupporter(studentsIndex) {
         if (students[studentsIndex]) {
             var students_id = students[studentsIndex].id;
             var supporters_id = $("#supporters_id_" + studentsIndex).val();
             $("#loading-" + studentsIndex).show();
             $.post('{{ route('student_supporter') }}', {
-                    students_id,
-                    supporters_id
-                },
-                function (result) {
+                    students_id
+                    , supporters_id
+                }
+                , function(result) {
                     $("#loading-" + studentsIndex).hide();
                     console.log('Result', result);
                     if (result.error != null) {
                         alert('خطای بروز رسانی');
                     }
-                }).fail(function () {
+                }).fail(function() {
                 $("#loading-" + studentsIndex).hide();
                 alert('خطای بروز رسانی');
             });
         }
         return false;
     }
-    function selectParentOne(dobj){
-        filterParents.parent1 = ($(dobj).val()!='')?parseInt($(dobj).val(), 10):'';
+
+    function selectParentOne(dobj) {
+        filterParents.parent1 = ($(dobj).val() != '') ? parseInt($(dobj).val(), 10) : '';
         filterTagsByParent()
     }
-    function selectParentTwo(dobj){
-        filterParents.parent2 = ($(dobj).val()!='')?parseInt($(dobj).val(), 10):'';
+
+    function selectParentTwo(dobj) {
+        filterParents.parent2 = ($(dobj).val() != '') ? parseInt($(dobj).val(), 10) : '';
         filterTagsByParent()
     }
-    function selectParentThree(dobj){
-        filterParents.parent3 = ($(dobj).val()!='')?parseInt($(dobj).val(), 10):'';
+
+    function selectParentThree(dobj) {
+        filterParents.parent3 = ($(dobj).val() != '') ? parseInt($(dobj).val(), 10) : '';
         filterTagsByParent()
     }
-    function selectParentFour(dobj){
-        filterParents.parent4 = ($(dobj).val()!='')?parseInt($(dobj).val(), 10):'';
+
+    function selectParentFour(dobj) {
+        filterParents.parent4 = ($(dobj).val() != '') ? parseInt($(dobj).val(), 10) : '';
         filterTagsByParent()
     }
-    function filterTagsByParent(){
+
+    function filterTagsByParent() {
         $("input.tag-checkbox").show();
         $("span.tag-title").show();
         $("br.tag-br").show();
-        $("input.tag-checkbox").each(function (id, field){
+        $("input.tag-checkbox").each(function(id, field) {
             console.log('checking', field)
             let tagId = parseInt($(field).val(), 10);
             let theTag = tags[tagId];
             console.log(tagId, theTag)
-            if(theTag){
-                if(filterParents.parent1!=''){
-                    if(filterParents.parent1!=theTag.parent1){
+            if (theTag) {
+                if (filterParents.parent1 != '') {
+                    if (filterParents.parent1 != theTag.parent1) {
                         $(field).hide();
                         $("#tag-title-" + tagId).hide();
                         $("#tag-br-" + tagId).hide();
                     }
                 }
-                if(filterParents.parent2!=''){
-                    if(filterParents.parent2!=theTag.parent2){
+                if (filterParents.parent2 != '') {
+                    if (filterParents.parent2 != theTag.parent2) {
                         $(field).hide();
                         $("#tag-title-" + tagId).hide();
                         $("#tag-br-" + tagId).hide();
                     }
                 }
-                if(filterParents.parent3!=''){
-                    if(filterParents.parent3!=theTag.parent3){
+                if (filterParents.parent3 != '') {
+                    if (filterParents.parent3 != theTag.parent3) {
                         $(field).hide();
                         $("#tag-title-" + tagId).hide();
                         $("#tag-br-" + tagId).hide();
                     }
                 }
-                if(filterParents.parent4!=''){
-                    if(filterParents.parent4!=theTag.parent4){
+                if (filterParents.parent4 != '') {
+                    if (filterParents.parent4 != theTag.parent4) {
                         $(field).hide();
                         $("#tag-title-" + tagId).hide();
                         $("#tag-br-" + tagId).hide();
@@ -1016,55 +1076,60 @@ $egucation_levels = [
 
         });
     }
-    function selectNeedParentOne(dobj){
-        filterParents.need_parent1 = ($(dobj).val()!='')?parseInt($(dobj).val(), 10):'';
+
+    function selectNeedParentOne(dobj) {
+        filterParents.need_parent1 = ($(dobj).val() != '') ? parseInt($(dobj).val(), 10) : '';
         filterNeedTagsByParent()
     }
-    function selectNeedParentTwo(dobj){
-        filterParents.need_parent2 = ($(dobj).val()!='')?parseInt($(dobj).val(), 10):'';
+
+    function selectNeedParentTwo(dobj) {
+        filterParents.need_parent2 = ($(dobj).val() != '') ? parseInt($(dobj).val(), 10) : '';
         filterNeedTagsByParent()
     }
-    function selectNeedParentThree(dobj){
-        filterParents.need_parent3 = ($(dobj).val()!='')?parseInt($(dobj).val(), 10):'';
+
+    function selectNeedParentThree(dobj) {
+        filterParents.need_parent3 = ($(dobj).val() != '') ? parseInt($(dobj).val(), 10) : '';
         filterNeedTagsByParent()
     }
-    function selectNeedParentFour(dobj){
-        filterParents.need_parent4 = ($(dobj).val()!='')?parseInt($(dobj).val(), 10):'';
+
+    function selectNeedParentFour(dobj) {
+        filterParents.need_parent4 = ($(dobj).val() != '') ? parseInt($(dobj).val(), 10) : '';
         filterNeedTagsByParent()
     }
-    function filterNeedTagsByParent(){
+
+    function filterNeedTagsByParent() {
         $("input.needtag-checkbox").show();
         $("span.needtag-title").show();
         $("br.needtag-br").show();
-        $("input.needtag-checkbox").each(function (id, field){
+        $("input.needtag-checkbox").each(function(id, field) {
             console.log('checking', field)
             let tagId = parseInt($(field).val(), 10);
             let theTag = collections[tagId];
             console.log(tagId, theTag)
-            if(theTag){
-                if(filterParents.need_parent1!=''){
-                    if(filterParents.need_parent1!=theTag.need_parent1){
+            if (theTag) {
+                if (filterParents.need_parent1 != '') {
+                    if (filterParents.need_parent1 != theTag.need_parent1) {
                         $(field).hide();
                         $("#needtag-title-" + tagId).hide();
                         $("#needtag-br-" + tagId).hide();
                     }
                 }
-                if(filterParents.need_parent2!=''){
-                    if(filterParents.need_parent2!=theTag.need_parent2){
+                if (filterParents.need_parent2 != '') {
+                    if (filterParents.need_parent2 != theTag.need_parent2) {
                         $(field).hide();
                         $("#needtag-title-" + tagId).hide();
                         $("#needtag-br-" + tagId).hide();
                     }
                 }
-                if(filterParents.need_parent3!=''){
-                    if(filterParents.need_parent3!=theTag.need_parent3){
+                if (filterParents.need_parent3 != '') {
+                    if (filterParents.need_parent3 != theTag.need_parent3) {
                         $(field).hide();
                         $("#needtag-title-" + tagId).hide();
                         $("#needtag-br-" + tagId).hide();
                     }
                 }
-                if(filterParents.need_parent4!=''){
-                    if(filterParents.need_parent4!=theTag.need_parent4){
+                if (filterParents.need_parent4 != '') {
+                    if (filterParents.need_parent4 != theTag.need_parent4) {
                         $(field).hide();
                         $("#needtag-title-" + tagId).hide();
                         $("#needtag-br-" + tagId).hide();
@@ -1074,166 +1139,119 @@ $egucation_levels = [
 
         });
     }
-    function selectCollectionOne(dobj){
+
+    function selectCollectionOne(dobj) {
         $("#collection-two").find('option').show();
         $("#collection-two").find('option[value=""]').prop('selected', true);
-        if($(dobj).val()!=''){
-            $("#collection-two").find('option').each(function(id, field){
-                if($(field).data('parent_id')!=$(dobj).val() && $(field).val()!=''){
+        if ($(dobj).val() != '') {
+            $("#collection-two").find('option').each(function(id, field) {
+                if ($(field).data('parent_id') != $(dobj).val() && $(field).val() != '') {
                     $(field).hide();
-                }else{
+                } else {
                     $(field).show();
                 }
             });
         }
         $("#collection-three").find('option').show();
         $("#collection-three").find('option[value=""]').prop('selected', true);
-        if($(dobj).val()!=''){
-            $("#collection-three").find('option').each(function(id, field){
-                if($(field).data('parent_parent_id')!=$(dobj).val()){
+        if ($(dobj).val() != '') {
+            $("#collection-three").find('option').each(function(id, field) {
+                if ($(field).data('parent_parent_id') != $(dobj).val()) {
                     $(field).hide();
-                }else{
+                } else {
                     $(field).show();
                 }
             });
         }
         filterCollectionsByParent();
     }
-    function selectCollectionTwo(dobj){
+
+    function selectCollectionTwo(dobj) {
         console.log('hey');
         $("#collection-three").find('option').show();
         $("#collection-three").find('option[value=""]').prop('selected', true);
-        if($(dobj).val()!=''){
-            $("#collection-three").find('option').each(function(id, field){
-                if($(field).data('parent_id')!=$(dobj).val()){
+        if ($(dobj).val() != '') {
+            $("#collection-three").find('option').each(function(id, field) {
+                if ($(field).data('parent_id') != $(dobj).val()) {
                     $(field).hide();
-                }else{
+                } else {
                     $(field).show();
                 }
             });
         }
         filterCollectionsByParent();
     }
-    function selectCollectionThree(dobj){
+
+    function selectCollectionThree(dobj) {
         console.log('hey3');
         filterCollectionsByParent();
     }
-    // function filterCollectionsByParent(){
-    //     $("input.collection-checkbox").show();
-    //     $("span.collection-title").show();
-    //     $("br.collection-br").show();
-    //     let collectionParents = $("#collection-two").val();
-    //     let parents = [];
-    //     if($("#collection-one").val()=='' && collectionParents==''){
-    //         return false;
-    //     }
-
-
-
-
-    //     if(collectionParents==''){
-    //         parents.push(parseInt($("#collection-one").val(), 10));
-    //         $("#collection-two").find('option').each(function(id, field){
-    //             if($(field).css('display')!='none'){
-    //                 parents.push(parseInt($(field).val(), 10));
-    //             }
-    //         });
-    //         $("input.collection-checkbox").each(function (id, field){
-    //             let collectionId = parseInt($(field).val(), 10);
-    //             if(parents.indexOf(collectionId)<0){
-    //                 $(field).hide();
-    //                 $("#collection-title-" + collectionId).hide();
-    //                 $("#collection-br-" + collectionId).hide();
-    //             }
-    //         });
-    //         return false;
-    //     }else {
-    //         parents.push(parseInt(collectionParents, 10))
-    //     }
-    //     console.log('parents:', parents);
-
-    //     $("input.collection-checkbox").each(function (id, field){
-    //         // console.log('checking', field)
-    //         let collectionId = parseInt($(field).val(), 10);
-    //         let theCollection = collections[collectionId];
-    //         console.log(collectionId, theCollection)
-    //         if(theCollection){
-    //             console.log(parents.indexOf(theCollection.id), parents.indexOf(theCollection.parent_id));
-    //             if(parents.indexOf(theCollection.id)<0 && parents.indexOf(theCollection.parent_id)<0){
-    //                 $(field).hide();
-    //                 $("#collection-title-" + collectionId).hide();
-    //                 $("#collection-br-" + collectionId).hide();
-    //             }
-    //         }
-
-    //     });
-    // }
-    function filterCollectionsByParent(){
+    function filterCollectionsByParent() {
         $("input.collection-checkbox").show();
         $("span.collection-title").show();
         $("br.collection-br").show();
         let collectionParents = $("#collection-two").val();
         let parents = [];
-        if($("#collection-one").val()=='' && collectionParents==''){
+        if ($("#collection-one").val() == '' && collectionParents == '') {
             return false;
         }
 
 
 
 
-        if(collectionParents==''){
+        if (collectionParents == '') {
             parents.push(parseInt($("#collection-one").val(), 10));
-            $("#collection-two").find('option').each(function(id, field){
-                if($(field).css('display')!='none' && !isNaN(parseInt($(field).val(), 10))){
+            $("#collection-two").find('option').each(function(id, field) {
+                if ($(field).css('display') != 'none' && !isNaN(parseInt($(field).val(), 10))) {
                     parents.push(parseInt($(field).val(), 10));
                 }
             });
             console.log('p1', parents);
-            $("input.collection-checkbox").each(function (id, field){
+            $("input.collection-checkbox").each(function(id, field) {
                 let collectionId = parseInt($(field).val(), 10);
-                if(parents.indexOf(collectionId)<0){
+                if (parents.indexOf(collectionId) < 0) {
                     $(field).hide();
                     $("#collection-title-" + collectionId).hide();
                     $("#collection-br-" + collectionId).hide();
                 }
             });
             return false;
-        }else {
+        } else {
             parents.push(parseInt(collectionParents, 10))
         }
 
 
-        if($("#collection-three").val()==''){
+        if ($("#collection-three").val() == '') {
             parents.push(parseInt($("#collection-two").val(), 10));
-            $("#collection-three").find('option').each(function(id, field){
-                if($(field).css('display')!='none' && !isNaN(parseInt($(field).val(), 10))){
+            $("#collection-three").find('option').each(function(id, field) {
+                if ($(field).css('display') != 'none' && !isNaN(parseInt($(field).val(), 10))) {
                     parents.push(parseInt($(field).val(), 10));
                 }
             });
             console.log('p2', parents);
-            $("input.collection-checkbox").each(function (id, field){
+            $("input.collection-checkbox").each(function(id, field) {
                 let collectionId = parseInt($(field).val(), 10);
-                if(parents.indexOf(collectionId)<0){
+                if (parents.indexOf(collectionId) < 0) {
                     $(field).hide();
                     $("#collection-title-" + collectionId).hide();
                     $("#collection-br-" + collectionId).hide();
                 }
             });
             return false;
-        }else {
+        } else {
             parents.push(parseInt($("#collection-three").val(), 10))
         }
 
         console.log('parents:', parents);
 
-        $("input.collection-checkbox").each(function (id, field){
+        $("input.collection-checkbox").each(function(id, field) {
             // console.log('checking', field)
             let collectionId = parseInt($(field).val(), 10);
             let theCollection = collections[collectionId];
             console.log(collectionId, theCollection)
-            if(theCollection){
+            if (theCollection) {
                 console.log(parents.indexOf(theCollection.id), parents.indexOf(theCollection.parent_id));
-                if(parents.indexOf(theCollection.id)<0 && parents.indexOf(theCollection.parent_id)<0){
+                if (parents.indexOf(theCollection.id) < 0 && parents.indexOf(theCollection.parent_id) < 0) {
                     $(field).hide();
                     $("#collection-title-" + collectionId).hide();
                     $("#collection-br-" + collectionId).hide();
@@ -1242,12 +1260,13 @@ $egucation_levels = [
 
         });
     }
+
     function preloadFilterTagModal() {
         $("input.filter-tag-checkbox").prop('checked', false);
         var selecteds = $("#has_the_tag").val();
         console.log(selecteds);
-        for(var i of selecteds) {
-            if(i=='') {
+        for (var i of selecteds) {
+            if (i == '') {
                 $("input.filter-tag-checkbox").prop('checked', true);
             }
             $("#filter-tag_" + i).prop('checked', true);
@@ -1257,7 +1276,7 @@ $egucation_levels = [
     function saveFilterTags() {
         console.log('SAVE')
         $(`#has_the_tag option`).prop('selected', false);
-        $("input.filter-tag-checkbox:checked").each(function (id, field) {
+        $("input.filter-tag-checkbox:checked").each(function(id, field) {
             console.log(`#has_the_tag option[value='${$(field).val()}']`);
             $(`#has_the_tag option[value='${$(field).val()}']`).prop('selected', true);
         });
@@ -1269,35 +1288,35 @@ $egucation_levels = [
     function selectFilterAll() {
         var state = $("#filter-tag_all").prop('checked');
         console.log('State', state);
-        $("input.filter-tag-checkbox").each(function(id, field){
+        $("input.filter-tag-checkbox").each(function(id, field) {
             console.log(field);
-            if(field.id!="filter-tag_all") {
+            if (field.id != "filter-tag_all") {
                 console.log('set', field.id, state);
                 $(field).prop('checked', state);
             }
         });
     }
 
-    function preloadTagModal(mode){
-        if(mode=='need'){
+    function preloadTagModal(mode) {
+        if (mode == 'need') {
             $("div.needs").show();
             $("div.morals").hide();
-        }else{
+        } else {
             $("div.needs").hide();
             $("div.morals").show();
         }
         $("input.tag-checkbox").prop('checked', false);
         $("input.collection-checkbox").prop('checked', false);
         var studentsIndex = parseInt($("#students_index").val(), 10);
-        if(!isNaN(studentsIndex)){
-            if(students[studentsIndex]){
+        if (!isNaN(studentsIndex)) {
+            if (students[studentsIndex]) {
                 console.log(students[studentsIndex].studenttags);
-                for(studenttag of students[studentsIndex].studenttags){
+                for (studenttag of students[studentsIndex].studenttags) {
                     $("#tag_" + studenttag.tags_id).prop("checked", true);
                     $("#needtag_" + studenttag.tags_id).prop("checked", true);
                 }
                 console.log(students[studentsIndex].studentcollections);
-                for(studentcollection of students[studentsIndex].studentcollections){
+                for (studentcollection of students[studentsIndex].studentcollections) {
                     $("#collection_" + studentcollection.collections_id).prop("checked", true);
                 }
 
@@ -1321,10 +1340,10 @@ $egucation_levels = [
     function saveTags() {
         var selectedTags = [];
         var selectedColllections = [];
-        $("input.tag-checkbox:checked").each(function (id, field) {
+        $("input.tag-checkbox:checked").each(function(id, field) {
             selectedTags.push(parseInt(field.value, 10));
         });
-        $("input.needtag-checkbox:checked").each(function (id, field) {
+        $("input.needtag-checkbox:checked").each(function(id, field) {
             selectedColllections.push(parseInt(field.value, 10));
         });
         var studentsIndex = parseInt($("#students_index").val(), 10);
@@ -1333,18 +1352,18 @@ $egucation_levels = [
                 console.log('selected tags', selectedTags);
                 console.log('selected collections', selectedColllections);
                 $.post('{{ route('student_tag') }}', {
-                        students_id: students[studentsIndex].id,
-                        selectedTags,
-                        selectedColllections
-                    },
-                    function (result) {
+                        students_id: students[studentsIndex].id
+                        , selectedTags
+                        , selectedColllections
+                    }
+                    , function(result) {
                         console.log('Result', result);
                         if (result.error != null) {
                             alert('خطای بروز رسانی');
                         } else {
                             window.location.reload();
                         }
-                    }).fail(function () {
+                    }).fail(function() {
                     alert('خطای بروز رسانی');
                 });
             }
@@ -1353,7 +1372,7 @@ $egucation_levels = [
 
     function saveTemperatures() {
         var selectedTemperatures = [];
-        $("input.temperature-checkbox:checked").each(function (id, field) {
+        $("input.temperature-checkbox:checked").each(function(id, field) {
             selectedTemperatures.push(parseInt(field.value, 10));
         });
         var studentsIndex = parseInt($("#students_index2").val(), 10);
@@ -1361,17 +1380,17 @@ $egucation_levels = [
             if (students[studentsIndex]) {
                 console.log('selected temperatures', selectedTemperatures);
                 $.post('{{ route('student_temperature') }}', {
-                        students_id: students[studentsIndex].id,
-                        selectedTemperatures
-                    },
-                    function (result) {
+                        students_id: students[studentsIndex].id
+                        , selectedTemperatures
+                    }
+                    , function(result) {
                         console.log('Result', result);
                         if (result.error != null) {
                             alert('خطای بروز رسانی');
                         } else {
                             window.location.reload();
                         }
-                    }).fail(function () {
+                    }).fail(function() {
                     alert('خطای بروز رسانی');
                 });
             }
@@ -1379,68 +1398,68 @@ $egucation_levels = [
     }
 
     function saveCall() {
-        const canSaveWithNoAlert = ($("#call_results_id option:selected").data('nocall')/* + $("#call_results_id option:selected").data('noanswer')*/) > 0;
-        if(!$("#next_call").val() && !canSaveWithNoAlert) {
+        const canSaveWithNoAlert = ($("#call_results_id option:selected").data('nocall') /* + $("#call_results_id option:selected").data('noanswer')*/ ) > 0;
+        if (!$("#next_call").val() && !canSaveWithNoAlert) {
             alert('ثبت بدون یادآور ممنوع می باشد');
             return;
         }
-        if(canSaveWithNoAlert && $("#next_call").val()!='') {
+        if (canSaveWithNoAlert && $("#next_call").val() != '') {
             alert('ثبت بدون یادآور باید باشد');
             return;
         }
-        if($("#notices_id").val()=='' && $("#products_id").val().length==0) {
+        if ($("#notices_id").val() == '' && $("#products_id").val().length == 0) {
             alert('انتخاب محصول یا اطلاع رسانی لازم است');
             return;
         }
-        console.log('request' , {
-                students_id,
-                description: $("#description").val(),
-                result: $("#result").val(),
-                replier: $("#replier").val(),
-                products_id: $("#products_id").val(),
-                notices_id: $("#notices_id").val(),
-                next_to_call: $("#next_to_call").val(),
-                next_call: $("#next_call").val(),
-                call_results_id: $("#call_results_id").val(),
-                calls_id
+        console.log('request', {
+            students_id
+            , description: $("#description").val()
+            , result: $("#result").val()
+            , replier: $("#replier").val()
+            , products_id: $("#products_id").val()
+            , notices_id: $("#notices_id").val()
+            , next_to_call: $("#next_to_call").val()
+            , next_call: $("#next_call").val()
+            , call_results_id: $("#call_results_id").val()
+            , calls_id
         });
         $.post('{{ route('supporter_student_call') }}', {
-                students_id,
-                description: $("#description").val(),
-                result: $("#result").val(),
-                replier: $("#replier").val(),
-                products_id: $("#products_id").val(),
-                notices_id: $("#notices_id").val(),
-                next_to_call: $("#next_to_call").val(),
-                next_call: $("#next_call").val(),
-                call_results_id: $("#call_results_id").val(),
-                calls_id
-        },
-        function (result) {
-            console.log('Result', result);
-            if (result.error != null) {
-                alert('خطای بروز رسانی');
-            } else {
-                @if(isset($students_id) && $students_id!=null)
-                window.location.href = '{{ route("reminders") }}';
-                @else
-                window.location.reload();
-                @endif
+                students_id
+                , description: $("#description").val()
+                , result: $("#result").val()
+                , replier: $("#replier").val()
+                , products_id: $("#products_id").val()
+                , notices_id: $("#notices_id").val()
+                , next_to_call: $("#next_to_call").val()
+                , next_call: $("#next_call").val()
+                , call_results_id: $("#call_results_id").val()
+                , calls_id
             }
-        }).fail(function () {
+            , function(result) {
+                console.log('Result', result);
+                if (result.error != null) {
+                    alert('خطای بروز رسانی');
+                } else {
+                    @if(isset($students_id) && $students_id != null)
+                    window.location.href = '{{ route("reminders") }}';
+                    @else
+                    window.location.reload();
+                    @endif
+                }
+            }).fail(function() {
             alert('خطای بروز رسانی');
         });
     }
 
-    function StudentCollection(){
+    function StudentCollection() {
         var has_collection = $("#has_collection").val().trim();
-        if(has_collection=='' || has_collection=='false'){
+        if (has_collection == '' || has_collection == 'false') {
             has_collection = 'true';
-        }else {
+        } else {
             has_collection = 'false';
         }
         $("#has_collection").val(has_collection);
-        if(has_collection == 'false')
+        if (has_collection == 'false')
             $("#student-collection-btn").removeClass('btn-success').addClass('btn-warning');
         else
             $("#student-collection-btn").removeClass('btn-warning').addClass('btn-success');
@@ -1449,11 +1468,11 @@ $egucation_levels = [
         return false;
     }
 
-    function StudentTag(){
+    function StudentTag() {
         var has_tag = $("#has_tag").val().trim();
-        if(has_tag=='' || has_tag=='false'){
+        if (has_tag == '' || has_tag == 'false') {
             has_tag = 'true';
-        }else {
+        } else {
             has_tag = 'false';
         }
         $("#has_tag").val(has_tag);
@@ -1462,15 +1481,15 @@ $egucation_levels = [
         return false;
     }
 
-    function StudentReminder(){
+    function StudentReminder() {
         var has_reminder = $("#has_reminder").val().trim();
-        if(has_reminder=='' || has_reminder=='false'){
+        if (has_reminder == '' || has_reminder == 'false') {
             has_reminder = 'true';
-        }else {
+        } else {
             has_reminder = 'false';
         }
         $("#has_reminder").val(has_reminder);
-        if(has_reminder == 'false')
+        if (has_reminder == 'false')
             $("#student-reminder-btn").removeClass('btn-success').addClass('btn-warning');
         else
             $("#student-reminder-btn").removeClass('btn-warning').addClass('btn-success');
@@ -1481,13 +1500,13 @@ $egucation_levels = [
 
     function StudentSite() {
         var has_site = $("#has_site").val().trim();
-        if(has_site=='' || has_site=='false'){
+        if (has_site == '' || has_site == 'false') {
             has_site = 'true';
-        }else {
+        } else {
             has_site = 'false';
         }
         $("#has_site").val(has_site);
-        if(has_site == 'false')
+        if (has_site == 'false')
             $("#student-site-btn").removeClass('btn-success').addClass('btn-warning');
         else
             $("#student-site-btn").removeClass('btn-warning').addClass('btn-success');
@@ -1498,13 +1517,13 @@ $egucation_levels = [
 
     function OrderCollection() {
         var order_collection = $("#order_collection").val().trim();
-        if(order_collection=='' || order_collection=='false'){
+        if (order_collection == '' || order_collection == 'false') {
             order_collection = 'true';
-        }else {
+        } else {
             order_collection = 'false';
         }
         $("#order_collection").val(order_collection);
-        if(order_collection == 'false')
+        if (order_collection == 'false')
             $("#order-collection-btn").removeClass('btn-success').addClass('btn-warning');
         else
             $("#order-collection-btn").removeClass('btn-warning').addClass('btn-success');
@@ -1513,100 +1532,89 @@ $egucation_levels = [
         return false;
     }
 
-    function selectProduct(){
+    function selectProduct() {
         $("#has_the_product").val($("#has_product").val().join(','));
         // $("#search-frm").submit();
     }
 
-    function selectTag(){
+    function selectTag() {
         $("#has_the_tags").val($("#has_the_tag").val().join(','));
     }
 
-    function selectCallResult(){
+    function selectCallResult() {
         $("#has_call_result").val($("#has_cal_result").val());
         // $("#search-frm").submit();
         table.ajax.reload();
     }
-    function selectMajors(){
+
+    function selectMajors() {
         $('#major').val($('#major').val());
         table.ajax.reload();
     }
-    function selectSources(){
+
+    function selectSources() {
         $('#sources_id').val($('#sources_id').val());
         table.ajax.reload();
     }
-    function selectEducationLevels(){
+
+    function selectEducationLevels() {
         $('#eduction_level').val($('#education_level').val());
         table.ajax.reload();
     }
 
-    $(function () {
-        $('input').keypress(function(event){
+
+    $(function() {
+        $('input').keypress(function(event) {
             var keycode = (event.keyCode ? event.keyCode : event.which);
-            if(keycode == '13'){
-               table.ajax.reload();
+            if (keycode == '13') {
+                table.ajax.reload();
             }
         });
 
         $('#next_call_persian').MdPersianDateTimePicker({
-            targetTextSelector: '#next_call_persian',
-            targetDateSelector: '#next_call',
-        });
+            targetTextSelector: '#next_call_persian'
+            , targetDateSelector: '#next_call'
+        , });
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
-        $(".btn-danger").click(function (e) {
+        $(".btn-danger").click(function(e) {
             if (!confirm('آیا مطمئنید؟')) {
                 e.preventDefault();
             }
         });
         $('select.select2').select2();
-
-        // $("table.datatables").DataTable({
-        //     "paging": true,
-        //     "lengthChange": false,
-        //     "searching": false,
-        //     "ordering": true,
-        //     "info": true,
-        //     "autoWidth": true,
-        //     "language": {
-        //         "paginate": {
-        //             "previous": "قبل",
-        //             "next": "بعد"
-        //         },
-        //         "emptyTable": "داده ای برای نمایش وجود ندارد",
-        //         "info": "نمایش _START_ تا _END_ از _TOTAL_ داده",
-        //         "infoEmpty": "نمایش 0 تا 0 از 0 داده",
-        //     }
-        // });
         table = $("#example2").DataTable({
-            "paging": true,
-            "lengthChange": false,
-            "searching": false,
-            "ordering": true,
-            "info": true,
-            "autoWidth": true,
-            "language": {
+            "paging": true
+            , "lengthChange": false
+            , "searching": false
+            , "ordering": true
+            , "info": true
+            , "autoWidth": true
+            , "language": {
                 "paginate": {
-                    "previous": "قبل",
-                    "next": "بعد"
-                },
-                "emptyTable": "داده ای برای نمایش وجود ندارد",
-                "info": "نمایش _START_ تا _END_ از _TOTAL_ داده",
-                "infoEmpty": "نمایش 0 تا 0 از 0 داده",
-            },
-            serverSide: true,
-            processing: true,
-            ajax: {
-                "type": "POST",
-                "url": "{{ route('supporter_students') . ((isset($students_id) && $students_id!=null)?'?students_id=' . $students_id . '&calls_id=' . $calls_id:'') }}",
-                "dataType": "json",
-                "contentType": 'application/json; charset=utf-8',
+                    "previous": "قبل"
+                    , "next": "بعد"
+                }
+                , "emptyTable": "داده ای برای نمایش وجود ندارد"
+                , "info": "نمایش _START_ تا _END_ از _TOTAL_ داده"
+                , "infoEmpty": "نمایش 0 تا 0 از 0 داده"
+            , }
+            , serverSide: true
+            , processing: true
+            , ajax: {
+                "type": "POST"
+                , "url": "{{ route('supporter_students') . ((isset($students_id) && $students_id!=null)?'?students_id=' . $students_id . '&calls_id=' . $calls_id:'') }}"
+                , "dataType": "json"
+                , "contentType": 'application/json; charset=utf-8',
 
-                "data": function (data) {
+                "data": function(data) {
                     data['sources_id'] = $("#sources_id").val();
+                    data['auxilary_id'] = theAuxilary;
+                    data['second_auxilary_id'] = theSecondAuxilary;
+                    data['third_auxilary_id'] = theThirdAuxilary;
                     data['name'] = $("#name").val();
                     data['phone'] = $("#phone").val();
                     data['has_collection'] = $("#has_collection").val();
@@ -1620,26 +1628,26 @@ $egucation_levels = [
                     data['education_level'] = $("#education_level").val();
                     data['major'] = $('#major').val();
                     return JSON.stringify(data);
-                },
-                "complete": function(response) {
-                    console.log(response);
+                }
+                , "complete": function(response) {
+                    //console.log(response);
                     $('#example2 tr').click(function() {
                         var tr = this;
                         var studentId = parseInt($(tr).find('td')[1].innerText, 10);
-                        if(!isNaN(studentId)){
-                            for(var index in students){
-                                if(students[index].id==studentId){
+                        if (!isNaN(studentId)) {
+                            for (var index in students) {
+                                if (students[index].id == studentId) {
                                     showMorePanel(index, tr);
                                 }
                             }
                         }
                     });
-                    @if(isset($students_id) && $students_id!=null)
+                    @if(isset($students_id) && $students_id != null)
                     var tr = $('#example2 tr')[1];
                     var studentId = parseInt($(tr).find('td')[1].innerText, 10);
-                    if(!isNaN(studentId)){
-                        for(var index in students){
-                            if(students[index].id==studentId){
+                    if (!isNaN(studentId)) {
+                        for (var index in students) {
+                            if (students[index].id == studentId) {
                                 showMorePanel(index, tr);
                                 $('#call_modal').modal('show');
                             }

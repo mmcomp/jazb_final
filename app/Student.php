@@ -69,4 +69,9 @@ class Student extends Model
     public function studentclasses(){
         return $this->hasMany('App\StudentClassRoom', 'students_id', 'id');
     }
+
+
+    public function mergestudent(){
+        return $this->hasOne('App\MergeStudents', 'main_students_id', 'id');
+    }
 }

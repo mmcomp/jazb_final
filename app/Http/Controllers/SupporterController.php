@@ -31,6 +31,7 @@ use App\Notice;
 use App\Purchase;
 use App\StudentTag;
 use App\City;
+use App\MergeStudents as AppMergeStudents;
 use Exception;
 use Log;
 
@@ -323,28 +324,18 @@ class SupporterController extends Controller
     }
 
     public function student($id = null){
-        // dump(request()->all());
-        // ----
+        // dd(request()->all());
         $user = null;
         if($id==null){
             $id = Auth::user()->id;
         }else {
             $user = User::find($id);
         }
-        // Student::where('is_deleted', false)->where('supporters_id', $id)->where('viewed', false)->update([
-        //     'viewed'=>true
-        // ]);
         $students = Student::where('is_deleted', false)->where('banned', false)->where('archived', false)->where('supporters_id', $id);
         $sources = Source::where('is_deleted', false)->get();
         $products = Product::where('is_deleted', false)->with('collection')->orderBy('name')->get();
-        // $callResults = CallResult::where('is_deleted', false)->get();
         foreach($products as $index => $product){
             $products[$index]->parents = "-";
-            // if($product->collection) {
-            //     $parents = $product->collection->parents();
-            //     $name = ($parents!='')?$parents . "->" . $product->collection->name : $product->collection->name;
-            //     $products[$index]->parents  = $name;
-            // }
         }
         $callResults = CallResult::where('is_deleted', false)->get();
         $notices = Notice::where('is_deleted', false)->get();
@@ -367,8 +358,20 @@ class SupporterController extends Controller
             $calls_id = (int)request()->input('calls_id');
             $students = $students->where('id', $students_id);
         }
+        if(request()->input('auxilary_id')!= null){
+            $auxilary_id = (int)request()->input('auxilary_id');
+            $students = $students->where('id',$auxilary_id);
+        }
+        if(request()->input('second_auxilary_id')!= null){
+            $second_auxilary_id = (int)request()->input('second_auxilary_id');
+            $students = $students->where('id',$second_auxilary_id);
+        }
+        if(request()->input('third_auxilary_id')!= null){
+            $third_auxilary_id = (int)request()->input('third_auxilary_id');
+            $students = $students->where('id',$third_auxilary_id);
+        }
+
         if(request()->getMethod()=='POST'){
-            // dump(request()->all());
 
             if(request()->input('name')!=null){
                 $name = trim(request()->input('name'));
@@ -453,6 +456,9 @@ class SupporterController extends Controller
         ->with('calls.product')
         ->with('calls.notice')
         ->with('calls.callresult')
+        ->with('mergestudent.auxilaryStudent')
+        ->with('mergestudent.secondAuxilaryStudent')
+        ->with('mergestudent.thirdAuxilaryStudent')
         ->orderBy('created_at', 'desc')
         ->get();
 
@@ -529,6 +535,7 @@ class SupporterController extends Controller
                 "needTagParentFours"=>$needTagParentFours,
                 "students_id"=>$students_id,
                 "calls_id"=>$calls_id,
+                // "student_relations" => $student_relations,
                 'msg_success' => request()->session()->get('msg_success'),
                 'msg_error' => request()->session()->get('msg_error')
             ]);

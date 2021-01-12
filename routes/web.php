@@ -116,6 +116,7 @@ Route::group(['middleware' => ['auth', 'message']], function () {
     Route::group(['prefix' => '/students'], function () {
         Route::any('/', 'StudentController@index')->name('students');
         Route::any('/all', 'StudentController@indexAll')->name('student_all');
+        Route::get('/merged','StudentController@merge')->name('student_merged');
         Route::any('/banned', 'StudentController@banned')->name('student_banned');
         Route::any('/archived', 'StudentController@archived')->name('student_archived');
         Route::any('/create', 'StudentController@create')->name('student_create');
@@ -130,6 +131,13 @@ Route::group(['middleware' => ['auth', 'message']], function () {
         Route::any('/class/{id}', 'StudentController@class')->name('student_class');
         Route::get('/class/{student_id}/delete/{id}', 'StudentController@classDelete')->name('student_class_delete');
         Route::post('/class/{student_id}/add', 'StudentController@classAdd')->name('student_class_add');
+    });
+    Route::group(['prefix' => '/merge_students'], function(){
+        Route::any('/','MergeStudentsController@index')->name('merge_students_index');
+        Route::any('/create','MergeStudentsController@create')->name('merge_students_create');
+        Route::any('/edit/{id}','MergeStudentsController@edit')->name('merge_students_edit');
+        Route::get('/delete/{id}','MergeStudentsController@delete')->name('merge_students_delete');
+        Route::post('/getStudents','MergeStudentsController@getStudents')->name('merge_students_get');
     });
 
     Route::group(['prefix' => '/marketer'], function () {

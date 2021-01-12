@@ -30,7 +30,8 @@ use App\Temperature;
 use App\StudentCollection;
 use App\ClassRoom;
 use App\City;
-
+use App\MergeStudents as AppMergeStudents;
+use App\Purchase;
 use Exception;
 
 class StudentController extends Controller
@@ -1077,17 +1078,30 @@ class StudentController extends Controller
     }
 
     public function purchases(Request $request, $id){
-        $student = Student::where('is_deleted', false)->where('banned', false)->where('id', $id)->first();
-        if($student == null){
+
+        $appMergeStudent = AppMergeStudents::where('is_deleted', false)->where('main_students_id', $id)->first();
+        $student = null;
+        if($appMergeStudent){
+            $purchases = Purchase::where('is_deleted', false)->
+            whereIn('students_id', [
+                $appMergeStudent->main_students_id,
+                $appMergeStudent->auxilary_students_id,
+                $appMergeStudent->second_auxilary_students_id,
+                $appMergeStudent->third_auxilary_students_id
+                ])->get();
+        }else{
+            $student = Student::where('is_deleted', false)->where('banned', false)->where('id', $id)->first();
+            if($student){
+                $purchases = $student->purchases()->where('type', '!=', 'site_failed')->get();
+            }else if($student == null){
             $request->session()->flash("msg_error", "دانش آموز پیدا نشد!");
             return redirect()->route('students');
+            }
         }
-        // dump($student);
-        $purchases = $student->purchases()->where('type', '!=', 'site_failed')->get();
-        // dd($purchases);
         return view('students.purchase', [
             'student' => $student,
-            'purchases'=>$purchases
+            'purchases'=>$purchases,
+            'appMergeStudent' => $appMergeStudent,
         ]);
     }
     //---------------------AJAX-----------------------------------
@@ -1428,5 +1442,8 @@ class StudentController extends Controller
         ];
 
         return $result;
+    }
+    public function merge(){
+        return view('students.merge');
     }
 }

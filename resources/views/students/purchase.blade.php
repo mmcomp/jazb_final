@@ -1,5 +1,12 @@
 @extends('layouts.index')
+@section('css')
+<style>
+ .list_style_type_none{
+     list-style-type: none;
+ }
+</style>
 
+@endsection
 @section('content')
     <!-- Content Header (Page header) -->
     <section class="content-header">
@@ -8,8 +15,37 @@
             <div class="col-sm-6">
               <h1>
                   پرداخت های
-                  {{ $student->first_name }} {{ $student->last_name }} [{{ $student->phone }}]
+                  @if($appMergeStudent)
+                  {{ $appMergeStudent->mainstudent->first_name }} {{ $appMergeStudent->mainstudent->last_name }}
+                  [{{ $appMergeStudent->mainstudent->phone }}]
+                  @else
+                  {{ $student->first_name}} {{$student->last_name}}
+                  [{{$student->phone}}]
+                  @endif
               </h1>
+              <br>
+                  @if($appMergeStudent)
+                  <p class="text-info">افراد مرتبط</p>
+                  <ul class="list_style_type_none">
+                      <li>
+                        {{$appMergeStudent->auxilaryStudent ? $appMergeStudent->auxilaryStudent->first_name : ''}}
+                        {{$appMergeStudent->auxilaryStudent ? $appMergeStudent->auxilaryStudent->last_name : ''}}
+                        {{$appMergeStudent->auxilaryStudent ? '['.$appMergeStudent->auxilaryStudent->phone.']' : ''}}
+                      </li>
+                      <li>
+                        {{$appMergeStudent->secondAuxilaryStudent ? $appMergeStudent->secondAuxilaryStudent->first_name : ''}}
+                        {{$appMergeStudent->secondAuxilaryStudent ? $appMergeStudent->secondAuxilaryStudent->last_name : ''}}
+                        {{$appMergeStudent->secondAuxilaryStudent ? '['.$appMergeStudent->secondAuxilaryStudent->phone.']' : ''}}
+                      </li>
+                      <li>
+                        {{$appMergeStudent->thirdAuxilaryStudent ? $appMergeStudent->thirdAuxilaryStudent->first_name : ''}}
+                        {{$appMergeStudent->thirdAuxilaryStudent ? $appMergeStudent->thirdAuxilaryStudent->last_name : ''}}
+                        {{$appMergeStudent->thirdAuxilaryStudent ? '['.$appMergeStudent->thirdAuxilaryStudent->phone.']' : ''}}
+                      </li>
+                  </ul>
+                  @else
+                  <p class="text-danger">هیچ فرد مرتبطی با این دانش آموز وجود ندارد.</p>
+                  @endif
             </div>
             <div class="col-sm-6">
               <!--
