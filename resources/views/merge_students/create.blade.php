@@ -9,7 +9,7 @@
         <div class="row mb-2">
             <div class="col-sm-6">
                 <h1>
-                    @if(isset($student))
+                    @if(isset($rel))
                     ویرایش ارتباط
                     @else
                     ارتباط جدید
@@ -50,6 +50,7 @@
                                         <option value="{{ ($rel->mainStudent) ? $rel->mainStudent->id : '-' }}" selected="selected">
                                             {{($rel->mainStudent) ? $rel->mainStudent->first_name : '-'}}
                                             {{($rel->mainStudent) ? $rel->mainStudent->last_name : ' '}}
+                                            -{{($rel->mainStudent) ? $rel->mainStudent->phone : ' '}}
                                         </option>
                                         @endif
                                     </select>
@@ -64,6 +65,7 @@
                                         <option value="{{ ($rel->auxilaryStudent) ? $rel->auxilaryStudent->id : '-' }}" selected="selected">
                                             {{($rel->auxilaryStudent) ? $rel->auxilaryStudent->first_name : '-'}}
                                             {{($rel->auxilaryStudent) ? $rel->auxilaryStudent->last_name : ' '}}
+                                            -{{($rel->auxilaryStudent) ? $rel->auxilaryStudent->phone : ' '}}
                                         </option>
                                         @endif
                                     </select>
@@ -78,6 +80,7 @@
                                         <option value="{{ ($rel->secondAuxilaryStudent) ? $rel->secondAuxilaryStudent->id : '-' }}" selected="selected">
                                             {{($rel->secondAuxilaryStudent) ? $rel->secondAuxilaryStudent->first_name : '-'}}
                                             {{($rel->secondAuxilaryStudent) ? $rel->secondAuxilaryStudent->last_name : ' '}}
+                                            -{{($rel->secondAuxilaryStudent) ? $rel->secondAuxilaryStudent->phone : ' '}}
                                         </option>
                                         @endif
                                     </select>
@@ -92,6 +95,7 @@
                                         <option value="{{ ($rel->thirdAuxilaryStudent) ? $rel->thirdAuxilaryStudent->id : '-' }}" selected="selected">
                                             {{($rel->thirdAuxilaryStudent) ? $rel->thirdAuxilaryStudent->first_name : '-'}}
                                             {{($rel->thirdAuxilaryStudent) ? $rel->thirdAuxilaryStudent->last_name : ' '}}
+                                            -{{($rel->thirdAuxilaryStudent) ? $rel->thirdAuxilaryStudent->phone : ' '}}
                                         </option>
                                         @endif
                                     </select>
@@ -100,8 +104,8 @@
                         </div>
                         <div class="row">
                             <div class="col">
-                                @if(isset($student))
-                                <button class="btn btn-warning">
+                                @if(isset($rel))
+                                <button class="btn btn-warning text-white">
                                     ویرایش
                                 </button>
                                 @else
@@ -126,6 +130,7 @@
 @section('js')
 <script src="/plugins/select2/js/select2.min.js"></script>
 <script type="text/javascript">
+    console.log($('#select2-main-results').children(":first"));
     function removeItem(first, second_option, third_option, forth_option) {
         $(first).on('change', function() {
             var x = $(this).val();

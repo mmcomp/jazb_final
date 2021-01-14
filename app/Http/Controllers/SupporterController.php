@@ -322,6 +322,9 @@ class SupporterController extends Controller
     public function students($id){
         return $this->student($id);
     }
+    public function findStudent($request, $students){
+        $request != null ? $students = $students->where('id', (int)$request) : $students = '';
+    }
 
     public function student($id = null){
         // dd(request()->all());
@@ -353,24 +356,16 @@ class SupporterController extends Controller
         $order_collection = 'false';
         $has_reminder = 'false';
         $has_tag = 'false';
+        $appMergeStudents = null;
         if(request()->input('students_id')!=null){
             $students_id = (int)request()->input('students_id');
             $calls_id = (int)request()->input('calls_id');
             $students = $students->where('id', $students_id);
         }
-        if(request()->input('auxilary_id')!= null){
-            $auxilary_id = (int)request()->input('auxilary_id');
-            $students = $students->where('id',$auxilary_id);
-        }
-        if(request()->input('second_auxilary_id')!= null){
-            $second_auxilary_id = (int)request()->input('second_auxilary_id');
-            $students = $students->where('id',$second_auxilary_id);
-        }
-        if(request()->input('third_auxilary_id')!= null){
-            $third_auxilary_id = (int)request()->input('third_auxilary_id');
-            $students = $students->where('id',$third_auxilary_id);
-        }
-
+        $this->findStudent(request()->input('main_id'),$students);
+        $this->findStudent(request()->input('auxilary_id'),$students);
+        $this->findStudent(request()->input('second_auxilary_id'),$students);
+        $this->findStudent(request()->input('third_auxilary_id'),$students);
         if(request()->getMethod()=='POST'){
 
             if(request()->input('name')!=null){
@@ -456,9 +451,23 @@ class SupporterController extends Controller
         ->with('calls.product')
         ->with('calls.notice')
         ->with('calls.callresult')
+        ->with('mergestudent.mainStudent')
         ->with('mergestudent.auxilaryStudent')
         ->with('mergestudent.secondAuxilaryStudent')
         ->with('mergestudent.thirdAuxilaryStudent')
+        ->with('mergeauxilarystudent.mainStudent')
+        ->with('mergeauxilarystudent.auxilaryStudent')
+        ->with('mergeauxilarystudent.secondAuxilaryStudent')
+        ->with('mergeauxilarystudent.thirdAuxilaryStudent')
+        ->with('mergesecondauxilarystudent.mainStudent')
+        ->with('mergesecondauxilarystudent.auxilaryStudent')
+        ->with('mergesecondauxilarystudent.secondAuxilaryStudent')
+        ->with('mergesecondauxilarystudent.thirdAuxilaryStudent')
+        ->with('mergethirdauxilarystudent.mainStudent')
+        ->with('mergethirdauxilarystudent.auxilaryStudent')
+        ->with('mergethirdauxilarystudent.secondAuxilaryStudent')
+        ->with('mergethirdauxilarystudent.thirdAuxilaryStudent')
+
         ->orderBy('created_at', 'desc')
         ->get();
 

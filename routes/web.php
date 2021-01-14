@@ -12,7 +12,6 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
 Route::get('/login', 'UserController@login')->name('login');
 Route::post('/login', 'UserController@login')->name('dologin');
 Route::get('/register', 'RegisterController@index')->name('register');

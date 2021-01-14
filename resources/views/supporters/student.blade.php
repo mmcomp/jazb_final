@@ -687,6 +687,50 @@ null => ""
 <!-- DataTables -->
 <script src="../../plugins/datatables/jquery.dataTables.js"></script>
 <script src="../../plugins/datatables-bs4/js/dataTables.bootstrap4.js"></script>
+<script type="text/javascript">
+    var studentMergeData = ``;
+    var first = ``;
+    var second = ``;
+    var third = ``;
+    var forth = ``;
+    function mergeStudents(item,selfId){
+        //studentMergeData = ``;
+        first = ``;
+        second = ``;
+        third = ``;
+        forth = ``;
+        if(item) {
+            if(selfId!=item.main_student.id){
+                first=`<p class="cursor_pointer text-success" id="${item.main_student.id}"
+                onclick="searchMain(${item.main_student.id})">
+                    ${item.main_student.first_name}
+                    ${item.main_student.last_name}
+                    [${item.main_student.phone}]</p>`;
+            }
+            if(item.auxilary_student && selfId!=item.auxilary_student.id){
+                second = `<p class="cursor_pointer" id="${item.auxilary_student.id}"
+                onclick="searchAuxilary(${item.auxilary_student.id})">
+                    ${item.auxilary_student.first_name}
+                    ${item.auxilary_student.last_name}
+                    [${item.auxilary_student.phone}]</p>`;
+            }
+            if(item.second_auxilary_student && selfId!=item.second_auxilary_student.id){
+                third = `<p class="cursor_pointer" id="${item.second_auxilary_student.id}"
+                onclick="searchSecondAuxilary(${item.second_auxilary_student.id})">
+                ${item.second_auxilary_student.first_name}
+                ${item.second_auxilary_student.last_name}
+                [${item.second_auxilary_student.phone}]</p>`;
+            }
+            if(item.third_auxilary_student && selfId!=item.third_auxilary_student.id){
+                forth = `<p class="cursor_pointer" id="${item.third_auxilary_student.id}"
+                onclick="searchThirdAuxilary(${item.third_auxilary_student.id})">${item.third_auxilary_student.first_name}
+                ${item.third_auxilary_student.last_name}
+                [${item.third_auxilary_student.phone}]</p>`;
+            }
+            studentMergeData = `افراد مرتبط:<br>`+ first + second + third + forth;
+        }
+    }
+</script>
 <!-- page script -->
 <script>
     let students = @JSON($students);
@@ -807,36 +851,16 @@ null => ""
             }
             callIndex++;
         }
-        var studentMergeData = ``;
-        var first = ``;
-        var second = ``;
-        var third = ``;
+
         var merge = students[index].mergestudent;
-        if(merge) {
-            if(merge.auxilary_student){
-                first = `<p class="cursor_pointer" id="${merge.auxilary_student.id}"
-                onclick="searchAuxilary(${merge.auxilary_student.id})">
-                    ${merge.auxilary_student.first_name}
-                    ${merge.auxilary_student.last_name}
-                    [${merge.auxilary_student.phone}]</p>`;
-            }
-            if(merge.second_auxilary_student){
-                second = `<p class="cursor_pointer" id="${merge.second_auxilary_student.id}"
-                onclick="searchSecondAuxilary(${merge.second_auxilary_student.id})">
-                    ${merge.second_auxilary_student.first_name}
-                ${merge.second_auxilary_student.last_name}
-                [${merge.second_auxilary_student.phone}]</p>`;
-            }
-            if(merge.third_auxilary_student){
-                third = `<p class="cursor_pointer" id="${merge.third_auxilary_student.id}"
-                onclick="searchThirdAuxilary(${merge.third_auxilary_student.id})">${merge.third_auxilary_student.first_name}
-                ${merge.third_auxilary_student.last_name}
-                [${merge.third_auxilary_student.phone}]</p>`;
-            }
-            studentMergeData = `افراد مرتبط:<br>`+ first + second + third;
-        }else{
-            studentMergeData = `<p class="text-danger">هیچ دانش آموز مرتبطی پیدا نشد!</p>`;
-        }
+        var stu_id  = students[index].id;
+        var auxilaryMerge = students[index].mergeauxilarystudent;
+        var secondAuxilaryMerge = students[index].mergesecondauxilarystudent;
+        var thirdAuxilaryMerge = students[index].mergethirdauxilarystudent;
+        mergeStudents(merge,stu_id);
+        mergeStudents(auxilaryMerge,stu_id);
+        mergeStudents(secondAuxilaryMerge,stu_id);
+        mergeStudents(thirdAuxilaryMerge,stu_id);
         var test = `<table style="width: 100%">
             <tr>
                 <td>
@@ -968,22 +992,33 @@ null => ""
             row.child(test).show();
         }
     }
+    let theMain = null;
     let theAuxilary = null;
     let theSecondAuxilary = null;
     let theThirdAuxilary = null;
+    searchMain = (id) => {
+        theMain = id;
+        theAuxilary = null;
+        theSecondAuxilary = null;
+        theThirdAuxilary = null;
+        table.ajax.reload();
+    };
     searchAuxilary = (id) => {
+        theMain = null;
         theAuxilary = id;
         theSecondAuxilary = null;
         theThirdAuxilary = null;
         table.ajax.reload();
     };
     searchSecondAuxilary = (id) => {
+        theMain = null;
         theAuxilary = null;
         theSecondAuxilary = id;
         theThirdAuxilary = null;
         table.ajax.reload();
     };
     searchThirdAuxilary = (id) => {
+        theMain = null;
         theAuxilary = null;
         theSecondAuxilary = null;
         theThirdAuxilary = id;
@@ -1612,6 +1647,7 @@ null => ""
 
                 "data": function(data) {
                     data['sources_id'] = $("#sources_id").val();
+                    data['main_id'] = theMain;
                     data['auxilary_id'] = theAuxilary;
                     data['second_auxilary_id'] = theSecondAuxilary;
                     data['third_auxilary_id'] = theThirdAuxilary;
