@@ -24,7 +24,7 @@
                       {{$secondAuxilaryTitleOfPurchasePage}}
                     @elseif($thirdAuxilary)
                       {{$thirdAuxilaryTitleOfPurchasePage}}
-                    @else
+                    @elseif($student)
                     {{ $student->first_name}} {{$student->last_name}}
                     [{{$student->phone}}]
                     @endif

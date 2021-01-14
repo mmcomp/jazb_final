@@ -72,7 +72,7 @@ class MergeStudentsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function changeSupporter($item, $main, $request, $error, $id)
+    public function changeSupporter($item, $main, $request, $err, $id)
     {
         if ($item != null) {
             if ($item->supporters_id != $main->supporters_id) {
@@ -81,7 +81,7 @@ class MergeStudentsController extends Controller
                 try {
                     $stu->save();
                 } catch (Exception $error) {
-                    $request->session()->flash("msg_error", $error);
+                    $request->session()->flash("msg_error", $err);
                     return redirect()->route('merge_students_index');
                 }
             }
@@ -185,8 +185,8 @@ class MergeStudentsController extends Controller
             $sw = $this->handleError($arr_without_zeros, $request, $allRequests);
             if ($sw) {
                 $this->changeSupporter($rel->auxilaryStudent, $rel->mainStudent, $request, 'تغییر پشتیبان فرعی ۱ با مشکل روبرو شد.', $allRequests[1]);
-                $this->changeSupporter($rel->auxilaryStudent, $rel->mainStudent, $request, 'تغییر پشتیبان فرعی ۲ با مشکل روبرو شد.', $allRequests[2]);
-                $this->changeSupporter($rel->auxilaryStudent, $rel->mainStudent, $request, 'تغییر پشتیبان فرعی ۳ با مشکل روبرو شد.', $allRequests[3]);
+                $this->changeSupporter($rel->secondAuxilaryStudent, $rel->mainStudent, $request, 'تغییر پشتیبان فرعی ۲ با مشکل روبرو شد.', $allRequests[2]);
+                $this->changeSupporter($rel->thirdAuxilaryStudent, $rel->mainStudent, $request, 'تغییر پشتیبان فرعی ۳ با مشکل روبرو شد.', $allRequests[3]);
                 $rel->save();
             }
         } catch (Exception $error) {
