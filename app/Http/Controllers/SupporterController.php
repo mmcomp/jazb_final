@@ -341,7 +341,6 @@ class SupporterController extends Controller
             $user = User::find($id);
         }
         $students = Student::where('is_deleted', false)->where('banned', false)->where('archived', false)->where('supporters_id', $id);
-        $allStudents = $students;
         $sources = Source::where('is_deleted', false)->get();
         $products = Product::where('is_deleted', false)->with('collection')->orderBy('name')->get();
         foreach ($products as $index => $product) {
