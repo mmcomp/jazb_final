@@ -190,7 +190,7 @@ class MergeStudentsController extends Controller
                 $rel->save();
             }
         } catch (Exception $error) {
-            dd($error);
+            // dd($error);
             $request->session()->flash("msg_error", "سطر با موفقیت ویرایش نشد.");
             return redirect()->route('merge_students_index');
         }
