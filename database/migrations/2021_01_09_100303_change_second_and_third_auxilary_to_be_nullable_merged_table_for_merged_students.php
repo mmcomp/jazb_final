@@ -14,8 +14,8 @@ class ChangeSecondAndThirdAuxilaryToBeNullableMergedTableForMergedStudents exten
     public function up()
     {
         Schema::table('middle_table_for_merged_students', function (Blueprint $table) {
-            $table->integer('second_auxilary_students_id')->nullable()->change();
-            $table->integer('third_auxilary_students_id')->nullable()->change();
+            $table->integer('second_auxilary_students_id')->nullable();
+            $table->integer('third_auxilary_students_id')->nullable();
         });
     }
 
@@ -27,8 +27,8 @@ class ChangeSecondAndThirdAuxilaryToBeNullableMergedTableForMergedStudents exten
     public function down()
     {
         Schema::table('middle_table_for_merged_students', function (Blueprint $table) {
-            $table->integer('second_auxilary_students_id')->change();
-            $table->integer('third_auxilary_students_id')->change();
+            $table->dropColumn('second_auxilary_user_id');
+            $table->dropColumn('third_auxilary_user_id');
         });
     }
 }

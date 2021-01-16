@@ -22,12 +22,12 @@
 <body class="hold-transition login-page" style="background-image: url('/dist/img/photo2.png');background-size: cover;">
 <div class="login-box">
   <div class="login-logo">
-    <a href="index2.html">سامانه <b>جذب</b></a>
+    <a href="index2.html">سامانه اتوماسیون اداری <b>عارف</b></a>
   </div>
   <!-- /.login-logo -->
   <div class="card">
     <div class="card-body login-card-body">
-      <p class="login-box-msg">لطفا برای دسترسی به پنل جذب وارد شوید</p>
+      <p class="login-box-msg">لطفا برای دسترسی به پنل اتو ماسیون اداری وارد شوید</p>
       @if(isset($error))
       <div class="alert alert-danger">
           {{ $error->getMessage() }}
@@ -43,7 +43,7 @@
           </div>
           <input type="text" name="email" class="form-control" placeholder="تلفن همراه">
         </div>
-        <div class="input-group mb-3">
+        <div class="input-group mb-3" data-test="dd">
           <div class="input-group-append">
             <div class="input-group-text">
               <span class="fas fa-lock"></span>

@@ -362,10 +362,12 @@ class SupporterController extends Controller
             $calls_id = (int)request()->input('calls_id');
             $students = $students->where('id', $students_id);
         }
+        
         $this->findStudent(request()->input('main_id'),$students);
         $this->findStudent(request()->input('auxilary_id'),$students);
         $this->findStudent(request()->input('second_auxilary_id'),$students);
         $this->findStudent(request()->input('third_auxilary_id'),$students);
+
         if(request()->getMethod()=='POST'){
 
             if(request()->input('name')!=null){
