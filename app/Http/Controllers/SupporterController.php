@@ -340,7 +340,7 @@ class SupporterController extends Controller
         } else {
             $user = User::find($id);
         }
-        $students = Student::where('is_deleted', false)->where('banned', false)->where('supporters_id', $id);
+        $students = Student::where('is_deleted', false)->where('banned', false)->where('archived',false)->where('supporters_id', $id);
         $sources = Source::where('is_deleted', false)->get();
         $products = Product::where('is_deleted', false)->with('collection')->orderBy('name')->get();
         foreach ($products as $index => $product) {
