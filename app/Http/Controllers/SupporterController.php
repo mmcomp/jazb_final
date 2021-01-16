@@ -368,12 +368,14 @@ class SupporterController extends Controller
             $calls_id = (int)request()->input('calls_id');
             $students = $students->where('id', $students_id);
         }
+
         $this->findStudent(request()->input('main_id'), $students);
         $this->findStudent(request()->input('auxilary_id'), $students);
         $this->findStudent(request()->input('second_auxilary_id'), $students);
         $this->findStudent(request()->input('third_auxilary_id'), $students);
 
         if (request()->getMethod() == 'POST') {
+
 
             if (request()->input('name') != null) {
                 $name = trim(request()->input('name'));
@@ -412,7 +414,25 @@ class SupporterController extends Controller
                     $calls = $calls->whereIn('products_id', explode(',', $has_the_product));
                 }
                 $calls = $calls->pluck('students_id');
-                $students = $students->whereIn('id', $calls);
+                // $students = $students->whereIn('id', $purchases)->orWhereIn('id', $calls);
+                $students = $students->where(function ($query) use ($purchases, $calls) {
+                    $query->whereIn('id', $purchases)->orWhereIn('id', $calls);
+                });
+            } else {
+                if (request()->input('has_the_product') != null && request()->input('has_the_product') != '') {
+                    $has_the_product = request()->input('has_the_product');
+                    $purchases = Purchase::where('is_deleted', false)->where('type', '!=', 'site_failed')->whereIn('products_id', explode(',', $has_the_product))->pluck('students_id');
+                    $students = $students->whereIn('id', $purchases);
+                }
+                if (request()->input('has_call_result') != null && request()->input('has_call_result') != '') {
+                    $has_call_result = request()->input('has_call_result');
+                    $calls = Call::where('call_results_id', $has_call_result);
+                    if ($has_the_product != '') {
+                        $calls = $calls->whereIn('products_id', explode(',', $has_the_product));
+                    }
+                    $calls = $calls->pluck('students_id');
+                    $students = $students->whereIn('id', $calls);
+                }
             }
             if (request()->input('has_the_tags') != null && request()->input('has_the_tags') != '') {
                 $has_the_tags = request()->input('has_the_tags');
@@ -550,7 +570,6 @@ class SupporterController extends Controller
                 "needTagParentFours" => $needTagParentFours,
                 "students_id" => $students_id,
                 "calls_id" => $calls_id,
-                // "student_relations" => $student_relations,
                 'msg_success' => request()->session()->get('msg_success'),
                 'msg_error' => request()->session()->get('msg_error')
             ]);
