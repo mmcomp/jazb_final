@@ -470,6 +470,7 @@
                                 رشته تحصیلی :
                                 ${ (majors[students[index].major])?majors[students[index].major]:'-' }
                             </div>
+
                         </div>
                         <div class="row">
                             <div class="col">
@@ -482,6 +483,7 @@
                                 ${ students[index].pcreated_at }
                             </div>
                             <div class="col">
+                               
                             </div>
                         </div>
                         <div class="row">
