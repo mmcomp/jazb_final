@@ -69,4 +69,19 @@ class Student extends Model
     public function studentclasses(){
         return $this->hasMany('App\StudentClassRoom', 'students_id', 'id');
     }
+
+
+    public function mergestudent(){
+        return $this->hasOne('App\MergeStudents', 'main_students_id', 'id')->where('is_deleted',false);
+    }
+
+    public function mergeauxilarystudent(){
+        return $this->hasOne('App\MergeStudents', 'auxilary_students_id', 'id')->where('is_deleted',false);
+    }
+    public function mergesecondauxilarystudent(){
+        return $this->hasOne('App\MergeStudents', 'second_auxilary_students_id', 'id')->where('is_deleted',false);
+    }
+    public function mergethirdauxilarystudent(){
+        return $this->hasOne('App\MergeStudents', 'third_auxilary_students_id', 'id')->where('is_deleted',false);
+    }
 }

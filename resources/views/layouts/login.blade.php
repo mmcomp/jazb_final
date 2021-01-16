@@ -43,7 +43,7 @@
           </div>
           <input type="text" name="email" class="form-control" placeholder="تلفن همراه">
         </div>
-        <div class="input-group mb-3">
+        <div class="input-group mb-3" data-test="dd">
           <div class="input-group-append">
             <div class="input-group-text">
               <span class="fas fa-lock"></span>

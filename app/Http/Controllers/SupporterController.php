@@ -31,6 +31,7 @@ use App\Notice;
 use App\Purchase;
 use App\StudentTag;
 use App\City;
+use App\MergeStudents as AppMergeStudents;
 use Exception;
 use Log;
 
@@ -326,31 +327,24 @@ class SupporterController extends Controller
     {
         return $this->student($id);
     }
+    public function findStudent($request, $students)
+    {
+        $request != null ? $students = $students->where('id', (int)$request) : $students = '';
+    }
 
     public function student($id = null)
     {
-        // dump(request()->all());
-        // ----
         $user = null;
         if ($id == null) {
             $id = Auth::user()->id;
         } else {
             $user = User::find($id);
         }
-        // Student::where('is_deleted', false)->where('supporters_id', $id)->where('viewed', false)->update([
-        //     'viewed'=>true
-        // ]);
         $students = Student::where('is_deleted', false)->where('banned', false)->where('archived', false)->where('supporters_id', $id);
         $sources = Source::where('is_deleted', false)->get();
         $products = Product::where('is_deleted', false)->with('collection')->orderBy('name')->get();
-        // $callResults = CallResult::where('is_deleted', false)->get();
         foreach ($products as $index => $product) {
             $products[$index]->parents = "-";
-            // if($product->collection) {
-            //     $parents = $product->collection->parents();
-            //     $name = ($parents!='')?$parents . "->" . $product->collection->name : $product->collection->name;
-            //     $products[$index]->parents  = $name;
-            // }
         }
         $callResults = CallResult::where('is_deleted', false)->get();
         $notices = Notice::where('is_deleted', false)->get();
@@ -368,13 +362,20 @@ class SupporterController extends Controller
         $order_collection = 'false';
         $has_reminder = 'false';
         $has_tag = 'false';
+        $appMergeStudents = null;
         if (request()->input('students_id') != null) {
             $students_id = (int)request()->input('students_id');
             $calls_id = (int)request()->input('calls_id');
             $students = $students->where('id', $students_id);
         }
+
+        $this->findStudent(request()->input('main_id'), $students);
+        $this->findStudent(request()->input('auxilary_id'), $students);
+        $this->findStudent(request()->input('second_auxilary_id'), $students);
+        $this->findStudent(request()->input('third_auxilary_id'), $students);
+
         if (request()->getMethod() == 'POST') {
-            // dump(request()->all());
+
 
             if (request()->input('name') != null) {
                 $name = trim(request()->input('name'));
@@ -401,14 +402,12 @@ class SupporterController extends Controller
                     $students = $students->whereIn('id', $studentCollections);
                 }
             }
-            // To Do
-            // Check if has_the_product and has_call_result are set ?
-            // Then or them
-            // Else do these
-            if (request()->input('has_the_product') != null && request()->input('has_the_product') != null) {
+            if (request()->input('has_the_product') != null && request()->input('has_the_product') != '') {
                 $has_the_product = request()->input('has_the_product');
                 $purchases = Purchase::where('is_deleted', false)->where('type', '!=', 'site_failed')->whereIn('products_id', explode(',', $has_the_product))->pluck('students_id');
                 $students = $students->whereIn('id', $purchases);
+            }
+            if (request()->input('has_call_result') != null && request()->input('has_call_result') != '') {
                 $has_call_result = request()->input('has_call_result');
                 $calls = Call::where('call_results_id', $has_call_result);
                 if ($has_the_product != '') {
@@ -435,8 +434,6 @@ class SupporterController extends Controller
                     $students = $students->whereIn('id', $calls);
                 }
             }
-
-            // End of these
             if (request()->input('has_the_tags') != null && request()->input('has_the_tags') != '') {
                 $has_the_tags = request()->input('has_the_tags');
                 $studentTags = StudentTag::where('is_deleted', false)->whereIn('tags_id', explode(',', $has_the_tags))->pluck('students_id');
@@ -481,6 +478,23 @@ class SupporterController extends Controller
             ->with('calls.product')
             ->with('calls.notice')
             ->with('calls.callresult')
+            ->with('mergestudent.mainStudent')
+            ->with('mergestudent.auxilaryStudent')
+            ->with('mergestudent.secondAuxilaryStudent')
+            ->with('mergestudent.thirdAuxilaryStudent')
+            ->with('mergeauxilarystudent.mainStudent')
+            ->with('mergeauxilarystudent.auxilaryStudent')
+            ->with('mergeauxilarystudent.secondAuxilaryStudent')
+            ->with('mergeauxilarystudent.thirdAuxilaryStudent')
+            ->with('mergesecondauxilarystudent.mainStudent')
+            ->with('mergesecondauxilarystudent.auxilaryStudent')
+            ->with('mergesecondauxilarystudent.secondAuxilaryStudent')
+            ->with('mergesecondauxilarystudent.thirdAuxilaryStudent')
+            ->with('mergethirdauxilarystudent.mainStudent')
+            ->with('mergethirdauxilarystudent.auxilaryStudent')
+            ->with('mergethirdauxilarystudent.secondAuxilaryStudent')
+            ->with('mergethirdauxilarystudent.thirdAuxilaryStudent')
+
             ->orderBy('created_at', 'desc')
             ->get();
 

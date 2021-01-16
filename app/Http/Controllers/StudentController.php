@@ -30,7 +30,8 @@ use App\Temperature;
 use App\StudentCollection;
 use App\ClassRoom;
 use App\City;
-
+use App\MergeStudents as AppMergeStudents;
+use App\Purchase;
 use Exception;
 
 class StudentController extends Controller
@@ -1076,18 +1077,97 @@ class StudentController extends Controller
         ]);
     }
 
+    public function thirnaryOperatorsForpurchases($item){
+        $first = $item ? $item->first_name : '';
+        $second = $item ? $item->last_name : '';
+        $third = $item ? ('['.$item->phone.']') : '';
+        return $first.' '.$second.' '.$third;
+    }
+    public function relatedPersons($one,$two,$three,$boolParam){
+    $class = $boolParam ? 'text-success' : '';
+    $output = '<p class="text-info">افراد مرتبط</p>
+    <ul class="list_style_type_none">
+        <li class='."$class".'>'.
+            $this->thirnaryOperatorsForpurchases($one).
+            '</li>
+        <li>'.
+            $this->thirnaryOperatorsForpurchases($two).
+            '</li>
+        <li>'.
+            $this->thirnaryOperatorsForpurchases($three).
+            '</li>
+    </ul>';
+
+    return $output;
+    }
     public function purchases(Request $request, $id){
-        $student = Student::where('is_deleted', false)->where('banned', false)->where('id', $id)->first();
-        if($student == null){
+
+        $appMergeStudent = AppMergeStudents::where('is_deleted', false)->where('main_students_id', $id)->orWhere('auxilary_students_id', $id)
+        ->orWhere('second_auxilary_students_id', $id)
+        ->orWhere('third_auxilary_students_id', $id)
+        ->first();
+        $main = AppMergeStudents::where('is_deleted',false)->where('main_students_id',$id)->first();
+        $auxilary = AppMergeStudents::where('is_deleted',false)->where('auxilary_students_id',$id)->first();
+        $secondAuxilary = AppMergeStudents::where('is_deleted',false)->where('second_auxilary_students_id',$id)->first();
+        $thirdAuxilary = AppMergeStudents::where('is_deleted',false)->where('third_auxilary_students_id',$id)->first();
+        $relatedToMain = '';
+        $relatedToAuxilary = '';
+        $relatedToSecondAuxilary = '';
+        $relatedToThirdAuxilary = '';
+        $mainTitleOfPurchasePage = '';
+        $auxilaryTitleOfPurchasePage = '';
+        $secondAuxilaryTitleOfPurchasePage = '';
+        $thirdAuxilaryTitleOfPurchasePage = '';
+        if($main){
+            $relatedToMain = $this->relatedPersons($main->auxilaryStudent,$main->secondAuxilaryStudent,$main->thirdAuxilaryStudent,false);
+            $mainTitleOfPurchasePage = $this->thirnaryOperatorsForpurchases($main->mainStudent);
+        }
+        if($auxilary){
+            $relatedToAuxilary = $this->relatedPersons($auxilary->mainStudent,$auxilary->secondAuxilaryStudent,$auxilary->thirdAuxilaryStudent,true);
+            $auxilaryTitleOfPurchasePage = $this->thirnaryOperatorsForpurchases($auxilary->auxilaryStudent);
+        }
+        if($secondAuxilary){
+            $relatedToSecondAuxilary = $this->relatedPersons($secondAuxilary->mainStudent,$secondAuxilary->auxilaryStudent,$secondAuxilary->thirdAuxilaryStudent,true);
+            $secondAuxilaryTitleOfPurchasePage = $this->thirnaryOperatorsForpurchases($secondAuxilary->secondAuxilaryStudent);
+        }
+        if($thirdAuxilary){
+            $relatedToThirdAuxilary = $this->relatedPersons($thirdAuxilary->mainStudent,$thirdAuxilary->auxilaryStudent,$thirdAuxilary->secondAuxilaryStudent,true);
+            $thirdAuxilaryTitleOfPurchasePage = $this->thirnaryOperatorsForpurchases($thirdAuxilary->thirdAuxilaryStudent);
+        }
+        $student = null;
+        if($appMergeStudent){
+            $purchases = Purchase::where('is_deleted', false)->
+            whereIn('students_id', [
+                $appMergeStudent->main_students_id,
+                $appMergeStudent->auxilary_students_id,
+                $appMergeStudent->second_auxilary_students_id,
+                $appMergeStudent->third_auxilary_students_id
+                ])->get();
+        }else{
+            $student = Student::where('is_deleted', false)->where('banned', false)->where('id', $id)->first();
+            if($student){
+                $purchases = $student->purchases()->where('type', '!=', 'site_failed')->get();
+            }else if($student == null){
             $request->session()->flash("msg_error", "دانش آموز پیدا نشد!");
             return redirect()->route('students');
+            }
         }
-        // dump($student);
-        $purchases = $student->purchases()->where('type', '!=', 'site_failed')->get();
-        // dd($purchases);
         return view('students.purchase', [
             'student' => $student,
-            'purchases'=>$purchases
+            'purchases'=>$purchases,
+            'appMergeStudent' => $appMergeStudent,
+            'main' => $main,
+            'auxilary' => $auxilary,
+            'secondAuxilary' => $secondAuxilary,
+            'thirdAuxilary' => $thirdAuxilary,
+            'relatedToMain' => $relatedToMain,
+            'relatedToAuxilary' => $relatedToAuxilary,
+            'relatedToSecondAuxilary' => $relatedToSecondAuxilary,
+            'relatedToThirdAuxilary' => $relatedToThirdAuxilary,
+            'mainTitleOfPurchasePage' => $mainTitleOfPurchasePage,
+            'auxilaryTitleOfPurchasePage' => $auxilaryTitleOfPurchasePage,
+            'secondAuxilaryTitleOfPurchasePage' => $secondAuxilaryTitleOfPurchasePage,
+            'thirdAuxilaryTitleOfPurchasePage' => $thirdAuxilaryTitleOfPurchasePage
         ]);
     }
     //---------------------AJAX-----------------------------------
@@ -1428,5 +1508,8 @@ class StudentController extends Controller
         ];
 
         return $result;
+    }
+    public function merge(){
+        return view('students.merge');
     }
 }

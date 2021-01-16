@@ -502,7 +502,16 @@
                                 <p>فهرست دانش آموزان</p>
                             </a>
                         </li>
-
+                        <li class="nav-item">
+                            @if(strpos(\Request::route()->getName(), 'merge_students_index')===0)
+                            <a href="{{ route('merge_students_index') }}" class="nav-link active">
+                            @else
+                            <a href="{{ route('merge_students_index') }}" class="nav-link">
+                            @endif
+                                <!-- <i class="far fa-circle nav-icon"></i> -->
+                                <p>همگام سازی دانش آموزان</p>
+                            </a>
+                        </li>
                         <li class="nav-item">
                             @if(strpos(\Request::route()->getName(), 'student_banned')===0)
                             <a href="{{ route('student_banned') }}" class="nav-link active">
