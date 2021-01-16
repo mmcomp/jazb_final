@@ -36,7 +36,7 @@ class PurchaseController extends Controller
     public function create(Request $request)
     {
         $purchase = new Purchase();
-        $students = Student::where('is_deleted', false)->where('banned', false)->get();
+        $students = Student::where('is_deleted', false)->where('archived',true)->where('banned',true)->get();
         $products = Product::where('is_deleted', false)->with('collection')->orderBy('name')->get();
         foreach($products as $index => $product){
             $products[$index]->parents = "-";
