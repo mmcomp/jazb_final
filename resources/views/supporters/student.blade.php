@@ -116,7 +116,7 @@ null => ""
                                 </div>
                             </div>
                             <div class="col" style="padding-top: 32px;">
-                                <a class="btn btn-success" onclick="table.ajax.reload(); return false;" href="#">
+                                <a class="btn btn-success" onclick="theSearch()" href="#">
                                     جستجو
                                 </a>
                             </div>
@@ -1024,6 +1024,12 @@ null => ""
         theThirdAuxilary = id;
         table.ajax.reload();
     }
+    function emptySomeData(){
+        theMain = null;
+        theAuxilary = null;
+        theSecondAuxilary = null;
+        theThirdAuxilary = null;
+     }
 
 
     function changeSupporter(studentsIndex) {
@@ -1309,6 +1315,7 @@ null => ""
     }
 
     function saveFilterTags() {
+        emptySomeData();
         console.log('SAVE')
         $(`#has_the_tag option`).prop('selected', false);
         $("input.filter-tag-checkbox:checked").each(function(id, field) {
@@ -1318,6 +1325,7 @@ null => ""
         $('#tag_modal_filter').modal('hide');
         console.log($("#has_the_tag").val());
         $("#has_the_tags").val($("#has_the_tag").val().join(','));
+        table.ajax.reload();
     }
 
     function selectFilterAll() {
@@ -1373,6 +1381,7 @@ null => ""
     }
 
     function saveTags() {
+        emptySomeData();
         var selectedTags = [];
         var selectedColllections = [];
         $("input.tag-checkbox:checked").each(function(id, field) {
@@ -1396,7 +1405,8 @@ null => ""
                         if (result.error != null) {
                             alert('خطای بروز رسانی');
                         } else {
-                            window.location.reload();
+                            table.ajax.reload();
+                            //window.location.reload();
                         }
                     }).fail(function() {
                     alert('خطای بروز رسانی');
@@ -1406,6 +1416,7 @@ null => ""
     }
 
     function saveTemperatures() {
+        emptySomeData();
         var selectedTemperatures = [];
         $("input.temperature-checkbox:checked").each(function(id, field) {
             selectedTemperatures.push(parseInt(field.value, 10));
@@ -1423,7 +1434,8 @@ null => ""
                         if (result.error != null) {
                             alert('خطای بروز رسانی');
                         } else {
-                            window.location.reload();
+                            table.ajax.reload();
+                            //window.location.reload();
                         }
                     }).fail(function() {
                     alert('خطای بروز رسانی');
@@ -1487,6 +1499,7 @@ null => ""
     }
 
     function StudentCollection() {
+        emptySomeData();
         var has_collection = $("#has_collection").val().trim();
         if (has_collection == '' || has_collection == 'false') {
             has_collection = 'true';
@@ -1504,6 +1517,7 @@ null => ""
     }
 
     function StudentTag() {
+        emptySomeData();
         var has_tag = $("#has_tag").val().trim();
         if (has_tag == '' || has_tag == 'false') {
             has_tag = 'true';
@@ -1517,6 +1531,7 @@ null => ""
     }
 
     function StudentReminder() {
+        emptySomeData();
         var has_reminder = $("#has_reminder").val().trim();
         if (has_reminder == '' || has_reminder == 'false') {
             has_reminder = 'true';
@@ -1534,6 +1549,7 @@ null => ""
     }
 
     function StudentSite() {
+        emptySomeData();
         var has_site = $("#has_site").val().trim();
         if (has_site == '' || has_site == 'false') {
             has_site = 'true';
@@ -1551,6 +1567,7 @@ null => ""
     }
 
     function OrderCollection() {
+        emptySomeData();
         var order_collection = $("#order_collection").val().trim();
         if (order_collection == '' || order_collection == 'false') {
             order_collection = 'true';
@@ -1568,6 +1585,7 @@ null => ""
     }
 
     function selectProduct() {
+        emptySomeData();
         $("#has_the_product").val($("#has_product").val().join(','));
         // $("#search-frm").submit();
     }
@@ -1577,24 +1595,34 @@ null => ""
     }
 
     function selectCallResult() {
+        emptySomeData();
         $("#has_call_result").val($("#has_cal_result").val());
         // $("#search-frm").submit();
         table.ajax.reload();
     }
 
     function selectMajors() {
+        emptySomeData();
         $('#major').val($('#major').val());
         table.ajax.reload();
     }
 
+
     function selectSources() {
+        emptySomeData();
         $('#sources_id').val($('#sources_id').val());
         table.ajax.reload();
     }
 
     function selectEducationLevels() {
+        emptySomeData();
         $('#eduction_level').val($('#education_level').val());
         table.ajax.reload();
+    }
+    function theSearch(){
+        emptySomeData();
+        table.ajax.reload();
+        return false;
     }
 
 
@@ -1602,6 +1630,7 @@ null => ""
         $('input').keypress(function(event) {
             var keycode = (event.keyCode ? event.keyCode : event.which);
             if (keycode == '13') {
+                emptySomeData();
                 table.ajax.reload();
             }
         });
