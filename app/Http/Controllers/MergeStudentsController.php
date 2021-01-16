@@ -235,12 +235,12 @@ class MergeStudentsController extends Controller
             $students = Student::orderby('id', 'desc')->select('id', 'first_name', 'last_name', 'phone')->where(
                 'is_deleted',
                 false
-            )->where('banned', false)->where('archived', false)->get();
+            )->where('banned', false)->get();
         } else {
             $students = Student::orderby('id', 'desc')->select('id', 'first_name', 'last_name', 'phone')->where(
                 'is_deleted',
                 false
-            )->where('banned', false)->where('archived', false)->where(function ($query) use ($search) {
+            )->where('banned', false)->where(function ($query) use ($search) {
                 $query->where('first_name', 'like', '%' . $search . '%')->orWhere('last_name', 'like', '%' . $search . '%')
                     ->orWhere('phone', 'like', '%' . $search . '%');
             })->get();
