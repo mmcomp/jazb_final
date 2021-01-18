@@ -910,9 +910,8 @@ null => ""
                         </div>
                         <div class="row">
                             <div class="col">
-                                <a href="${ editRoute.replace('-1', students[index].id) }">
-                                    ویرایش مشخصات
-                                </a>
+                                تلفن دانش آموز:
+                                ${students[index].phone}
                             </div>
                             <div class="col">
                                 تاریخ ثبت دانش آموز :
@@ -922,6 +921,15 @@ null => ""
                             <div class="col">
                                ${ studentMergeData}
                             </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <a href="${ editRoute.replace('-1', students[index].id) }">
+                                    ویرایش مشخصات
+                                </a>
+                            </div>
+
+
                         </div>
                         <div class="row">
                             <div class="col">

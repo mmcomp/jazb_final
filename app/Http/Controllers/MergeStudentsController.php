@@ -14,11 +14,12 @@ class MergeStudentsController extends Controller
      * thirnary operators for index.blade.php items
      *
      */
-    public function thirnaryOperators($item){
+    public function thirnaryOperators($item)
+    {
         $first = $item ? $item->first_name : '';
         $second = $item ? $item->last_name : '';
-        $third = $item ? ('-'.$item->phone) : '';
-        return $first.' '.$second.' '.$third;
+        $third = $item ? ('-' . $item->phone) : '';
+        return $first . ' ' . $second . ' ' . $third;
     }
     /**
      * Display a listing of the resource.
@@ -76,7 +77,8 @@ class MergeStudentsController extends Controller
     {
         if ($item != null) {
             if ($item->supporters_id != $main->supporters_id) {
-                $stu = Student::where('is_deleted', false)->where('banned', false)->where('archived', false)->where('id', $id)->first();
+                $stu = Student::where('is_deleted', false)->where('id', $id)->first();
+                if(isset($stu)){
                 $stu->supporters_id = $main->supporters_id;
                 try {
                     $stu->save();
@@ -84,6 +86,7 @@ class MergeStudentsController extends Controller
                     $request->session()->flash("msg_error", $err);
                     return redirect()->route('merge_students_index');
                 }
+            }
             }
         }
     }
@@ -97,6 +100,30 @@ class MergeStudentsController extends Controller
         $arr1 = [$first, $second, $third, $forth];
         $arr2 = array_filter($arr1);
         return $arr2;
+    }
+    public function makeBannedAndArchivedToBefalse($allRequests){
+        $mainStudent = Student::where('id',$allRequests[0])->first();
+        $auxilaryStudent = Student::where('id',$allRequests[1])->first();
+        $secondAuxilaryStudent = Student::where('id',$allRequests[2])->first();
+        $thirdAuxilaryStudent = Student::where('id',$allRequests[3])->first();
+        if($mainStudent->archived)$mainStudent->archived = 0;
+        if($mainStudent->banned)$mainStudent->banned = 0;
+        if($auxilaryStudent){
+            if($auxilaryStudent->archived)$auxilaryStudent->archived = 0;
+            if($auxilaryStudent->banned)$auxilaryStudent->banned = 0;
+            $auxilaryStudent->save();
+        }
+        if($secondAuxilaryStudent){
+            if($secondAuxilaryStudent->archived)$secondAuxilaryStudent->archived = 0;
+            if($secondAuxilaryStudent->banned)$secondAuxilaryStudent->banned = 0;
+            $secondAuxilaryStudent->save();
+        }
+        if($thirdAuxilaryStudent){
+            if($thirdAuxilaryStudent->archived)$thirdAuxilaryStudent->archived = 0;
+            if($thirdAuxilaryStudent->banned)$thirdAuxilaryStudent->banned = 0;
+            $thirdAuxilaryStudent->save();
+        }
+        $mainStudent->save();
     }
 
 
@@ -127,13 +154,13 @@ class MergeStudentsController extends Controller
         try {
             $sw = $this->handleError($arr_without_zeros, $request, $allRequests);
             if ($sw) {
-                $mergeMain = $this->findRepeatedRow($allRequests[0]);
-                $mergeAuxilary = $this->findRepeatedRow($allRequests[1]);
-                $mergeSecondAuxilary = $this->findRepeatedRow($allRequests[2]);
-                $mergeThirdAuxilary = $this->findRepeatedRow($allRequests[3]);
-
+                $allRequests[0] ? $mergeMain = $this->findRepeatedRow($allRequests[0]) : $mergeMain = 0;
+                $allRequests[1] ? $mergeAuxilary = $this->findRepeatedRow($allRequests[1]) : $mergeSecondAuxilary = 0;
+                $allRequests[2] ? $mergeSecondAuxilary = $this->findRepeatedRow($allRequests[2]) : $mergeSecondAuxilary = 0;
+                $allRequests[3] ? $mergeThirdAuxilary = $this->findRepeatedRow($allRequests[3]) : $mergeThirdAuxilary = 0;
                 if (!$mergeMain && !$mergeAuxilary && !$mergeSecondAuxilary && !$mergeThirdAuxilary) {
                     try {
+                        $this->makeBannedAndArchivedToBefalse($allRequests);
                         $merged->save();
                     } catch (Exception $error) {
                         $request->session()->flash("msg_error", "سطر با موفقیت افزوده نشد!");
@@ -187,10 +214,11 @@ class MergeStudentsController extends Controller
                 $this->changeSupporter($rel->auxilaryStudent, $rel->mainStudent, $request, 'تغییر پشتیبان فرعی ۱ با مشکل روبرو شد.', $allRequests[1]);
                 $this->changeSupporter($rel->secondAuxilaryStudent, $rel->mainStudent, $request, 'تغییر پشتیبان فرعی ۲ با مشکل روبرو شد.', $allRequests[2]);
                 $this->changeSupporter($rel->thirdAuxilaryStudent, $rel->mainStudent, $request, 'تغییر پشتیبان فرعی ۳ با مشکل روبرو شد.', $allRequests[3]);
+                $this->makeBannedAndArchivedToBefalse($allRequests);
                 $rel->save();
             }
         } catch (Exception $error) {
-            // dd($error);
+            dd($error);
             $request->session()->flash("msg_error", "سطر با موفقیت ویرایش نشد.");
             return redirect()->route('merge_students_index');
         }
@@ -235,12 +263,12 @@ class MergeStudentsController extends Controller
             $students = Student::orderby('id', 'desc')->select('id', 'first_name', 'last_name', 'phone')->where(
                 'is_deleted',
                 false
-            )->where('banned', false)->where('archived', false)->get();
+            )->get();
         } else {
             $students = Student::orderby('id', 'desc')->select('id', 'first_name', 'last_name', 'phone')->where(
                 'is_deleted',
                 false
-            )->where('banned', false)->where('archived', false)->where(function ($query) use ($search) {
+            )->where(function ($query) use ($search) {
                 $query->where('first_name', 'like', '%' . $search . '%')->orWhere('last_name', 'like', '%' . $search . '%')
                     ->orWhere('phone', 'like', '%' . $search . '%');
             })->get();
@@ -251,7 +279,6 @@ class MergeStudentsController extends Controller
                 "id" => $student->id,
                 "text" => $student->first_name . ' ' . $student->last_name . '-' . $student->phone
             );
-
         }
         $response[] = [
             "id" => 0,

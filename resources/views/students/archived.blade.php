@@ -370,6 +370,9 @@
                                 </a>
                             </div>
                             <div class="col">
+                                ‌تلفن  دانش آموز:
+                                ${ students[index].phone }
+
                             </div>
                         </div>
                     </div>
