@@ -790,7 +790,7 @@ class StudentController extends Controller
                         <option>-</option>
                         ' . $supportersToSelect . '
                         </select>
-                        <a class="btn btn-success btn-sm" href="#" onclick="return changeSupporter(' . $index . ');">
+                        <a class="btn btn-success btn-sm" href="#" onclick="return changeSupporter(' . $index . "," . $item->id.');">
                             ذخیره
                         </a>
                         <br/>
@@ -1484,7 +1484,7 @@ class StudentController extends Controller
                     <option>-</option>
                     ' . $supportersToSelect . '
                     </select>
-                    <a class="btn btn-success btn-sm" href="#" onclick="return changeSupporter(' . $index . ');">
+                    <a class="btn btn-success btn-sm" href="#" onclick="return changeSupporter(' . $index . "," . $item->id.');">
                         ذخیره
                     </a>
                     <br/>
