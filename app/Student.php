@@ -22,7 +22,8 @@ class Student extends Model
         'student_phone',
         'citys_id',
         'sources_id',
-        'supporters_id'
+        'supporters_id',
+        'archived'
     ];
 
     public function user(){
