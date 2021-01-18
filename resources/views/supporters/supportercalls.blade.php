@@ -66,6 +66,7 @@ $persons = [
                     <th>نتیجه</th>
                     <th>یادآور</th>
                     <th>پاسخگو بعد</th>
+                    <th>تاریخ تماس</th>
                     <th>توضیحات</th>
                     <th>#</th>
                   </tr>
@@ -82,6 +83,7 @@ $persons = [
                         <td>{{ ($item->callresult)?$item->callresult->title:'-' }}</td>
                         <td>{{ ($item->next_call)?jdate($item->next_call)->format("Y/m/d"):'-' }}</td>
                         <td>{{ ($item->next_to_call)?$persons[$item->next_to_call]:'-' }}</td>
+                        <td>{{($item->created_at)?jdate($item->created_at)->format("Y/m/d H:i:s"):jdate()->format("Y/m/d H:i:s")}}</td>
                         <td>{{ $item->description }}</td>
                         <td>
                             <form method="POST" action="{{ route('user_supporter_acall') }}">
