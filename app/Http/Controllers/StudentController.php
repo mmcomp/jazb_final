@@ -307,7 +307,7 @@ class StudentController extends Controller
                         <option>-</option>
                         ' . $supportersToSelect . '
                         </select>
-                        <a class="btn btn-success btn-sm" href="#" onclick="return changeSupporter(' . $index . ');">
+                        <a class="btn btn-success btn-sm" href="#" onclick="return changeSupporter(' . $index . "," . $item->id.');">
                             ذخیره
                         </a>
                         <br/>
@@ -1269,11 +1269,13 @@ class StudentController extends Controller
                 "data"=>null
             ];
         }
+        //echo "students_id is ".$students_id.' & '.'supporter_id is '.$supporters_id;
 
         $student->supporters_id = $supporters_id;
         $student->supporter_seen = false;
         $student->supporter_start_date = date("Y-m-d H:i:s");
         $student->save();
+        //dd('students supporter id is '.$student->supporters_id);
 
         return [
             "error"=>null,
