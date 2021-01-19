@@ -37,8 +37,9 @@ null => ""
     div.dataTables_wrapper {
         width: 100% !important;
     }
-    .cursor_pointer{
-        cursor:pointer;
+
+    .cursor_pointer {
+        cursor: pointer;
     }
 
 </style>
@@ -693,43 +694,46 @@ null => ""
     var second = ``;
     var third = ``;
     var forth = ``;
-    function mergeStudents(item,selfId){
-        //studentMergeData = ``;
+
+    function mergeStudents(item, selfId) {
+        studentMergeData = ``;
         first = ``;
         second = ``;
         third = ``;
         forth = ``;
-        if(item) {
-            if(selfId!=item.main_student.id){
-                first=`<p class="cursor_pointer text-success" id="${item.main_student.id}"
+        if (item) {
+            if (selfId != item.main_student.id) {
+                first = `<p class="cursor_pointer text-success" id="${item.main_student.id}"
                 onclick="searchMain(${item.main_student.id})">
                     ${item.main_student.first_name}
                     ${item.main_student.last_name}
                     [${item.main_student.phone}]</p>`;
             }
-            if(item.auxilary_student && selfId!=item.auxilary_student.id){
+            if (item.auxilary_student && selfId != item.auxilary_student.id) {
                 second = `<p class="cursor_pointer" id="${item.auxilary_student.id}"
                 onclick="searchAuxilary(${item.auxilary_student.id})">
                     ${item.auxilary_student.first_name}
                     ${item.auxilary_student.last_name}
                     [${item.auxilary_student.phone}]</p>`;
             }
-            if(item.second_auxilary_student && selfId!=item.second_auxilary_student.id){
+            if (item.second_auxilary_student && selfId != item.second_auxilary_student.id) {
                 third = `<p class="cursor_pointer" id="${item.second_auxilary_student.id}"
                 onclick="searchSecondAuxilary(${item.second_auxilary_student.id})">
                 ${item.second_auxilary_student.first_name}
                 ${item.second_auxilary_student.last_name}
                 [${item.second_auxilary_student.phone}]</p>`;
             }
-            if(item.third_auxilary_student && selfId!=item.third_auxilary_student.id){
+            if (item.third_auxilary_student && selfId != item.third_auxilary_student.id) {
                 forth = `<p class="cursor_pointer" id="${item.third_auxilary_student.id}"
                 onclick="searchThirdAuxilary(${item.third_auxilary_student.id})">${item.third_auxilary_student.first_name}
                 ${item.third_auxilary_student.last_name}
                 [${item.third_auxilary_student.phone}]</p>`;
             }
-            studentMergeData = `افراد مرتبط:<br>`+ first + second + third + forth;
+            studentMergeData = `افراد مرتبط:<br>` + first + second + third + forth;
         }
+        return studentMergeData;
     }
+
 </script>
 <!-- page script -->
 <script>
@@ -765,7 +769,6 @@ null => ""
     let students_id = {{isset($students_id) ? $students_id : 'null'}};
 
     function showMorePanel(index, tr) {
-        {{-- console.log(index, tr); --}}
         var persons = {
             student: "دانش آموز"
             , father: "پدر"
@@ -853,14 +856,15 @@ null => ""
         }
 
         var merge = students[index].mergestudent;
-        var stu_id  = students[index].id;
+        var stu_id = students[index].id;
         var auxilaryMerge = students[index].mergeauxilarystudent;
         var secondAuxilaryMerge = students[index].mergesecondauxilarystudent;
         var thirdAuxilaryMerge = students[index].mergethirdauxilarystudent;
-        mergeStudents(merge,stu_id);
-        mergeStudents(auxilaryMerge,stu_id);
-        mergeStudents(secondAuxilaryMerge,stu_id);
-        mergeStudents(thirdAuxilaryMerge,stu_id);
+
+        var x = mergeStudents(merge, stu_id);
+        var y = mergeStudents(auxilaryMerge, stu_id);
+        var z = mergeStudents(secondAuxilaryMerge, stu_id);
+        var t = mergeStudents(thirdAuxilaryMerge, stu_id);
         var test = `<table style="width: 100%">
             <tr>
                 <td>
@@ -920,7 +924,7 @@ null => ""
                             </div>
 
                             <div class="col">
-                               ${ studentMergeData}
+                               ${x} ${y}  ${z}  ${t}
                             </div>
                         </div>
                         <div class="row">
@@ -1024,12 +1028,13 @@ null => ""
         theThirdAuxilary = id;
         table.ajax.reload();
     }
-    function emptySomeData(){
+
+    function emptySomeData() {
         theMain = null;
         theAuxilary = null;
         theSecondAuxilary = null;
         theThirdAuxilary = null;
-     }
+    }
 
 
     function changeSupporter(studentsIndex) {
@@ -1037,7 +1042,7 @@ null => ""
             var students_id = students[studentsIndex].id;
             var supporters_id = $("#supporters_id_" + studentsIndex).val();
             $("#loading-" + studentsIndex).show();
-            $.post('{{ route('student_supporter') }}', {
+            $.post('{{ route('student_supporter')}}', {
                     students_id
                     , supporters_id
                 }
@@ -1227,6 +1232,7 @@ null => ""
         console.log('hey3');
         filterCollectionsByParent();
     }
+
     function filterCollectionsByParent() {
         $("input.collection-checkbox").show();
         $("span.collection-title").show();
@@ -1620,7 +1626,8 @@ null => ""
         $('#eduction_level').val($('#education_level').val());
         table.ajax.reload();
     }
-    function theSearch(){
+
+    function theSearch() {
         emptySomeData();
         table.ajax.reload();
         return false;
