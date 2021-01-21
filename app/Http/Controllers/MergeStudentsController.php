@@ -135,7 +135,6 @@ class MergeStudentsController extends Controller
     public function create(Request $request)
     {
         $students = Student::where('is_deleted', false)->where('banned', false)->where('archived', false)->get();
-
         if ($request->getMethod() == 'GET') {
             return view('merge_students.create', [
                 'students' => $students,
