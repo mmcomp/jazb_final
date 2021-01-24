@@ -29,6 +29,9 @@ function changeCharsOfEachTable($pdo, $table_name, $fields)
         }
     }
     $setPhrase = [];
+    for($i = 0; $i < $rowCount; $i++){
+        $setPhrase[$i] = '';
+    }
     for ($i = 0; $i < $rowCount; $i++) {
         foreach ($values[$i] as $key => $value) {
             if (gettype($key) == "string") {
@@ -38,7 +41,7 @@ function changeCharsOfEachTable($pdo, $table_name, $fields)
         $setPhrase[$i] = substr($setPhrase[$i],0,-1);
         $setPhrase[$i].= ' WHERE id = '.$values[$i][0];
     }
-    for ($i = 0; $i < $rowCount; $i++) {
+    for ($i = 1; $i < $rowCount; $i++) {
         $sql = "UPDATE ". $table_name. " SET " . $setPhrase[$i];
         $stmt = $pdo->prepare($sql);
         $stmt->execute();
