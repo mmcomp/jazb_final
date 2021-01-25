@@ -1,4 +1,7 @@
 <?php
+$db_name="aref_jazb";
+$db_user = "root";
+$db_password = 159951;
 function arabicToPersian($inp)
 {
     $out = str_replace(array('ي', 'ك'), array('ی', 'ک'), $inp);
@@ -48,7 +51,7 @@ function changeCharsOfEachTable($pdo, $table_name, $fields)
     }
 }
 try {
-    $pdo = new PDO('mysql:host=localhost;dbname=aref_jazb', 'root', 159951);
+    $pdo = new PDO('mysql:host=localhost;dbname='.$db_name.';charset=utf8;', $db_user, $db_password);
     echo "we are connected to db<br>";
     changeCharsOfEachTable($pdo, 'students', ["first_name","last_name","school","introducing"]);
     changeCharsOfEachTable($pdo,'users',["first_name","last_name","education","major","home_address","work_address"]);
