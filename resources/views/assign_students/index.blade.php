@@ -32,13 +32,12 @@
 @endsection
 
 @section('content')
-{{dd($route)}}
     <!-- Content Header (Page header) -->
     <section class="content-header">
         <div class="container-fluid">
           <div class="row mb-2">
             <div class="col-sm-6">
-              <h1>دانش آموزان</h1>
+              <h1>اختصاص گروهی دانش آموزان به پشتیبان مقصد</h1>
             </div>
             <div class="col-sm-6">
               <!--
@@ -57,11 +56,6 @@
         <div class="row">
           <div class="col-12">
             <div class="card">
-              <div class="card-header">
-                <h3 class="card-title">
-                    <a class="btn btn-success" href="{{ route('student_create') }}">دانش آموز جدید</a>
-                </h3>
-              </div>
               <!-- /.card-header -->
               <div class="card-body">
 
@@ -184,11 +178,42 @@
                             </a>
                         </div>
                     </div>
+                    <input type="hidden" name="arrOfCheckBoxes" id="arrOfCheckBoxes">
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="destination_supporter">پشتیبان مقصد</label>
+                                <select  id="destination_supporter" name="destination_supporter" class="form-control">
+                                    <option value="">همه</option>
+                                    @foreach ($supports as $item)
+                                        @if(isset($supporters_id) && $supporters_id==$item->id)
+                                        <option value="{{ $item->id }}" selected >
+                                        @else
+                                        <option value="{{ $item->id }}" >
+                                        @endif
+                                        {{ $item->first_name }} {{ $item->last_name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col" style="padding-top: 32px;">
+                            <a class="btn btn-primary" onclick="table.ajax.reload();location.reload();return false;" href="#">
+                                ثبت
+                            </a>
+                        </div>
+                    </div>
                 </form>
 
                 <table id="example2" class="table table-bordered table-hover">
                   <thead>
                   <tr>
+                    <th>
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input bottom_10_px" id="selectCheckBox" name="selectCheckBox"
+                            onclick="selectAll(this)" value="0">
+                          </div>
+                    </th>
                     <th>ردیف</th>
                     <th>کد</th>
                     <th>نام</th>
@@ -394,6 +419,8 @@
 <script src="../../plugins/datatables-bs4/js/dataTables.bootstrap4.js"></script>
 <!-- page script -->
 <script>
+    let MyArr = [];
+    let sw = 0;
     let students = @JSON($students);
     let parentOnes = @JSON($parentOnes);
     let parentTwos = @JSON($parentTwos);
@@ -421,6 +448,45 @@
         need_parent2: '',
         need_parent3: '',
         need_parent4: ''
+    }
+    function myFunc(theItem){
+        if(theItem.checked){
+            MyArr.push($(theItem).val());
+            sessionStorage.setItem('checked',MyArr);
+        }else{
+            var index = MyArr.indexOf($(theItem).val());
+            MyArr.splice(index,1);
+            sessionStorage.setItem('checked',MyArr);
+        }
+        $('#arrOfCheckBoxes').val(MyArr);
+    }
+    function load(){
+        var items = sessionStorage.getItem('checked');
+        var newArr = items.split(',');
+        $(newArr).each(function(index,value){
+           $('#' + value).prop('checked',true);
+        });
+    }
+
+
+    function selectAll(theItem){
+      MyArr = [];
+      if(theItem.checked){
+          sw = 1;
+          $('input[type=checkbox]').each(function () {
+              this.checked = true;
+              if($(this).val()!= '0')MyArr.push($(this).val());
+        });
+        $('#arrOfCheckBoxes').val('all');
+      }else{
+          sw = 2
+        $('input[type=checkbox]').each(function () {
+            this.checked = false;
+            MyArr = [];
+
+      });
+      $('#arrOfCheckBoxes').val(0);
+      }
     }
     function showMorePanel(index, tr){
         var editRoute = `{{ route('student_edit', ['call_back'=>'student_all', 'id'=>-1]) }}`;
@@ -914,6 +980,7 @@
                 "infoEmpty":      "نمایش 0 تا 0 از 0 داده",
                 "proccessing": "در حال بروزرسانی"
             },
+            columnDefs: [ { orderable: false, targets: [0] } ],
             serverSide: true,
             processing: true,
             ajax: {
@@ -923,16 +990,9 @@
                 "contentType": 'application/json; charset=utf-8',
 
                 "data": function (data) {
-                    // console.log(data);
-                    // Grab form values containing user options
-                    // var form = {};
-                    // $.each($("form").serializeArray(), function (i, field) {
-                    //     form[field.name] = field.value || "";
-                    // });
-                    // Add options used by Datatables
-                    // var info = { "start": 0, "length": 10, "draw": 1 };
-                    // $.extend(form, info);
                     data['supporters_id'] = $("#supporters_id").val();
+                    data['selectCheckBox'] = $('#selectCheckBox').val();
+                    data['destination_supporter'] = $('#destination_supporter').val();
                     data['sources_id'] = $("#sources_id").val();
                     data['cities_id'] = $("#cities_id").val();
                     data['egucation_level'] = $("#egucation_level").val();
@@ -940,17 +1000,31 @@
                     data['school'] = $("#school").val();
                     data['name'] = $("#name").val();
                     data['phone'] = $("#phone").val();
-
+                    data['arrOfCheckBoxes'] = $('#arrOfCheckBoxes').val();
                     return JSON.stringify(data);
                 },
                 "complete": function(response) {
-                    console.log(response);
-                    console.log('students', students);
+                    load();
+                    ids = JSON.parse(response.responseText).ids;
+                    if(sw == 1){
+                        $(ids).each(function(index,value){
+                            $('#' + value).prop('checked',true);
+                         });
+                    }else if(sw == 2){
+                        $(ids).each(function(index,value){
+                            $('#' + value).prop('checked',false);
+                        });
+                    }
+
                     if(students && isEmpty(students))
                         students = JSON.parse(response.responseText).students;
                     $('#example2 tr').click(function() {
                         var tr = this;
-                        var studentId = parseInt($(tr).find('td')[1].innerText, 10);
+                        var studentId = 0;
+                        if(parseInt($(tr).find('td')[2])){
+                            studentId = parseInt($(tr).find('td')[2].innerText, 10);
+                        }
+                        //var studentId = parseInt($(tr).find('td')[2].innerText, 10);
                         if(!isNaN(studentId)){
                             for(var index in students){
                                 // console.log('check', students[index].id, studentId);
@@ -961,7 +1035,7 @@
                                 }
                             }
                         }
-                        console.log(this, $(this).find('td')[1].innerText);
+                        //console.log(this, $(this).find('td')[1].innerText);
                     });
                 }
 
