@@ -242,7 +242,7 @@ class assignGroupsOfStudentsToASponser extends Controller
                     $supportersToSelect .= '>' . $sitem->first_name . ' ' . $sitem->last_name . '</option>';
                 }
                 $selectCheckBox = "<div class='form-check'>
-                                     <input type='checkbox' class='form-check-input' id='$item->id' value='$item->id' onclick='myFunc(this)'>
+                                     <input type='checkbox' class='form-check-input' id='ch_$item->id' value='$item->id' onclick='myFunc(this)'>
                                   </div>";
 
                 $data[] = [
