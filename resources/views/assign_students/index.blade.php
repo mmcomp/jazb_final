@@ -465,7 +465,7 @@
         if(items != null){
             var newArr = items.split(',');
             $(newArr).each(function(index,value){
-               $('#' + value).prop('checked',true);
+               $('#ch_' + value).prop('checked',true);
             });
         }
     }
@@ -1010,11 +1010,11 @@
                     ids = JSON.parse(response.responseText).ids;
                     if(sw == 1){
                         $(ids).each(function(index,value){
-                            $('#' + value).prop('checked',true);
+                            $('#ch_' + value).prop('checked',true);
                          });
                     }else if(sw == 2){
                         $(ids).each(function(index,value){
-                            $('#' + value).prop('checked',false);
+                            $('#ch_' + value).prop('checked',false);
                         });
                     }
 
