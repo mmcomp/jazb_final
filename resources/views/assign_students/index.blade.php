@@ -462,10 +462,12 @@
     }
     function load(){
         var items = sessionStorage.getItem('checked');
-        var newArr = items.split(',');
-        $(newArr).each(function(index,value){
-           $('#' + value).prop('checked',true);
-        });
+        if(items != null){
+            var newArr = items.split(',');
+            $(newArr).each(function(index,value){
+               $('#' + value).prop('checked',true);
+            });
+        }
     }
 
 
