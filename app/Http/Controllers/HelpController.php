@@ -24,8 +24,12 @@ class HelpController extends Controller
 
     public function grid(){
         $user = User::where('id',Auth::user()->id)->first();
-        $user_helps_video = Help::where('group_id',$user->groups_id)->where('type','video')->orderBy('created_at','desc')->get();
-        $user_helps_file = Help::where('group_id',$user->groups_id)->where('type','file')->orderBy('created_at','desc')->get();
+        $user_helps_file = [];
+        $user_helps_video = [];
+        if($user->groups_id){
+            $user_helps_video = Help::where('group_id',$user->groups_id)->where('type','video')->orderBy('created_at','desc')->get();
+            $user_helps_file = Help::where('group_id',$user->groups_id)->where('type','file')->orderBy('created_at','desc')->get();
+        }
         return view('helps.grid',[
             'user_helps_video' => $user_helps_video,
             'user_helps_file' => $user_helps_file,
