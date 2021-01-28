@@ -6,6 +6,7 @@ use App\Group;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Help;
+use App\User;
 
 use Exception;
 
@@ -22,10 +23,12 @@ class HelpController extends Controller
     }
 
     public function grid(){
-        $helps = Help::orderBy('created_at', 'desc')->get();
-
+        $user = User::where('id',Auth::user()->id)->first();
+        $user_helps_video = Help::where('group_id',$user->groups_id)->where('type','video')->orderBy('created_at','desc')->get();
+        $user_helps_file = Help::where('group_id',$user->groups_id)->where('type','file')->orderBy('created_at','desc')->get();
         return view('helps.grid',[
-            'helps' => $helps,
+            'user_helps_video' => $user_helps_video,
+            'user_helps_file' => $user_helps_file,
             'msg_success' => request()->session()->get('msg_success'),
             'msg_error' => request()->session()->get('msg_error')
         ]);

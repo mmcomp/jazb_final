@@ -36,8 +36,8 @@
                         <div class="col-md-12">
                             فیلم ها
                         </div>
-                        @foreach ($helps as $index => $item)
-                            @if($item->type=='video')
+                        @if(count($user_helps_video))
+                        @foreach ($user_helps_video as $index => $item)
                             <div class="col-md-3 col-sm-4 col-xs-6" >
                                 <div class="card card-outline card-primary">
                                     <div class="card-header">
@@ -48,15 +48,18 @@
                                     </div>
                                 </div>
                             </div>
-                            @endif
                         @endforeach
+                        @else
+                        <p class="text-danger">هیچ ویدیوی آموزشی پیدا نشد!</p>
+                        @endif
                     </div>
                     <div class="row border p-1 m-1">
+
                         <div class="col-md-12">
                             فایل های آموزشی
                         </div>
-                        @foreach ($helps as $index => $item)
-                            @if($item->type=='file')
+                        @if(count($user_helps_file))
+                        @foreach ($user_helps_file as $index => $item)
                             <div class="col-md-3 col-sm-4 col-xs-6" >
                                 <div class="card card-outline card-primary">
                                     <div class="card-header">
@@ -67,8 +70,10 @@
                                     </div>
                                 </div>
                             </div>
-                            @endif
                         @endforeach
+                        @else
+                        <p class="text-danger">هیچ فایل آموزشی پیدا نشد!</p>
+                        @endif
                     </div>
                 </div>
                 <!-- /.card-body -->
