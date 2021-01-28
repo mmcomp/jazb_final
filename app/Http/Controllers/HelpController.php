@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Group;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Help;
@@ -33,14 +34,17 @@ class HelpController extends Controller
     public function create(Request $request)
     {
         $help = new Help;
+        $groups = Group::all();
         if($request->getMethod()=='GET'){
             return view('helps.create', [
-                "help"=>$help
+                "help"=>$help,
+                "groups" => $groups
             ]);
         }
 
         $help->name = $request->input('name');
         $help->link = $request->input('link');
+        $help->group_id = $request->input('userGroup');
         $help->save();
 
         $request->session()->flash("msg_success", "آموزش با موفقیت افزوده شد.");
@@ -50,6 +54,7 @@ class HelpController extends Controller
     public function edit(Request $request, $id)
     {
         $help = Help::where('id', $id)->first();
+        $groups = Group::all();
         if($help==null){
             $request->session()->flash("msg_error", "آموزش مورد نظر پیدا نشد!");
             return redirect()->route('helps');
@@ -57,12 +62,14 @@ class HelpController extends Controller
 
         if($request->getMethod()=='GET'){
             return view('helps.create', [
-                "help"=>$help
+                "help"=>$help,
+                "groups" => $groups
             ]);
         }
 
         $help->name = $request->input('name');
         $help->link = $request->input('link');
+        $help->group_id = $request->input('userGroup');
         $help->save();
 
         $request->session()->flash("msg_success", "آموزش با موفقیت ویرایش شد.");
