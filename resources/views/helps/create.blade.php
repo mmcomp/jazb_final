@@ -56,11 +56,22 @@
                             @endif
                         </div>
                     </div>
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="userGroup">گروه کاربری</label>
+                            <select name="userGroup" id="userGroup" class="form-control">
+                                <option value="0">-</option>
+                                @foreach($groups as $group)
+                                <option value="{{$group->id}}" {{(isset($help->group_id) && $group->id == $help->group_id) ? 'selected' : ''}}>{{$group->name}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
                 </div>
                 <div class="row">
                     <div class="col">
-                        <button class="btn btn-primary">
-                            ذخیره
+                        <button class="btn {{isset($help->group_id) ? 'btn-warning text-white' : 'btn-primary'}}">
+                            {{isset($help->group_id) ? 'ویرایش' : 'ذخیره'}}
                         </button>
                     </div>
                 </div>
