@@ -2,6 +2,7 @@
 
 namespace App\Imports;
 
+use Log;
 use App\Student;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\Importable;
