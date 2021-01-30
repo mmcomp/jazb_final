@@ -64,8 +64,9 @@ class StudentsImport implements ToModel, WithChunkReading, ShouldQueue
             $educationLevel = null;
         }
 
+        $student = null;
         try {
-            return new Student([
+            $student = new Student([
                 'phone' => ((strpos($row[0], '0')!==0)?'0':'') . $row[0],
                 'first_name' => $row[1],
                 'last_name' => $row[2],
@@ -84,7 +85,8 @@ class StudentsImport implements ToModel, WithChunkReading, ShouldQueue
                 'supporters_id' => $row[15]
             ]);
         }catch(Exception $e) {
-            return null;
         }
+
+        return $student;
     }
 }

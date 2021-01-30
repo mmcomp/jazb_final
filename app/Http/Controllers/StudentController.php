@@ -988,10 +988,10 @@ class StudentController extends Controller
             $csvPath = $request->file('attachment')->getPathname();
             if($request->file('attachment')->extension()=='xlsx'){
                 $importer = new StudentsImport;
-                try{
+                // try{
                     $importer->import($csvPath, null, \Maatwebsite\Excel\Excel::XLSX);
                     // $array = $importer->toArray($csvPath);
-                }catch(Exception $e){
+                // }catch(Exception $e){
                     // if($e->getCode()=="23000") {
                     //     $message = explode("'", $e->getMessage());
                     //     $mobile = $message[1];
@@ -1002,14 +1002,14 @@ class StudentController extends Controller
                     //         'sources'=>$sources
                     //     ]);
                     // }
-                    dd($e);
+                    // dd($e);
                     // return view('students.csv', [
                     //     'msg_success' => null,
                     //     'msg_error' => 'امکان بررسی اکسل مورد نظر نبود لطفا مطابق مثال بفرستید',
                     //     'fails'=>$fails,
                     //     'sources'=>$sources
                     // ]);
-                }
+                // }
                 return view('students.csv', [
                     'msg_success' => $msg,
                     'fails'=>$fails,
