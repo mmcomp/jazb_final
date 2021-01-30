@@ -64,23 +64,27 @@ class StudentsImport implements ToModel, WithChunkReading, ShouldQueue
             $educationLevel = null;
         }
 
-        return new Student([
-            'phone' => ((strpos($row[0], '0')!==0)?'0':'') . $row[0],
-            'first_name' => $row[1],
-            'last_name' => $row[2],
-            'egucation_level' => $educationLevel,
-            'parents_job_title' => $row[4],
-            'home_phone' => $row[5],
-            'father_phone' => $row[6],
-            'mother_phone' => $row[7],
-            'school' => $row[8],
-            'average' => $row[9],
-            'major' => ($row[10]!='' && strtoupper($row[10])!='NULL' && isset($majors[$row[10]]))?$majors[$row[10]]: null,
-            'introducing' => $row[11],
-            'student_phone' => $row[12],
-            'cities_id' => (int)$row[13],
-            'sources_id' => $row[14],
-            'supporters_id' => $row[15]
-        ]);
+        try {
+            return new Student([
+                'phone' => ((strpos($row[0], '0')!==0)?'0':'') . $row[0],
+                'first_name' => $row[1],
+                'last_name' => $row[2],
+                'egucation_level' => $educationLevel,
+                'parents_job_title' => $row[4],
+                'home_phone' => $row[5],
+                'father_phone' => $row[6],
+                'mother_phone' => $row[7],
+                'school' => $row[8],
+                'average' => $row[9],
+                'major' => ($row[10]!='' && strtoupper($row[10])!='NULL' && isset($majors[$row[10]]))?$majors[$row[10]]: null,
+                'introducing' => $row[11],
+                'student_phone' => $row[12],
+                'cities_id' => (int)$row[13],
+                'sources_id' => $row[14],
+                'supporters_id' => $row[15]
+            ]);
+        }catch(Exception $e) {
+            return null;
+        }
     }
 }
