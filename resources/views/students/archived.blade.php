@@ -729,14 +729,7 @@
                 }
 
             }
-            // ajax: function ( data, callback, settings ){
-            //     $.post('{{ route('api_filter_students') }}', {}, function(result){
-            //         console.log('Result', result);
-            //         callback(result);
-            //     }).fail(function(){
-            //         alert('خطای بروز رسانی');
-            //     });
-            // }
+            
         });
 
 

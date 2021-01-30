@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Hash;
 
 use App\User;
 use App\Group;
+use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
@@ -39,14 +40,60 @@ class UserController extends Controller
         }
     }
 
-    public function index(){
+    public function index(Request $request){
         $users = User::where('is_deleted', false)->with('group')->get();
+        $name = null;
+        if($request->getMethod() == 'POST'){
+            if($request->input('name')!=null){
+                $name = trim($request->input('name'));
+                $users = User::where(DB::raw('CONCAT(first_Name, " ", last_Name)'),'like',$name)->get();
+            }
+        }
+        if($request->getMethod() == 'GET'){
+            return view('users.index',[
+                'users' => $users,
+                'route' => 'user_alls',
+                'msg_success' => request()->session()->get('msg_success'),
+                'msg_error' => request()->session()->get('msg_error')
+            ]);
+        }else{
+            $req =  $request->all();
+            if(!isset($req['start'])){
+                $req['start'] = 0;
+                $req['length'] = 10;
+                $req['draw'] = 1;
+            }
+            $data = [];
+            foreach($users as $index => $item){
 
-        return view('users.index',[
-            'users' => $users,
-            'msg_success' => request()->session()->get('msg_success'),
-            'msg_error' => request()->session()->get('msg_error')
-        ]);
+                $data[] = [
+                    $index+1,
+                    $item->id,
+                    $item->email,
+                    $item->first_name,
+                    $item->last_name,
+                    ($item->group)?$item->group->name:'-',
+                    '<a class="btn btn-primary" href="'.route('user_all_edit',$item->id).'"> ویرایش</a>
+                     <a class="btn btn-danger" onclick="destroy(event)" href="'.route('user_all_delete',$item->id).'">حذف</a>'
+                ];
+            }
+
+
+            $outdata = [];
+            for($i = $req['start'];$i<min($req['length']+$req['start'], count($data));$i++){
+                $outdata[] = $data[$i];
+            }
+
+            $result = [
+                "draw" => $req['draw'],
+                "data" => $outdata,
+                "recordsTotal" => count($users),
+                "recordsFiltered" => count($users)
+            ];
+
+            return $result;
+        }
+
     }
 
     public function create(Request $request)
