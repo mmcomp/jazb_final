@@ -991,7 +991,7 @@ class StudentController extends Controller
                 // try{
                 $importer->import($csvPath, null, \Maatwebsite\Excel\Excel::XLSX);
                 $fails = $importer->getFails();
-                dd($fails);
+                // dd($fails);
                     // $array = $importer->toArray($csvPath);
                 // }catch(Exception $e){
                     // if($e->getCode()=="23000") {
