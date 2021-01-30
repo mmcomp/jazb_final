@@ -992,24 +992,23 @@ class StudentController extends Controller
                     $importer->import($csvPath, null, \Maatwebsite\Excel\Excel::XLSX);
                     // $array = $importer->toArray($csvPath);
                 }catch(Exception $e){
-                    if($e->getCode()=="23000") {
-                        $message = explode("'", $e->getMessage());
-                        // dd($message);
-                        $mobile = $message[1];
-                        return view('students.csv', [
-                            'msg_success' => null,
-                            'msg_error' => 'شماره ' . $mobile . 'تکراری است',
-                            'fails'=>$fails,
-                            'sources'=>$sources
-                        ]);
-                    }
-                    // dd($e);
-                    return view('students.csv', [
-                        'msg_success' => null,
-                        'msg_error' => 'امکان بررسی اکسل مورد نظر نبود لطفا مطابق مثال بفرستید',
-                        'fails'=>$fails,
-                        'sources'=>$sources
-                    ]);
+                    // if($e->getCode()=="23000") {
+                    //     $message = explode("'", $e->getMessage());
+                    //     $mobile = $message[1];
+                    //     return view('students.csv', [
+                    //         'msg_success' => null,
+                    //         'msg_error' => 'شماره ' . $mobile . 'تکراری است',
+                    //         'fails'=>$fails,
+                    //         'sources'=>$sources
+                    //     ]);
+                    // }
+                    dd($e);
+                    // return view('students.csv', [
+                    //     'msg_success' => null,
+                    //     'msg_error' => 'امکان بررسی اکسل مورد نظر نبود لطفا مطابق مثال بفرستید',
+                    //     'fails'=>$fails,
+                    //     'sources'=>$sources
+                    // ]);
                 }
                 return view('students.csv', [
                     'msg_success' => $msg,
