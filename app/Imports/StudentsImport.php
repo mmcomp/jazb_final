@@ -13,6 +13,7 @@ use Maatwebsite\Excel\Concerns\WithChunkReading;
 class StudentsImport implements ToModel, WithChunkReading, ShouldQueue
 {
     use Importable;
+    public $fails = [];
 
     public function chunkSize(): int
     {
@@ -64,12 +65,10 @@ class StudentsImport implements ToModel, WithChunkReading, ShouldQueue
             $educationLevel = null;
         }
 
-        $alreadyStudents = [];
-
         $student = Student::where('phone', ((strpos($row[0], '0')!==0)?'0':'') . $row[0])->first();
 
         if($student===null) {
-            $student = new Student([
+            return new Student([
                 'phone' => ((strpos($row[0], '0')!==0)?'0':'') . $row[0],
                 'first_name' => $row[1],
                 'last_name' => $row[2],
@@ -87,12 +86,15 @@ class StudentsImport implements ToModel, WithChunkReading, ShouldQueue
                 'sources_id' => $row[14],
                 'supporters_id' => $row[15]
             ]);
-        } else {
-            $alreadyStudents[] = $student->phone;
+        }else {
+            $this->fails[] = $student->phone;
         }
 
+        return $student;
+    }
 
-
-        return $alreadyStudents;
+    public function getFails()
+    {
+        return $this->fails;
     }
 }

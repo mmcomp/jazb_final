@@ -989,8 +989,8 @@ class StudentController extends Controller
             if($request->file('attachment')->extension()=='xlsx'){
                 $importer = new StudentsImport;
                 // try{
-                $fails = $importer->import($csvPath, null, \Maatwebsite\Excel\Excel::XLSX);
-                dd($fails);
+                $importer->import($csvPath, null, \Maatwebsite\Excel\Excel::XLSX);
+                $fails = $importer->getFails();
                     // $array = $importer->toArray($csvPath);
                 // }catch(Exception $e){
                     // if($e->getCode()=="23000") {
