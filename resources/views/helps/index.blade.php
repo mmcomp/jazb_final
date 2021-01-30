@@ -88,7 +88,11 @@
 <!-- page script -->
 <script>
     $(function () {
-    //   $("#example1").DataTable();
+    $(".btn-danger").click(function(e){
+        if(!confirm('آیا مطمئنید؟')){
+          e.preventDefault();
+        }
+    });
       $('#example2').DataTable({
         "paging": true,
         "lengthChange": false,
@@ -107,11 +111,7 @@
         }
       });
 
-      $(".btn-danger").click(function(e){
-          if(!confirm('آیا مطمئنید؟')){
-            e.preventDefault();
-          }
-      });
+
     });
   </script>
 @endsection
