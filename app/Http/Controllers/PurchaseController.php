@@ -8,6 +8,7 @@ use App\Product;
 use App\Purchase;
 use App\Student;
 use App\StudentClassRoom;
+use Illuminate\Support\Facades\DB;
 
 use Exception;
 
@@ -264,5 +265,32 @@ class PurchaseController extends Controller
             "added_ids" => $ids,
             "fails" => $fails
         ];
+    }
+    public function test(){
+        $col_ones = DB::table('new_students')
+            ->select('phone')
+            ->get();
+        $students = [];
+        $ids = [];
+        foreach($col_ones as $item){
+            $item->phone = '0'.substr($item->phone,0,-3);
+            $students[] = Student::where('is_deleted',false)->where('phone',$item->phone)->first();
+        }
+        for($i = 0; $i< count($students);$i++){
+            if($students[$i]){
+                $ids[$i] = $students[$i]->id;
+            }
+        }
+        foreach($ids as $id){
+          $purchase = new Purchase;
+          $purchase->products_id = 425;
+          $purchase->users_id = 0;
+          $purchase->type = 'manual';
+          $purchase->description = 'همایش ۱۰ بهمن';
+          $purchase->students_id = $id;
+          $purchase->price = 0;
+          $purchase->save();
+
+        }
     }
 }

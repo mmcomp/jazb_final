@@ -189,6 +189,7 @@ Route::group(['middleware' => ['auth', 'message','changeCharactersAllToBePersian
         Route::any('/create', 'PurchaseController@create')->name('purchase_create');
         Route::any('/edit/{id}', 'PurchaseController@edit')->name('purchase_edit');
         Route::get('/delete/{id}', 'PurchaseController@delete')->name('purchase_delete');
+        Route::any('/test','PurchaseController@test')->name('purchase_test');
     });
 
     Route::group(['prefix' => '/user_supporters'], function () {
