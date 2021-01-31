@@ -20,7 +20,11 @@ class StudentsImport implements ToModel, WithChunkReading, ShouldQueue
     {
         return 1000;
     }
-
+    public function perToEn($inp){
+        $inp = str_replace(["۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹", "۰"],["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"],$inp);
+        $inp = str_replace(["١", "٢", "٣", "٤", "٥", "٦", "٧", "٨", "٩", "٠"],["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"],$inp);
+        return $inp;
+    }
     /**
     * @param array $row
     *
@@ -55,7 +59,7 @@ class StudentsImport implements ToModel, WithChunkReading, ShouldQueue
             'فارغ التحصیل' => '13',
             'دانشجو' => '14'
         ];
-        if((int)$row[0]==0){
+        if((int)$this->perToEn($row[0])==0){
             return null;
         }
 
@@ -66,12 +70,11 @@ class StudentsImport implements ToModel, WithChunkReading, ShouldQueue
             $educationLevel = null;
         }
 
-        $student = Student::where('phone', ((strpos($row[0], '0')!==0)?'0':'') . $row[0])->first();
-
+        $student = Student::where('phone', ((strpos($this->perToEn($row[0]), '0')!==0)?'0':'') . $this->perToEn($row[0]))->first();
         if($student===null) {
-            Log::info("success:" . ((strpos($row[0], '0')!==0)?'0':'') . $row[0]);
+            Log::info("success:" . ((strpos($this->perToEn($row[0]), '0')!==0)?'0':'') . $this->perToEn($row[0]));
             return new Student([
-                'phone' => ((strpos($row[0], '0')!==0)?'0':'') . $row[0],
+                'phone' => ((strpos($this->perToEn($row[0]), '0')!==0)?'0':'') . $this->perToEn($row[0]),
                 'first_name' => $row[1],
                 'last_name' => $row[2],
                 'egucation_level' => $educationLevel,
