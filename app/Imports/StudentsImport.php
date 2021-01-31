@@ -2,6 +2,7 @@
 
 namespace App\Imports;
 
+use Log;
 use App\Student;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\Importable;
@@ -13,6 +14,7 @@ use Maatwebsite\Excel\Concerns\WithChunkReading;
 class StudentsImport implements ToModel, WithChunkReading, ShouldQueue
 {
     use Importable;
+    public $fails = [];
 
     public function chunkSize(): int
     {
@@ -64,7 +66,10 @@ class StudentsImport implements ToModel, WithChunkReading, ShouldQueue
             $educationLevel = null;
         }
 
-        try {
+        $student = Student::where('phone', ((strpos($row[0], '0')!==0)?'0':'') . $row[0])->first();
+
+        if($student===null) {
+            Log::info("success:" . ((strpos($row[0], '0')!==0)?'0':'') . $row[0]);
             return new Student([
                 'phone' => ((strpos($row[0], '0')!==0)?'0':'') . $row[0],
                 'first_name' => $row[1],
@@ -83,8 +88,16 @@ class StudentsImport implements ToModel, WithChunkReading, ShouldQueue
                 'sources_id' => $row[14],
                 'supporters_id' => $row[15]
             ]);
-        }catch(Exception $e) {
-            return null;
+        }else {
+            Log::info("fail:" . $student->phone);
+            $this->fails[] = $student->phone;
         }
+
+        return $student;
+    }
+
+    public function getFails()
+    {
+        return $this->fails;
     }
 }
