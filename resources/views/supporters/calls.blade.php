@@ -204,7 +204,7 @@ $persons = [
                         <td>{{ $item->last_name }}</td>
                         @endif
                         <td>
-                            <form method="POST" action="{{ route('user_supporter_acall') }}" target="_blank" >
+                            <form method="POST" action="{{ route('user_supporter_acall',$item->id) }}" target="_blank" >
                                 @csrf
                                 <input type="hidden" name="from_date" value="{{ ($from_date)?$from_date:'' }}" />
                                 <input type="hidden" name="to_date" value="{{ ($to_date)?$to_date:'' }}" />

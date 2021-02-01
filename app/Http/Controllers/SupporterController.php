@@ -202,9 +202,9 @@ class SupporterController extends Controller
         ]);
     }
 
-    public function acallIndex(Request $request)
+    public function acallIndex(Request $request,$id)
     {
-        $supporter = User::find($request->input("id"));
+        $supporter = User::find($id);
         //dd($request->all());
         $persons = [
             "student"=>"دانش آموز",
@@ -214,12 +214,12 @@ class SupporterController extends Controller
         ];
         if($request->getMethod() == 'POST'){
             if (request()->input('call_id')) {
-                $call =  Call::where("users_id", $supporter->id)->where('id', request()->input('call_id'))->first();
+                $call =  Call::where("users_id", $id)->where('id', request()->input('call_id'))->first();
                 if ($call) {
                     $call->delete();
                 }
             }
-            $calls = Call::where("users_id", $supporter->id);
+            $calls = Call::where("users_id", $id);
             if (request()->input('from_date')) {
                 $from_date = request()->input('from_date');
                 if ($from_date != '')
@@ -266,7 +266,14 @@ class SupporterController extends Controller
         if($request->getMethod() == 'GET'){
             return view("supporters.supportercalls", [
                 "supporter" => $supporter,
-                //"calls" => $calls,
+                "from_date" => $request->input('from_date'),
+                "to_date" => $request->input('to_date'),
+                "products_id" => $request->input('products_id'),
+                "notices_id" => $request->input('notices_id'),
+                'replier_id' => $request->input('replier_id'),
+                "sources_id" => $request->input('sources_id'),
+                'id' => $id,
+                'supporter' => $supporter,
                 "request" => request()->all(),
                 "route" => 'user_supporter_acall'
             ]);

@@ -15,6 +15,8 @@ $persons = [
         display: none;
     }
 </style>
+<meta name="csrf-token" content="{{ csrf_token() }}">
+
 @endsection
 
 @section('content')
@@ -26,8 +28,8 @@ $persons = [
               <h1>
                   تماس های
                   توسط
-                  {{-- {{ $supporter->first_name }} --}}
-                  {{-- {{ $supporter->last_name }} --}}
+                 {{ $supporter->first_name }}
+                 {{ $supporter->last_name }}
               </h1>
             </div>
             <div class="col-sm-6">
@@ -123,19 +125,27 @@ $persons = [
 <script src="../../plugins/datatables-bs4/js/dataTables.bootstrap4.js"></script>
 <!-- page script -->
 <script>
+    $(".btn-danger").click(function(e){
+        if(!confirm('آیا مطمئنید؟')){
+          e.preventDefault();
+        }
+    });
     function showStudents(index){
-        // $(".students").hide();
         $("#students-" + index).toggle();
 
         return false;
     }
     function showStudentTags(index){
-        // $(".students").hide();
         $("#studenttags-" + index).toggle();
 
         return false;
     }
     $(function () {
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
       $('#example2').DataTable({
         "paging": true,
         "lengthChange": false,
@@ -152,33 +162,30 @@ $persons = [
             "info":           "نمایش _START_ تا _END_ از _TOTAL_ داده",
             "infoEmpty":      "نمایش 0 تا 0 از 0 داده",
         },
-        ,
         serverSide: true,
         processing: true,
         ajax: {
             "type": "POST",
-            "url": "{{ route($route) }}",
+            "url": "{{ route($route,$id) }}",
             "dataType": "json",
             "contentType": 'application/json; charset=utf-8',
             "data": function (data) {
-                {{-- data['from_date'] = "{{ $request['from_date'] ? $request['from_date'] : ''}}";
-                data['to_date'] = "{{ $request['to_date'] ? $request['to_date']: ''}}";
-                data['products_id'] = "{{ $request['products_id'] ? $request['products_id']: ''}}";
-                data['notices_id'] = "{{ $request['notices_id'] ? $request['notices_id']: ''}}";
-                data['replier_id'] = "{{ $request['replier_id'] ? $request['replier_id']: ''}}";
-                data['sources_id'] = "{{ $request['sources_id'] ? $request['sources_id']: ''}}";
-                data['id'] = "{{ $request['id'] ? $request['id']: ''}}"; --}}
+                data['from_date'] = "{{ $from_date}}";
+                data['to_date'] = "{{ $to_date }}";
+                data['products_id'] = "{{ $products_id}}";
+                data['notices_id'] = "{{ $notices_id }}";
+                data['replier_id'] = "{{ $replier_id}}";
+                data['sources_id'] = "{{ $sources_id}}";
+                data['id'] = "{{ $id}}";
+                console.log(data);
                 return JSON.stringify(data);
             },
             "complete": function(response) {
             }
-      });
+      }
 
-      $(".btn-danger").click(function(e){
-          if(!confirm('آیا مطمئنید؟')){
-            e.preventDefault();
-          }
-      });
+
     });
+});
   </script>
 @endsection
