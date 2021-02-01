@@ -26,8 +26,8 @@ $persons = [
               <h1>
                   تماس های
                   توسط
-                  {{ $supporter->first_name }}
-                  {{ $supporter->last_name }}
+                  {{-- {{ $supporter->first_name }} --}}
+                  {{-- {{ $supporter->last_name }} --}}
               </h1>
             </div>
             <div class="col-sm-6">
@@ -72,7 +72,7 @@ $persons = [
                   </tr>
                   </thead>
                   <tbody>
-                      @foreach ($calls as $index => $item)
+                      {{-- @foreach ($calls as $index => $item)
                       <tr>
                         <td>{{ $index + 1 }}</td>
                         <td>{{ $item->id }}</td>
@@ -88,9 +88,9 @@ $persons = [
                         <td>
                             <form method="POST" action="{{ route('user_supporter_acall') }}">
                                 @csrf
-                                <input type="hidden" name="from_date" value="{{ ($request['from_date'])?$request['from_date']:'' }}">
-                                <input type="hidden" name="to_date" value="{{ ($request['to_date'])?$request['to_date']:'' }}">
-                                <input type="hidden" name="products_id" value="{{ ($request['products_id'])?$request['products_id']:'' }}">
+                                <input type="hidden" name="from_date" id="from_date" value="{{ ($request['from_date'])?$request['from_date']:'' }}">
+                                <input type="hidden" name="to_date" id="to_date" value="{{ ($request['to_date'])?$request['to_date']:'' }}">
+                                <input type="hidden" name="products_id" id="products_id" value="{{ ($request['products_id'])?$request['products_id']:'' }}">
                                 <input type="hidden" name="notices_id" value="{{ ($request['notices_id'])?$request['notices_id']:'' }}">
                                 <input type="hidden" name="replier_id" value="{{ ($request['replier_id'])?$request['replier_id']:'' }}">
                                 <input type="hidden" name="sources_id" value="{{ ($request['sources_id'])?$request['sources_id']:'' }}">
@@ -102,7 +102,7 @@ $persons = [
                             </form>
                         </td>
                       </tr>
-                      @endforeach
+                      @endforeach --}}
                   </tbody>
                 </table>
               </div>
@@ -136,7 +136,6 @@ $persons = [
         return false;
     }
     $(function () {
-    //   $("#example1").DataTable();
       $('#example2').DataTable({
         "paging": true,
         "lengthChange": false,
@@ -152,7 +151,27 @@ $persons = [
             "emptyTable":     "داده ای برای نمایش وجود ندارد",
             "info":           "نمایش _START_ تا _END_ از _TOTAL_ داده",
             "infoEmpty":      "نمایش 0 تا 0 از 0 داده",
-        }
+        },
+        ,
+        serverSide: true,
+        processing: true,
+        ajax: {
+            "type": "POST",
+            "url": "{{ route($route) }}",
+            "dataType": "json",
+            "contentType": 'application/json; charset=utf-8',
+            "data": function (data) {
+                {{-- data['from_date'] = "{{ $request['from_date'] ? $request['from_date'] : ''}}";
+                data['to_date'] = "{{ $request['to_date'] ? $request['to_date']: ''}}";
+                data['products_id'] = "{{ $request['products_id'] ? $request['products_id']: ''}}";
+                data['notices_id'] = "{{ $request['notices_id'] ? $request['notices_id']: ''}}";
+                data['replier_id'] = "{{ $request['replier_id'] ? $request['replier_id']: ''}}";
+                data['sources_id'] = "{{ $request['sources_id'] ? $request['sources_id']: ''}}";
+                data['id'] = "{{ $request['id'] ? $request['id']: ''}}"; --}}
+                return JSON.stringify(data);
+            },
+            "complete": function(response) {
+            }
       });
 
       $(".btn-danger").click(function(e){
