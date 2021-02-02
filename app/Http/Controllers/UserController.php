@@ -46,7 +46,7 @@ class UserController extends Controller
         if($request->getMethod() == 'POST'){
             if($request->input('name')!=null){
                 $name = trim($request->input('name'));
-                $users = User::where(DB::raw('CONCAT(first_Name, " ", last_Name)'),'like',$name)->get();
+                $users = User::where(DB::raw('CONCAT(first_Name, " ", last_Name)'),'like','%'.$name.'%')->get();
             }
         }
         if($request->getMethod() == 'GET'){
