@@ -34,6 +34,7 @@ use App\City;
 use App\MergeStudents as AppMergeStudents;
 use Exception;
 use Log;
+use Illuminate\Support\Facades\DB;
 
 class SupporterController extends Controller
 {
@@ -202,16 +203,17 @@ class SupporterController extends Controller
         ]);
     }
 
+
     public function acallIndex(Request $request,$id)
     {
         $supporter = User::find($id);
-        //dd($request->all());
         $persons = [
             "student"=>"دانش آموز",
             "father"=>"پدر",
             "mother"=>"مادر",
             "other"=>"غیره"
         ];
+        $fullName = null;
         if($request->getMethod() == 'POST'){
             if (request()->input('call_id')) {
                 $call =  Call::where("users_id", $id)->where('id', request()->input('call_id'))->first();
@@ -246,6 +248,13 @@ class SupporterController extends Controller
                     $students = Student::where('sources_id', $sources_id)->where('is_deleted', false)->where('banned', false)->pluck('id');
                     $calls->whereIn('students_id', $students);
                 }
+            }
+            if(request()->input('fullName')){
+                $fullName = trim(request()->input('fullName'));
+                $students = Student::select('id',DB::raw("CONCAT(first_name,' ',last_name)"))->where(DB::raw("CONCAT(first_name,' ',last_name)"),'like','%'.$fullName.'%')
+                ->where('is_deleted',false)->where('banned',false)->pluck('id');
+                $calls->whereIn('students_id', $students);
+
             }
             $calls = $calls->with('student')->with('product.collection')->with('notice')->get();
             foreach ($calls as $index => $call) {
@@ -299,7 +308,7 @@ class SupporterController extends Controller
                     ($item->next_to_call)?$persons[$item->next_to_call]:'-',
                     ($item->created_at)?jdate($item->created_at)->format("Y/m/d H:i:s"):jdate()->format("Y/m/d H:i:s"),
                     $item->description,
-                    'jfd'
+                    '<a class="btn btn-danger" onclick ="destroy(event)" href="'.route('user_supporter_delete_call',["user_id" => $id,"id" => $item->id]).'">حذف</a>'
                 ];
             }
 
@@ -1064,6 +1073,13 @@ class SupporterController extends Controller
         if ($call)
             $call->delete();
         return redirect()->route('supporter_student_allcall', ["id" => $users_id]);
+    }
+    public function newDeleteCall($users_id, $id)
+    {
+        $call = Call::find($id);
+        if ($call)
+            $call->delete();
+        return redirect()->route('user_supporter_acall', ["id" => $users_id]);
     }
 
     public function calls($id)

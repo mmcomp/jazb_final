@@ -200,6 +200,7 @@ Route::group(['middleware' => ['auth', 'message','changeCharactersAllToBePersian
         Route::any('/students/{id}', 'SupporterController@students')->name('supporter_allstudents');
         Route::any('/create', 'SupporterController@create')->name('user_supporter_create');
         Route::post('/change_pass', 'SupporterController@changePass')->name('user_supporter_changepass');
+        Route::any('/delete_a_call/{user_id}/{id}','SupporterController@newDeleteCall')->name('user_supporter_delete_call');
     });
 
     Route::group(['prefix' => '/schools'], function () {

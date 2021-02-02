@@ -56,6 +56,25 @@ $persons = [
               </div>
               <!-- /.card-header -->
               <div class="card-body">
+                <h3 class="text-center">
+                    فیلتر
+                 </h3>
+                 <form method="post">
+                     @csrf
+                     <div class="row">
+                         <div class="col">
+                             <div class="form-group">
+                                 <label for="fullName">نام و نام خانوادگی دانش آموز</label>
+                                 <input type="text" id="fullName" name="fullName" class="form-control" onkeypress="handle(event)" >
+                             </div>
+                         </div>
+                         <div class="col" style="padding-top: 32px;">
+                             <a class="btn btn-success" onclick="table.ajax.reload(); return false;" href="#">
+                                 جستجو
+                             </a>
+                         </div>
+                     </div>
+                 </form>
                 <table id="example2" class="table table-bordered table-hover">
                   <thead>
                   <tr>
@@ -125,11 +144,13 @@ $persons = [
 <script src="../../plugins/datatables-bs4/js/dataTables.bootstrap4.js"></script>
 <!-- page script -->
 <script>
-    $(".btn-danger").click(function(e){
+    var table;
+    function destroy(event){
         if(!confirm('آیا مطمئنید؟')){
-          e.preventDefault();
-        }
-    });
+            event.preventDefault();
+          }
+    }
+
     function showStudents(index){
         $("#students-" + index).toggle();
 
@@ -146,7 +167,7 @@ $persons = [
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
-      $('#example2').DataTable({
+      table = $('#example2').DataTable({
         "paging": true,
         "lengthChange": false,
         "searching": false,
@@ -177,7 +198,7 @@ $persons = [
                 data['replier_id'] = "{{ $replier_id}}";
                 data['sources_id'] = "{{ $sources_id}}";
                 data['id'] = "{{ $id}}";
-                console.log(data);
+                data['fullName'] = $('#fullName').val();
                 return JSON.stringify(data);
             },
             "complete": function(response) {
@@ -187,5 +208,12 @@ $persons = [
 
     });
 });
+function handle(e){
+    if(e.keyCode === 13){
+        e.preventDefault(); // Ensure it is only this code that runs
+        table.ajax.reload();
+        return false;
+    }
+}
   </script>
 @endsection

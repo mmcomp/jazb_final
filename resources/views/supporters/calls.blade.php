@@ -204,15 +204,14 @@ $persons = [
                         <td>{{ $item->last_name }}</td>
                         @endif
                         <td>
-                            <form method="POST" action="{{ route('user_supporter_acall',$item->id) }}" target="_blank" >
-                                @csrf
-                                <input type="hidden" name="from_date" value="{{ ($from_date)?$from_date:'' }}" />
-                                <input type="hidden" name="to_date" value="{{ ($to_date)?$to_date:'' }}" />
+                            <form method="GET" action="{{ route('user_supporter_acall',$item->id) }}" target="_blank" >
+                                <input type="hidden" name="from_date" value="{{ ($from_date)?$from_date:date("Y-m-d") }}" />
+                                <input type="hidden" name="to_date" value="{{ ($to_date)?$to_date:date("Y-m-d") }}" />
                                 <input type="hidden" name="products_id" value="{{ ($products_id)?$products_id:'' }}" />
                                 <input type="hidden" name="notices_id" value="{{ ($notices_id)?$notices_id:'' }}" />
                                 <input type="hidden" name="replier_id" value="{{ ($replier_id)?$replier_id:'' }}" />
                                 <input type="hidden" name="sources_id" value="{{ ($sources_id)?$sources_id:'' }}" />
-                                <input type="hidden" name="id" value="{{ $item->id }}" />
+                                {{-- <input type="hidden" name="id" value="{{ $item->id }}" /> --}}
                                 <button class="btn btn-link">
                                     {{ $item->callCount }}
                                 </button>
