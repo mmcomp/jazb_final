@@ -99,7 +99,7 @@ Route::group(['middleware' => ['auth', 'message','changeCharactersAllToBePersian
     });
 
     Route::group(['prefix' => '/products'], function () {
-        Route::get('/', 'ProductController@index')->name('products');
+        Route::any('/', 'ProductController@index')->name('products');
         Route::any('/create', 'ProductController@create')->name('product_create');
         Route::any('/edit/{id}', 'ProductController@edit')->name('product_edit');
         Route::get('/delete/{id}', 'ProductController@delete')->name('product_delete');
@@ -169,7 +169,7 @@ Route::group(['middleware' => ['auth', 'message','changeCharactersAllToBePersian
     });
 
     Route::group(['prefix' => '/users'], function () {
-        Route::get('/', 'UserController@index')->name('user_alls');
+        Route::any('/', 'UserController@index')->name('user_alls');
         Route::any('/create', 'UserController@create')->name('user_all_create');
         Route::any('/edit/{id}', 'UserController@edit')->name('user_all_edit');
         Route::get('/delete/{id}', 'UserController@delete')->name('user_all_delete');
