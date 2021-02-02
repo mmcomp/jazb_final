@@ -15,6 +15,8 @@ $persons = [
         display: none;
     }
 </style>
+<meta name="csrf-token" content="{{ csrf_token() }}">
+
 @endsection
 
 @section('content')
@@ -26,8 +28,8 @@ $persons = [
               <h1>
                   تماس های
                   توسط
-                  {{ $supporter->first_name }}
-                  {{ $supporter->last_name }}
+                 {{ $supporter->first_name }}
+                 {{ $supporter->last_name }}
               </h1>
             </div>
             <div class="col-sm-6">
@@ -54,6 +56,25 @@ $persons = [
               </div>
               <!-- /.card-header -->
               <div class="card-body">
+                <h3 class="text-center">
+                    فیلتر
+                 </h3>
+                 <form method="post">
+                     @csrf
+                     <div class="row">
+                         <div class="col">
+                             <div class="form-group">
+                                 <label for="fullName">نام و نام خانوادگی دانش آموز</label>
+                                 <input type="text" id="fullName" name="fullName" class="form-control" onkeypress="handle(event)" >
+                             </div>
+                         </div>
+                         <div class="col" style="padding-top: 32px;">
+                             <a class="btn btn-success" onclick="table.ajax.reload(); return false;" href="#">
+                                 جستجو
+                             </a>
+                         </div>
+                     </div>
+                 </form>
                 <table id="example2" class="table table-bordered table-hover">
                   <thead>
                   <tr>
@@ -72,7 +93,7 @@ $persons = [
                   </tr>
                   </thead>
                   <tbody>
-                      @foreach ($calls as $index => $item)
+                      {{-- @foreach ($calls as $index => $item)
                       <tr>
                         <td>{{ $index + 1 }}</td>
                         <td>{{ $item->id }}</td>
@@ -88,9 +109,9 @@ $persons = [
                         <td>
                             <form method="POST" action="{{ route('user_supporter_acall') }}">
                                 @csrf
-                                <input type="hidden" name="from_date" value="{{ ($request['from_date'])?$request['from_date']:'' }}">
-                                <input type="hidden" name="to_date" value="{{ ($request['to_date'])?$request['to_date']:'' }}">
-                                <input type="hidden" name="products_id" value="{{ ($request['products_id'])?$request['products_id']:'' }}">
+                                <input type="hidden" name="from_date" id="from_date" value="{{ ($request['from_date'])?$request['from_date']:'' }}">
+                                <input type="hidden" name="to_date" id="to_date" value="{{ ($request['to_date'])?$request['to_date']:'' }}">
+                                <input type="hidden" name="products_id" id="products_id" value="{{ ($request['products_id'])?$request['products_id']:'' }}">
                                 <input type="hidden" name="notices_id" value="{{ ($request['notices_id'])?$request['notices_id']:'' }}">
                                 <input type="hidden" name="replier_id" value="{{ ($request['replier_id'])?$request['replier_id']:'' }}">
                                 <input type="hidden" name="sources_id" value="{{ ($request['sources_id'])?$request['sources_id']:'' }}">
@@ -102,7 +123,7 @@ $persons = [
                             </form>
                         </td>
                       </tr>
-                      @endforeach
+                      @endforeach --}}
                   </tbody>
                 </table>
               </div>
@@ -123,21 +144,30 @@ $persons = [
 <script src="../../plugins/datatables-bs4/js/dataTables.bootstrap4.js"></script>
 <!-- page script -->
 <script>
+    var table;
+    function destroy(event){
+        if(!confirm('آیا مطمئنید؟')){
+            event.preventDefault();
+          }
+    }
+
     function showStudents(index){
-        // $(".students").hide();
         $("#students-" + index).toggle();
 
         return false;
     }
     function showStudentTags(index){
-        // $(".students").hide();
         $("#studenttags-" + index).toggle();
 
         return false;
     }
     $(function () {
-    //   $("#example1").DataTable();
-      $('#example2').DataTable({
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+      table = $('#example2').DataTable({
         "paging": true,
         "lengthChange": false,
         "searching": false,
@@ -152,14 +182,38 @@ $persons = [
             "emptyTable":     "داده ای برای نمایش وجود ندارد",
             "info":           "نمایش _START_ تا _END_ از _TOTAL_ داده",
             "infoEmpty":      "نمایش 0 تا 0 از 0 داده",
-        }
-      });
+        },
+        serverSide: true,
+        processing: true,
+        ajax: {
+            "type": "POST",
+            "url": "{{ route($route,$id) }}",
+            "dataType": "json",
+            "contentType": 'application/json; charset=utf-8',
+            "data": function (data) {
+                data['from_date'] = "{{ $from_date}}";
+                data['to_date'] = "{{ $to_date }}";
+                data['products_id'] = "{{ $products_id}}";
+                data['notices_id'] = "{{ $notices_id }}";
+                data['replier_id'] = "{{ $replier_id}}";
+                data['sources_id'] = "{{ $sources_id}}";
+                data['id'] = "{{ $id}}";
+                data['fullName'] = $('#fullName').val();
+                return JSON.stringify(data);
+            },
+            "complete": function(response) {
+            }
+      }
 
-      $(".btn-danger").click(function(e){
-          if(!confirm('آیا مطمئنید؟')){
-            e.preventDefault();
-          }
-      });
+
     });
+});
+function handle(e){
+    if(e.keyCode === 13){
+        e.preventDefault(); // Ensure it is only this code that runs
+        table.ajax.reload();
+        return false;
+    }
+}
   </script>
 @endsection

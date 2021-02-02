@@ -34,6 +34,7 @@ use App\City;
 use App\MergeStudents as AppMergeStudents;
 use Exception;
 use Log;
+use Illuminate\Support\Facades\DB;
 
 class SupporterController extends Controller
 {
@@ -202,62 +203,132 @@ class SupporterController extends Controller
         ]);
     }
 
-    public function acallIndex(Request $request)
+
+    public function acallIndex(Request $request,$id)
     {
-        $supporter = User::find($request->input("id"));
-        if (request()->input('call_id')) {
-            $call =  Call::where("users_id", $supporter->id)->where('id', request()->input('call_id'))->first();
-            if ($call) {
-                $call->delete();
-            }
-        }
-        $calls = Call::where("users_id", $supporter->id);
-        if (request()->input('from_date')) {
-            $from_date = request()->input('from_date');
-            if ($from_date != '')
-                $calls->where('created_at', '>=', $from_date);
-        }
-        if (request()->input('to_date')) {
-            $to_date = request()->input('to_date');
-            if ($to_date != '')
-                $calls->where('created_at', '<=', $to_date);
-        }
-        if (request()->input('products_id')) {
-            $products_id = (int)request()->input('products_id');
-            if ($products_id > 0)
-                $calls->where('products_id', $products_id);
-        }
-        if (request()->input('notices_id')) {
-            $notices_id = (int)request()->input('notices_id');
-            if ($notices_id > 0)
-                $calls->where('notices_id', $notices_id);
-        }
-        if (request()->input('sources_id')) {
-            $sources_id = (int)request()->input('sources_id');
-            if ($sources_id > 0) {
-                $students = Student::where('sources_id', $sources_id)->where('is_deleted', false)->where('banned', false)->pluck('id');
-                $calls->whereIn('students_id', $students);
-            }
-        }
-        $calls = $calls->with('student')->with('product.collection')->with('notice')->get();
-        foreach ($calls as $index => $call) {
-            if ($call->product) {
-                $product = $call->product;
-                $product->parents = "-";
-                if ($product->collection) {
-                    $parents = $product->collection->parents();
-                    $name = ($parents != '') ? $parents . "->" . $product->collection->name : $product->collection->name;
-                    $product->parents = $name;
+        $supporter = User::find($id);
+        $persons = [
+            "student"=>"دانش آموز",
+            "father"=>"پدر",
+            "mother"=>"مادر",
+            "other"=>"غیره"
+        ];
+        $fullName = null;
+        if($request->getMethod() == 'POST'){
+            if (request()->input('call_id')) {
+                $call =  Call::where("users_id", $id)->where('id', request()->input('call_id'))->first();
+                if ($call) {
+                    $call->delete();
                 }
-                $calls[$index]->product = $product;
+            }
+            $calls = Call::where("users_id", $id);
+            if (request()->input('from_date')) {
+                $from_date = request()->input('from_date');
+                if ($from_date != '')
+                    $calls->where('created_at', '>=', $from_date);
+            }
+            if (request()->input('to_date')) {
+                $to_date = request()->input('to_date');
+                if ($to_date != '')
+                    $calls->where('created_at', '<=', $to_date);
+            }
+            if (request()->input('products_id')) {
+                $products_id = (int)request()->input('products_id');
+                if ($products_id > 0)
+                    $calls->where('products_id', $products_id);
+            }
+            if (request()->input('notices_id')) {
+                $notices_id = (int)request()->input('notices_id');
+                if ($notices_id > 0)
+                    $calls->where('notices_id', $notices_id);
+            }
+            if (request()->input('sources_id')) {
+                $sources_id = (int)request()->input('sources_id');
+                if ($sources_id > 0) {
+                    $students = Student::where('sources_id', $sources_id)->where('is_deleted', false)->where('banned', false)->pluck('id');
+                    $calls->whereIn('students_id', $students);
+                }
+            }
+            if(request()->input('fullName')){
+                $fullName = trim(request()->input('fullName'));
+                $students = Student::select('id',DB::raw("CONCAT(first_name,' ',last_name)"))->where(DB::raw("CONCAT(first_name,' ',last_name)"),'like','%'.$fullName.'%')
+                ->where('is_deleted',false)->where('banned',false)->pluck('id');
+                $calls->whereIn('students_id', $students);
+
+            }
+            $calls = $calls->with('student')->with('product.collection')->with('notice')->get();
+            foreach ($calls as $index => $call) {
+                if ($call->product) {
+                    $product = $call->product;
+                    $product->parents = "-";
+                    if ($product->collection) {
+                        $parents = $product->collection->parents();
+                        $name = ($parents != '') ? $parents . "->" . $product->collection->name : $product->collection->name;
+                        $product->parents = $name;
+                    }
+                    $calls[$index]->product = $product;
+                }
             }
         }
-        // dd($calls);
-        return view("supporters.supportercalls", [
-            "supporter" => $supporter,
-            "calls" => $calls,
-            "request" => request()->all()
-        ]);
+
+
+        if($request->getMethod() == 'GET'){
+            return view("supporters.supportercalls", [
+                "supporter" => $supporter,
+                "from_date" => $request->input('from_date'),
+                "to_date" => $request->input('to_date'),
+                "products_id" => $request->input('products_id'),
+                "notices_id" => $request->input('notices_id'),
+                'replier_id' => $request->input('replier_id'),
+                "sources_id" => $request->input('sources_id'),
+                'id' => $id,
+                'supporter' => $supporter,
+                "request" => request()->all(),
+                "route" => 'user_supporter_acall'
+            ]);
+        }else{
+            $req =  $request->all();
+            if(!isset($req['start'])){
+                $req['start'] = 0;
+                $req['length'] = 10;
+                $req['draw'] = 1;
+            }
+            $data = [];
+            foreach($calls as $index => $item){
+
+                $data[] = [
+                    $index+1,
+                    $item->id,
+                    $item->student->first_name.' '.$item->student->last_name,
+                    ($item->product)?(($item->product->parents!='-')?$item->product->parents . '->':'') . $item->product->name:'-' ,
+                    ($item->notice)? $item->notice->name:'-',
+                    $persons[$item->replier],
+                    ($item->callresult)?$item->callresult->title:'-',
+                    ($item->next_call)?jdate($item->next_call)->format("Y/m/d"):'-',
+                    ($item->next_to_call)?$persons[$item->next_to_call]:'-',
+                    ($item->created_at)?jdate($item->created_at)->format("Y/m/d H:i:s"):jdate()->format("Y/m/d H:i:s"),
+                    $item->description,
+                    '<a class="btn btn-danger" onclick ="destroy(event)" href="'.route('user_supporter_delete_call',["user_id" => $id,"id" => $item->id]).'">حذف</a>'
+                ];
+            }
+
+
+            $outdata = [];
+            for($i = $req['start'];$i<min($req['length']+$req['start'], count($data));$i++){
+                $outdata[] = $data[$i];
+            }
+
+            $result = [
+                "draw" => $req['draw'],
+                "data" => $outdata,
+                "recordsTotal" => count($calls),
+                "recordsFiltered" => count($calls)
+            ];
+
+            return $result;
+        }
+
+
     }
 
     public function create(Request $request)
@@ -1002,6 +1073,13 @@ class SupporterController extends Controller
         if ($call)
             $call->delete();
         return redirect()->route('supporter_student_allcall', ["id" => $users_id]);
+    }
+    public function newDeleteCall($users_id, $id)
+    {
+        $call = Call::find($id);
+        if ($call)
+            $call->delete();
+        return redirect()->route('user_supporter_acall', ["id" => $users_id]);
     }
 
     public function calls($id)
