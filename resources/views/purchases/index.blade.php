@@ -51,10 +51,25 @@
                       <tr>
                         <td>{{ $index + 1 }}</td>
                         <td>{{ $item->id }}</td>
-                        <td>{{ ($item->type == 'manual')?'حضوری':'سایت' }}</td>
+                        {{-- <td>{{ ($item->type == 'manual')?'حضوری':'سایت' }}</td> --}}
+                        <td>
+                            @if($item->type == 'manual')
+                            حضوری
+                            @elseif($item->type == 'site_successed')
+                            سایت
+                            @elseif($item->type == 'site_failed')
+                            انصرافی
+                            @endif
+                        </td>
                         <td>{{ $item->student->first_name }} {{ $item->student->last_name }} [{{ $item->student->phone }}]</td>
                         <td>{{ $item->factor_number }}</td>
-                        <td>{{ $item->product->name }}</td>
+                        <td>
+                            {{($item->product->collection->parent) ? $item->product->collection->parent->name : ''}}
+                            {{($item->product->collection->parent) ? '->' : ''}}
+                            {{($item->product->collection)?$item->product->collection->name : ''}}
+                            {{($item->product->collection) ? '->' : ''}}
+                            {{ $item->product->name }}
+                        </td>
                         <td>{{ number_format($item->price) }}</td>
                         <td>{{ $item->description }}</td>
                         <td>
@@ -89,6 +104,11 @@
 <script>
     $(function () {
     //   $("#example1").DataTable();
+    $(".btn-danger").click(function(e){
+        if(!confirm('آیا مطمئنید؟')){
+          e.preventDefault();
+        }
+    });
       $('#example2').DataTable({
         "paging": true,
         "lengthChange": false,
@@ -107,11 +127,7 @@
         }
       });
 
-      $(".btn-danger").click(function(e){
-          if(!confirm('آیا مطمئنید؟')){
-            e.preventDefault();
-          }
-      });
+
     });
   </script>
 @endsection

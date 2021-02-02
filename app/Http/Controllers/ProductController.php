@@ -14,7 +14,7 @@ use Exception;
 
 class ProductController extends Controller
 {
-    public function index(){
+    public function index(Request $request){
         $products = Product::where('is_deleted', false)->with('collection')->orderBy('name')->get();
         foreach($products as $index => $product){
             $products[$index]->parents = "-";
@@ -24,11 +24,59 @@ class ProductController extends Controller
                 $products[$index]->parents = $name;
             }
         }
-        return view('products.index',[
-            'products' => $products,
-            'msg_success' => request()->session()->get('msg_success'),
-            'msg_error' => request()->session()->get('msg_error')
-        ]);
+        $name = null;
+        if($request->getMethod() == 'POST'){
+            if($request->input('name')!=null){
+                $name = trim($request->input('name'));
+                $products = Product::where('is_deleted',false)->where('name','like','%'.$name.'%')->get();
+            }
+        }
+        if($request->getMethod() == 'GET'){
+            return view('products.index',[
+                'route' => 'products',
+                'products' => $products,
+                'msg_success' => request()->session()->get('msg_success'),
+                'msg_error' => request()->session()->get('msg_error')
+            ]);
+        }else {
+            $req =  $request->all();
+            if(!isset($req['start'])){
+                $req['start'] = 0;
+                $req['length'] = 10;
+                $req['draw'] = 1;
+            }
+            $data = [];
+            foreach($products as $index => $item){
+
+                $data[] = [
+                    $index+1,
+                    $item->id,
+                    $item->name,
+                    $item->parents,
+                    number_format($item->price),
+                    '<a class="btn btn-primary" href="'.route('product_edit',$item->id).'"> ویرایش</a>
+                     <a class="btn btn-danger" onclick="destroy(event)" href="'.route('product_delete',$item->id).'">حذف</a>'
+                ];
+            }
+
+
+            $outdata = [];
+            for($i = $req['start'];$i<min($req['length']+$req['start'], count($data));$i++){
+                $outdata[] = $data[$i];
+            }
+
+            $result = [
+                "draw" => $req['draw'],
+                "data" => $outdata,
+                "recordsTotal" => count($products),
+                "recordsFiltered" => count($products)
+            ];
+
+            return $result;
+        }
+
+
+
     }
 
     public function create(Request $request)

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\MergeStudents as AppMergeStudents;
 use App\Student;
+use Illuminate\Support\Facades\DB;
 use Exception;
 
 use Illuminate\Http\Request;
@@ -265,13 +266,12 @@ class MergeStudentsController extends Controller
                 false
             )->get();
         } else {
-            $students = Student::orderby('id', 'desc')->select('id', 'first_name', 'last_name', 'phone')->where(
+            $students = Student::select('id', 'first_name', 'last_name', 'phone',DB::raw("CONCAT(first_name,' ',last_name)"))->where(
                 'is_deleted',
                 false
             )->where(function ($query) use ($search) {
-                $query->where('first_name', 'like', '%' . $search . '%')->orWhere('last_name', 'like', '%' . $search . '%')
-                    ->orWhere('phone', 'like', '%' . $search . '%');
-            })->get();
+                $query->where(DB::raw("CONCAT(first_name,' ',last_name)"),'like','%'.$search.'%')->orWhere('phone','like','%'.$search.'%');
+            })->orderby('id','desc')->get();
         }
         $response = array();
         foreach ($students as $student) {
@@ -282,7 +282,7 @@ class MergeStudentsController extends Controller
         }
         $response[] = [
             "id" => 0,
-            "text" => "خالی"
+            "text" => "-"
         ];
         return $response;
     }
