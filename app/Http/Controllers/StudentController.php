@@ -36,6 +36,11 @@ use Exception;
 
 class StudentController extends Controller
 {
+    public function perToEn($inp){
+        $inp = str_replace(["۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹", "۰"],["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"],$inp);
+        $inp = str_replace(["١", "٢", "٣", "٤", "٥", "٦", "٧", "٨", "٩", "٠"],["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"],$inp);
+        return $inp;
+    }
     public function class(Request $request, $id) {
         $student = Student::where('is_deleted', false)->where('banned', false)->where('archived', false)->where('id', $id)->with('studentclasses.class')->first();
         if($student==null){
@@ -964,6 +969,14 @@ class StudentController extends Controller
         $request->session()->flash("msg_success", "دانش آموز با موفقیت حذف شد.");
         return redirect()->route('students');
     }
+    public function education_level_null_for_csv($educationLevels,$educationLevelsInPersian,$level){
+        if(!isset($educationLevels[$level]) && isset($educationLevelsInPersian[$level])){
+            $educationLevel = $educationLevelsInPersian[$level];
+        }else if(!isset($educationLevels[$level]) && !isset($educationLevelsInPersian[$level])){
+            $educationLevel = null;
+        }
+        return $educationLevel;
+    }
 
     public function csv(Request $request){
         $msg = null;
@@ -982,36 +995,33 @@ class StudentController extends Controller
             'art' => 'art',
             'other' => 'other'
         ];
+        $educationLevels = ['6','7','8','9','10','11','12','13','14'];
+        $educationLevelsInPersian = [
+            'ششم' => '6',
+            'شش' => '6',
+            'هفتم' => '7',
+            'هفت' => '7',
+            'هشتم' => '8',
+            'هشت' => '8',
+            'نهم' => '9',
+            'نه' => '9',
+            'دهم' => '10',
+            'ده' => '10',
+            'یازدهم' => '11',
+            'یازده' => '11',
+            'دوازدهم' => '12',
+            'دوازده' => '12',
+            'فارغ التحصیل' => '13',
+            'دانشجو' => '14'
+        ];
         $sources = Source::where('is_deleted', false)->get();
         if($request->getMethod()=='POST'){
             $msg = 'بروز رسانی با موفقیت انجام شد';
             $csvPath = $request->file('attachment')->getPathname();
             if($request->file('attachment')->extension()=='xlsx'){
                 $importer = new StudentsImport;
-                // try{
                 $importer->import($csvPath, null, \Maatwebsite\Excel\Excel::XLSX);
                 $fails = $importer->getFails();
-                // dd($fails);
-                    // $array = $importer->toArray($csvPath);
-                // }catch(Exception $e){
-                    // if($e->getCode()=="23000") {
-                    //     $message = explode("'", $e->getMessage());
-                    //     $mobile = $message[1];
-                    //     return view('students.csv', [
-                    //         'msg_success' => null,
-                    //         'msg_error' => 'شماره ' . $mobile . 'تکراری است',
-                    //         'fails'=>$fails,
-                    //         'sources'=>$sources
-                    //     ]);
-                    // }
-                    // dd($e);
-                    // return view('students.csv', [
-                    //     'msg_success' => null,
-                    //     'msg_error' => 'امکان بررسی اکسل مورد نظر نبود لطفا مطابق مثال بفرستید',
-                    //     'fails'=>$fails,
-                    //     'sources'=>$sources
-                    // ]);
-                // }
                 return view('students.csv', [
                     'msg_success' => $msg,
                     'fails'=>$fails,
@@ -1020,17 +1030,16 @@ class StudentController extends Controller
             }
             $csv = explode("\n", file_get_contents($csvPath));
             $sources_id = $request->input('sources_id');
+
             foreach($csv as $index => $line){
                 $line = explode(',', $line);
                 if($index>0 && count($line)>=13){
-
-                    // dump($line);
                     $student = new Student;
                     $student->users_id = Auth::user()->id;
-                    $student->phone = ((strpos($line[0], '0')!==0)?'0':'') . $line[0];
+                    $student->phone = ((strpos($this->perToEn($line[0]), '0')!==0)?'0':'') . $this->perToEn($line[0]);
                     $student->first_name = $line[1]=="NULL"?null:$line[1];
                     $student->last_name = $line[2];
-                    $student->egucation_level = $line[3];
+                    $student->egucation_level = $this->education_level_null_for_csv($educationLevels,$educationLevelsInPersian,$line[3]);
                     $student->parents_job_title = $line[4]=="NULL"?null:$line[4];
                     $student->home_phone = $line[5]=="NULL"?null:$line[5];
                     $student->father_phone = $line[6]=="NULL"?null:$line[6];
@@ -1060,7 +1069,6 @@ class StudentController extends Controller
                             $student->description = $line[16];
                         }
                     }
-                    // dd($student);
                     try{
                         $student->save();
                     }catch(Exception $e){
@@ -1070,7 +1078,6 @@ class StudentController extends Controller
                 }
             }
         }
-        // die();
         return view('students.csv', [
             'msg_success' => $msg,
             'fails'=>$fails,
