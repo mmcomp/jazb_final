@@ -116,6 +116,17 @@ null => ""
                                     <input type="number" class="form-control" id="phone" name="phone" placeholder="تلفن" value="{{ isset($phone)?$phone:'' }}" />
                                 </div>
                             </div>
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="conditions">شروط</label>
+                                    <select name="conditions" id="conditions" class="form-control">
+                                        <option value="0">-</option>
+                                        @foreach($saleSuggestions as $suggestion)
+                                        <option value="{{$suggestion->id}}">{{$suggestion->name}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
                             <div class="col" style="padding-top: 32px;">
                                 <a class="btn btn-success" onclick="theSearch()" href="#">
                                     جستجو
@@ -1709,6 +1720,7 @@ null => ""
                     data['has_tag'] = $("#has_tag").val();
                     data['education_level'] = $("#education_level").val();
                     data['major'] = $('#major').val();
+                    data['conditions'] = $('#conditions').val();
                     return JSON.stringify(data);
                 }
                 , "complete": function(response) {

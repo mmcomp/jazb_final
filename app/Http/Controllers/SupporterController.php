@@ -32,6 +32,7 @@ use App\Purchase;
 use App\StudentTag;
 use App\City;
 use App\MergeStudents as AppMergeStudents;
+use App\SaleSuggestion;
 use Exception;
 use Log;
 use Illuminate\Support\Facades\DB;
@@ -406,6 +407,7 @@ class SupporterController extends Controller
     public function student($id = null)
     {
         $user = null;
+        $saleSuggestions = SaleSuggestion::all();
         if ($id == null) {
             $id = Auth::user()->id;
         } else {
@@ -537,6 +539,20 @@ class SupporterController extends Controller
                 $major = request()->input('major');
                 $students = $students->where('major', $major);
             }
+            if(request()->input('conditions') != null){
+                $condition_id = request()->input('conditions');
+                $moralTags = Tag::where('type', 'moral')->where('is_deleted', false)->orderBy('name')->get();
+                if($condition_id){
+                    $suggestion = SaleSuggestion::where('id',$condition_id)->first();
+                    if($suggestion->if_products_id){
+                        $purchases = Purchase::where('products_id',$suggestion->if_products_id)->where('supporters_id',$id)->pluck('students_id');
+                    }
+                    //$moralTags = Tag::where('type','moral')->where('is_deleted',false)->where('id',$suggestion->if_moral_tags_id)->first();
+                    //$student_tags = StudentTag::where('tags_id',$moralTags->id)->where('users_id',$id)->where('is_deleted',false)->pluck('students_id');
+                    $students = $students->whereIn('id',$purchases);
+                    //dd($students);
+                }
+            }
         }
 
         $students = $students
@@ -565,7 +581,6 @@ class SupporterController extends Controller
             ->with('mergethirdauxilarystudent.auxilaryStudent')
             ->with('mergethirdauxilarystudent.secondAuxilaryStudent')
             ->with('mergethirdauxilarystudent.thirdAuxilaryStudent')
-
             ->orderBy('created_at', 'desc')
             ->get();
 
@@ -641,6 +656,7 @@ class SupporterController extends Controller
                 "needTagParentFours" => $needTagParentFours,
                 "students_id" => $students_id,
                 "calls_id" => $calls_id,
+                "saleSuggestions" => $saleSuggestions,
                 'msg_success' => request()->session()->get('msg_success'),
                 'msg_error' => request()->session()->get('msg_error')
             ]);
