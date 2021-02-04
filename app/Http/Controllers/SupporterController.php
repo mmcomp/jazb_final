@@ -544,13 +544,65 @@ class SupporterController extends Controller
                 $moralTags = Tag::where('type', 'moral')->where('is_deleted', false)->orderBy('name')->get();
                 if($condition_id){
                     $suggestion = SaleSuggestion::where('id',$condition_id)->first();
+                    $purchases = [];
+                    $student_tags = [];
+                    $need_tags = [];
+                    $school = null;
+                    $last_year_grade = 0;
+                    $average = 0;
+                    $source = 0;
                     if($suggestion->if_products_id){
-                        $purchases = Purchase::where('products_id',$suggestion->if_products_id)->where('supporters_id',$id)->pluck('students_id');
+                        $if_products_id = explode(',',$suggestion->if_products_id);
+                        $purchases = Purchase::whereIn('products_id',$if_products_id)->where('supporters_id',$id)->pluck('students_id');
                     }
-                    //$moralTags = Tag::where('type','moral')->where('is_deleted',false)->where('id',$suggestion->if_moral_tags_id)->first();
-                    //$student_tags = StudentTag::where('tags_id',$moralTags->id)->where('users_id',$id)->where('is_deleted',false)->pluck('students_id');
-                    $students = $students->whereIn('id',$purchases);
-                    //dd($students);
+                    if($suggestion->if_moral_tags_id){
+                        $if_moral_tags_id = explode(',',$suggestion->if_moral_tags_id);
+                        $student_tags = StudentTag::whereIn('tags_id',$if_moral_tags_id)->where('users_id',$id)->where('is_deleted',false)->pluck('students_id');
+                    }
+                    if($suggestion->if_need_tags_id){
+                        $if_need_tags_id = explode(',',$suggestion->if_need_tags_id);
+                        $need_tags = StudentTag::whereIn('tags_id',$if_need_tags_id)->where('users_id',$id)->where('is_deleted',false)->pluck('students_id');
+                    }
+                    if($suggestion->if_schools_id){
+                        $school = $suggestion->if_schools_id;
+                    }
+                    if($suggestion->if_last_year_grade){
+                        $last_year_grade = $suggestion->if_last_year_grade == null ? 0 : $suggestion->if_last_year_grade;
+                    }
+                    if($suggestion->if_avarage){
+                        $average = $suggestion->if_avarage == null ? 0 : $suggestion->if_avarage;
+                    }
+                    if($suggestion->if_sources_id){
+                        $source = $suggestion->if_sources_id == null ? 0 : $suggestion->if_sources_id;
+                    }
+                    if($average && $last_year_grade){
+                        $students = $students->whereIn('id',$purchases)
+                        ->whereIn('id',$student_tags)
+                        ->whereIn('id',$need_tags)
+                        ->where('last_year_grade','<=',$last_year_grade)
+                        ->where('average','>=',$average)
+                        ->where('sources_id',$source)
+                        ->where('school',$school);
+                    }elseif($average){
+                        $students = $students->whereIn('id',$purchases)
+                        ->whereIn('id',$student_tags)
+                        ->whereIn('id',$need_tags)
+                        ->where('average','>=',$average)
+                        ->where('sources_id',$source)
+                        ->where('school',$school);
+                    }elseif($last_year_grade){
+                        $students = $students->whereIn('id',$purchases)
+                        ->whereIn('id',$student_tags)
+                        ->whereIn('id',$need_tags)
+                        ->where('last_year_grade','<=',$last_year_grade)
+                        ->where('sources_id',$source)
+                        ->where('school',$school);
+                    }
+                    $students = $students->whereIn('id',$purchases)
+                                         ->whereIn('id',$student_tags)
+                                         ->whereIn('id',$need_tags)
+                                         ->where('sources_id',$source)
+                                         ->where('school',$school);
                 }
             }
         }

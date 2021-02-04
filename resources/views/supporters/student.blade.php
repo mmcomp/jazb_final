@@ -119,7 +119,7 @@ null => ""
                             <div class="col">
                                 <div class="form-group">
                                     <label for="conditions">شروط</label>
-                                    <select name="conditions" id="conditions" class="form-control">
+                                    <select name="conditions" id="conditions" class="form-control" onchange="theSearch()">
                                         <option value="0">-</option>
                                         @foreach($saleSuggestions as $suggestion)
                                         <option value="{{$suggestion->id}}">{{$suggestion->name}}</option>

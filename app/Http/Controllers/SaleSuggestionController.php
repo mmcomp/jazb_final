@@ -30,7 +30,7 @@ class SaleSuggestionController extends Controller
         $sources = Source::where('is_deleted', false)->get();
         $moralTags = Tag::where('type', 'moral')->where('is_deleted', false)->orderBy('name')->get();
         $needTags = Tag::where('type', 'need')->where('is_deleted', false)->orderBy('name')->get();
-        $schools = School::where('is_deleted', false)->get();
+        //$schools = School::where('is_deleted', false)->get();
         $saleSuggestion = new SaleSuggestion;
         if($request->getMethod()=='GET'){
             return view('sale_suggestions.create', [
@@ -39,7 +39,7 @@ class SaleSuggestionController extends Controller
                 "sources"=>$sources,
                 "moralTags"=>$moralTags,
                 "needTags"=>$needTags,
-                "schools"=>$schools
+                //"schools"=>$schools
             ]);
         }
         $request->validate([
@@ -89,7 +89,7 @@ class SaleSuggestionController extends Controller
         $sources = Source::where('is_deleted', false)->get();
         $moralTags = Tag::where('type', 'moral')->where('is_deleted', false)->orderBy('name')->get();
         $needTags = Tag::where('type', 'need')->where('is_deleted', false)->orderBy('name')->get();
-        $schools = School::where('is_deleted', false)->get();
+       // $schools = School::where('is_deleted', false)->get();
         if($request->getMethod()=='GET'){
             return view('sale_suggestions.create', [
                 "saleSuggestion"=>$saleSuggestion,
@@ -97,14 +97,30 @@ class SaleSuggestionController extends Controller
                 "sources"=>$sources,
                 "moralTags"=>$moralTags,
                 "needTags"=>$needTags,
-                "schools"=>$schools
+                //"schools"=>$schools
             ]);
         }
+        $request->validate([
+            "name" => "required|max:255",
+            "if_products_id" => "required_without_all:if_moral_tags_id,if_need_tags_id,if_schools_id,if_last_year_grade,if_avarage,if_sources_id",
+            "if_moral_tags_id" => "required_without_all:if_products_id,if_need_tags_id,if_schools_id,if_last_year_grade,if_avarage,if_sources_id",
+            "if_need_tags_id" => "required_without_all:if_products_id,if_moral_tags_id,if_schools_id,if_last_year_grade,if_avarage,if_sources_id",
+            "if_schools_id" => "required_without_all:if_products_id,if_need_tags_id,if_moral_tags_id,if_last_year_grade,if_avarage,if_sources_id",
+            "if_last_year_grade" => "required_without_all:if_products_id,if_need_tags_id,if_schools_id,if_moral_tags_id,if_avarage,if_sources_id",
+            "if_avarage" => "required_without_all:if_products_id,if_need_tags_id,if_schools_id,if_last_year_grade,if_moral_tags_id,if_sources_id",
+            "if_sources_id" => "required_without_all:if_products_id,if_need_tags_id,if_schools_id,if_last_year_grade,if_avarage,if_moral_tags_id",
+            "then_product1_id" => "required_without_all:then_product2_id,then_product3_id",
+            "then_product2_id" => "required_without_all:then_product1_id,then_product3_id",
+            "then_product3_id" => "required_without_all:then_product1_id,then_product2_id"
 
+        ]);
+        $if_products_id = $request->input('if_products_id');
+        $if_moral_tags_id = $request->input('if_moral_tags_id');
+        $if_need_tags_id = $request->input('if_need_tags_id');
         $saleSuggestion->name = $request->input('name', '');
-        $saleSuggestion->if_products_id = $request->input('if_products_id');
-        $saleSuggestion->if_moral_tags_id = $request->input('if_moral_tags_id');
-        $saleSuggestion->if_need_tags_id = $request->input('if_need_tags_id');
+        $saleSuggestion->if_products_id = !empty($if_products_id) ? implode(',',$if_products_id) : null;
+        $saleSuggestion->if_moral_tags_id = !empty($if_moral_tags_id) ? implode(',',$if_moral_tags_id) : null;
+        $saleSuggestion->if_need_tags_id = !empty($if_need_tags_id) ? implode(',',$if_need_tags_id) : null ;
         $saleSuggestion->if_schools_id = $request->input('if_schools_id');
         $saleSuggestion->if_last_year_grade = $request->input('if_last_year_grade');
         $saleSuggestion->if_avarage = $request->input('if_avarage');
