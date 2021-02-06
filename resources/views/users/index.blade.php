@@ -116,8 +116,8 @@
                 "info":           "نمایش _START_ تا _END_ از _TOTAL_ داده",
                 "infoEmpty":      "نمایش 0 تا 0 از 0 داده",
             },
-            serverSide: true,
             processing: true,
+            serverSide: true,
             ajax: {
                 "type": "POST",
                 "url": "{{ route($route) }}",
@@ -131,7 +131,17 @@
                 "complete": function(response) {
                 }
 
-            }
+            },
+            columns: [
+                { data: 'row',orderable:true },
+                { data: 'id' },
+                { data: 'email' },
+                { data: 'first_name' },
+                { data: 'last_name' },
+                { data: 'group' },
+                { data: 'end'}
+
+             ]
           });
           $('#name').on('keypress',function(e) {
             if(e.which == 13) {

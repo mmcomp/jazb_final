@@ -46,7 +46,7 @@ class UserController extends Controller
         if($request->getMethod() == 'POST'){
             if($request->input('name')!=null){
                 $name = trim($request->input('name'));
-                $users = User::where(DB::raw('CONCAT(first_Name, " ", last_Name)'),'like','%'.$name.'%')->get();
+                $users = User::where(DB::raw('CONCAT(first_Name, " ", last_Name)'),'like','%'.$name.'%')->where('is_deleted',false)->get();
             }
         }
         if($request->getMethod() == 'GET'){
@@ -66,16 +66,16 @@ class UserController extends Controller
             $data = [];
             foreach($users as $index => $item){
 
-                $data[] = [
-                    $index+1,
-                    $item->id,
-                    $item->email,
-                    $item->first_name,
-                    $item->last_name,
-                    ($item->group)?$item->group->name:'-',
-                    '<a class="btn btn-primary" href="'.route('user_all_edit',$item->id).'"> ویرایش</a>
+                $data[] = array(
+                   "row" =>   $index+1,
+                   "id"  =>   $item->id,
+                   "email" =>   $item->email,
+                   "first_name" => $item->first_name,
+                   "last_name" => $item->last_name,
+                   "group" => ($item->group)?$item->group->name:'-',
+                   "end" => '<a class="btn btn-primary" href="'.route('user_all_edit',$item->id).'"> ویرایش</a>
                      <a class="btn btn-danger" onclick="destroy(event)" href="'.route('user_all_delete',$item->id).'">حذف</a>'
-                ];
+                );
             }
 
 
@@ -88,7 +88,7 @@ class UserController extends Controller
                 "draw" => $req['draw'],
                 "data" => $outdata,
                 "recordsTotal" => count($users),
-                "recordsFiltered" => count($users)
+                "recordsFiltered" => count($users),
             ];
 
             return $result;
