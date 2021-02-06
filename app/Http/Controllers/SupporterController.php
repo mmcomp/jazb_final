@@ -553,15 +553,15 @@ class SupporterController extends Controller
                     $source = 0;
                     if($suggestion->if_products_id){
                         $if_products_id = explode(',',$suggestion->if_products_id);
-                        $purchases = Purchase::whereIn('products_id',$if_products_id)->where('supporters_id',$id)->pluck('students_id');
+                        $purchases = Purchase::whereIn('products_id',$if_products_id)->pluck('students_id');
                     }
                     if($suggestion->if_moral_tags_id){
                         $if_moral_tags_id = explode(',',$suggestion->if_moral_tags_id);
-                        $student_tags = StudentTag::whereIn('tags_id',$if_moral_tags_id)->where('users_id',$id)->where('is_deleted',false)->pluck('students_id');
+                        $student_tags = StudentTag::whereIn('tags_id',$if_moral_tags_id)->where('is_deleted',false)->pluck('students_id');
                     }
                     if($suggestion->if_need_tags_id){
                         $if_need_tags_id = explode(',',$suggestion->if_need_tags_id);
-                        $need_tags = StudentTag::whereIn('tags_id',$if_need_tags_id)->where('users_id',$id)->where('is_deleted',false)->pluck('students_id');
+                        $need_tags = StudentTag::whereIn('tags_id',$if_need_tags_id)->where('is_deleted',false)->pluck('students_id');
                     }
                     if($suggestion->if_schools_id){
                         $school = $suggestion->if_schools_id;
@@ -575,34 +575,27 @@ class SupporterController extends Controller
                     if($suggestion->if_sources_id){
                         $source = $suggestion->if_sources_id == null ? 0 : $suggestion->if_sources_id;
                     }
-                    if($average && $last_year_grade){
-                        $students = $students->whereIn('id',$purchases)
-                        ->whereIn('id',$student_tags)
-                        ->whereIn('id',$need_tags)
-                        ->where('last_year_grade','<=',$last_year_grade)
-                        ->where('average','>=',$average)
-                        ->where('sources_id',$source)
-                        ->where('school',$school);
-                    }elseif($average){
-                        $students = $students->whereIn('id',$purchases)
-                        ->whereIn('id',$student_tags)
-                        ->whereIn('id',$need_tags)
-                        ->where('average','>=',$average)
-                        ->where('sources_id',$source)
-                        ->where('school',$school);
-                    }elseif($last_year_grade){
-                        $students = $students->whereIn('id',$purchases)
-                        ->whereIn('id',$student_tags)
-                        ->whereIn('id',$need_tags)
-                        ->where('last_year_grade','<=',$last_year_grade)
-                        ->where('sources_id',$source)
-                        ->where('school',$school);
-                    }
-                    $students = $students->whereIn('id',$purchases)
-                                         ->whereIn('id',$student_tags)
-                                         ->whereIn('id',$need_tags)
-                                         ->where('sources_id',$source)
-                                         ->where('school',$school);
+                    $students = $students->where(function($query) use ($purchases){
+                          if($purchases)$query->whereIn('id',$purchases);
+                    })
+                    ->where(function($query) use ($student_tags){
+                          if($student_tags)$query->whereIn('id',$student_tags);
+                    })
+                    ->where(function($query) use ($need_tags){
+                         if($need_tags)$query->whereIn('id',$need_tags);
+                    })
+                    ->where(function($query) use($last_year_grade){
+                         if($last_year_grade)$query->where('last_year_grade','<=',$last_year_grade);
+                    })
+                    ->where(function($query) use ($average){
+                        if($average)$query->where('average','>=',$average);
+                    })
+                    ->where(function($query) use ($school){
+                        if($school)$query->where('school',$school);
+                    })
+                    ->where(function($query) use ($source){
+                        if($source) $query->where('sources_id',$source);
+                    });
                 }
             }
         }
