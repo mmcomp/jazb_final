@@ -551,28 +551,28 @@ class SupporterController extends Controller
                     $last_year_grade = 0;
                     $average = 0;
                     $source = 0;
-                    if($suggestion->if_products_id){
+                    if($suggestion->if_products_id != null && $suggestion->if_products_id != ""){
                         $if_products_id = explode(',',$suggestion->if_products_id);
                         $purchases = Purchase::whereIn('products_id',$if_products_id)->pluck('students_id');
                     }
-                    if($suggestion->if_moral_tags_id){
+                    if($suggestion->if_moral_tags_id != null && $suggestion->if_moral_tags_id != ""){
                         $if_moral_tags_id = explode(',',$suggestion->if_moral_tags_id);
                         $student_tags = StudentTag::whereIn('tags_id',$if_moral_tags_id)->where('is_deleted',false)->pluck('students_id');
                     }
-                    if($suggestion->if_need_tags_id){
+                    if($suggestion->if_need_tags_id != null && $suggestion->if_need_tags_id != ""){
                         $if_need_tags_id = explode(',',$suggestion->if_need_tags_id);
                         $need_tags = StudentTag::whereIn('tags_id',$if_need_tags_id)->where('is_deleted',false)->pluck('students_id');
                     }
-                    if($suggestion->if_schools_id){
+                    if($suggestion->if_schools_id != null && $suggestion->if_schools_id != ""){
                         $school = $suggestion->if_schools_id;
                     }
-                    if($suggestion->if_last_year_grade){
+                    if($suggestion->if_last_year_grade != 0){
                         $last_year_grade = $suggestion->if_last_year_grade == null ? 0 : $suggestion->if_last_year_grade;
                     }
-                    if($suggestion->if_avarage){
+                    if($suggestion->if_avarage != 0){
                         $average = $suggestion->if_avarage == null ? 0 : $suggestion->if_avarage;
                     }
-                    if($suggestion->if_sources_id){
+                    if($suggestion->if_sources_id != 0){
                         $source = $suggestion->if_sources_id == null ? 0 : $suggestion->if_sources_id;
                     }
                     $students = $students->where(function($query) use ($purchases){
