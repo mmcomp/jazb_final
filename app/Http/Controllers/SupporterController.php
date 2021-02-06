@@ -32,6 +32,7 @@ use App\Purchase;
 use App\StudentTag;
 use App\City;
 use App\MergeStudents as AppMergeStudents;
+use App\SaleSuggestion;
 use Exception;
 use Log;
 use Illuminate\Support\Facades\DB;
@@ -406,6 +407,7 @@ class SupporterController extends Controller
     public function student($id = null)
     {
         $user = null;
+        $saleSuggestions = SaleSuggestion::all();
         if ($id == null) {
             $id = Auth::user()->id;
         } else {
@@ -537,6 +539,65 @@ class SupporterController extends Controller
                 $major = request()->input('major');
                 $students = $students->where('major', $major);
             }
+            if(request()->input('conditions') != null){
+                $condition_id = request()->input('conditions');
+                $moralTags = Tag::where('type', 'moral')->where('is_deleted', false)->orderBy('name')->get();
+                if($condition_id){
+                    $suggestion = SaleSuggestion::where('id',$condition_id)->first();
+                    $purchases = [];
+                    $student_tags = [];
+                    $need_tags = [];
+                    $school = null;
+                    $last_year_grade = 0;
+                    $average = 0;
+                    $source = 0;
+                    if($suggestion->if_products_id != null && $suggestion->if_products_id != ""){
+                        $if_products_id = explode(',',$suggestion->if_products_id);
+                        $purchases = Purchase::whereIn('products_id',$if_products_id)->pluck('students_id');
+                    }
+                    if($suggestion->if_moral_tags_id != null && $suggestion->if_moral_tags_id != ""){
+                        $if_moral_tags_id = explode(',',$suggestion->if_moral_tags_id);
+                        $student_tags = StudentTag::whereIn('tags_id',$if_moral_tags_id)->where('is_deleted',false)->pluck('students_id');
+                    }
+                    if($suggestion->if_need_tags_id != null && $suggestion->if_need_tags_id != ""){
+                        $if_need_tags_id = explode(',',$suggestion->if_need_tags_id);
+                        $need_tags = StudentTag::whereIn('tags_id',$if_need_tags_id)->where('is_deleted',false)->pluck('students_id');
+                    }
+                    if($suggestion->if_schools_id != null && $suggestion->if_schools_id != ""){
+                        $school = $suggestion->if_schools_id;
+                    }
+                    if($suggestion->if_last_year_grade != 0){
+                        $last_year_grade = $suggestion->if_last_year_grade == null ? 0 : $suggestion->if_last_year_grade;
+                    }
+                    if($suggestion->if_avarage != 0){
+                        $average = $suggestion->if_avarage == null ? 0 : $suggestion->if_avarage;
+                    }
+                    if($suggestion->if_sources_id != 0){
+                        $source = $suggestion->if_sources_id == null ? 0 : $suggestion->if_sources_id;
+                    }
+                    $students = $students->where(function($query) use ($purchases){
+                          if($purchases)$query->whereIn('id',$purchases);
+                    })
+                    ->where(function($query) use ($student_tags){
+                          if($student_tags)$query->whereIn('id',$student_tags);
+                    })
+                    ->where(function($query) use ($need_tags){
+                         if($need_tags)$query->whereIn('id',$need_tags);
+                    })
+                    ->where(function($query) use($last_year_grade){
+                         if($last_year_grade)$query->where('last_year_grade','<=',$last_year_grade);
+                    })
+                    ->where(function($query) use ($average){
+                        if($average)$query->where('average','>=',$average);
+                    })
+                    ->where(function($query) use ($school){
+                        if($school)$query->where('school',$school);
+                    })
+                    ->where(function($query) use ($source){
+                        if($source) $query->where('sources_id',$source);
+                    });
+                }
+            }
         }
 
         $students = $students
@@ -565,7 +626,6 @@ class SupporterController extends Controller
             ->with('mergethirdauxilarystudent.auxilaryStudent')
             ->with('mergethirdauxilarystudent.secondAuxilaryStudent')
             ->with('mergethirdauxilarystudent.thirdAuxilaryStudent')
-
             ->orderBy('created_at', 'desc')
             ->get();
 
@@ -641,6 +701,7 @@ class SupporterController extends Controller
                 "needTagParentFours" => $needTagParentFours,
                 "students_id" => $students_id,
                 "calls_id" => $calls_id,
+                "saleSuggestions" => $saleSuggestions,
                 'msg_success' => request()->session()->get('msg_success'),
                 'msg_error' => request()->session()->get('msg_error')
             ]);
