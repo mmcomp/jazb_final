@@ -47,6 +47,7 @@
                   </tr>
                   </thead>
                   <tbody>
+                      @if($purchases)
                       @foreach ($purchases as $index => $item)
                       <tr>
                         <td>{{ $index + 1 }}</td>
@@ -61,20 +62,24 @@
                             انصرافی
                             @endif
                         </td>
-                        <td>{{ $item->student->first_name }} {{ $item->student->last_name }} [{{ $item->student->phone }}]</td>
-                        <td>{{ $item->factor_number }}</td>
                         <td>
-                            {{($item->product->collection->parent) ? $item->product->collection->parent->name : ''}}
-                            {{($item->product->collection->parent) ? '->' : ''}}
-                            {{($item->product->collection)?$item->product->collection->name : ''}}
-                            {{($item->product->collection) ? '->' : ''}}
-                            {{ $item->product->name }}
+                            {{ $item->student ? $item->student->first_name. ' '. $item->student->last_name.' ['.$item->student->phone.']' : '-' }}
+                        </td>
+                        <td>
+                            {{ $item->factor_number }}
+                        </td>
+                        <td>
+                            {{( $item->product && $item->product->collection && $item->product->collection->parent) ? $item->product->collection->parent->name : ''}}
+                            {{( $item->product && $item->product->collection && $item->product->collection->parent) ? '->' : ''}}
+                            {{( $item->product && $item->product->collection)?$item->product->collection->name : ''}}
+                            {{ $item->product && $item->product->collection ? '->' : ''}}
+                            {{ $item->product ? $item->product->name : '-' }}
                         </td>
                         <td>{{ number_format($item->price) }}</td>
                         <td>{{ $item->description }}</td>
                         <td>
                             <a class="btn btn-primary" href="{{ route('purchase_edit', $item->id) }}">
-                                ویرایش
+                   `             ویرایش
                             </a>
                             <a class="btn btn-danger" href="{{ route('purchase_delete', $item->id) }}">
                                 حذف
@@ -82,6 +87,7 @@
                         </td>
                       </tr>
                       @endforeach
+                      @endif
                   </tbody>
                 </table>
               </div>
