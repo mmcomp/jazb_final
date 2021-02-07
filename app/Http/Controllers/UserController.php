@@ -42,13 +42,13 @@ class UserController extends Controller
 
     public function index(Request $request){
         $users = User::where('is_deleted', false)->with('group')->get();
-        $name = null;
-        if($request->getMethod() == 'POST'){
-            if($request->input('name')!=null){
-                $name = trim($request->input('name'));
-                $users = User::where(DB::raw('CONCAT(first_Name, " ", last_Name)'),'like','%'.$name.'%')->where('is_deleted',false)->get();
-            }
-        }
+        // $name = null;
+        // if($request->getMethod() == 'POST'){
+        //     if($request->input('name')!=null){
+        //         $name = trim($request->input('name'));
+        //         $users = User::where(DB::raw('CONCAT(first_Name, " ", last_Name)'),'like','%'.$name.'%')->where('is_deleted',false)->get();
+        //     }
+        // }
         if($request->getMethod() == 'GET'){
             return view('users.index',[
                 'users' => $users,
@@ -63,30 +63,53 @@ class UserController extends Controller
                 $req['length'] = 10;
                 $req['draw'] = 1;
             }
+            $columnIndex_arr = $request->get('order');
+            $columnName_arr = $request->get('columns');
+            $order_arr = $request->get('order');
+            $columnIndex = $columnIndex_arr[0]['column']; // Column index
+            $columnName = $columnName_arr[$columnIndex]['data']; // Column name
+            $columnSortOrder = $order_arr[0]['dir']; // asc or desc
+            $searchValue = $request->input('name'); // Search value
+
+            // Total records
+            //$totalRecords = User::select('count(*) as allcount')->count();
+            //$totalRecordswithFilter = User::select('count(*) as allcount')->where('is_deleted',false)->where(DB::raw('CONCAT(first_Name, " ", last_Name)'), 'like', '%' .$searchValue . '%')->count();
+
+            // Fetch records
+            if($columnName != 'row' && $columnName != 'end'){
+                $records = User::orderBy($columnName,$columnSortOrder)
+                ->where(DB::raw('CONCAT(first_Name, " ", last_Name)'), 'like', '%' .$searchValue . '%')
+                ->where('is_deleted',false)
+                ->select('users.*')
+                ->skip($req['start'])
+                ->take($req['length'])
+                ->with('group')
+                ->get();
+            }else{
+                $records = User::where(DB::raw('CONCAT(first_Name, " ", last_Name)'), 'like', '%' .$searchValue . '%')
+                ->where('is_deleted',false)
+                ->select('users.*')
+                ->skip($req['start'])
+                ->take($req['length'])
+                ->get();
+            }
             $data = [];
-            foreach($users as $index => $item){
+            foreach($records as $index => $item){
 
                 $data[] = array(
-                   "row" =>   $index+1,
+                   "row" =>   $index + 1,
                    "id"  =>   $item->id,
                    "email" =>   $item->email,
                    "first_name" => $item->first_name,
                    "last_name" => $item->last_name,
-                   "group" => ($item->group)?$item->group->name:'-',
+                   "groups_id" => ($item->group)?$item->group->name:'-',
                    "end" => '<a class="btn btn-primary" href="'.route('user_all_edit',$item->id).'"> ویرایش</a>
                      <a class="btn btn-danger" onclick="destroy(event)" href="'.route('user_all_delete',$item->id).'">حذف</a>'
                 );
             }
-
-
-            $outdata = [];
-            for($i = $req['start'];$i<min($req['length']+$req['start'], count($data));$i++){
-                $outdata[] = $data[$i];
-            }
-
             $result = [
                 "draw" => $req['draw'],
-                "data" => $outdata,
+                "data" => $data,
                 "recordsTotal" => count($users),
                 "recordsFiltered" => count($users),
             ];

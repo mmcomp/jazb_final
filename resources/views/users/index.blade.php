@@ -1,6 +1,9 @@
 @extends('layouts.index')
 @section('css')
 <meta name="csrf-token" content="{{ csrf_token() }}">
+<link rel="stylesheet" href="/plugins/datatables/css/jquery.dataTables.min.css" type="text/css">
+<link rel="stylesheet" href="/css/dataTableStyle.css">
+
 @endsection
 @section('content')
     <!-- Content Header (Page header) -->
@@ -84,6 +87,7 @@
 <!-- DataTables -->
 <script src="../../plugins/datatables/jquery.dataTables.js"></script>
 <script src="../../plugins/datatables-bs4/js/dataTables.bootstrap4.js"></script>
+
 <!-- page script -->
 <script>
         var table;
@@ -99,6 +103,7 @@
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
             });
+
 
           table = $('#example2').DataTable({
             "paging": true,
@@ -116,6 +121,19 @@
                 "info":           "نمایش _START_ تا _END_ از _TOTAL_ داده",
                 "infoEmpty":      "نمایش 0 تا 0 از 0 داده",
             },
+            "columnDefs": [   ////define column 1 and 6
+                    {
+                        "searchable": false,
+                        "orderable": false,
+                        "targets": 0
+                    },
+                    {
+                        "searchable": false,
+                        "orderable": false,
+                        "targets": 6
+                    },
+            ],
+            "order": [[1, 'asc']], /// sort columns 2
             processing: true,
             serverSide: true,
             ajax: {
@@ -129,28 +147,36 @@
                     return JSON.stringify(data);
                 },
                 "complete": function(response) {
+                    $('#example2_paginate').removeClass('dataTables_paginate');
                 }
 
             },
             columns: [
-                { data: 'row',orderable:true },
+                { data: null},
                 { data: 'id' },
                 { data: 'email' },
                 { data: 'first_name' },
                 { data: 'last_name' },
-                { data: 'group' },
+                { data: 'groups_id' },
                 { data: 'end'}
 
              ]
           });
+          table.on('draw.dt', function () {
+            var info = table.page.info();
+            table.column(0, { search: 'applied', order: 'applied', page: 'applied' }).nodes().each(function (cell, i) {
+                cell.innerHTML = i + 1 + info.start;
+            });
+        });
+
           $('#name').on('keypress',function(e) {
             if(e.which == 13) {
                table.ajax.reload();
                return false;
             }
          });
-
-
         });
+
   </script>
+
 @endsection
