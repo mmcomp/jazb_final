@@ -26,7 +26,7 @@ class PurchaseController extends Controller
             ->with('product')
             ->orderBy('created_at', 'desc')
             ->get();
-
+    
         return view('purchases.index',[
             'purchases' => $purchases,
             'msg_success' => request()->session()->get('msg_success'),

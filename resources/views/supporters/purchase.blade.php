@@ -104,8 +104,8 @@
                                         <option value="{{ $item->id }}" selected >
                                         @else
                                         <option value="{{ $item->id }}" >
-                                        {{ ($item->collection->parent) ? $item->collection->parent->name : ''}}
-                                        {{ ($item->collection->parent) ? '->' : ''}}
+                                        {{ ($item->collection && $item->collection->parent) ? $item->collection->parent->name : ''}}
+                                        {{ ($item->collection && $item->collection->parent) ? '->' : ''}}
                                         {{ ($item->collection) ? $item->collection->name : ''}}
                                         {{ ($item->collection) ? '->' : ''}}
                                         {{ $item->name }}
