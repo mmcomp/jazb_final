@@ -47,7 +47,12 @@ class ProductController extends Controller
             }
             $data = [];
             foreach($products as $index => $item){
-
+                if($item->collection) {
+                    $parents = $item->collection->parents();
+                    //$name = ($parents!='')?$parents . "->" . $item->collection->name : $item->collection->name;
+                    $name = ($parents!='')?$parents : $item->collection->name;
+                    $products[$index]->parents = $name;
+                }
                 $data[] = [
                     $index+1,
                     $item->id,
