@@ -590,9 +590,9 @@
                         </li>
                         <li class="nav-item">
                             @if(strpos(\Request::route()->getName(), 'supporter_student_purchases')===0)
-                            <a href="{{ route('supporter_student_purchases') }}" class="nav-link active">
+                            <a href="{{ route('supporter_student_purchases_get') }}" class="nav-link active">
                                 @else
-                                <a href="{{ route('supporter_student_purchases') }}" class="nav-link">
+                                <a href="{{ route('supporter_student_purchases_get') }}" class="nav-link">
                                     @endif
                                     <p>گزارش خرید ها</p>
                                 </a>
