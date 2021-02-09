@@ -1145,7 +1145,7 @@ class SupporterController extends Controller
 
     public function calls($id)
     {
-        $student = Student::where('id', $id)->where('banned', false)->with('calls.product')->with('calls.product.collection')->with('calls.callresult')->first();
+        $student = Student::where('id', $id)->where('banned', false)->with('calls.product')->with('calls.product.collection')->with('calls.callresult')->with('calls.notice')->first();
         if ($student->calls)
             foreach ($student->calls as $index => $call) {
                 if ($student->calls[$index]->product) {

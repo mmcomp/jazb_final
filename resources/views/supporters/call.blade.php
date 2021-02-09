@@ -62,6 +62,7 @@ $persons = [
                     <th>نتیجه</th>
                     <th>یادآور</th>
                     <th>پاسخگو بعد</th>
+                    <th>اطلاع رسانی</th>
                     <th>توضیحات</th>
                     <th>#</th>
                   </tr>
@@ -76,6 +77,7 @@ $persons = [
                         <td>{{ ($item->callresult)?$item->callresult->title:'-' }}</td>
                         <td>{{ ($item->next_call)?jdate($item->next_call)->format("Y/m/d"):'-' }}</td>
                         <td>{{ ($item->next_to_call)?$persons[$item->next_to_call]:'-' }}</td>
+                        <td>{{($item->notices_id ? $item->notice->name : '-')}}</td>
                         <td>{{ $item->description }}</td>
                         <td>
                             <a class="btn btn-danger" href="{{ route('supporter_student_deletecall', ["user_id"=>$item->users_id, "id"=>$item->id]) }}">
