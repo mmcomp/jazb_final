@@ -209,7 +209,7 @@
                   </tr>
                   </thead>
                   <tbody>
-                      @foreach ($students as $index => $item)
+                      {{--  @foreach ($students as $index => $item)
                       <!--
                       <tr id="main-tr-{{ $item->id }}">
                         <td onclick="showMorePanel({{ $index }});">{{ $index + 1 }}</td>
@@ -303,7 +303,7 @@
                           </td>
                       </tr>
                       -->
-                      @endforeach
+                      @endforeach  --}}
                   </tbody>
                   <!--
                   <tfoot>
@@ -1078,23 +1078,6 @@
         });
         $('select.select2').select2();
 
-        // $('#example2').DataTable({
-        //     "paging": true,
-        //     "lengthChange": false,
-        //     "searching": false,
-        //     "ordering": true,
-        //     "info": true,
-        //     "autoWidth": false,
-        //     "language": {
-        //         "paginate": {
-        //             "previous": "قبل",
-        //             "next": "بعد"
-        //         },
-        //         "emptyTable":     "داده ای برای نمایش وجود ندارد",
-        //         "info":           "نمایش _START_ تا _END_ از _TOTAL_ داده",
-        //         "infoEmpty":      "نمایش 0 تا 0 از 0 داده",
-        //     }
-        // });
         table = $("#example2").DataTable({
             "paging": true,
             "lengthChange": false,
@@ -1133,10 +1116,14 @@
                     return JSON.stringify(data);
                 },
                 "complete": function(response) {
-                    console.log(response);
+                    //console.log(response);
+                    $('#example2 tbody tr').addClass('cursor_pointer');
                     $('#example2 tr').click(function() {
                         var tr = this;
                         var studentId = parseInt($(tr).find('td')[1].innerText, 10);
+                        var url = '{{ route("student_purchases", ":id") }}';
+                        url = !isNaN(studentId) ? url.replace(':id', studentId):'{{ route("supporter_student_purchases")}}';
+                        window.open(url,'_blank');
                         if(!isNaN(studentId)){
                             for(var index in students){
                                 if(students[index].id==studentId){
