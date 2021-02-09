@@ -390,6 +390,7 @@ null => ""
                     <h3 class="text-center">
                         اخلاقی
                     </h3>
+
                     @foreach ($moralTags as $index => $item)
                     <input type="checkbox" class="tag-checkbox" id="tag_{{ $item->id }}" value="{{ $item->id }}" />
                     {{ $item->name }}
@@ -429,28 +430,28 @@ null => ""
                             اخلاقی
                         </h3>
                         <div>
-                            <select id="parent-one" onchange="selectParentOne(this);">
+                            <select id="parent-one" onchange="selectParentOne(this,0);">
                                 <option value="">همه</option>
                                 @foreach ($parentOnes as $item)
                                 <option value="{{ $item->id }}">{{$item->name}}</option>
                                 @endforeach
                             </select>
 
-                            <select id="parent-two" onchange="selectParentTwo(this);">
+                            <select id="parent-two" onchange="selectParentTwo(this,0);">
                                 <option value="">همه</option>
                                 @foreach ($parentTwos as $item)
                                 <option value="{{ $item->id }}">{{$item->name}}</option>
                                 @endforeach
                             </select>
 
-                            <select id="parent-three" onchange="selectParentThree(this);">
+                            <select id="parent-three" onchange="selectParentThree(this,0);">
                                 <option value="">همه</option>
                                 @foreach ($parentThrees as $item)
                                 <option value="{{ $item->id }}">{{$item->name}}</option>
                                 @endforeach
                             </select>
 
-                            <select id="parent-four" onchange="selectParentFour(this);">
+                            <select id="parent-four" onchange="selectParentFour(this,0);">
                                 <option value="">همه</option>
                                 @foreach ($parentFours as $item)
                                 <option value="{{ $item->id }}">{{$item->name}}</option>
@@ -557,16 +558,47 @@ null => ""
             </div>
             <div class="modal-body">
                 <p>
-                    <input type="hidden" id="students_index" />
+                    <input type="hidden" id="students1_index" />
                     <h3 class="text-center">
                         اخلاقی
                     </h3>
-                    <input type="checkbox" class="filter-tag-checkbox" id="filter-tag_all" value="" onclick="selectFilterAll();" />
-                    همه
+                    <div>
+                        <select id="parent1" onchange="selectParentOne(this,1);">
+                            <option value="">همه</option>
+                            @foreach ($parentOnes as $item)
+                            <option value="{{ $item->id }}">{{$item->name}}</option>
+                            @endforeach
+                        </select>
+
+                        <select id="parent2" onchange="selectParentTwo(this,1);">
+                            <option value="">همه</option>
+                            @foreach ($parentTwos as $item)
+                            <option value="{{ $item->id }}">{{$item->name}}</option>
+                            @endforeach
+                        </select>
+
+                        <select id="parent3" onchange="selectParentThree(this,1);">
+                            <option value="">همه</option>
+                            @foreach ($parentThrees as $item)
+                            <option value="{{ $item->id }}">{{$item->name}}</option>
+                            @endforeach
+                        </select>
+
+                        <select id="parent4" onchange="selectParentFour(this,1);">
+                            <option value="">همه</option>
+                            @foreach ($parentFours as $item)
+                            <option value="{{ $item->id }}">{{$item->name}}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    {{-- <input type="checkbox" class="filter-tag-checkbox" id="filter-tag_all" value="" onclick="selectFilterAll();" />
+                    همه --}}
                     @foreach ($moralTags as $index => $item)
                     <input type="checkbox" class="filter-tag-checkbox" id="filter-tag_{{ $item->id }}" value="{{ $item->id }}" />
-                    {{ $item->name }}
-                    <br />
+                    <span class="tag1-title" id="tag1-title-{{ $item->id }}">
+                        {{ $item->name }}
+                    </span>
+                    <br class="tag1-br" id="tag1-br-{{ $item->id }}" />
                     @endforeach
                 </p>
             </div>
@@ -1078,67 +1110,71 @@ null => ""
         }
         return false;
     }
+    function theFilterTags(sw){
+        if(!sw){
+            filterTagsByParent("input.tag-checkbox","span.tag-title","br.tag-br","#tag-title-","#tag-br-");
+        }else{
+            filterTagsByParent("input.filter-tag-checkbox","span.tag1-title","br.tag1-br","#tag1-title-","#tag1-br-");
+        }
+    }
 
-    function selectParentOne(dobj) {
+    function selectParentOne(dobj,sw) {
         filterParents.parent1 = ($(dobj).val() != '') ? parseInt($(dobj).val(), 10) : '';
-        filterTagsByParent()
+        theFilterTags(sw);
     }
 
-    function selectParentTwo(dobj) {
+    function selectParentTwo(dobj,sw) {
         filterParents.parent2 = ($(dobj).val() != '') ? parseInt($(dobj).val(), 10) : '';
-        filterTagsByParent()
+        theFilterTags(sw);
     }
 
-    function selectParentThree(dobj) {
+    function selectParentThree(dobj,sw) {
         filterParents.parent3 = ($(dobj).val() != '') ? parseInt($(dobj).val(), 10) : '';
-        filterTagsByParent()
+        theFilterTags(sw);
     }
 
-    function selectParentFour(dobj) {
+    function selectParentFour(dobj,sw) {
         filterParents.parent4 = ($(dobj).val() != '') ? parseInt($(dobj).val(), 10) : '';
-        filterTagsByParent()
+        theFilterTags(sw);
     }
 
-    function filterTagsByParent() {
-        $("input.tag-checkbox").show();
-        $("span.tag-title").show();
-        $("br.tag-br").show();
-        $("input.tag-checkbox").each(function(id, field) {
-            console.log('checking', field)
+    function filterTagsByParent(theCheckbox,title,br,title_id,br_id) {
+        $(theCheckbox).show();
+        $(title).show();
+        $(br).show();
+        $(theCheckbox).each(function(id, field) {
             let tagId = parseInt($(field).val(), 10);
             let theTag = tags[tagId];
-            console.log(tagId, theTag)
             if (theTag) {
                 if (filterParents.parent1 != '') {
                     if (filterParents.parent1 != theTag.parent1) {
                         $(field).hide();
-                        $("#tag-title-" + tagId).hide();
-                        $("#tag-br-" + tagId).hide();
+                        $(title_id + tagId).hide();
+                        $(br_id + tagId).hide();
                     }
                 }
                 if (filterParents.parent2 != '') {
                     if (filterParents.parent2 != theTag.parent2) {
                         $(field).hide();
-                        $("#tag-title-" + tagId).hide();
-                        $("#tag-br-" + tagId).hide();
+                        $(title_id + tagId).hide();
+                        $(br_id + tagId).hide();
                     }
                 }
                 if (filterParents.parent3 != '') {
                     if (filterParents.parent3 != theTag.parent3) {
                         $(field).hide();
-                        $("#tag-title-" + tagId).hide();
-                        $("#tag-br-" + tagId).hide();
+                        $(title_id + tagId).hide();
+                        $(br_id + tagId).hide();
                     }
                 }
                 if (filterParents.parent4 != '') {
                     if (filterParents.parent4 != theTag.parent4) {
                         $(field).hide();
-                        $("#tag-title-" + tagId).hide();
-                        $("#tag-br-" + tagId).hide();
+                        $(title_id + tagId).hide();
+                        $(br_id + tagId).hide();
                     }
                 }
             }
-
         });
     }
 
