@@ -598,6 +598,7 @@
                                 </a>
                         </li>
                         @endif
+
                         @if(Gate::allows('parameters'))
                         <li class="nav-item">
                             @if(strpos(\Request::route()->getName(), 'help')===0)
