@@ -1098,7 +1098,7 @@
             processing: true,
             ajax: {
                 "type": "POST",
-                "url": "{{ route('supporter_student_purchases') }}",
+                "url": "{{ route('supporter_student_purchases_post') }}",
                 "dataType": "json",
                 "contentType": 'application/json; charset=utf-8',
 
@@ -1122,7 +1122,7 @@
                         var tr = this;
                         var studentId = parseInt($(tr).find('td')[1].innerText, 10);
                         var url = '{{ route("student_purchases", ":id") }}';
-                        url = !isNaN(studentId) ? url.replace(':id', studentId):'{{ route("supporter_student_purchases")}}';
+                        url = !isNaN(studentId) ? url.replace(':id', studentId):'{{ route("supporter_student_purchases_get")}}';
                         window.open(url,'_blank');
                         if(!isNaN(studentId)){
                             for(var index in students){

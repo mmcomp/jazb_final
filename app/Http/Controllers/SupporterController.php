@@ -205,17 +205,17 @@ class SupporterController extends Controller
     }
 
 
-    public function acallIndex(Request $request,$id)
+    public function acallIndex(Request $request, $id)
     {
         $supporter = User::find($id);
         $persons = [
-            "student"=>"دانش آموز",
-            "father"=>"پدر",
-            "mother"=>"مادر",
-            "other"=>"غیره"
+            "student" => "دانش آموز",
+            "father" => "پدر",
+            "mother" => "مادر",
+            "other" => "غیره"
         ];
         $fullName = null;
-        if($request->getMethod() == 'POST'){
+        if ($request->getMethod() == 'POST') {
             if (request()->input('call_id')) {
                 $call =  Call::where("users_id", $id)->where('id', request()->input('call_id'))->first();
                 if ($call) {
@@ -250,12 +250,11 @@ class SupporterController extends Controller
                     $calls->whereIn('students_id', $students);
                 }
             }
-            if(request()->input('fullName')){
+            if (request()->input('fullName')) {
                 $fullName = trim(request()->input('fullName'));
-                $students = Student::select('id',DB::raw("CONCAT(first_name,' ',last_name)"))->where(DB::raw("CONCAT(first_name,' ',last_name)"),'like','%'.$fullName.'%')
-                ->where('is_deleted',false)->where('banned',false)->pluck('id');
+                $students = Student::select('id', DB::raw("CONCAT(first_name,' ',last_name)"))->where(DB::raw("CONCAT(first_name,' ',last_name)"), 'like', '%' . $fullName . '%')
+                    ->where('is_deleted', false)->where('banned', false)->pluck('id');
                 $calls->whereIn('students_id', $students);
-
             }
             $calls = $calls->with('student')->with('product.collection')->with('notice')->get();
             foreach ($calls as $index => $call) {
@@ -273,7 +272,7 @@ class SupporterController extends Controller
         }
 
 
-        if($request->getMethod() == 'GET'){
+        if ($request->getMethod() == 'GET') {
             return view("supporters.supportercalls", [
                 "supporter" => $supporter,
                 "from_date" => $request->input('from_date'),
@@ -287,35 +286,35 @@ class SupporterController extends Controller
                 "request" => request()->all(),
                 "route" => 'user_supporter_acall'
             ]);
-        }else{
+        } else {
             $req =  $request->all();
-            if(!isset($req['start'])){
+            if (!isset($req['start'])) {
                 $req['start'] = 0;
                 $req['length'] = 10;
                 $req['draw'] = 1;
             }
             $data = [];
-            foreach($calls as $index => $item){
+            foreach ($calls as $index => $item) {
 
                 $data[] = [
-                    $index+1,
+                    $index + 1,
                     $item->id,
-                    $item->student->first_name.' '.$item->student->last_name,
-                    ($item->product)?(($item->product->parents!='-')?$item->product->parents . '->':'') . $item->product->name:'-' ,
-                    ($item->notice)? $item->notice->name:'-',
+                    $item->student->first_name . ' ' . $item->student->last_name,
+                    ($item->product) ? (($item->product->parents != '-') ? $item->product->parents . '->' : '') . $item->product->name : '-',
+                    ($item->notice) ? $item->notice->name : '-',
                     $persons[$item->replier],
-                    ($item->callresult)?$item->callresult->title:'-',
-                    ($item->next_call)?jdate($item->next_call)->format("Y/m/d"):'-',
-                    ($item->next_to_call)?$persons[$item->next_to_call]:'-',
-                    ($item->created_at)?jdate($item->created_at)->format("Y/m/d H:i:s"):jdate()->format("Y/m/d H:i:s"),
+                    ($item->callresult) ? $item->callresult->title : '-',
+                    ($item->next_call) ? jdate($item->next_call)->format("Y/m/d") : '-',
+                    ($item->next_to_call) ? $persons[$item->next_to_call] : '-',
+                    ($item->created_at) ? jdate($item->created_at)->format("Y/m/d H:i:s") : jdate()->format("Y/m/d H:i:s"),
                     $item->description,
-                    '<a class="btn btn-danger" onclick ="destroy(event)" href="'.route('user_supporter_delete_call',["user_id" => $id,"id" => $item->id]).'">حذف</a>'
+                    '<a class="btn btn-danger" onclick ="destroy(event)" href="' . route('user_supporter_delete_call', ["user_id" => $id, "id" => $item->id]) . '">حذف</a>'
                 ];
             }
 
 
             $outdata = [];
-            for($i = $req['start'];$i<min($req['length']+$req['start'], count($data));$i++){
+            for ($i = $req['start']; $i < min($req['length'] + $req['start'], count($data)); $i++) {
                 $outdata[] = $data[$i];
             }
 
@@ -328,8 +327,6 @@ class SupporterController extends Controller
 
             return $result;
         }
-
-
     }
 
     public function create(Request $request)
@@ -413,7 +410,7 @@ class SupporterController extends Controller
         } else {
             $user = User::find($id);
         }
-        $students = Student::where('is_deleted', false)->where('banned', false)->where('archived',false)->where('supporters_id', $id);
+        $students = Student::where('is_deleted', false)->where('banned', false)->where('archived', false)->where('supporters_id', $id);
         $sources = Source::where('is_deleted', false)->get();
         $products = Product::where('is_deleted', false)->with('collection')->orderBy('name')->get();
         foreach ($products as $index => $product) {
@@ -539,11 +536,11 @@ class SupporterController extends Controller
                 $major = request()->input('major');
                 $students = $students->where('major', $major);
             }
-            if(request()->input('conditions') != null){
+            if (request()->input('conditions') != null) {
                 $condition_id = request()->input('conditions');
                 $moralTags = Tag::where('type', 'moral')->where('is_deleted', false)->orderBy('name')->get();
-                if($condition_id){
-                    $suggestion = SaleSuggestion::where('id',$condition_id)->first();
+                if ($condition_id) {
+                    $suggestion = SaleSuggestion::where('id', $condition_id)->first();
                     $purchases = [];
                     $student_tags = [];
                     $need_tags = [];
@@ -551,51 +548,51 @@ class SupporterController extends Controller
                     $last_year_grade = 0;
                     $average = 0;
                     $source = 0;
-                    if($suggestion->if_products_id != null && $suggestion->if_products_id != ""){
-                        $if_products_id = explode(',',$suggestion->if_products_id);
-                        $purchases = Purchase::whereIn('products_id',$if_products_id)->pluck('students_id');
+                    if ($suggestion->if_products_id != null && $suggestion->if_products_id != "") {
+                        $if_products_id = explode(',', $suggestion->if_products_id);
+                        $purchases = Purchase::whereIn('products_id', $if_products_id)->pluck('students_id');
                     }
-                    if($suggestion->if_moral_tags_id != null && $suggestion->if_moral_tags_id != ""){
-                        $if_moral_tags_id = explode(',',$suggestion->if_moral_tags_id);
-                        $student_tags = StudentTag::whereIn('tags_id',$if_moral_tags_id)->where('is_deleted',false)->pluck('students_id');
+                    if ($suggestion->if_moral_tags_id != null && $suggestion->if_moral_tags_id != "") {
+                        $if_moral_tags_id = explode(',', $suggestion->if_moral_tags_id);
+                        $student_tags = StudentTag::whereIn('tags_id', $if_moral_tags_id)->where('is_deleted', false)->pluck('students_id');
                     }
-                    if($suggestion->if_need_tags_id != null && $suggestion->if_need_tags_id != ""){
-                        $if_need_tags_id = explode(',',$suggestion->if_need_tags_id);
-                        $need_tags = StudentTag::whereIn('tags_id',$if_need_tags_id)->where('is_deleted',false)->pluck('students_id');
+                    if ($suggestion->if_need_tags_id != null && $suggestion->if_need_tags_id != "") {
+                        $if_need_tags_id = explode(',', $suggestion->if_need_tags_id);
+                        $need_tags = StudentTag::whereIn('tags_id', $if_need_tags_id)->where('is_deleted', false)->pluck('students_id');
                     }
-                    if($suggestion->if_schools_id != null && $suggestion->if_schools_id != ""){
+                    if ($suggestion->if_schools_id != null && $suggestion->if_schools_id != "") {
                         $school = $suggestion->if_schools_id;
                     }
-                    if($suggestion->if_last_year_grade != 0){
+                    if ($suggestion->if_last_year_grade != 0) {
                         $last_year_grade = $suggestion->if_last_year_grade == null ? 0 : $suggestion->if_last_year_grade;
                     }
-                    if($suggestion->if_avarage != 0){
+                    if ($suggestion->if_avarage != 0) {
                         $average = $suggestion->if_avarage == null ? 0 : $suggestion->if_avarage;
                     }
-                    if($suggestion->if_sources_id != 0){
+                    if ($suggestion->if_sources_id != 0) {
                         $source = $suggestion->if_sources_id == null ? 0 : $suggestion->if_sources_id;
                     }
-                    $students = $students->where(function($query) use ($purchases){
-                          if($purchases)$query->whereIn('id',$purchases);
+                    $students = $students->where(function ($query) use ($purchases) {
+                        if ($purchases) $query->whereIn('id', $purchases);
                     })
-                    ->where(function($query) use ($student_tags){
-                          if($student_tags)$query->whereIn('id',$student_tags);
-                    })
-                    ->where(function($query) use ($need_tags){
-                         if($need_tags)$query->whereIn('id',$need_tags);
-                    })
-                    ->where(function($query) use($last_year_grade){
-                         if($last_year_grade)$query->where('last_year_grade','<=',$last_year_grade);
-                    })
-                    ->where(function($query) use ($average){
-                        if($average)$query->where('average','>=',$average);
-                    })
-                    ->where(function($query) use ($school){
-                        if($school)$query->where('school',$school);
-                    })
-                    ->where(function($query) use ($source){
-                        if($source) $query->where('sources_id',$source);
-                    });
+                        ->where(function ($query) use ($student_tags) {
+                            if ($student_tags) $query->whereIn('id', $student_tags);
+                        })
+                        ->where(function ($query) use ($need_tags) {
+                            if ($need_tags) $query->whereIn('id', $need_tags);
+                        })
+                        ->where(function ($query) use ($last_year_grade) {
+                            if ($last_year_grade) $query->where('last_year_grade', '<=', $last_year_grade);
+                        })
+                        ->where(function ($query) use ($average) {
+                            if ($average) $query->where('average', '>=', $average);
+                        })
+                        ->where(function ($query) use ($school) {
+                            if ($school) $query->where('school', $school);
+                        })
+                        ->where(function ($query) use ($source) {
+                            if ($source) $query->where('sources_id', $source);
+                        });
                 }
             }
         }
@@ -943,68 +940,13 @@ class SupporterController extends Controller
         }
     }
 
-    public function purchases()
+    public function getPurchases()
     {
         $supports = [];
-        if (Gate::allows('purchases')) {
-            $students = Student::where('is_deleted', false)->where('banned', false)->where('archived', false);
-            $supportGroupId = Group::getSupport();
-            if ($supportGroupId)
-                $supportGroupId = $supportGroupId->id;
-            $supports = User::where('is_deleted', false)->where('groups_id', $supportGroupId)->get();
-        } else {
-            $students = Student::where('is_deleted', false)->where('banned', false)->where('archived', false)->where('supporters_id', Auth::user()->id);
-        }
-        // $students = Student::where('is_deleted', false)->where('banned', false)/*->where('supporter_seen', false)*/->where('supporters_id', Auth::user()->id);
         $sources = Source::where('is_deleted', false)->get();
         $name = null;
         $sources_id = null;
-        $products_id = null;
         $phone = null;
-        $supporters_id = null;
-        $from_date = null;
-        $to_date = null;
-        if (request()->getMethod() == 'POST') {
-            // dump(request()->all());
-            if (request()->input('name') != null) {
-                $name = trim(request()->input('name'));
-                $students = $students->where(function ($query) use ($name) {
-                    $query->where('first_name', 'like', '%' . $name . '%')->orWhere('last_name', 'like', '%' . $name . '%');
-                });
-            }
-            if (request()->input('sources_id') != null) {
-                $sources_id = (int)request()->input('sources_id');
-                $students = $students->where('sources_id', $sources_id);
-            }
-            if (request()->input('phone') != null) {
-                $phone = (int)request()->input('phone');
-                $students = $students->where('phone', $phone);
-            }
-            if (request()->input('products_id') != null) {
-                $products_id = (int)request()->input('products_id');
-                $studentIds = Purchase::where('products_id', $products_id)->where('is_deleted', false)->where('type', '!=', 'site_failed')->pluck('students_id');
-                $students = $students->whereIn('id', $studentIds);
-            }
-            if (Gate::allows('purchases')) {
-                if (request()->input('supporters_id') != null) {
-                    $supporters_id = (int)request()->input('supporters_id');
-                    $students = $students->where('supporters_id', $supporters_id);
-                }
-                if (request()->input('from_date') != null) {
-                    $from_date = request()->input('from_date');
-                    $studentIds = Purchase::where('created_at', '>=', $from_date)->where('is_deleted', false)->where('type', '!=', 'site_failed')->pluck('students_id');
-                    $students = $students->whereIn('id', $studentIds);
-                }
-                if (request()->input('to_date') != null) {
-                    $to_date = request()->input('to_date');
-                    $studentIds = Purchase::where('created_at', '<=', $to_date)->where('is_deleted', false)->where('type', '!=', 'site_failed')->pluck('students_id');
-                    $students = $students->whereIn('id', $studentIds);
-                }
-            }
-        }
-        // DB::enableQueryLog();
-
-        // dd(DB::getQueryLog());
         $moralTags = Tag::where('is_deleted', false)
             // ->with('parent_one')
             // ->with('parent_two')
@@ -1027,105 +969,157 @@ class SupporterController extends Controller
         $needTagParentThrees = NeedTagParentThree::where('is_deleted', false)->has('tags')->get();
         $needTagParentFours = NeedTagParentFour::where('is_deleted', false)->has('tags')->get();
         $products = Product::where('is_deleted', false)->get();
-
         $finalStudents = [];
-
-
-        if (request()->getMethod() == 'GET') {
-            return view('supporters.purchase', [
-                'students' => $finalStudents,
-                'sources' => $sources,
-                'name' => $name,
-                'sources_id' => $sources_id,
-                'phone' => $phone,
-                'moralTags' => $moralTags,
-                'needTags' => $collections,
-                'hotTemperatures' => $hotTemperatures,
-                'coldTemperatures' => $coldTemperatures,
-                "parentOnes" => $parentOnes,
-                "parentTwos" => $parentTwos,
-                "parentThrees" => $parentThrees,
-                "parentFours" => $parentFours,
-                "firstCollections" => $firstCollections,
-                "secondCollections" => $secondCollections,
-                "thirdCollections" => $thirdCollections,
-                "needTagParentOnes" => $needTagParentOnes,
-                "needTagParentTwos" => $needTagParentTwos,
-                "needTagParentThrees" => $needTagParentThrees,
-                "needTagParentFours" => $needTagParentFours,
-                "supports" => $supports,
-                "products" => $products,
-                'msg_success' => request()->session()->get('msg_success'),
-                'msg_error' => request()->session()->get('msg_error')
-            ]);
+        return view('supporters.purchase', [
+            'students' => $finalStudents,
+            'sources' => $sources,
+            'name' => $name,
+            'sources_id' => $sources_id,
+            'phone' => $phone,
+            'moralTags' => $moralTags,
+            'needTags' => $collections,
+            'hotTemperatures' => $hotTemperatures,
+            'coldTemperatures' => $coldTemperatures,
+            "parentOnes" => $parentOnes,
+            "parentTwos" => $parentTwos,
+            "parentThrees" => $parentThrees,
+            "parentFours" => $parentFours,
+            "firstCollections" => $firstCollections,
+            "secondCollections" => $secondCollections,
+            "thirdCollections" => $thirdCollections,
+            "needTagParentOnes" => $needTagParentOnes,
+            "needTagParentTwos" => $needTagParentTwos,
+            "needTagParentThrees" => $needTagParentThrees,
+            "needTagParentFours" => $needTagParentFours,
+            "supports" => $supports,
+            "products" => $products,
+            'msg_success' => request()->session()->get('msg_success'),
+            'msg_error' => request()->session()->get('msg_error')
+        ]);
+    }
+    public function postPurchases(Request $request)
+    {
+        $supports = [];
+        $students = [];
+        if (Gate::allows('purchases')) {
+            $students = Student::where('is_deleted', false)->where('banned', false)->where('archived', false);
+            $supportGroupId = Group::getSupport();
+            if ($supportGroupId)
+                $supportGroupId = $supportGroupId->id;
+            $supports = User::where('is_deleted', false)->where('groups_id', $supportGroupId)->get();
         } else {
-
-            $students = $students
-                ->with('user')
-                ->with('studenttags.tag')
-                ->with('studentcollections.collection')
-                ->with('studenttags.tag.parent_four')
-                ->with('studenttemperatures.temperature')
-                ->with('source')
-                ->with('consultant')
-                ->with('supporter')
-                ->orderBy('created_at', 'desc')
-                ->get();
-            foreach ($students as $student) {
-                $student->ownPurchases = $student->purchases()->where('supporters_id', $student->supporters_id);
-                if ($products_id != null) {
-                    $student->ownPurchases = $student->ownPurchases->where('products_id', $products_id);
-                }
-                $student->ownPurchases = $student->ownPurchases->get();
-                $student->otherPurchases = $student->purchases()->where('supporters_id', '!=', $student->supporters_id);
-                if ($products_id != null) {
-                    $student->otherPurchases = $student->otherPurchases->where('products_id', $products_id);
-                }
-                $student->otherPurchases = $student->otherPurchases->get();
-                $student->todayPurchases = $student->purchases()->where('created_at', '>=', date("Y-m-d 00:00:00"));
-                if ($products_id != null) {
-                    $student->todayPurchases = $student->todayPurchases->where('products_id', $products_id);
-                }
-                $student->todayPurchases = $student->todayPurchases->get();
-                $student->pcreated_at = jdate(strtotime($student->created_at))->format("Y/m/d");
-                $finalStudents[] = $student;
-            }
-
-            $req =  request()->all();
-            // dd($req);
-            if (!isset($req['start'])) {
-                $req['start'] = 0;
-                $req['length'] = 10;
-                $req['draw'] = 1;
-            }
-            $data = [];
-            foreach ($students as $index => $item) {
-                $data[] = [
-                    $index + 1,
-                    $item->id,
-                    $item->first_name,
-                    $item->last_name,
-                    count($item->otherPurchases),
-                    count($item->ownPurchases),
-                    count($item->todayPurchases),
-                    ""
-                ];
-            }
-
-            $outdata = [];
-            for ($i = $req['start']; $i < min($req['length'] + $req['start'], count($data)); $i++) {
-                $outdata[] = $data[$i];
-            }
-
-            $result = [
-                "draw" => $req['draw'],
-                "data" => $outdata,
-                "recordsTotal" => count($students),
-                "recordsFiltered" => count($students)
-            ];
-
-            return $result;
+            $students = Student::where('is_deleted', false)->where('banned', false)->where('archived', false)->where('supporters_id', Auth::user()->id);
         }
+        $sources = Source::where('is_deleted', false)->get();
+        $name = null;
+        $sources_id = null;
+        $products_id = null;
+        $phone = null;
+        $supporters_id = null;
+        $from_date = null;
+        $to_date = null;
+        if ($request->input('name') != null) {
+            $name = trim(request()->input('name'));
+            $students = $students->where(function ($query) use ($name) {
+               $query->where(DB::raw("CONCAT(first_name,' ',last_name)"),'like','%'.$name.'%');
+            });
+        }
+        if ($request->input('sources_id') != null) {
+            $sources_id = (int)request()->input('sources_id');
+            $students = $students->where('sources_id', $sources_id);
+        }
+        if ($request->input('phone') != null) {
+            $phone = (int)request()->input('phone');
+            $students = $students->where('phone', $phone);
+        }
+        if ($request->input('products_id') != null) {
+            $products_id = (int)request()->input('products_id');
+            $studentIds = Purchase::where('products_id', $products_id)->where('is_deleted', false)->where('type', '!=', 'site_failed')->pluck('students_id');
+            $students = $students->whereIn('id', $studentIds);
+        }
+        if (Gate::allows('purchases')) {
+            if ($request->input('supporters_id') != null) {
+                $supporters_id = (int)request()->input('supporters_id');
+                $students = $students->where('supporters_id', $supporters_id);
+            }
+            if ($request->input('from_date') != null) {
+                $from_date = request()->input('from_date');
+                $studentIds = Purchase::where('created_at', '>=', $from_date)->where('is_deleted', false)->where('type', '!=', 'site_failed')->pluck('students_id');
+                $students = $students->whereIn('id', $studentIds);
+            }
+            if ($request->input('to_date') != null) {
+                $to_date = request()->input('to_date');
+                $studentIds = Purchase::where('created_at', '<=', $to_date)->where('is_deleted', false)->where('type', '!=', 'site_failed')->pluck('students_id');
+                $students = $students->whereIn('id', $studentIds);
+            }
+        }
+        $allStudents = $students->orderBy('id','desc')->get();
+
+        $req =  request()->all();
+        if (!isset($req['start'])) {
+            $req['start'] = 0;
+            $req['length'] = 10;
+            $req['draw'] = 1;
+        }
+        $students = $students
+            ->with('user')
+            ->with('studenttags.tag')
+            ->with('studentcollections.collection')
+            ->with('studenttags.tag.parent_four')
+            ->with('studenttemperatures.temperature')
+            ->with('source')
+            ->with('consultant')
+            ->with('supporter')
+            ->orderBy('created_at', 'desc')
+            ->offset($req['start'])
+            ->limit($req['length'])
+            ->get();
+        foreach ($allStudents as $student) {
+            $student->ownPurchases = $student->purchases()->select('purchases.students_id')->where('supporters_id', $student->supporters_id);
+            if ($products_id != null) {
+                $student->ownPurchases = $student->ownPurchases->select('purchases.product_id')->where('products_id', $products_id);
+            }
+            $student->ownPurchases = $student->ownPurchases->get();
+            $student->otherPurchases = $student->purchases()->select('purchases.students_id')->where('supporters_id', '!=', $student->supporters_id);
+            if ($products_id != null) {
+                $student->otherPurchases = $student->otherPurchases->select('purchases.product_id')->where('products_id', $products_id);
+            }
+            $student->otherPurchases = $student->otherPurchases->get();
+            $student->todayPurchases = $student->purchases()->select('purchases.created_at')->where('created_at', '>=', date("Y-m-d 00:00:00"));
+            if ($products_id != null) {
+                $student->todayPurchases = $student->todayPurchases->select('purchases.product_id')->where('products_id', $products_id);
+            }
+            $student->todayPurchases = $student->todayPurchases->get();
+            $student->pcreated_at = jdate(strtotime($student->created_at))->format("Y/m/d");
+            $finalStudents[] = $student;
+        }
+        $data = [];
+        foreach ($allStudents as $index => $item) {
+            $data[] = [
+                $index + 1,
+                $item->id,
+                $item->first_name,
+                $item->last_name,
+                count($item->otherPurchases),
+                count($item->ownPurchases),
+                count($item->todayPurchases),
+                ""
+            ];
+        }
+
+        $outdata = [];
+        for ($i = $req['start']; $i < min($req['length'] + $req['start'], count($data)); $i++) {
+            $outdata[] = $data[$i];
+        }
+
+        $result = [
+            "draw" => $req['draw'],
+            "data" => $outdata,
+            "recordsTotal" => count($allStudents),
+            "recordsFiltered" => count($allStudents),
+        ];
+
+        return $result;
     }
 
     public function deleteCall($users_id, $id)
