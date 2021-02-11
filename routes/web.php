@@ -239,7 +239,8 @@ Route::group(['middleware' => ['auth', 'message','changeCharactersAllToBePersian
         Route::any('/calls/{id}', 'SupporterController@calls')->name('supporter_student_allcall');
         Route::any('/delete_call/{user_id}/{id}', 'SupporterController@deleteCall')->name('supporter_student_deletecall');
         Route::any('/create', 'SupporterController@studentCreate')->name('supporter_student_create');
-        Route::any('/purchases', 'SupporterController@purchases')->name('supporter_student_purchases');
+        Route::get('/purchases', 'SupporterController@getPurchases')->name('supporter_student_purchases_get');
+        Route::post('/purchase','SupporterController@postPurchases')->name('supporter_student_purchases_post');
     });
 
     Route::group(['prefix' => '/circulars'], function () {
