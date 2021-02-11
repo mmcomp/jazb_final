@@ -640,7 +640,7 @@
             mother:"مادر",
             other:"غیره"
         };
-        var editRoute = `{{ route('student_edit', ['call_back'=>'supporter_student_purchases', 'id'=>-1]) }}`;
+        var editRoute = `{{ route('student_edit', ['call_back'=>'supporter_student_purchases_post', 'id'=>-1]) }}`;
         var purchaseRoute = `{{ route('student_purchases', -1) }}`;
         var supporterStudentAllCallRoute = `{{ route('supporter_student_allcall', -1) }}`;
         var tmpCall = `
