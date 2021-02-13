@@ -79,7 +79,7 @@
                         <td>{{ $item->description }}</td>
                         <td>
                             <a class="btn btn-primary" href="{{ route('purchase_edit', $item->id) }}">
-                   `             ویرایش
+                                ویرایش
                             </a>
                             <a class="btn btn-danger" href="{{ route('purchase_delete', $item->id) }}">
                                 حذف
