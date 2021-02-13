@@ -954,6 +954,22 @@ class SupporterController extends Controller
             // ->with('parent_four')
             ->where('type', 'moral')
             ->get();
+        $students = [];
+        if (Gate::allows('purchases')) {
+        $students = Student::where('is_deleted', false)->where('banned', false)->where('archived', false);
+           $supportGroupId = Group::getSupport();
+            if ($supportGroupId)
+               $supportGroupId = $supportGroupId->id;
+            $supports = User::where('is_deleted', false)->where('groups_id', $supportGroupId)->get();
+        }
+        else {
+            $students = Student::where('is_deleted', false)->where('banned', false)->where('archived', false)->where('supporters_id', Auth::user()->id);
+        }
+        foreach ($students as $index => $item) {
+            $item->today_purchases = $item->purchases()->where('created_at', '>=', date("Y-m-d 00:00:00"))->count();
+            $item->save();
+        }
+
         $parentOnes = TagParentOne::has('tags')->get();
         $parentTwos = TagParentTwo::has('tags')->get();
         $parentThrees = TagParentThree::has('tags')->get();
@@ -1021,7 +1037,7 @@ class SupporterController extends Controller
         if ($request->input('name') != null) {
             $name = trim(request()->input('name'));
             $students = $students->where(function ($query) use ($name) {
-               $query->where(DB::raw("CONCAT(first_name,' ',last_name)"),'like','%'.$name.'%');
+                $query->where(DB::raw("CONCAT(first_name,' ',last_name)"), 'like', '%' . $name . '%');
             });
         }
         if ($request->input('sources_id') != null) {
@@ -1053,7 +1069,7 @@ class SupporterController extends Controller
                 $students = $students->whereIn('id', $studentIds);
             }
         }
-        $allStudents = $students->orderBy('id','desc')->get();
+        $allStudents = $students->orderBy('id', 'desc')->get();
 
         $req =  request()->all();
         if (!isset($req['start'])) {
@@ -1076,17 +1092,28 @@ class SupporterController extends Controller
             ->get();
         $data = [];
         foreach ($allStudents as $index => $item) {
+            //     $item->today_purchases = $item->purchases()->where('created_at', '>=', date("Y-m-d 00:00:00"))->where(function($query) use($products_id){
+            //         if ($products_id != null) $query->where('products_id', $products_id);
+            //    })->count();
             $data[] = [
                 $index + 1,
                 $item->id,
                 $item->first_name,
                 $item->last_name,
-                $item->otherPurchases,
-                $item->ownPurchases,
-                $item->todayPurchases,
+                $item->other_purchases,
+                $item->own_purchases,
+                $item->today_purchases,
                 ""
             ];
+            //$item->save();
         }
+        foreach ($students as $index => $item) {
+            $item->today_purchases = $item->purchases()->where('created_at', '>=', date("Y-m-d 00:00:00"))->where(function ($query) use ($products_id) {
+                if ($products_id != null) $query->where('products_id', $products_id);
+            })->count();
+            $item->save();
+        }
+
 
         $outdata = [];
         for ($i = $req['start']; $i < min($req['length'] + $req['start'], count($data)); $i++) {
