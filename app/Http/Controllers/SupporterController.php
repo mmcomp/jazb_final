@@ -1092,9 +1092,6 @@ class SupporterController extends Controller
             ->get();
         $data = [];
         foreach ($allStudents as $index => $item) {
-            //     $item->today_purchases = $item->purchases()->where('created_at', '>=', date("Y-m-d 00:00:00"))->where(function($query) use($products_id){
-            //         if ($products_id != null) $query->where('products_id', $products_id);
-            //    })->count();
             $data[] = [
                 $index + 1,
                 $item->id,
@@ -1105,7 +1102,6 @@ class SupporterController extends Controller
                 $item->today_purchases,
                 ""
             ];
-            //$item->save();
         }
         foreach ($students as $index => $item) {
             $item->today_purchases = $item->purchases()->where('created_at', '>=', date("Y-m-d 00:00:00"))->where(function ($query) use ($products_id) {
