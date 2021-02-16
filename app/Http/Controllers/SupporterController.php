@@ -96,12 +96,14 @@ class SupporterController extends Controller
     public function callIndex($theSupporters_id = null)
     {
         $supporters_id = null;
+        $supportersForSelectInView = null;
         if ($theSupporters_id == null) {
             $supportGroupId = Group::getSupport();
             if ($supportGroupId)
                 $supportGroupId = $supportGroupId->id;
             $supporters_id = null;
             $supporters = User::where('is_deleted', false)->where('groups_id', $supportGroupId);
+            $supportersForSelectInView = $supporters->get();
             if (request()->getMethod() == 'POST') {
                 if (request()->input('supporters_id')) {
                     $supporters_id = request()->input('supporters_id');
@@ -111,6 +113,7 @@ class SupporterController extends Controller
             $supporters = $supporters->with('students.purchases')->with('students.studenttags.tag')->orderBy('max_student', 'desc')->get();
         } else {
             $supporters = User::where('id', $theSupporters_id)->get();
+            $supportersForSelectInView = User::where('is_deleted',false)->get();
         }
 
         $callResults = CallResult::where('is_deleted', false)->get();
@@ -184,8 +187,8 @@ class SupporterController extends Controller
         }
         $notices = Notice::where('is_deleted', false)->get();
         $sources = Source::where('is_deleted', false)->get();
-        // dd($supporters);
         return view('supporters.calls', [
+            'supportersForSelectInView' => $supportersForSelectInView,
             'supporters' => $supporters,
             'products' => $products,
             'notices' => $notices,
