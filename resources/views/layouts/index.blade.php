@@ -493,6 +493,16 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                            @if(strpos(\Request::route()->getName(), 'student_output_csv')===0)
+                            <a href="{{ route('student_output_csv') }}" class="nav-link active">
+                            @else
+                            <a href="{{ route('student_output_csv') }}" class="nav-link">
+                            @endif
+                                <!-- <i class="far fa-circle nav-icon"></i> -->
+                                <p>خروجی اکسل</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             @if(strpos(\Request::route()->getName(), 'student_all')===0)
                             <a href="{{ route('student_all') }}" class="nav-link active">
                             @else

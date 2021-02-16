@@ -977,6 +977,46 @@ class StudentController extends Controller
         }
         return $educationLevel;
     }
+    public function outputCsv(Request $request){
+        $from_date = null;
+        $to_date = null;
+        $majors = [
+            'ریاضی' => 'mathematics',
+            'تجربی' => 'experimental',
+            'انسانی' => 'humanities',
+            'هنر' => 'art',
+            'غیره' => 'other'
+        ];
+        $educationLevels = ['6','7','8','9','10','11','12','13','14'];
+        $supportGroupId = Group::getSupport();
+        if($supportGroupId)
+            $supportGroupId = $supportGroupId->id;
+        $supports = User::where('is_deleted', false)->where('groups_id', $supportGroupId)->get();
+        if($request->getMethod() == 'POST'){
+            if(request()->input('supporters_id')!=null){
+                $supporters_id = (int)request()->input('supporters_id');
+            }
+            if(request()->input('egucation_level')!=null){
+                $egucation_level = request()->input('egucation_level');
+            }
+            if(request()->input('major')!=null){
+                $major = request()->input('major');
+            }
+            if ($request->input('from_date') != null) {
+                $from_date = request()->input('from_date');
+            }
+            if ($request->input('to_date') != null) {
+                $to_date = request()->input('to_date');
+            }
+        }
+        return view('students.output-csv')->with([
+            'from_date' => $from_date,
+            'to_date' => $to_date,
+            'majors' => $majors,
+            'egucation_levels' => $educationLevels,
+            'supports' => $supports
+        ]);
+    }
 
     public function csv(Request $request){
         $msg = null;
