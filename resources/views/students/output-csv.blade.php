@@ -4,7 +4,7 @@
     <div class="container-fluid">
       <div class="row mb-2">
         <div class="col-sm-6">
-          <h1>خروجی اکسل </h1>
+            <h1>خروجی اکسل از پروفایل دانش آموزان</h1>
         </div>
         <div class="col-sm-6">
           <!--
@@ -33,9 +33,8 @@
                 <div class="row">
                     <div class="col">
                         <div class="form-group">
-                            <label for="students_select">خروجی اکسل از پروفایل دانش آموزان</label>
+                            <label for="students_select"> دانش آموزان</label>
                             <select  id="students_select" name="students_select" class="form-control">
-                                <option value="0">-</option>
                                 <option value="students">لیست  دانش آموزان</option>
                                 <option value="archive_students">دانش آموزان لیست آرشیو</option>
                                 <option value="black_students">دانش آموزان لیست سیاه</option>
@@ -108,6 +107,11 @@
                                 @endforeach
                             </select>
                         </div>
+                    </div>
+                    <div class="col" style="padding-top: 32px;">
+                        <button type="submit" class="btn btn-primary">
+                            دریافت
+                        </button>
                     </div>
                 </div>
             </form>
