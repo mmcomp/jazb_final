@@ -77,7 +77,6 @@ class StudentsExport implements FromCollection,WithHeadings,WithColumnWidths,Wit
             $student->student_phone,
             $student->sources_id = $source ? $source->name : '',
             $student->supporters_id = $supporter ? $supporter->first_name.' '.$supporter->last_name: '',
-            $student->is_deleted = $student->is_deleted == 1 ? 'بله' : 'خیر',
             $student->users_id = $user ? $user->first_name.' '.$user->last_name: '',
             $student->marketers_id = $marketer ? $marketer->first_name.' '.$marketer->last_name:'',
             $student->average,
@@ -118,20 +117,23 @@ class StudentsExport implements FromCollection,WithHeadings,WithColumnWidths,Wit
             'N' => 15,
             'O' => 15,
             'P' => 15,
+            'Q' => 20,
             'R' => 20,
-            'S' => 15,
-            'U' => 15,
-            'Y' => 15,
-            'Z' => 15,
-            'AA' => 50,
+            'S' => 10,
+            'T' => 15,
+            'U' => 10,
+            'X' => 15,
+            'Y' => 10,
+            'Z' => 50,
+            'AA' => 20,
             'AB' => 20,
-            'AC' => 20,
-            'AD' => 20,
-            'AF' => 20,
-            'AH' => 15,
+            'AC' => 15,
+            'AD' => 10,
+            'AF' => 10,
+            'AG' => 20,
+            'AH' => 25,
             'AI' => 25,
             'AJ' => 25,
-            'AK' => 20
         ];
     }
     public function headings():array
@@ -153,7 +155,6 @@ class StudentsExport implements FromCollection,WithHeadings,WithColumnWidths,Wit
            'تلفن دانش آموز',
            'منبع',
            'پشتیبان',
-           'حذف شده',
            'ایجادکننده',
            'بازاریاب',
            'معدل',
@@ -234,7 +235,7 @@ class StudentsExport implements FromCollection,WithHeadings,WithColumnWidths,Wit
     */
     public function collection()
     {
-        $students = Student::where('is_deleted',false)->exclude('updated_at');
+        $students = Student::where('is_deleted',false)->exclude(['updated_at','is_deleted']);
         if($this->students_select != null){
             if ($this->students_select == 'archive_students') {
                 $students = $students->where('archived', true);
