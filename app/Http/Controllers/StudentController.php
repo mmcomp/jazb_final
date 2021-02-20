@@ -1027,6 +1027,10 @@ class StudentController extends Controller
         $supports = User::where('is_deleted', false)->where('groups_id', $supportGroupId)->get();
         if ($request->getMethod() == 'POST') {
             $studentsExport = new StudentsExport($request->input('students_select'),(int)$request->input('supporters_id'),$request->input('major'),$request->input('egucation_level'),$request->input('from_date'),$request->input('to_date'));
+            if(!count($studentsExport->collection())){
+                $request->session()->flash("msg_error", "دانش آموزی با این شرایط پیدا نشد!");
+                return redirect()->back();
+            }
             return Excel::download($studentsExport, 'students.xlsx');
 
         }
@@ -1035,7 +1039,8 @@ class StudentController extends Controller
             'to_date' => $to_date,
             'majors' => $majors,
             'egucation_levels' => $education_levels,
-            'supports' => $supports
+            'supports' => $supports,
+            'msg_error' => request()->session()->get('msg_error')
         ]);
     }
 

@@ -12,6 +12,7 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithColumnWidths;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Morilog\Jalali\CalendarUtils;
+use Illuminate\Support\Facades\DB;
 
 class StudentsExport implements FromCollection,WithHeadings,WithColumnWidths,WithMapping
 {
@@ -233,45 +234,7 @@ class StudentsExport implements FromCollection,WithHeadings,WithColumnWidths,Wit
     */
     public function collection()
     {
-        $students = Student::select('id',
-                                    'first_name',
-                                    'last_name',
-                                    'last_year_grade',
-                                    'consultants_id',
-                                    'parents_job_title',
-                                    'home_phone',
-                                    'father_phone',
-                                    'mother_phone',
-                                    'phone',
-                                    'school',
-                                    'created_at',
-                                    'introducing',
-                                    'student_phone',
-                                    'sources_id',
-                                    'supporters_id',
-                                    'is_deleted',
-                                    'users_id',
-                                    'marketers_id',
-                                    'average',
-                                    'password',
-                                    'viewed',
-                                    'major',
-                                    'egucation_level',
-                                    'provinces_id',
-                                    'is_from_site',
-                                    'description',
-                                    'supporter_seen',
-                                    'saloon',
-                                    'supporter_start_date',
-                                    'banned',
-                                    'cities_id',
-                                    'archived',
-                                    'outside_consultants',
-                                    'own_purchases',
-                                    'other_purchases',
-                                    'today_purchases'
-                                    )
-                           ->where('is_deleted',false);
+        $students = Student::where('is_deleted',false)->exclude('updated_at');
         if($this->students_select != null){
             if ($this->students_select == 'archive_students') {
                 $students = $students->where('archived', true);
@@ -300,6 +263,9 @@ class StudentsExport implements FromCollection,WithHeadings,WithColumnWidths,Wit
             if ($to_date != '') $students = $students->where('created_at', '<=', $to_date);
         }
         $students = $students->get();
-        return $students;
+        if(!empty($students)){
+            return $students;
+        }
+        return [];
     }
 }
