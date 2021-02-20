@@ -103,7 +103,7 @@ $persons = [
                         <label for="supporters_id">پشتیبان</label>
                         <select id="supporters_id" name="supporters_id" class="form-control" >
                             <option value="">همه</option>
-                            @foreach ($supporters as $item)
+                            @foreach ($supportersForSelectInView as $item)
                                 @if($supporters_id && $supporters_id == $item->id)
                                 <option selected value="{{ $item->id }}">
                                     {{ $item->first_name }} {{ $item->last_name }}
