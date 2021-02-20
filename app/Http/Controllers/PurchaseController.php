@@ -138,25 +138,18 @@ class PurchaseController extends Controller
                 }else{
                     $student->own_purchases = 0;
                 }
-                if($purchase->created_at >= date("Y-m-d 00:00:00")){
-                  if($student->today_purchases > 0){
-                    $student->today_purchases -= 1;
-                  }else{
-                    $student->today_purchases  = 0;
-                  }
-                }
             }else{
                 if($student->other_purchases > 0){
                     $student->other_purchases -= 1;
                 }else{
                     $student->other_purchases = 0;
                 }
-                if($purchase->created_at >= date("Y-m-d 00:00:00")){
-                    if($student->today_purchases > 0){
-                      $student->today_purchases -= 1;
-                    }else{
-                      $student->today_purchases  = 0;
-                    }
+            }
+            if($purchase->created_at >= date("Y-m-d 00:00:00")){
+                if($student->today_purchases > 0){
+                  $student->today_purchases -= 1;
+                }else{
+                  $student->today_purchases  = 0;
                 }
             }
             $student->save();
@@ -175,7 +168,12 @@ class PurchaseController extends Controller
         $ids = [];
         $fails = [];
         foreach($purchases as $purchase){
-            $student = Student::where('id',$purchase["students_id"])->first();
+            if(!isset($purchase['factor_number'])){
+                $fails[] = $purchase;
+                continue;
+            }
+            $purchaseObject = Purchase::where("factor_number", $purchase['factor_number'])->where('is_deleted', false)->where('type','!=','manual')->first();
+            $student = Student::where('id',$purchaseObject->students_id)->first();
             if($student){
                 $student->today_purchases = $student->purchases()->where('created_at', '>=', date("Y-m-d 00:00:00"))->where('is_deleted',false)->where('type','!=','site_failed')->count();
 
@@ -185,25 +183,18 @@ class PurchaseController extends Controller
                     }else{
                         $student->own_purchases = 0;
                     }
-                    if($purchase["created_at"] >= date("Y-m-d 00:00:00")){
-                      if($student->today_purchases > 0){
-                        $student->today_purchases -= 1;
-                      }else{
-                        $student->today_purchases  = 0;
-                      }
-                    }
                 }else{
                     if($student->other_purchases > 0){
                         $student->other_purchases -= 1;
                     }else{
                         $student->other_purchases = 0;
                     }
-                    if($purchase["created_at"] >= date("Y-m-d 00:00:00")){
-                        if($student->today_purchases > 0){
-                          $student->today_purchases -= 1;
-                        }else{
-                          $student->today_purchases  = 0;
-                        }
+                }
+                if($purchaseObject->created_at >= date("Y-m-d 00:00:00")){
+                    if($student->today_purchases > 0){
+                      $student->today_purchases -= 1;
+                    }else{
+                      $student->today_purchases  = 0;
                     }
                 }
                 try{
@@ -212,13 +203,6 @@ class PurchaseController extends Controller
                     $fails[] = $student;
                 }
             }
-
-            if(!isset($purchase['factor_number'])){
-                $fails[] = $purchase;
-                continue;
-            }
-
-            $purchaseObject = Purchase::where("factor_number", $purchase['factor_number'])->where('is_deleted', false)->first();
             if(!$purchaseObject){
                 $fails[] = $purchase;
                 continue;
@@ -249,25 +233,22 @@ class PurchaseController extends Controller
                 $fails[] = $purchase;
                 continue;
             }
-            $purchaseObject = Purchase::where("factor_number", $purchase['factor_number'])->where('is_deleted', true)->first();
+            $purchaseObject = Purchase::where("factor_number", $purchase['factor_number'])->where('is_deleted', true)->where('type','!=','manual')->first();
             if(!$purchaseObject){
                 $fails[] = $purchase;
                 continue;
             }
-            $student = Student::where('id',$purchase["students_id"])->first();
+            $student = Student::where('id',$purchaseObject->students_id)->first();
             if($student){
                 $student->today_purchases = $student->purchases()->where('created_at', '>=', date("Y-m-d 00:00:00"))->where('is_deleted',false)->where('type','!=','site_failed')->count();
 
                 if($student->supporters_id){
                     $student->own_purchases += 1;
-                    if($purchase["created_at"] >= date("Y-m-d 00:00:00")){
-                        $student->today_purchases += 1;
-                    }
                 }else{
                     $student->other_purchases += 1;
-                    if($purchase["created_at"] >= date("Y-m-d 00:00:00")){
-                          $student->today_purchases += 1;
-                    }
+                }
+                if($purchaseObject->created_at >= date("Y-m-d 00:00:00")){
+                    $student->today_purchases += 1;
                 }
                 try{
                     $student->save();
