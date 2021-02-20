@@ -1266,24 +1266,74 @@ class StudentController extends Controller
         ];
     }
 
+    public function returnStu($id){
+          return Student::where('archived',false)->where('banned',false)->where('is_deleted',false)->where('id',$id)->first();
+    }
+    public function giveStudentThatItsSupporterChanged($student,$supporters_id){
+        $student->supporters_id = $supporters_id;
+        $student->supporter_seen = false;
+        $student->supporter_start_date = date("Y-m-d H:i:s");
+        $student->other_purchases += $student->own_purchases;
+        $student->own_purchases = 0;
+        // $student->today_purchases = $student->purchases()->where('created_at', '>=', date("Y-m-d 00:00:00"))->count();
+        // try{
+        //     $student->save();
+        // }catch(Exception $e){
+        //     dd($e);
+        // }
+    }
+    public function handleErrorForSaveStudent($student){
+        try{
+            $student->save();
+        }catch(Exception $e){
+            dd($e);
+        }
+    }
+
     public function supporter(Request $request){
         $students_id = $request->input('students_id');
         $supporters_id = $request->input('supporters_id');
-
         $student = Student::where('id', $students_id)->where('banned', false)->where('is_deleted', false)->first();
+        $mergeStudent = AppMergeStudents::where('main_students_id',$students_id)->first();
+        if($mergeStudent != null){
+           $auxilaryStu = $this->returnStu($mergeStudent->auxilary_students_id);
+           $secondAuxilaryStu = $this->returnStu($mergeStudent->second_auxilary_students_id);
+           $thirdAuxilaryStu = $this->returnStu($mergeStudent->third_auxilary_students_id);
+           $this->giveStudentThatItsSupporterChanged($mergeStudent,$supporters_id);
+           $mergeStudent->today_purchases = $mergeStudent->mainpurchases()->where('created_at', '>=', date("Y-m-d 00:00:00"))->count();
+           $this->handleErrorForSaveStudent($mergeStudent);
+
+           $this->giveStudentThatItsSupporterChanged($auxilaryStu,$supporters_id);
+           $auxilaryStu->today_purchases = $auxilaryStu->auxilarypurchases()->where('created_at', '>=', date("Y-m-d 00:00:00"))->count();
+           $this->handleErrorForSaveStudent($auxilaryStu);
+
+           $this->giveStudentThatItsSupporterChanged($secondAuxilaryStu,$supporters_id);
+           $secondAuxilaryStu->today_purchases = $secondAuxilaryStu->secondAuxilarypurchases()->where('created_at', '>=', date("Y-m-d 00:00:00"))->count();
+           $this->handleErrorForSaveStudent($secondAuxilaryStu);
+
+           $this->giveStudentThatItsSupporterChanged($thirdAuxilaryStu,$supporters_id);
+           $thirdAuxilaryStu->today_purchases = $thirdAuxilaryStu->thirdAuxilarypurchases()->where('created_at', '>=', date("Y-m-d 00:00:00"))->count();
+           $this->handleErrorForSaveStudent($thirdAuxilaryStu);
+           $request->session()->flash("msg_success", "");
+           return redirect()->route('student_all');
+        }
         if($student==null){
             return [
                 "error"=>"student_not_found",
                 "data"=>null
             ];
         }
-        $student->supporters_id = $supporters_id;
-        $student->supporter_seen = false;
-        $student->supporter_start_date = date("Y-m-d H:i:s");
-        $student->other_purchases += $student->own_purchases;
-        $student->own_purchases = 0;
+        // $student->supporters_id = $supporters_id;
+        // $student->supporter_seen = false;
+        // $student->supporter_start_date = date("Y-m-d H:i:s");
+        // $student->other_purchases += $student->own_purchases;
+        // $student->own_purchases = 0;
+        // $student->today_purchases = $student->purchases()->where('created_at', '>=', date("Y-m-d 00:00:00"))->count();
+        // $student->save();
+        $this->giveStudentThatItsSupporterChanged($student,$supporters_id);
         $student->today_purchases = $student->purchases()->where('created_at', '>=', date("Y-m-d 00:00:00"))->count();
-        $student->save();
+        $this->handleErrorForSaveStudent($student);
+
 
         return [
             "error"=>null,
