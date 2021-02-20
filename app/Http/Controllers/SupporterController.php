@@ -1074,25 +1074,6 @@ class SupporterController extends Controller
             ->offset($req['start'])
             ->limit($req['length'])
             ->get();
-        foreach ($allStudents as $student) {
-            $student->ownPurchases = $student->purchases()->select('purchases.students_id')->where('supporters_id', $student->supporters_id);
-            if ($products_id != null) {
-                $student->ownPurchases = $student->ownPurchases->select('purchases.product_id')->where('products_id', $products_id);
-            }
-            $student->ownPurchases = $student->ownPurchases->get();
-            $student->otherPurchases = $student->purchases()->select('purchases.students_id')->where('supporters_id', '!=', $student->supporters_id);
-            if ($products_id != null) {
-                $student->otherPurchases = $student->otherPurchases->select('purchases.product_id')->where('products_id', $products_id);
-            }
-            $student->otherPurchases = $student->otherPurchases->get();
-            $student->todayPurchases = $student->purchases()->select('purchases.created_at')->where('created_at', '>=', date("Y-m-d 00:00:00"));
-            if ($products_id != null) {
-                $student->todayPurchases = $student->todayPurchases->select('purchases.product_id')->where('products_id', $products_id);
-            }
-            $student->todayPurchases = $student->todayPurchases->get();
-            $student->pcreated_at = jdate(strtotime($student->created_at))->format("Y/m/d");
-            $finalStudents[] = $student;
-        }
         $data = [];
         foreach ($allStudents as $index => $item) {
             $data[] = [
@@ -1100,9 +1081,9 @@ class SupporterController extends Controller
                 $item->id,
                 $item->first_name,
                 $item->last_name,
-                count($item->otherPurchases),
-                count($item->ownPurchases),
-                count($item->todayPurchases),
+                $item->otherPurchases,
+                $item->ownPurchases,
+                $item->todayPurchases,
                 ""
             ];
         }

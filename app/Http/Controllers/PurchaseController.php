@@ -26,7 +26,7 @@ class PurchaseController extends Controller
             ->with('product')
             ->orderBy('created_at', 'desc')
             ->get();
-    
+
         return view('purchases.index',[
             'purchases' => $purchases,
             'msg_success' => request()->session()->get('msg_success'),
@@ -61,10 +61,21 @@ class PurchaseController extends Controller
         $purchase->supporters_id = $student->supporters_id;
         $purchase->users_id = Auth::user()->id;
         $purchase->products_id = $request->input('products_id');
+        $products_id = $purchase->products_id;
         $purchase->description = $request->input('description');
         $purchase->price = $request->input('price');
         $purchase->factor_number = $request->input('factor_number');
         $purchase->type = 'manual';
+        $student->ownPurchases = $student->purchases()->where('supporters_id',$student->supporters_id)->where(function($query) use($products_id){
+            if($products_id != null) $query->where('products_id',$products_id);
+        })->count();
+        $student->otherPurchases = $student->purchases()->where('supporters_id', '!=', $student->supporters_id)->where(function($query) use($products_id){
+            if($products_id != null) $query->where('products_id',$products_id);
+        })->count();
+        $student->todayPurchases = $student->purchases()->where('created_at', '>=', date("Y-m-d 00:00:00"))->where(function($query) use($products_id){
+                if ($products_id != null) $query->where('products_id', $products_id);
+        })->count();
+        $student->save();
         $purchase->save();
 
         $request->session()->flash("msg_success", "پرداخت با موفقیت افزوده شد.");
@@ -95,9 +106,20 @@ class PurchaseController extends Controller
         $purchase->supporters_id = $student->supporters_id;
         $purchase->users_id = Auth::user()->id;
         $purchase->products_id = $request->input('products_id');
+        $products_id = $purchase->products_id;
         $purchase->description = $request->input('description');
         $purchase->price = $request->input('price');
         $purchase->factor_number = $request->input('factor_number');
+        $student->ownPurchases = $student->purchases()->where('supporters_id',$student->supporters_id)->where(function($query) use($products_id){
+            if($products_id != null) $query->where('products_id',$products_id);
+        })->count();
+        $student->otherPurchases = $student->purchases()->where('supporters_id', '!=', $student->supporters_id)->where(function($query) use($products_id){
+            if($products_id != null) $query->where('products_id',$products_id);
+        })->count();
+        $student->todayPurchases = $student->purchases()->where('created_at', '>=', date("Y-m-d 00:00:00"))->where(function($query) use($products_id){
+            if ($products_id != null) $query->where('products_id', $products_id);
+        })->count();
+        $student->save();
         $purchase->save();
 
         $request->session()->flash("msg_success", "پرداخت با موفقیت افزوده شد.");

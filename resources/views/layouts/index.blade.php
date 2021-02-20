@@ -599,7 +599,7 @@
                                 </a>
                         </li>
                         <li class="nav-item">
-                            @if(strpos(\Request::route()->getName(), 'supporter_student_purchases')===0)
+                            @if(strpos(\Request::route()->getName(), 'supporter_student_purchases_get')===0)
                             <a href="{{ route('supporter_student_purchases_get') }}" class="nav-link active">
                                 @else
                                 <a href="{{ route('supporter_student_purchases_get') }}" class="nav-link">
@@ -608,6 +608,7 @@
                                 </a>
                         </li>
                         @endif
+
                         @if(Gate::allows('parameters'))
                         <li class="nav-item">
                             @if(strpos(\Request::route()->getName(), 'help')===0)
@@ -749,7 +750,9 @@
                                 </a>
                         </li>
                         <li class="nav-item">
+
                             @if(strpos(\Request::route()->getName(), 'supporter_student_purchases')===0)
+
                             <a href="{{ route('supporter_student_purchases_get') }}" class="nav-link active">
                             @else
                             <a href="{{ route('supporter_student_purchases_get') }}" class="nav-link">
