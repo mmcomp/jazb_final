@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Http\Controllers\StudentController;
 use App\Student;
 use App\User;
 use App\Source;
@@ -17,7 +18,10 @@ use App\NeedTagParentTwo;
 use App\NeedTagParentThree;
 use App\NeedTagParentFour;
 use App\Temperature;
+use App\MergeStudents as AppMergeStudents;
 use Illuminate\Http\Request;
+use Exception;
+
 
 class assignGroupsOfStudentsToASponser extends Controller
 {
@@ -179,12 +183,39 @@ class assignGroupsOfStudentsToASponser extends Controller
             }else{
             $arrOfCheckBoxes = explode(',',$arrOfCheckBoxes);
             }
+            //dd($arrOfCheckBoxes);
 
             if($destination_supporter != null && !empty($arrOfCheckBoxes)){
+              // dd('hello');
                foreach($arrOfCheckBoxes as $checkbox){
                    $stu = Student::where('id',$checkbox)->first();
+                   $mergeStudent = AppMergeStudents::where('main_students_id', $checkbox)->where('is_deleted',false)->first();
+                   $auxilaryStudent = AppMergeStudents::where('auxilary_students_id',$checkbox)->where('is_deleted',false)->first();
+                   $secondAuxilaryStudent = AppMergeStudents::where('second_auxilary_students_id',$checkbox)->where('is_deleted',false)->first();
+                   $thirdAuxilaryStudent = AppMergeStudents::where('third_auxilary_students_id',$checkbox)->where('is_deleted',false)->first();
+                   if ($mergeStudent != null) {
+                       $stuController = new StudentController;
+                       $auxilaryStu = $stuController->returnStu($mergeStudent->auxilary_students_id);
+                       $secondAuxilaryStu = $stuController->returnStu($mergeStudent->second_auxilary_students_id);
+                       $thirdAuxilaryStu = $stuController->returnStu($mergeStudent->third_auxilary_students_id);
+                       $mergeStudent = Student::where('id', $mergeStudent->main_students_id)->first();
+
+                       $stuController->giveStudentThatItsSupporterChanged($mergeStudent, $supporters_id);
+                    //    $stuController->giveStudentThatItsSupporterChanged($auxilaryStu, $supporters_id);
+                    //    $stuController->giveStudentThatItsSupporterChanged($secondAuxilaryStu, $supporters_id);
+                    //    $stuController->giveStudentThatItsSupporterChanged($thirdAuxilaryStu, $supporters_id);
+                      // dd('1');
+                       $sw = 1;
+                   }else if($mergeStudent == null && ($auxilaryStudent != null || $secondAuxilaryStudent != null || $thirdAuxilaryStudent != null)){
+                      $sw = 0;
+                   }
                    if($stu){
                     $stu->supporters_id = $destination_supporter;
+                    $stu->supporter_seen = false;
+                    $stu->supporter_start_date = date("Y-m-d H:i:s");
+                    $stu->other_purchases += $stu->own_purchases;
+                    $stu->own_purchases = 0;
+                    $stu->today_purchases = $stu->purchases()->where('created_at', '>=', date("Y-m-d 00:00:00"))->count();
                     $stu->save();
                     $sw = 1;
                    }
@@ -192,6 +223,7 @@ class assignGroupsOfStudentsToASponser extends Controller
                }
 
             }
+            dd('1');
             if($sw){
                 request()->session()->flash("msg_success", "پشتیبان این افراد با موفقیت تغییر کرد.");
                 return redirect()->route('assign_students_index');

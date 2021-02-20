@@ -228,11 +228,13 @@
             }, function(result){
                 $("#loading-" + studentsIndex).hide();
                 if(result.error!=null){
-                    alert('خطای بروز رسانی');
+                    alert(result.error);
                 }
+                table.ajax.reload();
             }).fail(function(){
                 $("#loading-" + studentsIndex).hide();
                 alert('خطای بروز رسانی');
+                table.ajax.reload();
             });
         }
         return false;

@@ -1093,19 +1093,19 @@ null => ""
             var students_id = students[studentsIndex].id;
             var supporters_id = $("#supporters_id_" + studentsIndex).val();
             $("#loading-" + studentsIndex).show();
-            $.post('{{ route('student_supporter')}}', {
-                    students_id
-                    , supporters_id
+            $.post('{{ route('student_supporter') }}', {
+                students_id,
+                supporters_id
+            }, function(result){
+                $("#loading-" + studentsIndex).hide();
+                if(result.error!=null){
+                    alert(result.error);
                 }
-                , function(result) {
-                    $("#loading-" + studentsIndex).hide();
-                    console.log('Result', result);
-                    if (result.error != null) {
-                        alert('خطای بروز رسانی');
-                    }
-                }).fail(function() {
+                table.ajax.reload();
+            }).fail(function(){
                 $("#loading-" + studentsIndex).hide();
                 alert('خطای بروز رسانی');
+                table.ajax.reload();
             });
         }
         return false;

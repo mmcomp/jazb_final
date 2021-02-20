@@ -550,13 +550,14 @@
                 supporters_id
             }, function(result){
                 $("#loading-" + studentsIndex).hide();
-                console.log('Result', result);
                 if(result.error!=null){
-                    alert('خطای بروز رسانی');
+                    alert(result.error);
                 }
+                table.ajax.reload();
             }).fail(function(){
                 $("#loading-" + studentsIndex).hide();
                 alert('خطای بروز رسانی');
+                table.ajax.reload();
             });
         }
         return false;
