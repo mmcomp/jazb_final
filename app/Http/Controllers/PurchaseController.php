@@ -61,23 +61,22 @@ class PurchaseController extends Controller
         $purchase->supporters_id = $student->supporters_id;
         $purchase->users_id = Auth::user()->id;
         $purchase->products_id = $request->input('products_id');
-        $products_id = $purchase->products_id;
         $purchase->description = $request->input('description');
         $purchase->price = $request->input('price');
         $purchase->factor_number = $request->input('factor_number');
         $purchase->type = 'manual';
-        $student->ownPurchases = $student->purchases()->where('supporters_id',$student->supporters_id)->where(function($query) use($products_id){
-            if($products_id != null) $query->where('products_id',$products_id);
-        })->count();
-        $student->otherPurchases = $student->purchases()->where('supporters_id', '!=', $student->supporters_id)->where(function($query) use($products_id){
-            if($products_id != null) $query->where('products_id',$products_id);
-        })->count();
-        $student->todayPurchases = $student->purchases()->where('created_at', '>=', date("Y-m-d 00:00:00"))->where(function($query) use($products_id){
-                if ($products_id != null) $query->where('products_id', $products_id);
-        })->count();
-        $student->save();
         $purchase->save();
-
+        if($student){
+            if ($student->supporters_id) {
+                $student->own_purchases = $student->purchases()->where('supporters_id', $student->supporters_id)
+                   ->where('is_deleted',false)->where('type','!=','site_failed')->count();
+            }
+            $student->other_purchases = $student->purchases()->where(function($query) use($student){
+                if($student->supporters_id)$query->where('supporters_id','!=',$student->supporters_id)->orWhere('supporters_id',0);
+            })->where('is_deleted',false)->where('type','!=','site_failed')->count();
+            $student->today_purchases = $student->purchases()->where('created_at', '>=', date("Y-m-d 00:00:00"))->where('is_deleted',false)->where('type','!=','site_failed')->count();
+            $student->save();
+        }
         $request->session()->flash("msg_success", "پرداخت با موفقیت افزوده شد.");
         return redirect()->route('purchases');
     }
@@ -101,37 +100,59 @@ class PurchaseController extends Controller
         }
 
         $student = Student::find($request->input('students_id'));
-
         $purchase->students_id = $request->input('students_id');
         $purchase->supporters_id = $student->supporters_id;
         $purchase->users_id = Auth::user()->id;
         $purchase->products_id = $request->input('products_id');
-        $products_id = $purchase->products_id;
         $purchase->description = $request->input('description');
         $purchase->price = $request->input('price');
         $purchase->factor_number = $request->input('factor_number');
-        $student->ownPurchases = $student->purchases()->where('supporters_id',$student->supporters_id)->where(function($query) use($products_id){
-            if($products_id != null) $query->where('products_id',$products_id);
-        })->count();
-        $student->otherPurchases = $student->purchases()->where('supporters_id', '!=', $student->supporters_id)->where(function($query) use($products_id){
-            if($products_id != null) $query->where('products_id',$products_id);
-        })->count();
-        $student->todayPurchases = $student->purchases()->where('created_at', '>=', date("Y-m-d 00:00:00"))->where(function($query) use($products_id){
-            if ($products_id != null) $query->where('products_id', $products_id);
-        })->count();
-        $student->save();
         $purchase->save();
+        if($student){
+            $student->today_purchases = $student->purchases()->where('created_at', '>=', date("Y-m-d 00:00:00"))->where('is_deleted',false)->where('type','!=','site_failed')->count();
 
-        $request->session()->flash("msg_success", "پرداخت با موفقیت افزوده شد.");
+            if($purchase->created_at < date("Y-m-d 00:00:00")){
+               $student->today_purchases = $student->today_purchases > 0 ? $student->today_purchases -1 : $student->today_purchases;
+            }
+            $student->save();
+        }
+
+        $request->session()->flash("msg_success", "پرداخت با موفقیت ویرایش شد.");
         return redirect()->route('purchases');
     }
 
     public function delete(Request $request, $id)
     {
         $purchase = Purchase::where('id', $id)->where('is_deleted', false)->first();
+        $student = Student::where('id',$purchase->students_id)->first();
         if($purchase==null){
             $request->session()->flash("msg_error", "پرداخت پیدا نشد!");
             return redirect()->route('purchases');
+        }
+        if($student){
+            $student->today_purchases = $student->purchases()->where('created_at', '>=', date("Y-m-d 00:00:00"))->where('is_deleted',false)->where('type','!=','site_failed')->count();
+
+            if($student->supporters_id){
+                if($student->own_purchases > 0){
+                    $student->own_purchases -= 1;
+                }else{
+                    $student->own_purchases = 0;
+                }
+            }else{
+                if($student->other_purchases > 0){
+                    $student->other_purchases -= 1;
+                }else{
+                    $student->other_purchases = 0;
+                }
+            }
+            if($purchase->created_at >= date("Y-m-d 00:00:00")){
+                if($student->today_purchases > 0){
+                  $student->today_purchases -= 1;
+                }else{
+                  $student->today_purchases  = 0;
+                }
+            }
+            $student->save();
         }
 
         $purchase->is_deleted = true;
@@ -151,8 +172,37 @@ class PurchaseController extends Controller
                 $fails[] = $purchase;
                 continue;
             }
+            $purchaseObject = Purchase::where("factor_number", $purchase['factor_number'])->where('is_deleted', false)->where('type','!=','manual')->first();
+            $student = Student::where('id',$purchaseObject->students_id)->first();
+            if($student){
+                $student->today_purchases = $student->purchases()->where('created_at', '>=', date("Y-m-d 00:00:00"))->where('is_deleted',false)->where('type','!=','site_failed')->count();
 
-            $purchaseObject = Purchase::where("factor_number", $purchase['factor_number'])->where('is_deleted', false)->first();
+                if($student->supporters_id){
+                    if($student->own_purchases > 0){
+                        $student->own_purchases -= 1;
+                    }else{
+                        $student->own_purchases = 0;
+                    }
+                }else{
+                    if($student->other_purchases > 0){
+                        $student->other_purchases -= 1;
+                    }else{
+                        $student->other_purchases = 0;
+                    }
+                }
+                if($purchaseObject->created_at >= date("Y-m-d 00:00:00")){
+                    if($student->today_purchases > 0){
+                      $student->today_purchases -= 1;
+                    }else{
+                      $student->today_purchases  = 0;
+                    }
+                }
+                try{
+                    $student->save();
+                }catch(Exception $e){
+                    $fails[] = $student;
+                }
+            }
             if(!$purchaseObject){
                 $fails[] = $purchase;
                 continue;
@@ -178,16 +228,35 @@ class PurchaseController extends Controller
         $ids = [];
         $fails = [];
         foreach($purchases as $purchase){
+
             if(!isset($purchase['factor_number'])){
                 $fails[] = $purchase;
                 continue;
             }
-
-            $purchaseObject = Purchase::where("factor_number", $purchase['factor_number'])->where('is_deleted', false)->first();
+            $purchaseObject = Purchase::where("factor_number", $purchase['factor_number'])->where('is_deleted', true)->where('type','!=','manual')->first();
             if(!$purchaseObject){
                 $fails[] = $purchase;
                 continue;
             }
+            $student = Student::where('id',$purchaseObject->students_id)->first();
+            if($student){
+                $student->today_purchases = $student->purchases()->where('created_at', '>=', date("Y-m-d 00:00:00"))->where('is_deleted',false)->where('type','!=','site_failed')->count();
+
+                if($student->supporters_id){
+                    $student->own_purchases += 1;
+                }else{
+                    $student->other_purchases += 1;
+                }
+                if($purchaseObject->created_at >= date("Y-m-d 00:00:00")){
+                    $student->today_purchases += 1;
+                }
+                try{
+                    $student->save();
+                }catch(Exception $e){
+                    $fails[] = $student;
+                }
+            }
+
             $purchaseObject->is_deleted = false;
             $purchaseObject->save();
 
@@ -220,6 +289,7 @@ class PurchaseController extends Controller
                 $fails[] = $purchase;
                 continue;
             }
+
             foreach($purchase as $key=>$value){
                 if($key != 'woo_id' && $key != 'phone')
                     $purchaseObject->$key = $value;
@@ -236,6 +306,23 @@ class PurchaseController extends Controller
                 $purchaseSaved = true;
             }catch(Exception $e){
                 $fails[] = $purchase;
+            }
+            if($student){
+                if($student->supporters_id){
+                    $student->own_purchases = $student->purchases()->where('supporters_id',$student->supporters_id)
+                    ->where('is_deleted',false)->where('type','!=','site_failed')->count();
+                }
+                $student->other_purchases = $student->purchases()->where(function($query) use($student){
+                    if($student->supporters_id) $query->where('supporters_id','!=',$student->supporters_id)->orWhere('supporters_id',0);;
+                })
+                ->where('is_deleted',false)->where('type','!=','site_failed')
+                ->count();
+                $student->today_purchases = $student->purchases()->where('created_at', '>=', date("Y-m-d 00:00:00"))->where('is_deleted',false)->where('type','!=','site_failed')->count();
+                try{
+                    $student->save();
+                }catch(Exception $e){
+                    $fails[] = $student;
+                }
             }
             if($purchaseSaved) {
                 if($product->classrooms) {

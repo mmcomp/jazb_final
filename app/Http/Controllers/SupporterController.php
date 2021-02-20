@@ -954,6 +954,18 @@ class SupporterController extends Controller
             // ->with('parent_four')
             ->where('type', 'moral')
             ->get();
+        $students = [];
+        if (Gate::allows('purchases')) {
+            $students = Student::where('is_deleted', false)->where('banned', false)->where('archived', false)->get();
+        }
+        else {
+            $students = Student::where('is_deleted', false)->where('banned', false)->where('archived', false)->where('supporters_id', Auth::user()->id)->get();
+        }
+        foreach ($students as $index => $item) {
+            $item->today_purchases = $item->purchases()->where('created_at', '>=', date("Y-m-d 00:00:00"))->where('type','!=','site_failed')->where('is_deleted',false)->count();
+            $item->save();
+        }
+
         $parentOnes = TagParentOne::has('tags')->get();
         $parentTwos = TagParentTwo::has('tags')->get();
         $parentThrees = TagParentThree::has('tags')->get();
@@ -1021,7 +1033,7 @@ class SupporterController extends Controller
         if ($request->input('name') != null) {
             $name = trim(request()->input('name'));
             $students = $students->where(function ($query) use ($name) {
-               $query->where(DB::raw("CONCAT(first_name,' ',last_name)"),'like','%'.$name.'%');
+                $query->where(DB::raw("CONCAT(first_name,' ',last_name)"), 'like', '%' . $name . '%');
             });
         }
         if ($request->input('sources_id') != null) {
@@ -1053,7 +1065,7 @@ class SupporterController extends Controller
                 $students = $students->whereIn('id', $studentIds);
             }
         }
-        $allStudents = $students->orderBy('id','desc')->get();
+        $allStudents = $students->orderBy('id', 'desc')->get();
 
         $req =  request()->all();
         if (!isset($req['start'])) {
@@ -1075,27 +1087,34 @@ class SupporterController extends Controller
             ->limit($req['length'])
             ->get();
         $data = [];
-        foreach ($allStudents as $index => $item) {
+        foreach ($students as $index => $item) {
+            if ($item->supporters_id) {
+                $item->own_purchases = $item->purchases()->where('supporters_id', $item->supporters_id)
+                   ->where('is_deleted',false)->where('type','!=','site_failed')->count();
+            }
+            $item->other_purchases = $item->purchases()->where(function($query) use($item){
+                if($item->supporters_id)$query->where('supporters_id','!=',$item->supporters_id)->orWhere('supporters_id',0);
+            })->where('is_deleted',false)->where('type','!=','site_failed')->count();
+            $item->today_purchases = $item->purchases()->where('created_at', '>=', date("Y-m-d 00:00:00"))->where(function ($query) use ($products_id) {
+                if ($products_id != null) $query->where('products_id', $products_id);
+            })->where('type','!=','site_failed')->where('is_deleted',false)->count();
+            $item->save();
+        }
+        foreach ($students as $index => $item) {
             $data[] = [
-                $index + 1,
+                $req['start'] + $index + 1,
                 $item->id,
                 $item->first_name,
                 $item->last_name,
-                $item->otherPurchases,
-                $item->ownPurchases,
-                $item->todayPurchases,
+                $item->other_purchases,
+                $item->own_purchases,
+                $item->today_purchases,
                 ""
             ];
         }
-
-        $outdata = [];
-        for ($i = $req['start']; $i < min($req['length'] + $req['start'], count($data)); $i++) {
-            $outdata[] = $data[$i];
-        }
-
         $result = [
             "draw" => $req['draw'],
-            "data" => $outdata,
+            "data" => $data,
             "recordsTotal" => count($allStudents),
             "recordsFiltered" => count($allStudents),
         ];
