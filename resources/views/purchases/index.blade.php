@@ -52,7 +52,6 @@
                       <tr>
                         <td>{{ $index + 1 }}</td>
                         <td>{{ $item->id }}</td>
-                        {{-- <td>{{ ($item->type == 'manual')?'حضوری':'سایت' }}</td> --}}
                         <td>
                             @if($item->type == 'manual')
                             حضوری
@@ -109,7 +108,6 @@
 <!-- page script -->
 <script>
     $(function () {
-    //   $("#example1").DataTable();
     $(".btn-danger").click(function(e){
         if(!confirm('آیا مطمئنید؟')){
           e.preventDefault();
@@ -132,8 +130,6 @@
             "infoEmpty":      "نمایش 0 تا 0 از 0 داده",
         }
       });
-
-
     });
   </script>
 @endsection
