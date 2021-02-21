@@ -139,10 +139,10 @@ Route::group(['middleware' => ['auth', 'message','changeCharactersAllToBePersian
         Route::post('/getStudents','MergeStudentsController@getStudents')->name('merge_students_get');
     });
     Route::group(['prefix' => '/assign_students'], function(){
-        Route::any('/','AssignGroupsOfStudentsToASponser@index')->name('assign_students_index');
-        Route::any('/create','AssignGroupsOfStudentsToASponser@create')->name('assign_students_create');
-        Route::any('/edit/{id}','AssignGroupsOfStudentsToASponser@edit')->name('assign_students_edit');
-        Route::get('/delete/{id}','AssignGroupsOfStudentsToASponser@delete')->name('assign_students_delete');
+        Route::any('/','AssignGroupsOfStudentsToASponserController@index')->name('assign_students_index');
+        Route::any('/create','AssignGroupsOfStudentsToASponserController@create')->name('assign_students_create');
+        Route::any('/edit/{id}','AssignGroupsOfStudentsToASponserController@edit')->name('assign_students_edit');
+        Route::get('/delete/{id}','AssignGroupsOfStudentsToASponserController@delete')->name('assign_students_delete');
     });
 
     Route::group(['prefix' => '/marketer'], function () {

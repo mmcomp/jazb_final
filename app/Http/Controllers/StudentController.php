@@ -30,12 +30,15 @@ use App\Temperature;
 use App\StudentCollection;
 use App\ClassRoom;
 use App\City;
+use App\Http\Traits\ChangeSupporterTrait;
 use App\MergeStudents as AppMergeStudents;
 use App\Purchase;
+use Illuminate\Support\Facades\Route;
 use Exception;
 
 class StudentController extends Controller
 {
+    use ChangeSupporterTrait;
     public function perToEn($inp)
     {
         $inp = str_replace(["۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹", "۰"], ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"], $inp);
@@ -943,7 +946,9 @@ class StudentController extends Controller
         if ($student->supporters_id != $request->input('supporters_id') && $student->supporter_seen) {
             $student->supporter_seen = false;
         }
-        $student->supporters_id = $request->input('supporters_id');
+        if(Auth::user()->group->name == 'Admin'){
+          $student->supporters_id = $request->input('supporters_id');
+        }
         $student->banned = ($request->input('banned') != null) ? true : false;
         $student->archived = ($request->input('archived') != null) ? true : false;
         $student->outside_consultants = $request->input('outside_consultants');
@@ -1279,26 +1284,6 @@ class StudentController extends Controller
             "data" => null
         ];
     }
-
-    public function returnStu($id)
-    {
-        return Student::where('archived', false)->where('banned', false)->where('is_deleted', false)->where('id', $id)->first();
-    }
-    public function giveStudentThatItsSupporterChanged($student, $supporters_id)
-    {
-        $student->supporters_id = $supporters_id;
-        $student->supporter_seen = false;
-        $student->supporter_start_date = date("Y-m-d H:i:s");
-        $student->other_purchases += $student->own_purchases;
-        $student->own_purchases = 0;
-        $student->today_purchases = $student->purchases()->where('created_at', '>=', date("Y-m-d 00:00:00"))->count();
-        try {
-            $student->save();
-        } catch (Exception $e) {
-            dd($e);
-        }
-    }
-
     public function supporter(Request $request)
     {
         $students_id = $request->input('students_id');

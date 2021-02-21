@@ -389,9 +389,9 @@
             row.child( test ).show();
         }
     }
-    function changeSupporter(studentsIndex){
+    function changeSupporter(studentsIndex,id){
         if(students[studentsIndex]){
-            var students_id = students[studentsIndex].id;
+            var students_id = id;
             var supporters_id = $("#supporters_id_" + studentsIndex).val();
             $("#loading-" + studentsIndex).show();
             $.post('{{ route('student_supporter') }}', {

@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Http\Controllers\StudentController;
 use App\Student;
 use App\User;
@@ -8,6 +9,7 @@ use App\Source;
 use App\Group;
 use App\Collection;
 use App\City;
+use App\Http\Traits\ChangeSupporterTrait;
 use App\Tag;
 use App\TagParentOne;
 use App\TagParentTwo;
@@ -18,13 +20,25 @@ use App\NeedTagParentTwo;
 use App\NeedTagParentThree;
 use App\NeedTagParentFour;
 use App\Temperature;
+use Illuminate\Support\Facades\DB;
 use App\MergeStudents as AppMergeStudents;
 use Illuminate\Http\Request;
 use Exception;
 
 
-class assignGroupsOfStudentsToASponser extends Controller
+class assignGroupsOfStudentsToASponserController extends Controller
 {
+    use ChangeSupporterTrait;
+    public function updateTodayPurchases($ids)
+    {
+        foreach ($ids as $id) {
+            $stu = Student::where('id', $id)->with('purchases')->first();
+            if ($stu) {
+                $stu->today_purchases = $stu->purchases()->where('created_at', '>=', date("Y-m-d 00:00:00"))->count();
+                $stu->save();
+            }
+        }
+    }
     /**
      * Display a listing of the resource.
      *
@@ -33,10 +47,10 @@ class assignGroupsOfStudentsToASponser extends Controller
     public function index()
     {
         $ids = [];
-        $sw = 0;
+        $sw = 3;
         $students = Student::where('is_deleted', false)->where('banned', false)->where('archived', false);
         $supportGroupId = Group::getSupport();
-        if($supportGroupId)
+        if ($supportGroupId)
             $supportGroupId = $supportGroupId->id;
         $supports = User::where('is_deleted', false)->where('groups_id', $supportGroupId)->get();
         $sources = Source::where('is_deleted', false)->get();
@@ -48,43 +62,43 @@ class assignGroupsOfStudentsToASponser extends Controller
         $egucation_level = null;
         $school = null;
         $major = null;
-        if(request()->getMethod()=='POST'){
+        if (request()->getMethod() == 'POST') {
             // dump(request()->all());
-            if(request()->input('supporters_id')!=null){
+            if (request()->input('supporters_id') != null) {
                 $supporters_id = (int)request()->input('supporters_id');
                 $students = $students->where('supporters_id', $supporters_id);
             }
-            if(request()->input('name')!=null){
+            if (request()->input('name') != null) {
                 $name = trim(request()->input('name'));
                 $students = $students->where(function ($query) use ($name) {
                     $tmpNames = explode(' ', $name);
-                    foreach($tmpNames as $tmpName) {
+                    foreach ($tmpNames as $tmpName) {
                         $tmpName = trim($tmpName);
                         $query->orWhere('first_name', 'like', '%' . $tmpName . '%')->orWhere('last_name', 'like', '%' . $tmpName . '%');
                     }
                 });
             }
-            if(request()->input('sources_id')!=null){
+            if (request()->input('sources_id') != null) {
                 $sources_id = (int)request()->input('sources_id');
                 $students = $students->where('sources_id', $sources_id);
             }
-            if(request()->input('phone')!=null){
+            if (request()->input('phone') != null) {
                 $phone = (int)request()->input('phone');
                 $students = $students->where('phone', $phone);
             }
-            if(request()->input('cities_id')!=null){
+            if (request()->input('cities_id') != null) {
                 $cities_id = (int)request()->input('cities_id');
                 $students = $students->where('cities_id', $cities_id);
             }
-            if(request()->input('egucation_level')!=null){
+            if (request()->input('egucation_level') != null) {
                 $egucation_level = request()->input('egucation_level');
                 $students = $students->where('egucation_level', $egucation_level);
             }
-            if(request()->input('major')!=null){
+            if (request()->input('major') != null) {
                 $major = request()->input('major');
                 $students = $students->where('major', $major);
             }
-            if(request()->input('school')!=null){
+            if (request()->input('school') != null) {
                 $school = request()->input('school');
                 $students = $students->where('school', 'like',  '%' . $school . '%');
             }
@@ -126,9 +140,8 @@ class assignGroupsOfStudentsToASponser extends Controller
 
 
 
-        // dd($students);
-        if(request()->getMethod()=='GET'){
-            return view('assign_students.index',[
+        if (request()->getMethod() == 'GET') {
+            return view('assign_students.index', [
                 'route' => 'assign_students_index',
                 'students' => $students,
                 'supports' => $supports,
@@ -137,30 +150,31 @@ class assignGroupsOfStudentsToASponser extends Controller
                 'name' => $name,
                 'sources_id' => $sources_id,
                 'phone' => $phone,
-                'moralTags'=>$moralTags,
-                'needTags'=>$needTags,
-                'hotTemperatures'=>$hotTemperatures,
-                'coldTemperatures'=>$coldTemperatures,
-                "parentOnes"=>$parentOnes,
-                "parentTwos"=>$parentTwos,
-                "parentThrees"=>$parentThrees,
-                "parentFours"=>$parentFours,
-                "firstCollections"=>$firstCollections,
-                "secondCollections"=>$secondCollections,
-                "thirdCollections"=>$thirdCollections,
+                'moralTags' => $moralTags,
+                'needTags' => $needTags,
+                'hotTemperatures' => $hotTemperatures,
+                'coldTemperatures' => $coldTemperatures,
+                "parentOnes" => $parentOnes,
+                "parentTwos" => $parentTwos,
+                "parentThrees" => $parentThrees,
+                "parentFours" => $parentFours,
+                "firstCollections" => $firstCollections,
+                "secondCollections" => $secondCollections,
+                "thirdCollections" => $thirdCollections,
                 // "fourthCollections"=>$fourthCollections,
-                "cities"=>$cities,
-                "cities_id"=>$cities_id,
-                "egucation_level"=>$egucation_level,
-                "major"=>$major,
-                "needTagParentOnes"=>$needTagParentOnes,
-                "needTagParentTwos"=>$needTagParentTwos,
-                "needTagParentThrees"=>$needTagParentThrees,
-                "needTagParentFours"=>$needTagParentFours,
+                "cities" => $cities,
+                "cities_id" => $cities_id,
+                "egucation_level" => $egucation_level,
+                "major" => $major,
+                "needTagParentOnes" => $needTagParentOnes,
+                "needTagParentTwos" => $needTagParentTwos,
+                "needTagParentThrees" => $needTagParentThrees,
+                "needTagParentFours" => $needTagParentFours,
                 'msg_success' => request()->session()->get('msg_success'),
                 'msg_error' => request()->session()->get('msg_error')
             ]);
-        }else {
+        } else {
+            $message = null;
             $students = $students
                 ->with('user')
                 ->with('studenttags.tag.parent_four')
@@ -171,95 +185,87 @@ class assignGroupsOfStudentsToASponser extends Controller
                 ->with('supporter')
                 ->orderBy('created_at', 'desc')
                 ->get();
-            foreach($students as $index => $student) {
+            foreach ($students as $index => $student) {
                 $students[$index]->pcreated_at = jdate(strtotime($student->created_at))->format("Y/m/d");
                 $ids[] = $student->id;
             }
             $req =  request()->all();
             $destination_supporter = request()->input('destination_supporter');
             $arrOfCheckBoxes = request()->input('arrOfCheckBoxes');
-            if($arrOfCheckBoxes == 'all'){
+            if ($arrOfCheckBoxes == 'all') {
                 $arrOfCheckBoxes = $ids;
-            }else{
-            $arrOfCheckBoxes = explode(',',$arrOfCheckBoxes);
+            } else {
+                $arrOfCheckBoxes = explode(',', $arrOfCheckBoxes);
             }
-            //dd($arrOfCheckBoxes);
-
-            if($destination_supporter != null && !empty($arrOfCheckBoxes)){
-              // dd('hello');
-               foreach($arrOfCheckBoxes as $checkbox){
-                   $stu = Student::where('id',$checkbox)->first();
-                   $mergeStudent = AppMergeStudents::where('main_students_id', $checkbox)->where('is_deleted',false)->first();
-                   $auxilaryStudent = AppMergeStudents::where('auxilary_students_id',$checkbox)->where('is_deleted',false)->first();
-                   $secondAuxilaryStudent = AppMergeStudents::where('second_auxilary_students_id',$checkbox)->where('is_deleted',false)->first();
-                   $thirdAuxilaryStudent = AppMergeStudents::where('third_auxilary_students_id',$checkbox)->where('is_deleted',false)->first();
-                   if ($mergeStudent != null) {
-                       $stuController = new StudentController;
-                       $auxilaryStu = $stuController->returnStu($mergeStudent->auxilary_students_id);
-                       $secondAuxilaryStu = $stuController->returnStu($mergeStudent->second_auxilary_students_id);
-                       $thirdAuxilaryStu = $stuController->returnStu($mergeStudent->third_auxilary_students_id);
-                       $mergeStudent = Student::where('id', $mergeStudent->main_students_id)->first();
-
-                       $stuController->giveStudentThatItsSupporterChanged($mergeStudent, $supporters_id);
-                    //    $stuController->giveStudentThatItsSupporterChanged($auxilaryStu, $supporters_id);
-                    //    $stuController->giveStudentThatItsSupporterChanged($secondAuxilaryStu, $supporters_id);
-                    //    $stuController->giveStudentThatItsSupporterChanged($thirdAuxilaryStu, $supporters_id);
-                      // dd('1');
-                       $sw = 1;
-                   }else if($mergeStudent == null && ($auxilaryStudent != null || $secondAuxilaryStudent != null || $thirdAuxilaryStudent != null)){
-                      $sw = 0;
-                   }
-                   if($stu){
-                    $stu->supporters_id = $destination_supporter;
-                    $stu->supporter_seen = false;
-                    $stu->supporter_start_date = date("Y-m-d H:i:s");
-                    $stu->other_purchases += $stu->own_purchases;
-                    $stu->own_purchases = 0;
-                    $stu->today_purchases = $stu->purchases()->where('created_at', '>=', date("Y-m-d 00:00:00"))->count();
-                    $stu->save();
-                    $sw = 1;
-                   }
-
-               }
-
+            if ($destination_supporter != null && !empty($arrOfCheckBoxes)) {
+                $mergeStudents = AppMergeStudents::where('is_deleted', false)->get();
+                $mergeStudentsArr = [];
+                foreach ($mergeStudents as $index => $item) {
+                    $mergeStudentsArr[$item->main_students_id] = array_filter([$item->auxilary_students_id, $item->second_auxilary_students_id, $item->third_auxilary_students_id]);
+                }
+                foreach ($arrOfCheckBoxes as $checkbox) {
+                    foreach ($mergeStudentsArr as $main => $auxilaries) {
+                        //if it is main student id
+                        if ($main == $checkbox) {
+                            $arrOfCheckBoxes = array_merge($arrOfCheckBoxes,$auxilaries);
+                        }
+                        //if it is auxilaries
+                        else if (in_array($checkbox, $auxilaries)) {
+                            $sw = 0;
+                            $message = 'ابتدا باید پشتیبان فرد اصلی را تغییر دهید.';
+                            $arrOfCheckBoxes = array_diff($arrOfCheckBoxes, [$checkbox]);
+                            break;
+                        } else {
+                            $sw = 1;
+                            $message = "پشتیبان این افراد با موفقیت تغییر کردند.";
+                        }
+                    }
+                }
+                $this->updateTodayPurchases($arrOfCheckBoxes);
+                Student::whereIn('id', $arrOfCheckBoxes)
+                    ->with('purchases')
+                    ->update([
+                        'supporters_id' => $destination_supporter,
+                        'supporter_seen' => false,
+                        'supporter_start_date' => date("Y-m-d H:i:s"),
+                        'other_purchases' => DB::raw('other_purchases + own_purchases'),
+                        'own_purchases' => 0
+                    ]);
             }
-            dd('1');
-            if($sw){
-                request()->session()->flash("msg_success", "پشتیبان این افراد با موفقیت تغییر کرد.");
+            if ($sw == 1) {
+                request()->session()->flash("msg_success", $message);
+                return redirect()->route('assign_students_index');
+            } else if (!$sw) {
+                request()->session()->flash("msg_error", $message);
                 return redirect()->route('assign_students_index');
             }
-            if(!isset($req['start'])){
+            if (!isset($req['start'])) {
                 $req['start'] = 0;
                 $req['length'] = 10;
                 $req['draw'] = 1;
             }
             $data = [];
-            foreach($students as $index => $item){
+            foreach ($students as $index => $item) {
                 $tags = "";
-                if(($item->studenttags && count($item->studenttags)>0) || ($item->studentcollections && count($item->studentcollections)>0)){
-                    for($i = 0; $i < count($item->studenttags);$i++){
-                        $tags .= '<span class="alert alert-' . (($item->studenttags[$i]->tag->type=='moral')?'info':'warning') . ' p-1">
-                        ' . (($item->studenttags[$i]->tag->parent_four) ? $item->studenttags[$i]->tag->parent_four->name . '->' : '' ) . ' ' . $item->studenttags[$i]->tag->name . '
+                if (($item->studenttags && count($item->studenttags) > 0) || ($item->studentcollections && count($item->studentcollections) > 0)) {
+                    for ($i = 0; $i < count($item->studenttags); $i++) {
+                        $tags .= '<span class="alert alert-' . (($item->studenttags[$i]->tag->type == 'moral') ? 'info' : 'warning') . ' p-1">
+                        ' . (($item->studenttags[$i]->tag->parent_four) ? $item->studenttags[$i]->tag->parent_four->name . '->' : '') . ' ' . $item->studenttags[$i]->tag->name . '
                     </span><br/>';
                     }
-                    // for($i = 0; $i < count($item->studentcollections);$i++){
-                    //     $tags .= '<span class="alert alert-warning p-1">
-                    //         '. (($item->studentcollections[$i]->collection->parent) ? $item->studentcollections[$i]->collection->parent->name . '->' : '' ) . ' ' . $item->studentcollections[$i]->collection->name .'
-                    //     </span><br/>';
-                    // }
                 }
                 $registerer = "-";
-                if($item->user)
+                if ($item->user)
                     $registerer =  $item->user->first_name . ' ' . $item->user->last_name;
-                elseif($item->saloon)
+                elseif ($item->saloon)
                     $registerer = $item->saloon;
-                elseif($item->is_from_site)
+                elseif ($item->is_from_site)
                     $registerer =  'سایت';
 
                 $temps = "";
-                if($item->studenttemperatures && count($item->studenttemperatures)>0) {
-                    foreach ($item->studenttemperatures as $sitem){
-                        if($sitem->temperature->status=='hot')
+                if ($item->studenttemperatures && count($item->studenttemperatures) > 0) {
+                    foreach ($item->studenttemperatures as $sitem) {
+                        if ($sitem->temperature->status == 'hot')
                             $temps .= '<span class="alert alert-danger p-1">';
                         else
                             $temps .= '<span class="alert alert-info p-1">';
@@ -267,9 +273,9 @@ class assignGroupsOfStudentsToASponser extends Controller
                     }
                 }
                 $supportersToSelect = "";
-                foreach ($supports as $sitem){
+                foreach ($supports as $sitem) {
                     $supportersToSelect .= '<option value="' . $sitem->id . '"';
-                    if ($sitem->id==$item->supporters_id)
+                    if ($sitem->id == $item->supporters_id)
                         $supportersToSelect .= ' selected';
                     $supportersToSelect .= '>' . $sitem->first_name . ' ' . $sitem->last_name . '</option>';
                 }
@@ -279,19 +285,19 @@ class assignGroupsOfStudentsToASponser extends Controller
 
                 $data[] = [
                     $selectCheckBox,
-                    $index+1,
+                    $index + 1,
                     $item->id,
                     $item->first_name,
                     $item->last_name,
                     $registerer,
-                    ($item->source)?$item->source->name:'-',
+                    ($item->source) ? $item->source->name : '-',
                     $tags,
                     $temps,
                     '<select id="supporters_id_' . $index . '" class="form-control select2">
                         <option>-</option>
                         ' . $supportersToSelect . '
                         </select>
-                        <a class="btn btn-success btn-sm" href="#" onclick="return changeSupporter(' . $index . "," . $item->id.');">
+                        <a class="btn btn-success btn-sm" href="#" onclick="return changeSupporter(' . $index . "," . $item->id . ');">
                             ذخیره
                         </a>
                         <br/>
@@ -300,7 +306,7 @@ class assignGroupsOfStudentsToASponser extends Controller
                     '<a class="btn btn-warning" href="#" onclick="$(\'#students_index2\').val(' . $index . ');preloadTemperatureModal();$(\'#temperature_modal\').modal(\'show\'); return false;">
                         داغ/سرد
                     </a>
-                    <a class="btn btn-danger" href="' . route('student_class', ['id'=>$item->id]) . '" >
+                    <a class="btn btn-danger" href="' . route('student_class', ['id' => $item->id]) . '" >
                         تخصیص کلاس
                     </a>'
                 ];
@@ -308,7 +314,7 @@ class assignGroupsOfStudentsToASponser extends Controller
 
 
             $outdata = [];
-            for($i = $req['start'];$i<min($req['length']+$req['start'], count($data));$i++){
+            for ($i = $req['start']; $i < min($req['length'] + $req['start'], count($data)); $i++) {
                 $outdata[] = $data[$i];
             }
 
@@ -318,7 +324,7 @@ class assignGroupsOfStudentsToASponser extends Controller
                 "data" => $outdata,
                 "recordsTotal" => count($students),
                 "recordsFiltered" => count($students),
-                "students"=>$students,
+                "students" => $students,
                 "ids" => $ids
             ];
 
