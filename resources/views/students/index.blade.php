@@ -538,6 +538,7 @@
                 table.ajax.reload();
             }).fail(function(){
                 $("#loading-" + studentsIndex).hide();
+                console.log(result);
                 alert('خطای بروز رسانی');
                 table.ajax.reload();
             });
