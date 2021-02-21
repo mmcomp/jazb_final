@@ -212,13 +212,16 @@ class assignGroupsOfStudentsToASponserController extends Controller
                         //if it is auxilaries
                         else if (in_array($checkbox, $auxilaries)) {
                             $sw = 0;
-                            $message = 'ابتدا باید پشتیبان فرد اصلی را تغییر دهید.';
+                            $message = 'فرد یا یکی از افراد انتخابی فرعی است و ابتدا باید پشتیبان فرد اصلی را تغییر دهید!';
                             $arrOfCheckBoxes = array_diff($arrOfCheckBoxes, [$checkbox]);
                             break;
                         } else {
                             $sw = 1;
                             $message = "پشتیبان این افراد با موفقیت تغییر کردند.";
                         }
+                    }
+                    if(!$sw){
+                    break;
                     }
                 }
                 $this->updateTodayPurchases($arrOfCheckBoxes);

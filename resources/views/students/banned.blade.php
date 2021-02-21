@@ -540,9 +540,9 @@
             row.child( test ).show();
         }
     }
-    function changeSupporter(studentsIndex){
+    function changeSupporter(studentsIndex,id){
         if(students[studentsIndex]){
-            //var students_id = id;
+            var students_id = id;
             var supporters_id = $("#supporters_id_" + studentsIndex).val();
             $("#loading-" + studentsIndex).show();
             $.post('{{ route('student_supporter') }}', {
@@ -550,9 +550,7 @@
                 supporters_id
             }, function(result){
                 $("#loading-" + studentsIndex).hide();
-                if(result.error!=null){
-                    alert(result.error);
-                }
+                alert('خطای بروز رسانی');
                 table.ajax.reload();
             }).fail(function(){
                 $("#loading-" + studentsIndex).hide();

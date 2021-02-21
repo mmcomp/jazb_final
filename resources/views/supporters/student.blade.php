@@ -1098,9 +1098,10 @@ null => ""
                 supporters_id
             }, function(result){
                 $("#loading-" + studentsIndex).hide();
-                if(result.error!=null){
-                    alert(result.error);
-                }
+                // if(result.error!=null){
+                //     alert(result.error);
+                // }
+                alert('خطای بروز رسانی');
                 table.ajax.reload();
             }).fail(function(){
                 $("#loading-" + studentsIndex).hide();
