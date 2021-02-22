@@ -208,6 +208,7 @@ class assignGroupsOfStudentsToASponserController extends Controller
                         //if it is main student id
                         if ($main == $checkbox) {
                             $arrOfCheckBoxes = array_merge($arrOfCheckBoxes,$auxilaries);
+                            $sw = 1;
                         }
                         //if it is auxilaries
                         else if (in_array($checkbox, $auxilaries)) {
@@ -219,9 +220,6 @@ class assignGroupsOfStudentsToASponserController extends Controller
                             $sw = 1;
                             $message = "پشتیبان این افراد با موفقیت تغییر کردند.";
                         }
-                    }
-                    if(!$sw){
-                    break;
                     }
                 }
                 $this->updateTodayPurchases($arrOfCheckBoxes);

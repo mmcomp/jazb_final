@@ -532,7 +532,7 @@
                 supporters_id
             }, function(result){
                 $("#loading-" + studentsIndex).hide();
-                if(result.error!=null){
+                if(result && result.error!=null){
                     alert(result.error);
                 }
                 table.ajax.reload();
