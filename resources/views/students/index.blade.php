@@ -524,7 +524,6 @@
     }
     function changeSupporter(studentsIndex,id){
         if(students[studentsIndex]){
-            //var students_id = students[studentsIndex].id;
             var students_id = id;
             var supporters_id = $("#supporters_id_" + studentsIndex).val();
             $("#loading-" + studentsIndex).show();
@@ -533,13 +532,13 @@
                 supporters_id
             }, function(result){
                 $("#loading-" + studentsIndex).hide();
-                //console.log('Result', result);
-                if(result.error!=null){
-                    alert('خطای بروز رسانی');
+                if(result && result.error!=null){
+                    alert(result.error);
                 }
                 table.ajax.reload();
             }).fail(function(){
                 $("#loading-" + studentsIndex).hide();
+                console.log(result);
                 alert('خطای بروز رسانی');
                 table.ajax.reload();
             });
@@ -567,10 +566,10 @@
         $("span.tag-title").show();
         $("br.tag-br").show();
         $("input.tag-checkbox").each(function (id, field){
-            console.log('checking', field)
+           // console.log('checking', field)
             let tagId = parseInt($(field).val(), 10);
             let theTag = tags[tagId];
-            console.log(tagId, theTag)
+            //console.log(tagId, theTag)
             if(theTag){
                 if(filterParents.parent1!=''){
                     if(filterParents.parent1!=theTag.parent1){
@@ -625,10 +624,10 @@
         $("span.needtag-title").show();
         $("br.needtag-br").show();
         $("input.needtag-checkbox").each(function (id, field){
-            console.log('checking', field)
+           // console.log('checking', field)
             let tagId = parseInt($(field).val(), 10);
             let theTag = collections[tagId];
-            console.log(tagId, theTag)
+            //console.log(tagId, theTag)
             if(theTag){
                 if(filterParents.need_parent1!=''){
                     if(filterParents.need_parent1!=theTag.need_parent1){
@@ -688,7 +687,7 @@
         filterCollectionsByParent();
     }
     function selectCollectionTwo(dobj){
-        console.log('hey');
+       // console.log('hey');
         $("#collection-three").find('option').show();
         $("#collection-three").find('option[value=""]').prop('selected', true);
         if($(dobj).val()!=''){
@@ -703,7 +702,7 @@
         filterCollectionsByParent();
     }
     function selectCollectionThree(dobj){
-        console.log('hey3');
+       // console.log('hey3');
         filterCollectionsByParent();
     }
     function filterCollectionsByParent(){
@@ -768,7 +767,7 @@
             // console.log('checking', field)
             let collectionId = parseInt($(field).val(), 10);
             let theCollection = collections[collectionId];
-            console.log(collectionId, theCollection)
+            //console.log(collectionId, theCollection)
             if(theCollection){
                 console.log(parents.indexOf(theCollection.id), parents.indexOf(theCollection.parent_id));
                 if(parents.indexOf(theCollection.id)<0 && parents.indexOf(theCollection.parent_id)<0){
@@ -943,7 +942,7 @@
                     return JSON.stringify(data);
                 },
                 "complete": function(response) {
-                    console.log(response);
+                   // console.log(response);
                     console.log('students', students);
                     if(students && isEmpty(students))
                         students = JSON.parse(response.responseText).students;

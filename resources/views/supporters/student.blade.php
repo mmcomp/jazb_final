@@ -1088,24 +1088,26 @@ null => ""
     }
 
 
-    function changeSupporter(studentsIndex) {
-        if (students[studentsIndex]) {
-            var students_id = students[studentsIndex].id;
+    function changeSupporter(studentsIndex,id){
+        if(students[studentsIndex]){
+            var students_id = id;
             var supporters_id = $("#supporters_id_" + studentsIndex).val();
             $("#loading-" + studentsIndex).show();
-            $.post('{{ route('student_supporter')}}', {
-                    students_id
-                    , supporters_id
+            $.post('{{ route('student_supporter') }}', {
+                students_id,
+                supporters_id
+            }, function(result){
+                $("#loading-" + studentsIndex).hide();
+                if(result && result.error != null){
+                    alert(result.error);
+                }else{
+                    alert('خطای بروز رسانی');
                 }
-                , function(result) {
-                    $("#loading-" + studentsIndex).hide();
-                    console.log('Result', result);
-                    if (result.error != null) {
-                        alert('خطای بروز رسانی');
-                    }
-                }).fail(function() {
+                table.ajax.reload();
+            }).fail(function(){
                 $("#loading-" + studentsIndex).hide();
                 alert('خطای بروز رسانی');
+                table.ajax.reload();
             });
         }
         return false;
