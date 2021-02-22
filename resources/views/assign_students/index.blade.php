@@ -238,6 +238,41 @@
           <!-- /.col -->
         </div>
         <!-- /.row -->
+        <div class="card card-success" style="width: 400px;position: fixed;left: 10px;bottom: 10px;display:none;" id="success_message">
+            <div class="card-header">
+                <h3 class="card-title">موفقیت</h3>
+
+                <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="remove"><i
+                            class="fas fa-times"></i>
+                    </button>
+                </div>
+                <!-- /.card-tools -->
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body">
+                پشتیبان این افراد با موفقیت تغییر کرد.
+            </div>
+            <!-- /.card-body -->
+        </div>
+        <div class="card card-danger" style="width: 400px;position: fixed;left: 10px;bottom: 10px;display:none;" id="error_message">
+            <div class="card-header">
+                <h3 class="card-title">خطا</h3>
+
+                <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="remove"><i
+                            class="fas fa-times"></i>
+                    </button>
+                </div>
+                <!-- /.card-tools -->
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body">
+                فرد یا یکی از افراد انتخابی فرعی است و ابتدا باید پشتیبان فرد اصلی را تغییر دهید!
+
+            </div>
+            <!-- /.card-body -->
+        </div>
       </section>
       <!-- /.content -->
 @endsection
@@ -952,7 +987,9 @@
 
         return JSON.stringify(obj) === JSON.stringify({});
     }
+
     $(function () {
+
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -963,8 +1000,16 @@
                 e.preventDefault();
             }
         });
+        function IsJsonString(str) {
+            try {
+                JSON.parse(str);
+            } catch (e) {
+                return false;
+            }
+            return true;
+        }
         $('select.select2').select2();
-
+        var myText = "";
         table = $('#example2').DataTable({
             "paging": true,
             "lengthChange": false,
@@ -1006,8 +1051,19 @@
                     return JSON.stringify(data);
                 },
                 "complete": function(response) {
+                    myText = response.responseText;
                     load();
+                    if(!JSON.parse(response.responseText).sw){
+                        $('#error_message').css('display','block');
+                    }else if(JSON.parse(response.responseText).sw == 1){
+                        $('#error_message').css('display','none');
+                        $('#success_message').css('display','block');
+                    }
+
+                    //if(IsJsonString(response.responseText)){
                     ids = JSON.parse(response.responseText).ids;
+                        //students = JSON.parse(response.responseText).students;
+                    //}
                     if(sw == 1){
                         $(ids).each(function(index,value){
                             $('#ch_' + value).prop('checked',true);
@@ -1020,25 +1076,29 @@
 
                     if(students && isEmpty(students))
                         students = JSON.parse(response.responseText).students;
-                    $('#example2 tr').click(function() {
-                        var tr = this;
-                        var studentId = 0;
-                        if(parseInt($(tr).find('td')[2])){
-                            studentId = parseInt($(tr).find('td')[2].innerText, 10);
-                        }
-                        //var studentId = parseInt($(tr).find('td')[2].innerText, 10);
-                        if(!isNaN(studentId)){
-                            for(var index in students){
-                                // console.log('check', students[index].id, studentId);
-                                if(students[index].id==studentId){
-                                    // console.log(students[index]);
-                                    showMorePanel(index, tr);
-                                    // break;
+                    $('#example2 tr').click(function(e) {
+                        if ($(e.target).is("label,input")) {
+                            return
+                        } else {
+                            var tr = this;
+                            //var studentId = 0;
+                            //if(parseInt($(tr).find('td')[2])){
+                            var studentId = parseInt($(tr).find('td')[2].innerText, 10);
+                            //}
+                            //var studentId = parseInt($(tr).find('td')[2].innerText, 10);
+                            if(!isNaN(studentId)){
+                                for(var index in students){
+                                    if(students[index].id==studentId){
+                                        showMorePanel(index, tr);
+                                        // break;
+                                    }
                                 }
                             }
                         }
+
                         //console.log(this, $(this).find('td')[1].innerText);
                     });
+
                 }
 
             }
