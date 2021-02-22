@@ -198,7 +198,7 @@
                             </div>
                         </div>
                         <div class="col" style="padding-top: 32px;">
-                            <a class="btn btn-primary" onclick="table.ajax.reload();location.reload();return false;" href="#">
+                            <a class="btn btn-primary" onclick="saveSupporterChanges()" href="#">
                                 ثبت
                             </a>
                         </div>
@@ -503,6 +503,13 @@
                $('#ch_' + value).prop('checked',true);
             });
         }
+    }
+    function saveSupporterChanges(){
+        table.ajax.reload();
+        setTimeout(function(){
+            location.reload();
+        },3000);
+        return false;
     }
 
 
