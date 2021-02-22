@@ -229,8 +229,6 @@
                 $("#loading-" + studentsIndex).hide();
                 if(result && result.error != null){
                     alert(result.error);
-                }else{
-                    alert('خطای بروز رسانی');
                 }
                 table.ajax.reload();
             }).fail(function(){
