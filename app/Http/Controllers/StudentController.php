@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
+use Morilog\Jalali\CalendarUtils;
+
 
 use App\Imports\StudentsImport;
 use App\Student;
@@ -31,6 +33,8 @@ use App\StudentCollection;
 use App\ClassRoom;
 use App\City;
 use App\Http\Traits\ChangeSupporterTrait;
+use App\Exports\StudentsExport;
+
 use App\MergeStudents as AppMergeStudents;
 use App\Purchase;
 use Illuminate\Support\Facades\Route;
@@ -45,8 +49,27 @@ class StudentController extends Controller
         $inp = str_replace(["١", "٢", "٣", "٤", "٥", "٦", "٧", "٨", "٩", "٠"], ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"], $inp);
         return $inp;
     }
-    public function class(Request $request, $id)
+    public static function jalaliToGregorian($pdate)
     {
+        $pdate = explode('/', SupporterController::persianToEnglishDigits($pdate));
+        $date = "";
+        if (count($pdate) == 3) {
+            $y = (int)$pdate[0];
+            $m = (int)$pdate[1];
+            $d = (int)$pdate[2];
+            if ($d > $y) {
+                $tmp = $d;
+                $d = $y;
+                $y = $tmp;
+            }
+            $y = (($y < 1000) ? $y + 1300 : $y);
+            $gregorian = CalendarUtils::toGregorian($y, $m, $d);
+            $gregorian = $gregorian[0] . "-" . $gregorian[1] . "-" . $gregorian[2];
+        }
+        return $gregorian;
+    }
+    public function class(Request $request, $id) {
+
         $student = Student::where('is_deleted', false)->where('banned', false)->where('archived', false)->where('id', $id)->with('studentclasses.class')->first();
         if ($student == null) {
             $request->session()->flash("msg_error", "دانش آموز مورد نظر پیدا نشد!");
@@ -990,6 +1013,50 @@ class StudentController extends Controller
             $educationLevel = null;
         }
         return $educationLevel;
+    }
+    public function outputCsv(Request $request){
+        $from_date = null;
+        $to_date = null;
+        $majors = [
+            "mathematics"=>"ریاضی",
+            "experimental"=>"تجربی",
+            "humanities"=>"انسانی",
+            "art"=>"هنر",
+            "other"=>"دیگر"
+        ];
+        $education_levels = [
+            "6" => "6",
+            "7" => "7",
+            "8" => "8",
+            "9" => "9",
+            "10" => "10",
+            "11" => "11",
+            "12" => "12",
+            "13" => "فارغ التحصیل",
+            "14" => "دانشجو",
+            null => ""
+        ];
+        $supportGroupId = Group::getSupport();
+        if($supportGroupId)
+            $supportGroupId = $supportGroupId->id;
+        $supports = User::where('is_deleted', false)->where('groups_id', $supportGroupId)->get();
+        if ($request->getMethod() == 'POST') {
+            $studentsExport = new StudentsExport($request->input('students_select'),(int)$request->input('supporters_id'),$request->input('major'),$request->input('egucation_level'),$request->input('from_date'),$request->input('to_date'));
+            if(!count($studentsExport->collection())){
+                $request->session()->flash("msg_error", "دانش آموزی با این شرایط پیدا نشد!");
+                return redirect()->back();
+            }
+            return Excel::download($studentsExport, 'students.xlsx');
+
+        }
+        return view('students.output-csv')->with([
+            'from_date' => $from_date,
+            'to_date' => $to_date,
+            'majors' => $majors,
+            'egucation_levels' => $education_levels,
+            'supports' => $supports,
+            'msg_error' => request()->session()->get('msg_error')
+        ]);
     }
 
     public function csv(Request $request)
