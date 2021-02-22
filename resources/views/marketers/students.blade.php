@@ -217,9 +217,9 @@
 <!-- page script -->
 <script>
     let students = @JSON($students);
-    function changeSupporter(studentsIndex){
+    function changeSupporter(studentsIndex,id){
         if(students[studentsIndex]){
-            var students_id = students[studentsIndex].id;
+            var students_id = id;
             var supporters_id = $("#supporters_id_" + studentsIndex).val();
             $("#loading-" + studentsIndex).show();
             $.post('{{ route('student_supporter') }}', {
@@ -227,12 +227,16 @@
                 supporters_id
             }, function(result){
                 $("#loading-" + studentsIndex).hide();
-                if(result.error!=null){
+                if(result && result.error != null){
+                    alert(result.error);
+                }else{
                     alert('خطای بروز رسانی');
                 }
+                table.ajax.reload();
             }).fail(function(){
                 $("#loading-" + studentsIndex).hide();
                 alert('خطای بروز رسانی');
+                table.ajax.reload();
             });
         }
         return false;

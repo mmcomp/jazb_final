@@ -602,10 +602,12 @@
                 supporters_id
             }, function(result){
                 $("#loading-" + studentsIndex).hide();
-                //console.log('Result', result);
-                if(result.error!=null){
+                if(result && result.error != null){
+                    alert(result.error);
+                }else{
                     alert('خطای بروز رسانی');
                 }
+
                 table.ajax.reload();
             }).fail(function(){
                 $("#loading-" + studentsIndex).hide();

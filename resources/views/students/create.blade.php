@@ -304,7 +304,7 @@
                             <input type="text" class="form-control" id="introducing" name="introducing" placeholder="معرف"  />
                             @endif
                         </div>
-
+                        @if(Auth::user()->group->name == 'Admin')
                         <div class="form-group">
                             <label for="supporters_id">پشتیبان</label>
                             <select  id="supporters_id" name="supporters_id" class="form-control">
@@ -320,7 +320,7 @@
                                 @endforeach
                             </select>
                         </div>
-
+                        @endif
                         <div class="form-group">
                             <label for="outside_consultants">مشاور بیرونی</label>
                             @if (isset($student) && isset($student->outside_consultants))
