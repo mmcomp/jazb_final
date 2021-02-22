@@ -7,6 +7,7 @@ use App\Student;
 use App\Group;
 use App\User;
 use App\Call;
+use Carbon\Carbon;
 use Morilog\Jalali\CalendarUtils;
 
 class DashboardController extends Controller
@@ -34,6 +35,8 @@ class DashboardController extends Controller
         }
         $gates = $group->gates()->where('key', 'supporters')->get();
         if(count($gates)>0){
+            $all_missed_calls = Call::where('users_id',Auth::user()->id)->where('call_results_id',1)->get();
+            $missed_calls_of_yesterday = Call::where('users_id',Auth::user()->id)->where('call_results_id',1)->where('created_at','>=',Carbon::yesterday())->get();
             $newStudents = Student::where('is_deleted', false)->where('banned', false)->where('archived', false)->where('supporters_id', Auth::user()->id)->where('supporter_seen', false)->count();
             $year = (int)jdate()->format("Y");
             $month = (int)jdate()->format("m");
@@ -54,6 +57,10 @@ class DashboardController extends Controller
             return view('dashboard.support', [
                 'newStudents'=>$newStudents,
                 'results'=>$results,
+                'all_missed_calls' => $all_missed_calls,
+                'count_of_all_missed_calls' => count($all_missed_calls),
+                'yesterday_missed_calls' => $missed_calls_of_yesterday,
+                'count_of_yesterday_missed_calls' => count($missed_calls_of_yesterday),
                 'yesterday_recalls'=>$yesterday_recalls
             ]);
         }

@@ -35,10 +35,24 @@ use App\MergeStudents as AppMergeStudents;
 use App\SaleSuggestion;
 use Exception;
 use Log;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class SupporterController extends Controller
 {
+    public function allMissedCalls(){
+        $all_missed_calls = Call::where('users_id',Auth::user()->id)->where('call_results_id',1)->get();
+        return view('supporters.allMissedCalls')->with([
+            'all_missed_calls' => $all_missed_calls
+        ]);
+    }
+    public function yesterdayMissedCalls(){
+        $missed_calls_of_yesterday = Call::where('users_id',Auth::user()->id)->where('call_results_id',1)->where('created_at','>=',Carbon::yesterday())->get();
+
+        return view('supporters.yesterdayMissedCalls')->with([
+            'yesterday_missed_calls' => $missed_calls_of_yesterday
+        ]);
+    }
     public static function persianToEnglishDigits($pnumber)
     {
         $number = str_replace('۰', '0', $pnumber);
