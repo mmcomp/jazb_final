@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Student;
 use App\Group;
 use App\User;
+use App\Call;
 use Morilog\Jalali\CalendarUtils;
 
 class DashboardController extends Controller
@@ -49,9 +50,11 @@ class DashboardController extends Controller
             for($i = 0;$i < count($dates)-1;$i++){
                 $results[] = Student::where('is_deleted', false)->where('banned', false)->where('archived', false)->where('supporters_id', Auth::user()->id)->where('created_at', '>=', DashboardController::fixDateDigits($dates[$i]) . ' 00:00:00')->where('created_at', '<', DashboardController::fixDateDigits($dates[$i+1]) . ' 00:00:00')->count();
             }
+            $yesterday_recalls = Call::where('users_id', Auth::user()->id)->where('next_call', ">=", date("Y-m-d 00:00:00", strtotime("yesterday")))->where('next_call', "<=", date("Y-m-d 23:59:59", strtotime("yesterday")))->get();
             return view('dashboard.support', [
                 'newStudents'=>$newStudents,
-                'results'=>$results
+                'results'=>$results,
+                'yesterday_recalls'=>$yesterday_recalls
             ]);
         }
 
@@ -72,7 +75,6 @@ class DashboardController extends Controller
         for($i = 0;$i < count($dates)-1;$i++){
             $results[] = Student::where('is_deleted', false)->where('banned', false)->where('archived', false)->where('created_at', '>=', DashboardController::fixDateDigits($dates[$i]) . ' 00:00:00')->where('created_at', '<', DashboardController::fixDateDigits($dates[$i+1]) . ' 00:00:00')->count();
         }
-        // dump($dates);dd($results);
         $supportGroupId = Group::getSupport();
         $supporters = [];
         if($supportGroupId){
@@ -82,7 +84,6 @@ class DashboardController extends Controller
                 return $hackathon->students->count();
             }, SORT_REGULAR, true);
         }
-        // dd($supporters);
         return view('dashboard.admin', [
             'devideStudents'=>$devideStudents,
             'todayStudents'=>$todayStudents,
