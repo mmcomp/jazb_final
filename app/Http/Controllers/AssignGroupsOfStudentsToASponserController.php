@@ -233,13 +233,13 @@ class assignGroupsOfStudentsToASponserController extends Controller
                         'own_purchases' => 0
                     ]);
             }
-            if ($sw == 1) {
-                request()->session()->flash("msg_success", $message);
-                return redirect()->route('assign_students_index');
-            } else if (!$sw) {
-                request()->session()->flash("msg_error", $message);
-                return redirect()->route('assign_students_index');
-            }
+            // if ($sw == 1) {
+            //     request()->session()->flash("msg_success", $message);
+            //     return redirect()->route('assign_students_index');
+            // } else if (!$sw) {
+            //     request()->session()->flash("msg_error", $message);
+            //     return redirect()->route('assign_students_index');
+            // }
             if (!isset($req['start'])) {
                 $req['start'] = 0;
                 $req['length'] = 10;
@@ -326,7 +326,8 @@ class assignGroupsOfStudentsToASponserController extends Controller
                 "recordsTotal" => count($students),
                 "recordsFiltered" => count($students),
                 "students" => $students,
-                "ids" => $ids
+                "ids" => $ids,
+                "sw" => $sw
             ];
 
             return $result;
