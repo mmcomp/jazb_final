@@ -65,8 +65,8 @@ $persons = [
                         <td>{{ $item->description}}</td>
                         <td>{{ $item->student->first_name}} {{ $item->student->last_name}}</td>
                         <td>{{ $item->product ? $item->product->name : '-'}}</td>
-                        <td>@if($item->replier == 'mother')مادر@elseif($item->replier == 'father')پدر@elseif($item->replier == 'student')دانش آموز@else دیگران@endif</td>
-                        <td>@if($item->next_to_call == 'mother')مادر@elseif($item->next_to_call == 'father')پدر@elseif($item->next_to_call == 'student')دانش آموز@else دیگران@endif</td>
+                        <td>{{ $persons[$item->replier] }}</td>
+                        <td>{{ $persons[$item->next_to_call] }}</td>
                         <td>{{ $item->notice ? $item->notice->name : '-'}}</td>
                         <td>
                           <form method="get" action="{{ route('supporter_students') }}" >

@@ -12,6 +12,7 @@ use App\Group;
 use App\Student;
 use App\User;
 use App\Source;
+use App\Call;
 use App\Product;
 use App\Tag;
 use App\TagParentOne;
@@ -23,7 +24,6 @@ use App\NeedTagParentTwo;
 use App\NeedTagParentThree;
 use App\NeedTagParentFour;
 use App\Temperature;
-use App\Call;
 use App\CallResult;
 use App\StudentCollection;
 use App\Collection;
@@ -41,16 +41,30 @@ use Illuminate\Support\Facades\DB;
 class SupporterController extends Controller
 {
     public function allMissedCalls(){
+        $persons = [
+            "student"=>"دانش آموز",
+            "father"=>"پدر",
+            "mother"=>"مادر",
+            "other"=>"غیره"
+        ];
         $all_missed_calls = Call::where('users_id',Auth::user()->id)->where('call_results_id',1)->get();
         return view('supporters.allMissedCalls')->with([
-            'all_missed_calls' => $all_missed_calls
+            'all_missed_calls' => $all_missed_calls,
+            'persons' => $persons
         ]);
     }
     public function yesterdayMissedCalls(){
+        $persons = [
+            "student"=>"دانش آموز",
+            "father"=>"پدر",
+            "mother"=>"مادر",
+            "other"=>"غیره"
+        ];
         $missed_calls_of_yesterday = Call::where('users_id',Auth::user()->id)->where('call_results_id',1)->where('created_at','>=',Carbon::yesterday())->get();
 
         return view('supporters.yesterdayMissedCalls')->with([
-            'yesterday_missed_calls' => $missed_calls_of_yesterday
+            'yesterday_missed_calls' => $missed_calls_of_yesterday,
+            'persons' => $persons
         ]);
     }
     public static function persianToEnglishDigits($pnumber)
@@ -450,9 +464,20 @@ class SupporterController extends Controller
         $has_reminder = 'false';
         $has_tag = 'false';
         $appMergeStudents = null;
+        $replier = null;
+        $products_id = null;
+        $notices_id = null;
+        $call_results_id = null;
+        $next_to_call = null;
         if (request()->input('students_id') != null) {
             $students_id = (int)request()->input('students_id');
             $calls_id = (int)request()->input('calls_id');
+            $call = Call::where('id',$calls_id)->where('students_id',$students_id)->first();
+            $replier = $call ? $call->replier : '-';
+            $products_id = $call ? $call->products_id : '-';
+            $notices_id = $call ? $call->notices_id : '-';
+            $call_results_id = $call ? $call->call_results_id : '-';
+            $next_to_call = $call ? $call->next_to_call : '-';
             $students = $students->where('id', $students_id);
         }
 
@@ -715,6 +740,11 @@ class SupporterController extends Controller
                 "needTagParentFours" => $needTagParentFours,
                 "students_id" => $students_id,
                 "calls_id" => $calls_id,
+                "replier" => $replier,
+                "products_id" => $products_id,
+                "notices_id" => $notices_id,
+                "next_to_call" => $next_to_call,
+                "call_results_id" => $call_results_id,
                 "saleSuggestions" => $saleSuggestions,
                 'msg_success' => request()->session()->get('msg_success'),
                 'msg_error' => request()->session()->get('msg_error')
