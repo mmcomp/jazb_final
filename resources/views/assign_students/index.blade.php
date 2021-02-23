@@ -250,8 +250,7 @@
                 <!-- /.card-tools -->
             </div>
             <!-- /.card-header -->
-            <div class="card-body">
-                پشتیبان این افراد با موفقیت تغییر کرد.
+            <div class="card-body" id="success_card_body">
             </div>
             <!-- /.card-body -->
         </div>
@@ -267,9 +266,8 @@
                 <!-- /.card-tools -->
             </div>
             <!-- /.card-header -->
-            <div class="card-body">
-                فرد یا یکی از افراد انتخابی فرعی است و ابتدا باید پشتیبان فرد اصلی را تغییر دهید!
-
+            <div class="card-body" id="error_card_body">
+                فرد یا افراد انتخابی فرعی هستند و ابتدا باید پشتیبان فرد اصلی را تغییر دهید!
             </div>
             <!-- /.card-body -->
         </div>
@@ -1060,11 +1058,18 @@
                 "complete": function(response) {
                     myText = response.responseText;
                     load();
-                    if(!JSON.parse(response.responseText).sw){
+                    console.log('%c' + JSON.parse(response.responseText).sw,'color:orange;');
+                    if(JSON.parse(response.responseText).sw != -1 && JSON.parse(response.responseText).sw == 3 ){
+                        var checkboxes = JSON.parse(response.responseText).checkboxes;
+                        console.log('hello');
+                        console.log(checkboxes,'color: orange;');
+                        $('#success_card_body').text('فقط پشتیبان افراد '+ checkboxes + 'با موفقیت تغییر کرد.');
+                    }else if(!JSON.parse(response.responseText).sw){
                         $('#error_message').css('display','block');
-                    }else if(JSON.parse(response.responseText).sw == 1){
+                    }else if(JSON.parse(response.responseText).sw != -1 && (JSON.parse(response.responseText).sw == 1 && JSON.parse(response.responseText).sw == 2) ){
                         $('#error_message').css('display','none');
                         $('#success_message').css('display','block');
+                        $('#success_card_body').text('پشتیبان این افراد با موفقیت تغییر کرد.');
                     }
 
                     //if(IsJsonString(response.responseText)){
