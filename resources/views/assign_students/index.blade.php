@@ -211,7 +211,7 @@
                     <th>
                         <div class="form-check">
                             <input type="checkbox" class="form-check-input bottom_10_px" id="selectCheckBox" name="selectCheckBox"
-                            onclick="selectAll(this)" value="0">
+                            onchange="selectAll(this)" value="0">
                           </div>
                     </th>
                     <th>ردیف</th>
@@ -250,7 +250,9 @@
                 <!-- /.card-tools -->
             </div>
             <!-- /.card-header -->
-            <div class="card-body" id="success_card_body">
+            <div class="card-body h" id="success_card_body">
+                <ul id="ul"> </ul>
+                <p id="para"></p>
             </div>
             <!-- /.card-body -->
         </div>
@@ -267,7 +269,6 @@
             </div>
             <!-- /.card-header -->
             <div class="card-body" id="error_card_body">
-                فرد یا افراد انتخابی فرعی هستند و ابتدا باید پشتیبان فرد اصلی را تغییر دهید!
             </div>
             <!-- /.card-body -->
         </div>
@@ -500,6 +501,7 @@
             $(newArr).each(function(index,value){
                $('#ch_' + value).prop('checked',true);
             });
+            $('#arrOfCheckBoxes').val(items);
         }
     }
     function saveSupporterChanges(){
@@ -509,8 +511,6 @@
         },3000);
         return false;
     }
-
-
     function selectAll(theItem){
       MyArr = [];
       if(theItem.checked){
@@ -992,9 +992,8 @@
 
         return JSON.stringify(obj) === JSON.stringify({});
     }
-
     $(function () {
-
+        //x();
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -1005,16 +1004,7 @@
                 e.preventDefault();
             }
         });
-        function IsJsonString(str) {
-            try {
-                JSON.parse(str);
-            } catch (e) {
-                return false;
-            }
-            return true;
-        }
         $('select.select2').select2();
-        var myText = "";
         table = $('#example2').DataTable({
             "paging": true,
             "lengthChange": false,
@@ -1056,26 +1046,27 @@
                     return JSON.stringify(data);
                 },
                 "complete": function(response) {
-                    myText = response.responseText;
                     load();
-                    console.log('%c' + JSON.parse(response.responseText).sw,'color:orange;');
-                    if(JSON.parse(response.responseText).sw != -1 && JSON.parse(response.responseText).sw == 3 ){
+                    var theSwitch = JSON.parse(response.responseText).sw;
+                    if(theSwitch  == "auxilary_and_other"){
                         var checkboxes = JSON.parse(response.responseText).checkboxes;
-                        console.log('hello');
-                        console.log(checkboxes,'color: orange;');
-                        $('#success_card_body').text('فقط پشتیبان افراد '+ checkboxes + 'با موفقیت تغییر کرد.');
-                    }else if(!JSON.parse(response.responseText).sw){
-                        $('#error_message').css('display','block');
-                    }else if(JSON.parse(response.responseText).sw != -1 && (JSON.parse(response.responseText).sw == 1 && JSON.parse(response.responseText).sw == 2) ){
+                        $('#error_message').css('display','none');
+                        $('#success_message').css('display','block');
+                        for(var i =0; i < checkboxes.length; i++){
+                            $('#ul').append("<li>" + checkboxes[i] +"</li>");
+                        }
+                        $('#para').text('فقط پشتیبان این افراد با موفقیت تغییر کرد، بقیه افراد فرعی بودند.');
+
+                    } else if(theSwitch == "main" || theSwitch == "other" ){
                         $('#error_message').css('display','none');
                         $('#success_message').css('display','block');
                         $('#success_card_body').text('پشتیبان این افراد با موفقیت تغییر کرد.');
+                    } else if(theSwitch == "auxilary_and_not_main_and_not_other"){
+                        $('#success_message').css('display','none');
+                        $('#error_message').css('display','block');
+                        $('#error_card_body').text('ابتدا باید پشتیبان فرد اصلی را تغییر دهید.');
                     }
-
-                    //if(IsJsonString(response.responseText)){
                     ids = JSON.parse(response.responseText).ids;
-                        //students = JSON.parse(response.responseText).students;
-                    //}
                     if(sw == 1){
                         $(ids).each(function(index,value){
                             $('#ch_' + value).prop('checked',true);
@@ -1085,7 +1076,6 @@
                             $('#ch_' + value).prop('checked',false);
                         });
                     }
-
                     if(students && isEmpty(students))
                         students = JSON.parse(response.responseText).students;
                     $('#example2 tr').click(function(e) {
@@ -1093,37 +1083,21 @@
                             return
                         } else {
                             var tr = this;
-                            //var studentId = 0;
                             //if(parseInt($(tr).find('td')[2])){
                             var studentId = parseInt($(tr).find('td')[2].innerText, 10);
                             //}
-                            //var studentId = parseInt($(tr).find('td')[2].innerText, 10);
                             if(!isNaN(studentId)){
                                 for(var index in students){
                                     if(students[index].id==studentId){
                                         showMorePanel(index, tr);
-                                        // break;
                                     }
                                 }
                             }
                         }
-
-                        //console.log(this, $(this).find('td')[1].innerText);
                     });
-
                 }
-
             }
-            // ajax: function ( data, callback, settings ){
-            //     $.post('{{ route('api_filter_students') }}', {}, function(result){
-            //         console.log('Result', result);
-            //         callback(result);
-            //     }).fail(function(){
-            //         alert('خطای بروز رسانی');
-            //     });
-            // }
         });
-
         $("#input").keyup(e => {
             console.log(e);
         });
