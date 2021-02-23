@@ -95,6 +95,48 @@
           </div>
           <!-- /.row -->
           <div class="row">
+              <div class="col-6">
+                <div class="small-box bg-orange">
+                    <div class="inner p-0">
+                      <!--<h3>150</h3>-->
+
+                        <p class="text-center">
+                            <a href="{{ $count_of_yesterday_missed_calls ? route('supporter_yesterday_missed_calls') :'#' }}" class="text-light btn">
+                            تعداد تماس های بی پاسخ روز قبل
+                            <span class="badge badge-warning right">{{ $count_of_yesterday_missed_calls }}</span>
+                            </a>
+                        </p>
+                    </div>
+                    <!--
+                    <div class="icon">
+                      <i class="ion ion-bag"></i>
+                    </div>
+                    <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                    -->
+                  </div>
+              </div>
+              <div class="col-6">
+                <div class="small-box bg-orange">
+                    <div class="inner p-0">
+                      <!--<h3>150</h3>-->
+
+                        <p class="text-center">
+                            <a href="{{ $count_of_all_missed_calls ? route('supporter_all_missed_calls') : '#' }}" class="text-light btn">
+                            تعداد کل تماس های بی پاسخ
+                            <span class="badge badge-warning right">{{ $count_of_all_missed_calls }}</span>
+                            </a>
+                        </p>
+                    </div>
+                    <!--
+                    <div class="icon">
+                      <i class="ion ion-bag"></i>
+                    </div>
+                    <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                    -->
+                  </div>
+              </div>
+          </div>
+          <div class="row">
             <div class="col-md-3">
                 <h4 style="margin-top: 110px;">
                     تعداد کل ورودی های جدید
