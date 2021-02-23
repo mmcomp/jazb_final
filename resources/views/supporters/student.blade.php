@@ -665,17 +665,19 @@ null => ""
                             <option value="rejected">رد شده</option>
                             -->
                             @foreach ($callResults as $item)
-                            <option value="{{ $item->id }}" data-nocall="{{ $item->no_call }}" data-noanswer="{{ $item->no_answer }}">{{ $item->title }}</option>
+                            <option value="{{ $item->id }}" data-nocall="{{ $item->no_call }}" data-noanswer="{{ $item->no_answer }}"
+                                {{ $call_results_id == $item->id ? 'selected' : '' }}>
+                                {{ $item->title }}</option>
                             @endforeach
                         </select>
                     </div>
                     <div class="form-group">
                         <label for="replier">پاسخگو</label>
                         <select class="form-control" id="replier" name="replier">
-                            <option value="student">دانش آموز</option>
-                            <option value="father">پدر</option>
-                            <option value="mother">مادر</option>
-                            <option value="other">غیره</option>
+                            <option value="student" {{ $replier == "student" ? 'selected' : '' }}>دانش آموز</option>
+                            <option value="father" {{ $replier == "father" ? 'selected' : '' }}>پدر</option>
+                            <option value="mother" {{ $replier == "mother" ? 'selected' : '' }}>مادر</option>
+                            <option value="other"{{ $replier == "other" ? 'selected' : '' }}>غیره</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -683,7 +685,9 @@ null => ""
                         <select class="form-control select2" id="products_id" name="products_id[]" style="width: 100% !important;" multiple>
                             <option value=""></option>
                             @foreach ($products as $item)
-                            <option value="{{ $item->id }}">{{($item->parents!='-')?$item->parents . '->':''}} {{ $item->name }}</option>
+                            <option value="{{ $item->id }}"  {{ $products_id == $item->id ? 'selected' : '' }}>
+                                {{($item->parents!='-')?$item->parents . '->':''}} {{ $item->name }}
+                            </option>
                             @endforeach
                         </select>
                     </div>
@@ -692,17 +696,17 @@ null => ""
                         <select class="form-control select2" id="notices_id" name="notices_id" style="width: 100% !important;">
                             <option value=""></option>
                             @foreach ($notices as $item)
-                            <option value="{{ $item->id }}">{{ $item->name }}</option>
+                            <option value="{{ $item->id }}" {{ $notices_id == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
                             @endforeach
                         </select>
                     </div>
                     <div class="form-group">
                         <label for="next_to_call">تماس بعد</label>
                         <select class="form-control" id="next_to_call" name="next_to_call">
-                            <option value="student">دانش آموز</option>
-                            <option value="father">پدر</option>
-                            <option value="mother">مادر</option>
-                            <option value="other">غیره</option>
+                            <option value="student" {{ $next_to_call == "student" ? 'selected' : '' }}>دانش آموز</option>
+                            <option value="father" {{ $next_to_call == "father" ? 'selected' : '' }}>پدر</option>
+                            <option value="mother" {{ $next_to_call == "mother" ? 'selected' : '' }}>مادر</option>
+                            <option value="other" {{ $next_to_call == "other" ? "selected" : '' }}>غیره</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -1504,6 +1508,15 @@ null => ""
             }
         }
     }
+    function GoBackWithRefresh(event) {
+        if ('referrer' in document) {
+            window.location = document.referrer;
+            /* OR */
+            //location.replace(document.referrer);
+        } else {
+            window.history.back();
+        }
+    }
 
     function saveCall() {
         const canSaveWithNoAlert = ($("#call_results_id option:selected").data('nocall') /* + $("#call_results_id option:selected").data('noanswer')*/ ) > 0;
@@ -1549,7 +1562,10 @@ null => ""
                     alert('خطای بروز رسانی');
                 } else {
                     @if(isset($students_id) && $students_id != null)
-                    window.location.href = '{{ route("reminders") }}';
+                    //window.location.href = '{{ route("reminders") }}';
+                    //window.history.back();
+                    GoBackWithRefresh();
+                    return false;
                     @else
                     window.location.reload();
                     @endif
