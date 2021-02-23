@@ -174,22 +174,10 @@ class assignGroupsOfStudentsToASponserController extends Controller
                 'msg_error' => request()->session()->get('msg_error')
             ]);
         } else {
-            $message = null;
-            $students = $students
-                ->with('user')
-                ->with('studenttags.tag.parent_four')
-                ->with('studentcollections.collection.parent')
-                ->with('studenttemperatures.temperature')
-                ->with('source')
-                ->with('consultant')
-                ->with('supporter')
-                ->orderBy('created_at', 'desc')
-                ->get();
-            foreach ($students as $index => $student) {
-                $students[$index]->pcreated_at = jdate(strtotime($student->created_at))->format("Y/m/d");
-                $ids[] = $student->id;
-            }
-            $req =  request()->all();
+            $allStudents = $students->orderBy('id', 'desc')->get();
+
+
+            //$req =  request()->all();
             $destination_supporter = request()->input('destination_supporter');
             $arrOfCheckBoxes = request()->input('arrOfCheckBoxes');
             if ($arrOfCheckBoxes == 'all') {
@@ -213,12 +201,10 @@ class assignGroupsOfStudentsToASponserController extends Controller
                         //if it is auxilaries
                         else if (in_array($checkbox, $auxilaries)) {
                             $sw = 0;
-                            $message = 'فرد یا یکی از افراد انتخابی فرعی است و ابتدا باید پشتیبان فرد اصلی را تغییر دهید!';
                             $arrOfCheckBoxes = array_diff($arrOfCheckBoxes, [$checkbox]);
                             break;
                         } else {
                             $sw = 1;
-                            $message = "پشتیبان این افراد با موفقیت تغییر کردند.";
                         }
                     }
                 }
@@ -233,6 +219,28 @@ class assignGroupsOfStudentsToASponserController extends Controller
                         'own_purchases' => 0
                     ]);
             }
+            $req =  request()->all();
+            if (!isset($req['start'])) {
+                $req['start'] = 0;
+                $req['length'] = 10;
+                $req['draw'] = 1;
+            }
+            $students = $students
+                ->with('user')
+                ->with('studenttags.tag.parent_four')
+                ->with('studentcollections.collection.parent')
+                ->with('studenttemperatures.temperature')
+                ->with('source')
+                ->with('consultant')
+                ->with('supporter')
+                ->orderBy('created_at', 'desc')
+                ->offset($req['start'])
+                ->limit($req['length'])
+                ->get();
+            foreach ($students as $index => $student) {
+                $students[$index]->pcreated_at = jdate(strtotime($student->created_at))->format("Y/m/d");
+                $ids[] = $student->id;
+            }
             // if ($sw == 1) {
             //     request()->session()->flash("msg_success", $message);
             //     return redirect()->route('assign_students_index');
@@ -240,11 +248,11 @@ class assignGroupsOfStudentsToASponserController extends Controller
             //     request()->session()->flash("msg_error", $message);
             //     return redirect()->route('assign_students_index');
             // }
-            if (!isset($req['start'])) {
-                $req['start'] = 0;
-                $req['length'] = 10;
-                $req['draw'] = 1;
-            }
+            // if (!isset($req['start'])) {
+            //     $req['start'] = 0;
+            //     $req['length'] = 10;
+            //     $req['draw'] = 1;
+            // }
             $data = [];
             foreach ($students as $index => $item) {
                 $tags = "";
@@ -283,10 +291,10 @@ class assignGroupsOfStudentsToASponserController extends Controller
                 $selectCheckBox = "<div class='form-check'>
                                      <input type='checkbox' class='form-check-input' id='ch_$item->id' value='$item->id' onclick='myFunc(this)'>
                                   </div>";
-
+                //foreach($students as $index => $item){
                 $data[] = [
                     $selectCheckBox,
-                    $index + 1,
+                    $req['start'] + $index + 1,
                     $item->id,
                     $item->first_name,
                     $item->last_name,
@@ -295,36 +303,35 @@ class assignGroupsOfStudentsToASponserController extends Controller
                     $tags,
                     $temps,
                     '<select id="supporters_id_' . $index . '" class="form-control select2">
-                        <option>-</option>
-                        ' . $supportersToSelect . '
-                        </select>
-                        <a class="btn btn-success btn-sm" href="#" onclick="return changeSupporter(' . $index . "," . $item->id . ');">
-                            ذخیره
-                        </a>
-                        <br/>
-                        <img id="loading-' . $index . '" src="/dist/img/loading.gif" style="height: 20px;display: none;" />',
+                            <option>-</option>
+                            ' . $supportersToSelect . '
+                            </select>
+                            <a class="btn btn-success btn-sm" href="#" onclick="return changeSupporter(' . $index . "," . $item->id . ');">
+                                ذخیره
+                            </a>
+                            <br/>
+                            <img id="loading-' . $index . '" src="/dist/img/loading.gif" style="height: 20px;display: none;" />',
                     $item->description,
                     '<a class="btn btn-warning" href="#" onclick="$(\'#students_index2\').val(' . $index . ');preloadTemperatureModal();$(\'#temperature_modal\').modal(\'show\'); return false;">
-                        داغ/سرد
-                    </a>
-                    <a class="btn btn-danger" href="' . route('student_class', ['id' => $item->id]) . '" >
-                        تخصیص کلاس
-                    </a>'
+                            داغ/سرد
+                        </a>
+                        <a class="btn btn-danger" href="' . route('student_class', ['id' => $item->id]) . '" >
+                            تخصیص کلاس
+                        </a>'
                 ];
+                //}
+
             }
 
 
-            $outdata = [];
-            for ($i = $req['start']; $i < min($req['length'] + $req['start'], count($data)); $i++) {
-                $outdata[] = $data[$i];
-            }
+
 
 
             $result = [
                 "draw" => $req['draw'],
-                "data" => $outdata,
-                "recordsTotal" => count($students),
-                "recordsFiltered" => count($students),
+                "data" => $data,
+                "recordsTotal" => count($allStudents),
+                "recordsFiltered" => count($allStudents),
                 "students" => $students,
                 "ids" => $ids,
                 "sw" => $sw
