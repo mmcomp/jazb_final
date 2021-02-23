@@ -36,7 +36,7 @@ class DashboardController extends Controller
         $gates = $group->gates()->where('key', 'supporters')->get();
         if(count($gates)>0){
             $all_missed_calls = Call::where('users_id',Auth::user()->id)->where('call_results_id',1)->get();
-            $missed_calls_of_yesterday = Call::where('users_id',Auth::user()->id)->where('call_results_id',1)->where('created_at','>=',Carbon::yesterday())->get();
+            $missed_calls_of_yesterday = Call::where('users_id',Auth::user()->id)->where('call_results_id',1)->where('created_at', ">=", date("Y-m-d 00:00:00", strtotime("yesterday")))->where('created_at', "<=", date("Y-m-d 23:59:59", strtotime("yesterday")))->get();
             $newStudents = Student::where('is_deleted', false)->where('banned', false)->where('archived', false)->where('supporters_id', Auth::user()->id)->where('supporter_seen', false)->count();
             $year = (int)jdate()->format("Y");
             $month = (int)jdate()->format("m");

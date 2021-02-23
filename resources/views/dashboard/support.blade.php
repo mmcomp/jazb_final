@@ -101,7 +101,7 @@
                       <!--<h3>150</h3>-->
 
                         <p class="text-center">
-                            <a href="{{ route('supporter_yesterday_missed_calls') }}" class="text-light btn">
+                            <a href="{{ $count_of_yesterday_missed_calls ? route('supporter_yesterday_missed_calls') :'#' }}" class="text-light btn">
                             تعداد تماس های بی پاسخ روز قبل
                             <span class="badge badge-warning right">{{ $count_of_yesterday_missed_calls }}</span>
                             </a>
@@ -121,7 +121,7 @@
                       <!--<h3>150</h3>-->
 
                         <p class="text-center">
-                            <a href="{{ route('supporter_all_missed_calls') }}" class="text-light btn">
+                            <a href="{{ $count_of_all_missed_calls ? route('supporter_all_missed_calls') : '#' }}" class="text-light btn">
                             تعداد کل تماس های بی پاسخ
                             <span class="badge badge-warning right">{{ $count_of_all_missed_calls }}</span>
                             </a>

@@ -47,7 +47,7 @@ class SupporterController extends Controller
             "mother"=>"مادر",
             "other"=>"غیره"
         ];
-        $all_missed_calls = Call::where('users_id',Auth::user()->id)->where('call_results_id',1)->get();
+        $all_missed_calls = Call::where('users_id',Auth::user()->id)->where('call_results_id',1)->orderBy('id','desc')->get();
         return view('supporters.allMissedCalls')->with([
             'all_missed_calls' => $all_missed_calls,
             'persons' => $persons
@@ -60,7 +60,7 @@ class SupporterController extends Controller
             "mother"=>"مادر",
             "other"=>"غیره"
         ];
-        $missed_calls_of_yesterday = Call::where('users_id',Auth::user()->id)->where('call_results_id',1)->where('created_at','>=',Carbon::yesterday())->get();
+        $missed_calls_of_yesterday = Call::where('users_id',Auth::user()->id)->where('call_results_id',1)->where('created_at', ">=", date("Y-m-d 00:00:00", strtotime("yesterday")))->where('created_at', "<=", date("Y-m-d 23:59:59", strtotime("yesterday")))->get();
 
         return view('supporters.yesterdayMissedCalls')->with([
             'yesterday_missed_calls' => $missed_calls_of_yesterday,

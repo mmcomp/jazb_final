@@ -1508,6 +1508,15 @@ null => ""
             }
         }
     }
+    function GoBackWithRefresh(event) {
+        if ('referrer' in document) {
+            window.location = document.referrer;
+            /* OR */
+            //location.replace(document.referrer);
+        } else {
+            window.history.back();
+        }
+    }
 
     function saveCall() {
         const canSaveWithNoAlert = ($("#call_results_id option:selected").data('nocall') /* + $("#call_results_id option:selected").data('noanswer')*/ ) > 0;
@@ -1553,7 +1562,10 @@ null => ""
                     alert('خطای بروز رسانی');
                 } else {
                     @if(isset($students_id) && $students_id != null)
-                    window.location.href = '{{ route("reminders") }}';
+                    //window.location.href = '{{ route("reminders") }}';
+                    //window.history.back();
+                    GoBackWithRefresh();
+                    return false;
                     @else
                     window.location.reload();
                     @endif
