@@ -173,10 +173,12 @@
                             </div>
                         </div>
                         <div class="col" style="padding-top: 32px;">
-                            <a class="btn btn-success" onclick="table.ajax.reload(); return false;" href="#">
-                                جستجو
-                            </a>
+                                <button class="btn btn-success" onclick="theSearch(this)" id="theBtn">
+                                    جستجو
+                                </button>
+                                <img id="loading" src="/dist/img/loading.gif" style="height: 20px;display: none1;" />
                         </div>
+
                     </div>
                     <input type="hidden" name="arrOfCheckBoxes" id="arrOfCheckBoxes">
                     <div class="row">
@@ -482,6 +484,12 @@
         need_parent2: '',
         need_parent3: '',
         need_parent4: ''
+    }
+    function theSearch(myself){
+        $(myself).prop('disabled',true);
+        $('#loading').css('display','inline');
+        table.ajax.reload();
+        return false;
     }
     function myFunc(theItem){
         if(theItem.checked){
@@ -1046,7 +1054,9 @@
                     return JSON.stringify(data);
                 },
                 "complete": function(response) {
-                    load();
+                    //load();
+                    $('#loading').css('display','none');
+                    $('#theBtn').prop('disabled',false);
                     var theSwitch = JSON.parse(response.responseText).sw;
                     if(theSwitch  == "auxilary_and_other"){
                         var checkboxes = JSON.parse(response.responseText).checkboxes;
