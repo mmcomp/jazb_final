@@ -149,6 +149,28 @@
                 </div>
             </div>
           </div>
+          <div class="row">
+            <h4 style="margin-top: 70px;">
+                تعداد یادآورها
+            </h4>
+            <table class="table">
+                <thead>
+                  <tr>
+                    @for($i = 0; $i < 10; $i++)
+                    <th scope="col">{{ jdate()->addDays($i)->format('%d %B')}}</th>
+                    @endfor
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                      <td><a href="{{ route('reminders',['date' => 'today']) }}">{{ $todayCount }}</a></td>
+                    @foreach($arrOfReminders as $item)
+                      <td><a href="{{ $item ? route('reminders') : '#'}}">{{ $item }}</a></td>
+                    @endforeach
+                  </tr>
+                </tbody>
+              </table>
+          </div>
         </div><!-- /.container-fluid -->
       </section>
       <!-- /.content -->
