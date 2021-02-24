@@ -183,6 +183,7 @@ Route::group(['middleware' => ['auth', 'message','changeCharactersAllToBePersian
         Route::get('/user/{id}', 'MessageController@userIndex')->name('message_user');
         Route::any('/user_create/{id}', 'MessageController@userCreate')->name('message_user_create');
         Route::any('/message_create/{id}', 'MessageController@messageCreate')->name('message_message_create');
+        Route::get('/delete/{id}', 'MessageController@delete')->name('message_delete');
     });
 
     Route::group(['prefix' => '/purchases'], function () {

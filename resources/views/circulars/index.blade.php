@@ -42,6 +42,7 @@
                     <th>عنوان</th>
                     <th>متن</th>
                     <th>زمان</th>
+                    <th>#</th>
                   </tr>
                   </thead>
                   <tbody>
@@ -56,6 +57,13 @@
                         <td>{{ $item->title }}</td>
                         <td>{{ $item->content }}</td>
                         <td>{{ jdate($item->created_at)->format("Y/m/d") }}</td>
+                        <td>
+                            @if(Gate::allows('parameters'))
+                            <a class="btn btn-danger" href="{{ route('circular_delete', $item->id) }}">
+                                حذف
+                            </a>
+                            @endif
+                        </td>
                       </tr>
                       @endforeach
                   </tbody>
