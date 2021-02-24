@@ -176,7 +176,7 @@
                                 <button class="btn btn-success" onclick="theSearch(this)" id="theBtn">
                                     جستجو
                                 </button>
-                                <img id="loading" src="/dist/img/loading.gif" style="height: 20px;display: none1;" />
+                                <img id="loading" src="/dist/img/loading.gif" style="height: 20px;display: none;" />
                         </div>
 
                     </div>
