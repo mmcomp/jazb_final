@@ -47,7 +47,7 @@ class assignGroupsOfStudentsToASponserController extends Controller
     public function index()
     {
         $ids = [];
-        $sw = 3;
+        $sw = -1;
         $students = Student::where('is_deleted', false)->where('banned', false)->where('archived', false);
         $supportGroupId = Group::getSupport();
         if ($supportGroupId)
@@ -103,24 +103,14 @@ class assignGroupsOfStudentsToASponserController extends Controller
                 $students = $students->where('school', 'like',  '%' . $school . '%');
             }
         }
-        // DB::enableQueryLog();
-
-        // dd(DB::getQueryLog());
         $moralTags = Tag::where('is_deleted', false)
-            // ->with('parent_one')
-            // ->with('parent_two')
-            // ->with('parent_three')
-            // ->with('parent_four')
+
             ->where('type', 'moral')
             ->get();
         $needTags = Tag::where('is_deleted', false)
-            // ->with('parent_one')
-            // ->with('parent_two')
-            // ->with('parent_three')
-            // ->with('parent_four')
+
             ->where('type', 'need')
             ->get();
-        // dd($needTags);
         $parentOnes = TagParentOne::where('is_deleted', false)->has('tags')->get();
         $parentTwos = TagParentTwo::where('is_deleted', false)->has('tags')->get();
         $parentThrees = TagParentThree::where('is_deleted', false)->has('tags')->get();
@@ -175,50 +165,8 @@ class assignGroupsOfStudentsToASponserController extends Controller
             ]);
         } else {
             $allStudents = $students->orderBy('id', 'desc')->get();
-
-
-            //$req =  request()->all();
             $destination_supporter = request()->input('destination_supporter');
             $arrOfCheckBoxes = request()->input('arrOfCheckBoxes');
-            if ($arrOfCheckBoxes == 'all') {
-                $arrOfCheckBoxes = $ids;
-            } else {
-                $arrOfCheckBoxes = explode(',', $arrOfCheckBoxes);
-            }
-            if ($destination_supporter != null && !empty($arrOfCheckBoxes)) {
-                $mergeStudents = AppMergeStudents::where('is_deleted', false)->get();
-                $mergeStudentsArr = [];
-                foreach ($mergeStudents as $index => $item) {
-                    $mergeStudentsArr[$item->main_students_id] = array_filter([$item->auxilary_students_id, $item->second_auxilary_students_id, $item->third_auxilary_students_id]);
-                }
-                foreach ($arrOfCheckBoxes as $checkbox) {
-                    foreach ($mergeStudentsArr as $main => $auxilaries) {
-                        //if it is main student id
-                        if ($main == $checkbox) {
-                            $arrOfCheckBoxes = array_merge($arrOfCheckBoxes,$auxilaries);
-                            $sw = 1;
-                        }
-                        //if it is auxilaries
-                        else if (in_array($checkbox, $auxilaries)) {
-                            $sw = 0;
-                            $arrOfCheckBoxes = array_diff($arrOfCheckBoxes, [$checkbox]);
-                            break;
-                        } else {
-                            $sw = 1;
-                        }
-                    }
-                }
-                $this->updateTodayPurchases($arrOfCheckBoxes);
-                Student::whereIn('id', $arrOfCheckBoxes)
-                    ->with('purchases')
-                    ->update([
-                        'supporters_id' => $destination_supporter,
-                        'supporter_seen' => false,
-                        'supporter_start_date' => date("Y-m-d H:i:s"),
-                        'other_purchases' => DB::raw('other_purchases + own_purchases'),
-                        'own_purchases' => 0
-                    ]);
-            }
             $req =  request()->all();
             if (!isset($req['start'])) {
                 $req['start'] = 0;
@@ -240,6 +188,74 @@ class assignGroupsOfStudentsToASponserController extends Controller
             foreach ($students as $index => $student) {
                 $students[$index]->pcreated_at = jdate(strtotime($student->created_at))->format("Y/m/d");
                 $ids[] = $student->id;
+            }
+
+            if ($arrOfCheckBoxes == 'all') {
+                $arrOfCheckBoxes = $ids;
+            } else {
+                $arrOfCheckBoxes = explode(',', $arrOfCheckBoxes);
+            }
+            if ($destination_supporter != null && !empty($arrOfCheckBoxes)) {
+                $sw = null;
+                $mergeStudents = AppMergeStudents::where('is_deleted', false)->get();
+                $mergeStudentsArr = [];
+                $helperyArr = [];
+                $arr = [];
+                foreach ($mergeStudents as $index => $item) {
+                    if ($item->main_students_id) {
+                        $helperyArr[] = $item->main_students_id;
+                    }
+                    if ($item->auxilary_students_id) {
+                        $helperyArr[] = $item->auxilary_students_id;
+                    }
+                    if ($item->second_auxilary_students_id) {
+                        $helperyArr[] = $item->second_auxilary_students_id;
+                    }
+                    if ($item->third_auxilary_students_id) {
+                        $helperyArr[] = $item->third_auxilary_students_id;
+                    }
+                }
+
+                foreach ($mergeStudents as $index => $item) {
+                    $mergeStudentsArr[$item->main_students_id] = array_filter([$item->auxilary_students_id, $item->second_auxilary_students_id, $item->third_auxilary_students_id]);
+                }
+                $arr = array_diff($arrOfCheckBoxes, $helperyArr);
+                foreach ($mergeStudentsArr as $main => $auxilaries) {
+                    $count_auxilary = count(array_intersect($auxilaries, $arrOfCheckBoxes));
+                    $count_arr = count(array_intersect($arr, $arrOfCheckBoxes));
+                    if ((in_array($main, $arrOfCheckBoxes) && $count_auxilary) || in_array($main, $arrOfCheckBoxes)) {
+                        $arrOfCheckBoxes = array_unique(array_merge($arrOfCheckBoxes, $auxilaries));
+                        $sw = "main"; //all main or one main and other are auxilary or main and auixlary and other or one main and others
+                    } else if (!in_array($main, $arrOfCheckBoxes) &&  $count_auxilary && !$count_arr) {
+                        $arrOfCheckBoxes = array_diff($arrOfCheckBoxes, array_intersect($auxilaries, $arrOfCheckBoxes));
+                        $sw = "auxilary_and_not_main_and_not_other"; //all auxilaries
+                    } else if (!in_array($main, $arrOfCheckBoxes) &&  !$count_auxilary && $count_arr) {
+                        $sw = "other"; //all other
+                    }
+                }
+                foreach ($mergeStudentsArr as $main => $auxilaries) {
+                    $count_auxilary = count(array_intersect($auxilaries, $arrOfCheckBoxes));
+                    $count_arr = count(array_intersect($arr, $arrOfCheckBoxes));
+                    if ((!in_array($main, $arrOfCheckBoxes) &&  $count_auxilary && $count_arr)) {
+                        $arrOfCheckBoxes = array_diff($arrOfCheckBoxes, array_intersect($auxilaries, $arrOfCheckBoxes));
+                        $sw = "auxilary_and_other";
+                    }
+                }
+                $this->updateTodayPurchases($arrOfCheckBoxes);
+                Student::whereIn('id', $arrOfCheckBoxes)
+                    ->with('purchases')
+                    ->update([
+                        'supporters_id' => $destination_supporter,
+                        'supporter_seen' => false,
+                        'supporter_start_date' => date("Y-m-d H:i:s"),
+                        'other_purchases' => DB::raw('other_purchases + own_purchases'),
+                        'own_purchases' => 0
+                    ]);
+            }
+            $names = Student::where('is_deleted',false)->where('banned',false)->where('archived',false)->whereIn('id',$arrOfCheckBoxes)->get();
+            $arrOfNames = [];
+            foreach($names as $name){
+                $arrOfNames[] = $name->first_name.' '.$name->last_name;
             }
             // if ($sw == 1) {
             //     request()->session()->flash("msg_success", $message);
@@ -289,7 +305,7 @@ class assignGroupsOfStudentsToASponserController extends Controller
                     $supportersToSelect .= '>' . $sitem->first_name . ' ' . $sitem->last_name . '</option>';
                 }
                 $selectCheckBox = "<div class='form-check'>
-                                     <input type='checkbox' class='form-check-input' id='ch_$item->id' value='$item->id' onclick='myFunc(this)'>
+                                     <input type='checkbox' class='form-check-input theCheckBoxes' id='ch_$item->id' value='$item->id' onchange='myFunc(this)'>
                                   </div>";
                 //foreach($students as $index => $item){
                 $data[] = [
@@ -323,10 +339,6 @@ class assignGroupsOfStudentsToASponserController extends Controller
 
             }
 
-
-
-
-
             $result = [
                 "draw" => $req['draw'],
                 "data" => $data,
@@ -334,7 +346,8 @@ class assignGroupsOfStudentsToASponserController extends Controller
                 "recordsFiltered" => count($allStudents),
                 "students" => $students,
                 "ids" => $ids,
-                "sw" => $sw
+                "checkboxes" => $arrOfNames,
+                "sw" => $sw,
             ];
 
             return $result;
