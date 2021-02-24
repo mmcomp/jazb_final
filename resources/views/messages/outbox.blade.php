@@ -54,6 +54,7 @@ table tr {
                     <th>پیام</th>
                     <th>ضمیمه</th>
                     <!--<th>گیرنده ها</th>-->
+                    <th>#</th>
                   </tr>
                   </thead>
                   <tbody>
@@ -77,6 +78,13 @@ table tr {
                             @endforeach
                         </td>
                         -->
+                        <td>
+                            @if(Gate::allows('parameters'))
+                            <a class="btn btn-danger" href="{{ route('message_delete', $item->id) }}">
+                                حذف
+                            </a>
+                            @endif
+                        </td>
                       </tr>
                     @endforeach
                   </tbody>

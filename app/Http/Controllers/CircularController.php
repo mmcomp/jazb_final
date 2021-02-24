@@ -47,8 +47,8 @@ class CircularController extends Controller
         $request->session()->flash("msg_success", "بخشنامه با موفقیت افزوده شد.");
         return redirect()->route('circulars');
     }
-    /*
 
+    /*
     public function edit(Request $request, $id)
     {
         $collections = Collection::where('is_deleted', false)->orderBy('name')->get();
@@ -77,20 +77,20 @@ class CircularController extends Controller
         $request->session()->flash("msg_success", "محصول با موفقیت ویرایش شد.");
         return redirect()->route('products');
     }
+    */
 
     public function delete(Request $request, $id)
     {
-        $product = Product::where('id', $id)->where('is_deleted', false)->first();
-        if($product==null){
-            $request->session()->flash("msg_error", "محصول مورد نظر پیدا نشد!");
-            return redirect()->route('products');
+        $circular = Circular::where('id', $id)->where('is_deleted', false)->first();
+        if($circular==null){
+            $request->session()->flash("msg_error", "بخشنامه مورد نظر پیدا نشد!");
+            return redirect()->route('circulars');
         }
 
-        $product->is_deleted = true;
-        $product->save();
+        $circular->is_deleted = true;
+        $circular->save();
 
-        $request->session()->flash("msg_success", "محصول با موفقیت حذف شد.");
-        return redirect()->route('products');
+        $request->session()->flash("msg_success", "بخشنامه با موفقیت حذف شد.");
+        return redirect()->route('circulars');
     }
-    */
 }

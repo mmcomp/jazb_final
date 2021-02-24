@@ -124,4 +124,19 @@ class MessageController extends Controller
     public function messageCreate($id){
         return $this->create(request(), $id);
     }
+
+    public function delete(Request $request, $id)
+    {
+        $message = Message::where('id', $id)->where('is_deleted', false)->first();
+        if($message==null){
+            $request->session()->flash("msg_error", "پیام مورد نظر پیدا نشد!");
+            return redirect()->route('messages');
+        }
+
+        $message->is_deleted = true;
+        $message->save();
+
+        $request->session()->flash("msg_success", "بخشنامه با موفقیت حذف شد.");
+        return redirect()->route('messages');
+    }
 }
