@@ -51,9 +51,9 @@ class SupporterController extends Controller
         $all_missed_calls = 0;
         if ($call_results) {
             foreach ($call_results as $result) {
-                if(!isset($result->id)){
-                    continue;
-                }
+                // if(!isset($result->id)){
+                //     continue;
+                // }
                 $all_missed_calls = Call::where('users_id', Auth::user()->id)->where('call_results_id', $result->id)->get();
             }
         }
@@ -73,9 +73,9 @@ class SupporterController extends Controller
         $missed_calls_of_yesterday = 0;
         if ($call_results) {
             foreach ($call_results as $result) {
-                if(!isset($result->id)){
-                    continue;
-                  }
+                // if(!isset($result->id)){
+                //     continue;
+                //   }
                 $missed_calls_of_yesterday = Call::where('users_id', Auth::user()->id)->where('call_results_id', $result->id)->where('created_at', ">=", date("Y-m-d 00:00:00", strtotime("yesterday")))->where('created_at', "<=", date("Y-m-d 23:59:59", strtotime("yesterday")))->get();
             }
         }
@@ -93,9 +93,9 @@ class SupporterController extends Controller
         $arrOfNoNeed = [];
         if ($call_results_no_need) {
             foreach ($call_results_no_need as $result) {
-                if(!isset($result->id)){
-                    continue;
-                }
+                // if(!isset($result->id)){
+                //     continue;
+                // }
                 $arrOfNoNeed[] = $result->id;
                 $no_need_calls = Call::where('users_id', Auth::user()->id)->whereIn('call_results_id', $arrOfNoNeed)->pluck('students_id')->implode(',');
             }

@@ -42,9 +42,9 @@ class DashboardController extends Controller
             $arrOfMissed = [];
             if($call_results){
                 foreach($call_results as $result){
-                   if(!isset($result->id)){
-                     continue;
-                   }
+                //    if(!isset($result->id)){
+                //      continue;
+                //    }
                    $arrOfMissed[] = $result->id;
                    $all_missed_calls = Call::where('users_id',Auth::user()->id)->whereIn('call_results_id',$arrOfMissed)->get();
                    $missed_calls_of_yesterday = Call::where('users_id',Auth::user()->id)->whereIn('call_results_id',$arrOfMissed)->where('created_at', ">=", date("Y-m-d 00:00:00", strtotime("yesterday")))->where('created_at', "<=", date("Y-m-d 23:59:59", strtotime("yesterday")))->get();
@@ -56,9 +56,9 @@ class DashboardController extends Controller
             $arrOfNoNeed = [];
             if($call_results_no_need){
                 foreach($call_results_no_need as $result){
-                    if(!isset($result->id)){
-                        continue;
-                    }
+                    // if(!isset($result->id)){
+                    //     continue;
+                    // }
                     $arrOfNoNeed[] = $result->id;
                     $no_need_calls = Call::where('users_id',Auth::user()->id)->whereIn('call_results_id',$arrOfNoNeed)->pluck('students_id')->implode(',');
                 }
