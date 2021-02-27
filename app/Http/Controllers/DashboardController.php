@@ -37,8 +37,8 @@ class DashboardController extends Controller
         $gates = $group->gates()->where('key', 'supporters')->get();
         if(count($gates)>0){
             $call_results = CallResult::where('no_answer',1)->where('is_deleted',false)->get();
-            $all_missed_calls = 0;
-            $missed_calls_of_yesterday = 0;
+            $all_missed_calls = [];
+            $missed_calls_of_yesterday = [];
             $arrOfMissed = [];
             if($call_results){
                 foreach($call_results as $result){
@@ -94,8 +94,8 @@ class DashboardController extends Controller
                 'arrOfReminders' => $arrayOfReminders,
                 'all_missed_calls' => $all_missed_calls,
                 'no_need_calls_students' => count($no_need_calls_students),
-                'count_of_all_missed_calls' => $all_missed_calls ? count($all_missed_calls) : 0,
-                'yesterday_missed_calls' => $missed_calls_of_yesterday ? count($missed_calls_of_yesterday) : 0,
+                'count_of_all_missed_calls' =>  count($all_missed_calls),
+                'yesterday_missed_calls' => $missed_calls_of_yesterday,
                 'count_of_yesterday_missed_calls' => count($missed_calls_of_yesterday),
                 'yesterday_recalls'=>$yesterday_recalls
             ]);
