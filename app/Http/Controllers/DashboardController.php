@@ -37,6 +37,14 @@ class DashboardController extends Controller
         if(count($gates)>0){
             $all_missed_calls = Call::where('users_id',Auth::user()->id)->where('call_results_id',1)->get();
             $missed_calls_of_yesterday = Call::where('users_id',Auth::user()->id)->where('call_results_id',1)->where('created_at', ">=", date("Y-m-d 00:00:00", strtotime("yesterday")))->where('created_at', "<=", date("Y-m-d 23:59:59", strtotime("yesterday")))->get();
+            $recalls = Call::where('calls_id', '!=', null)->pluck('calls_id');
+            $calls = Call::where('next_call', '!=', null)->where('users_id', Auth::user()->id)->whereNotIn('id', $recalls);
+            $calls = $calls->get();
+            $arrayOfReminders = [];
+            $todayCount = $calls->where('next_call', '>=', Carbon::now()->addDays(0)->toDateString().' '."00:00:00")->where('next_call', '<=', Carbon::now()->addDays(0)->toDateString().' '."23:59:59")->count();
+            for($i = 1;$i < 10; $i++){
+                $arrayOfReminders[$i] = $calls->where('next_call', '>=', Carbon::now()->addDays($i)->toDateString().' '."00:00:00")->where('next_call', '<=', Carbon::now()->addDays($i)->toDateString().' '."23:59:59")->count();
+            }
             $newStudents = Student::where('is_deleted', false)->where('banned', false)->where('archived', false)->where('supporters_id', Auth::user()->id)->where('supporter_seen', false)->count();
             $year = (int)jdate()->format("Y");
             $month = (int)jdate()->format("m");
@@ -57,6 +65,8 @@ class DashboardController extends Controller
             return view('dashboard.support', [
                 'newStudents'=>$newStudents,
                 'results'=>$results,
+                'todayCount' => $todayCount,
+                'arrOfReminders' => $arrayOfReminders,
                 'all_missed_calls' => $all_missed_calls,
                 'count_of_all_missed_calls' => count($all_missed_calls),
                 'yesterday_missed_calls' => $missed_calls_of_yesterday,
