@@ -57,8 +57,11 @@ class DashboardController extends Controller
                     $no_need_calls = Call::where('users_id',Auth::user()->id)->whereIn('call_results_id',$arrOfNoNeed)->pluck('students_id')->implode(',');
                 }
             }
-            $no_need_calls = array_unique(explode(',',$no_need_calls));
-            $no_need_calls_students = Student::where('is_deleted',false)->where('banned',false)->where('archived',false)->whereIn('id',$no_need_calls)->get();
+            if(!is_array($no_need_calls)){
+                $no_need_calls = array_unique(explode(',',$no_need_calls));
+                $no_need_calls_students = Student::where('is_deleted',false)->where('banned',false)->where('archived',false)->whereIn('id',$no_need_calls)->get();
+            }
+
             $recalls = Call::where('calls_id', '!=', null)->pluck('calls_id');
             $calls = Call::where('next_call', '!=', null)->where('users_id', Auth::user()->id)->whereNotIn('id', $recalls);
             $calls = $calls->get();
