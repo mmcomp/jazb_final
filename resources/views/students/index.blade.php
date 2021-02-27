@@ -24,6 +24,8 @@
 @section('css')
 <link href="/plugins/select2/css/select2.min.css" rel="stylesheet" />
 <meta name="csrf-token" content="{{ csrf_token() }}">
+<link rel="stylesheet" href="/plugins/datatables/css/jquery.dataTables.min.css" type="text/css">
+<link rel="stylesheet" href="/css/dataTableStyle.css">
 <style>
     .morepanel{
         display: none;
@@ -912,6 +914,19 @@
                 "infoEmpty":      "نمایش 0 تا 0 از 0 داده",
                 "proccessing": "در حال بروزرسانی"
             },
+            "columnDefs": [   ////define column 1 and 10
+                    {
+                        "searchable": false,
+                        "orderable": false,
+                        "targets": 0
+                    },
+                    {
+                        "searchable": false,
+                        "orderable": false,
+                        "targets": 10
+                    },
+            ],
+            "order": [[1, 'asc']], /// sort columns 2
             serverSide: true,
             processing: true,
             ajax: {
@@ -942,8 +957,8 @@
                     return JSON.stringify(data);
                 },
                 "complete": function(response) {
+                    $('#example2_paginate').removeClass('dataTables_paginate');
                    // console.log(response);
-                    console.log('students', students);
                     if(students && isEmpty(students))
                         students = JSON.parse(response.responseText).students;
                     $('#example2 tr').click(function() {
