@@ -51,6 +51,7 @@
                             </tr>
                         </thead>
                         <tbody>
+                            @if(!empty($no_need_calls_students))
                             @foreach ($no_need_calls_students as $index => $item)
                             <tr>
                                 <td>{{ $index + 1 }}</td>
@@ -97,6 +98,7 @@
                                 <td>{{ $item->description }}</td>
                             </tr>
                             @endforeach
+                            @endif
                         </tbody>
                     </table>
                 </div>
