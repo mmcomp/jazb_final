@@ -95,7 +95,7 @@
           </div>
           <!-- /.row -->
           <div class="row">
-              <div class="col-4">
+              <div class="col-6">
                 <div class="small-box bg-orange">
                     <div class="inner p-0">
                       <!--<h3>150</h3>-->
@@ -115,7 +115,7 @@
                     -->
                   </div>
               </div>
-              <div class="col-4">
+              <div class="col-6">
                 <div class="small-box bg-orange">
                     <div class="inner p-0">
                       <!--<h3>150</h3>-->
@@ -135,7 +135,7 @@
                     -->
                   </div>
               </div>
-              <div class="col-4">
+              {{-- <div class="col-4">
                 <div class="small-box bg-orange">
                     <div class="inner p-0">
                       <!--<h3>150</h3>-->
@@ -154,7 +154,7 @@
                     <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
                     -->
                   </div>
-              </div>
+              </div> --}}
           </div>
           <div class="row">
             <div class="col-md-3">

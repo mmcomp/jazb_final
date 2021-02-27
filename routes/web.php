@@ -245,7 +245,7 @@ Route::group(['middleware' => ['auth', 'message','changeCharactersAllToBePersian
         Route::post('/purchases','SupporterController@postPurchases')->name('supporter_student_purchases_post');
         Route::any('/all_missed_calls','SupporterController@allMissedCalls')->name('supporter_all_missed_calls');
         Route::any('/yesterday_missed_calls','SupporterController@yesterdayMissedCalls')->name('supporter_yesterday_missed_calls');
-        Route::any('/no_need_calls_students','SupporterController@noNeedStudents')->name('no_need_students');
+       // Route::any('/no_need_calls_students','SupporterController@noNeedStudents')->name('no_need_students');
     });
 
     Route::group(['prefix' => '/circulars'], function () {
