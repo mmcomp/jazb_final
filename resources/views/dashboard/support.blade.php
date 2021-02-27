@@ -95,7 +95,7 @@
           </div>
           <!-- /.row -->
           <div class="row">
-              <div class="col-6">
+              <div class="col-4">
                 <div class="small-box bg-orange">
                     <div class="inner p-0">
                       <!--<h3>150</h3>-->
@@ -115,7 +115,7 @@
                     -->
                   </div>
               </div>
-              <div class="col-6">
+              <div class="col-4">
                 <div class="small-box bg-orange">
                     <div class="inner p-0">
                       <!--<h3>150</h3>-->
@@ -124,6 +124,26 @@
                             <a href="{{ $count_of_all_missed_calls ? route('supporter_all_missed_calls') : '#' }}" class="text-light btn">
                             تعداد کل تماس های بی پاسخ
                             <span class="badge badge-warning right">{{ $count_of_all_missed_calls }}</span>
+                            </a>
+                        </p>
+                    </div>
+                    <!--
+                    <div class="icon">
+                      <i class="ion ion-bag"></i>
+                    </div>
+                    <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                    -->
+                  </div>
+              </div>
+              <div class="col-4">
+                <div class="small-box bg-orange">
+                    <div class="inner p-0">
+                      <!--<h3>150</h3>-->
+
+                        <p class="text-center">
+                            <a href="{{ $no_need_calls_students ? route('no_need_students') : '#' }}" class="text-light btn">
+                             تعداد کاربران با تماس عدم نیاز
+                            <span class="badge badge-warning right">{{ $no_need_calls_students }}</span>
                             </a>
                         </p>
                     </div>
