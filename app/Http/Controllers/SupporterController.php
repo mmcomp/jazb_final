@@ -82,7 +82,6 @@ class SupporterController extends Controller
         ]);
     }
     public function noNeedStudents(){
-        return view('supporters.noNeedStudents');
         $call_results_no_need = CallResult::where('no_call', 1)->where('is_deleted', false)->get();
         $no_need_calls = [];
         $no_need_calls_students = [];
@@ -95,7 +94,7 @@ class SupporterController extends Controller
         }
         if(!is_array($no_need_calls)){
             $no_need_calls = array_unique(explode(',', $no_need_calls));
-            $no_need_calls_students = Student::where('is_deleted', false)->where('banned', false)->get();
+            $no_need_calls_students = Student::where('is_deleted', false)->where('banned', false)->whereIn('id',$no_need_calls)->get();
         }
 
         return view('supporters.noNeedStudents')->with([
