@@ -10,10 +10,13 @@ use Exception;
 
 class ReminderController extends Controller
 {
-    public function index(){
+    public function index($date=null){
         $recalls = Call::where('calls_id', '!=', null)->pluck('calls_id');
         $calls = Call::where('next_call', '!=', null)->where('users_id', Auth::user()->id)->whereNotIn('id', $recalls);
         $today = false;
+        if($date == "today"){
+            $calls = $calls->where('next_call', '>=', date("Y-m-d 00:00:00"))->where('next_call', '<=', date("Y-m-d 23:59:59"));
+        }
         if(request()->getMethod()=='POST') {
             if(request()->input('today') && request()->input('today')=='true') {
                 $today = true;
