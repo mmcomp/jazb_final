@@ -925,6 +925,11 @@
                         "orderable": false,
                         "targets": 10
                     },
+                    {
+                        "searchable": false,
+                        "orderable": false,
+                        "targets": 7
+                    },
             ],
             "order": [[1, 'asc']], /// sort columns 2
             serverSide: true,
@@ -978,15 +983,28 @@
                     });
                 }
 
-            }
-            // ajax: function ( data, callback, settings ){
-            //     $.post('{{ route('api_filter_students') }}', {}, function(result){
-            //         console.log('Result', result);
-            //         callback(result);
-            //     }).fail(function(){
-            //         alert('خطای بروز رسانی');
-            //     });
-            // }
+            },
+            columns: [
+                { data: null},
+                { data: 'id' },
+                { data: 'first_name' },
+                { data: 'last_name' },
+                { data: 'users_id' },
+                { data: 'sources_id'},
+                { data: 'tags'},
+                { data: 'temps'},
+                { data: 'supporters_id'},
+                { data: 'description'},
+                { data : 'end'}
+            ],
+
+
+        });
+        table.on('draw.dt', function () {
+            var info = table.page.info();
+            table.column(0, { search: 'applied', order: 'applied', page: 'applied' }).nodes().each(function (cell, i) {
+                cell.innerHTML = i + 1 + info.start;
+            });
         });
 
         $("#input").keyup(e => {

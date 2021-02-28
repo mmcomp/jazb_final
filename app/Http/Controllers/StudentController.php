@@ -49,7 +49,7 @@ class StudentController extends Controller
         $inp = str_replace(["١", "٢", "٣", "٤", "٥", "٦", "٧", "٨", "٩", "٠"], ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"], $inp);
         return $inp;
     }
-   
+
     public static function jalaliToGregorian($pdate)
     {
         $pdate = explode('/', SupporterController::persianToEnglishDigits($pdate));
@@ -139,11 +139,10 @@ class StudentController extends Controller
         return redirect()->route('student_class', ["id" => $student_id]);
     }
 
-    public function indexAll()
+    public function indexAll(Request $request)
     {
         // $tag = Tag::where('id', 1)->with('parent_four')->first();
         // dd($tag->);
-
         $students = Student::where('is_deleted', false)->where('banned', false)->where('archived', false);
         $supportGroupId = Group::getSupport();
         if ($supportGroupId)
@@ -271,7 +270,36 @@ class StudentController extends Controller
                 'msg_error' => request()->session()->get('msg_error')
             ]);
         } else {
-            $students = $students
+            $allStudents = $students->get();
+            // $students = $students
+            //     ->with('user')
+            //     ->with('studenttags.tag.parent_four')
+            //     ->with('studentcollections.collection.parent')
+            //     ->with('studenttemperatures.temperature')
+            //     ->with('source')
+            //     ->with('consultant')
+            //     ->with('supporter')
+            //     ->orderBy('created_at', 'desc')
+            //     ->get();
+
+            $req =  request()->all();
+            // dd($req);
+            if (!isset($req['start'])) {
+                $req['start'] = 0;
+                $req['length'] = 10;
+                $req['draw'] = 1;
+            }
+            $columnIndex_arr = $request->get('order');
+            $columnName_arr = $request->get('columns');
+            $order_arr = $request->get('order');
+            $columnIndex = $columnIndex_arr[0]['column']; // Column index
+            $columnName = $columnName_arr[$columnIndex]['data']; // Column name
+            $columnSortOrder = $order_arr[0]['dir']; // asc or desc
+            if($columnName != 'row' && $columnName != 'end' && $columnName != "tags" && $columnName != "temps"){
+                $students = $students->orderBy($columnName,$columnSortOrder)
+                ->select('students.*')
+                ->skip($req['start'])
+                ->take($req['length'])
                 ->with('user')
                 ->with('studenttags.tag.parent_four')
                 ->with('studentcollections.collection.parent')
@@ -279,17 +307,22 @@ class StudentController extends Controller
                 ->with('source')
                 ->with('consultant')
                 ->with('supporter')
-                ->orderBy('created_at', 'desc')
                 ->get();
+            }else{
+                $students = $students->select('students.*')
+                ->skip($req['start'])
+                ->take($req['length'])
+                ->with('user')
+                ->with('studenttags.tag.parent_four')
+                ->with('studentcollections.collection.parent')
+                ->with('studenttemperatures.temperature')
+                ->with('source')
+                ->with('consultant')
+                ->with('supporter')
+                ->get();
+            }
             foreach ($students as $index => $student) {
                 $students[$index]->pcreated_at = jdate(strtotime($student->created_at))->format("Y/m/d");
-            }
-            $req =  request()->all();
-            // dd($req);
-            if (!isset($req['start'])) {
-                $req['start'] = 0;
-                $req['length'] = 10;
-                $req['draw'] = 1;
             }
             $data = [];
             foreach ($students as $index => $item) {
@@ -300,11 +333,6 @@ class StudentController extends Controller
                         ' . (($item->studenttags[$i]->tag->parent_four) ? $item->studenttags[$i]->tag->parent_four->name . '->' : '') . ' ' . $item->studenttags[$i]->tag->name . '
                     </span><br/>';
                     }
-                    // for($i = 0; $i < count($item->studentcollections);$i++){
-                    //     $tags .= '<span class="alert alert-warning p-1">
-                    //         '. (($item->studentcollections[$i]->collection->parent) ? $item->studentcollections[$i]->collection->parent->name . '->' : '' ) . ' ' . $item->studentcollections[$i]->collection->name .'
-                    //     </span><br/>';
-                    // }
                 }
                 $registerer = "-";
                 if ($item->user)
@@ -332,15 +360,15 @@ class StudentController extends Controller
                     $supportersToSelect .= '>' . $sitem->first_name . ' ' . $sitem->last_name . '</option>';
                 }
                 $data[] = [
-                    $index + 1,
-                    $item->id,
-                    $item->first_name,
-                    $item->last_name,
-                    $registerer,
-                    ($item->source) ? $item->source->name : '-',
-                    $tags,
-                    $temps,
-                    '<select id="supporters_id_' . $index . '" class="form-control select2">
+                    "row" => $index + 1,
+                    "id" => $item->id,
+                    "first_name" => $item->first_name,
+                    "last_name" => $item->last_name,
+                    "users_id" => $registerer,
+                    "sources_id" => ($item->source) ? $item->source->name : '-',
+                    "tags" => $tags,
+                    "temps" => $temps,
+                    "supporters_id" => '<select id="supporters_id_' . $index . '" class="form-control select2">
                         <option>-</option>
                         ' . $supportersToSelect . '
                         </select>
@@ -349,8 +377,8 @@ class StudentController extends Controller
                         </a>
                         <br/>
                         <img id="loading-' . $index . '" src="/dist/img/loading.gif" style="height: 20px;display: none;" />',
-                    $item->description,
-                    '<a class="btn btn-warning" href="#" onclick="$(\'#students_index2\').val(' . $index . ');preloadTemperatureModal();$(\'#temperature_modal\').modal(\'show\'); return false;">
+                    "description" => $item->description,
+                    "end" => '<a class="btn btn-warning" href="#" onclick="$(\'#students_index2\').val(' . $index . ');preloadTemperatureModal();$(\'#temperature_modal\').modal(\'show\'); return false;">
                         داغ/سرد
                     </a>
                     <a class="btn btn-danger" href="' . route('student_class', ['id' => $item->id]) . '" >
@@ -359,17 +387,11 @@ class StudentController extends Controller
                 ];
             }
 
-
-            $outdata = [];
-            for ($i = $req['start']; $i < min($req['length'] + $req['start'], count($data)); $i++) {
-                $outdata[] = $data[$i];
-            }
-
             $result = [
                 "draw" => $req['draw'],
-                "data" => $outdata,
-                "recordsTotal" => count($students),
-                "recordsFiltered" => count($students),
+                "data" => $data,
+                "recordsTotal" => count($allStudents),
+                "recordsFiltered" => count($allStudents),
                 "students" => $students
             ];
 
