@@ -58,6 +58,7 @@ $persons = [
                   </tr>
                   </thead>
                   <tbody>
+                      @if(!empty($yesterday_missed_calls))
                       @foreach ($yesterday_missed_calls as $index => $item)
                       <tr>
                         <td>{{ $index + 1 }}</td>
@@ -79,6 +80,7 @@ $persons = [
                         </td>
                       </tr>
                       @endforeach
+                      @endif
                   </tbody>
                 </table>
               </div>

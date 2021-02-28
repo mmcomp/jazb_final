@@ -141,9 +141,9 @@
                       <!--<h3>150</h3>-->
 
                         <p class="text-center">
-                            <a href="{{ $no_need_calls_students ? route('no_need_students') : '#' }}" class="text-light btn">
+                            <a href="{{ $count_no_need_calls_students ? route('no_need_students') : '#' }}" class="text-light btn">
                              تعداد کاربران با تماس عدم نیاز
-                            <span class="badge badge-warning right">{{ $no_need_calls_students }}</span>
+                            <span class="badge badge-warning right">{{ $count_no_need_calls_students }}</span>
                             </a>
                         </p>
                     </div>
