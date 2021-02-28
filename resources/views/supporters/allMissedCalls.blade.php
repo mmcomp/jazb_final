@@ -49,6 +49,7 @@
                   </tr>
                   </thead>
                   <tbody>
+                      @if(!empty($all_missed_calls))
                       @foreach ($all_missed_calls as $index => $item)
                       <tr>
                         <td>{{ $index + 1 }}</td>
@@ -70,6 +71,7 @@
                         </td>
                       </tr>
                       @endforeach
+                      @endif
                   </tbody>
                 </table>
               </div>
