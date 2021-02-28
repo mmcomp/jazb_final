@@ -68,12 +68,13 @@ class SupporterController extends Controller
         ];
         $call_results = CallResult::where('no_answer', 1)->where('is_deleted', false)->get();
         $missed_calls_of_yesterday = 0;
+
         if ($call_results) {
             foreach ($call_results as $result) {
                 $missed_calls_of_yesterday = Call::where('users_id', Auth::user()->id)->where('call_results_id', $result->id)->where('created_at', ">=", date("Y-m-d 00:00:00", strtotime("yesterday")))->where('created_at', "<=", date("Y-m-d 23:59:59", strtotime("yesterday")))->get();
             }
         }
-        $missed_calls_of_yesterday = Call::where('users_id',Auth::user()->id)->where('call_results_id',1)->where('created_at', ">=", date("Y-m-d 00:00:00", strtotime("yesterday")))->where('created_at', "<=", date("Y-m-d 23:59:59", strtotime("yesterday")))->get();
+        //$missed_calls_of_yesterday = Call::where('users_id',Auth::user()->id)->where('call_results_id',1)->where('created_at', ">=", date("Y-m-d 00:00:00", strtotime("yesterday")))->where('created_at', "<=", date("Y-m-d 23:59:59", strtotime("yesterday")))->get();
 
         return view('supporters.yesterdayMissedCalls')->with([
             'yesterday_missed_calls' => $missed_calls_of_yesterday,
@@ -91,8 +92,11 @@ class SupporterController extends Controller
                 $no_need_calls = Call::where('users_id', Auth::user()->id)->whereIn('call_results_id', $arrOfNoNeed)->pluck('students_id')->implode(',');
             }
         }
-        $no_need_calls = array_unique(explode(',', $no_need_calls));
-        $no_need_calls_students = Student::where('is_deleted', false)->where('banned', false)->where('archived', false)->whereIn('id', $no_need_calls)->get();
+        if(!is_array($no_need_calls)){
+            $no_need_calls = array_unique(explode(',', $no_need_calls));
+            $no_need_calls_students = Student::where('is_deleted', false)->where('banned', false)->whereIn('id',$no_need_calls)->get();
+        }
+
         return view('supporters.noNeedStudents')->with([
            'no_need_calls_students' => $no_need_calls_students
         ]);

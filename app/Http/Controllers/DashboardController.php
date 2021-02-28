@@ -37,8 +37,8 @@ class DashboardController extends Controller
         $gates = $group->gates()->where('key', 'supporters')->get();
         if(count($gates)>0){
             $call_results = CallResult::where('no_answer',1)->where('is_deleted',false)->get();
-            $all_missed_calls = 0;
-            $missed_calls_of_yesterday = 0;
+            $all_missed_calls = [];
+            $missed_calls_of_yesterday = [];
             $arrOfMissed = [];
             if($call_results){
                 foreach($call_results as $result){
@@ -57,8 +57,11 @@ class DashboardController extends Controller
                     $no_need_calls = Call::where('users_id',Auth::user()->id)->whereIn('call_results_id',$arrOfNoNeed)->pluck('students_id')->implode(',');
                 }
             }
-            $no_need_calls = array_unique(explode(',',$no_need_calls));
-            $no_need_calls_students = Student::where('is_deleted',false)->where('banned',false)->where('archived',false)->whereIn('id',$no_need_calls)->get();
+            if(!is_array($no_need_calls)){
+                $no_need_calls = array_unique(explode(',',$no_need_calls));
+                $no_need_calls_students = Student::where('is_deleted',false)->where('banned',false)->where('archived',false)->whereIn('id',$no_need_calls)->get();
+            }
+
             $recalls = Call::where('calls_id', '!=', null)->pluck('calls_id');
             $calls = Call::where('next_call', '!=', null)->where('users_id', Auth::user()->id)->whereNotIn('id', $recalls);
             $calls = $calls->get();
@@ -91,8 +94,8 @@ class DashboardController extends Controller
                 'arrOfReminders' => $arrayOfReminders,
                 'all_missed_calls' => $all_missed_calls,
                 'no_need_calls_students' => count($no_need_calls_students),
-                'count_of_all_missed_calls' => $all_missed_calls ? count($all_missed_calls) : 0,
-                'yesterday_missed_calls' => $missed_calls_of_yesterday ? count($missed_calls_of_yesterday) : 0,
+                'count_of_all_missed_calls' =>  count($all_missed_calls),
+                'yesterday_missed_calls' => $missed_calls_of_yesterday,
                 'count_of_yesterday_missed_calls' => count($missed_calls_of_yesterday),
                 'yesterday_recalls'=>$yesterday_recalls
             ]);
