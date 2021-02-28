@@ -143,7 +143,9 @@ class StudentController extends Controller
     {
         // $tag = Tag::where('id', 1)->with('parent_four')->first();
         // dd($tag->);
-        $students = Student::where('is_deleted', false)->where('banned', false)->where('archived', false);
+        $sw = null;
+        $count = 0;
+        $students = Student::where('students.is_deleted', false)->where('students.banned', false)->where('students.archived', false);
         $supportGroupId = Group::getSupport();
         if ($supportGroupId)
             $supportGroupId = $supportGroupId->id;
@@ -271,19 +273,7 @@ class StudentController extends Controller
             ]);
         } else {
             $allStudents = $students->get();
-            // $students = $students
-            //     ->with('user')
-            //     ->with('studenttags.tag.parent_four')
-            //     ->with('studentcollections.collection.parent')
-            //     ->with('studenttemperatures.temperature')
-            //     ->with('source')
-            //     ->with('consultant')
-            //     ->with('supporter')
-            //     ->orderBy('created_at', 'desc')
-            //     ->get();
-
             $req =  request()->all();
-            // dd($req);
             if (!isset($req['start'])) {
                 $req['start'] = 0;
                 $req['length'] = 10;
@@ -295,7 +285,8 @@ class StudentController extends Controller
             $columnIndex = $columnIndex_arr[0]['column']; // Column index
             $columnName = $columnName_arr[$columnIndex]['data']; // Column name
             $columnSortOrder = $order_arr[0]['dir']; // asc or desc
-            if($columnName != 'row' && $columnName != 'end' && $columnName != "tags" && $columnName != "temps"){
+            if($columnName != 'row' && $columnName != 'end' && $columnName != "temps" && $columnName != "tags"){
+                $sw = "all";
                 $students = $students->orderBy($columnName,$columnSortOrder)
                 ->select('students.*')
                 ->skip($req['start'])
@@ -308,7 +299,36 @@ class StudentController extends Controller
                 ->with('consultant')
                 ->with('supporter')
                 ->get();
+            }else if($columnName == "tags"){
+                $sw = "tags";
+                $countStudents = $students
+                ->join('student_tags', 'students.id', '=', 'student_tags.students_id')
+                ->select('students.*',DB::raw('count(*) as CID'))
+                ->where('student_tags.is_deleted',false)
+                ->groupBy('student_tags.students_id')
+                ->orderBy("CID",$columnSortOrder)
+                ->get();
+                $count = $countStudents ? count($countStudents) : 0;
+                dd($count);
+                $students = $students
+                ->join('student_tags', 'students.id', '=', 'student_tags.students_id')
+                ->select('students.*',DB::raw('count(*) as CID'))
+                ->skip($req['start'])
+                ->take($req['length'])
+                ->where('student_tags.is_deleted',false)
+                ->groupBy('student_tags.students_id')
+                ->orderBy("CID",$columnSortOrder)
+                ->with('user')
+                ->with('studenttags.tag.parent_four')
+                ->with('studentcollections.collection.parent')
+                ->with('studenttemperatures.temperature')
+                ->with('source')
+                ->with('consultant')
+                ->with('supporter')
+                ->get();
+                dd($students);
             }else{
+                $sw = "other";
                 $students = $students->select('students.*')
                 ->skip($req['start'])
                 ->take($req['length'])
@@ -386,12 +406,15 @@ class StudentController extends Controller
                     </a>'
                 ];
             }
+            if($sw == null){
+                $count = count($allStudents);
+            }
 
             $result = [
                 "draw" => $req['draw'],
                 "data" => $data,
-                "recordsTotal" => count($allStudents),
-                "recordsFiltered" => count($allStudents),
+                "recordsTotal" => $count,
+                "recordsFiltered" => $count,
                 "students" => $students
             ];
 
