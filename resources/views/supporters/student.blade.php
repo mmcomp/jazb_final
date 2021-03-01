@@ -281,7 +281,7 @@ null => ""
                     </div>-->
                     <table id="example2" class="table table-bordered table-hover">
                         <thead>
-                            <tr>
+                            <tr class="table_header">
                                 <th>ردیف</th>
                                 <th>کد</th>
                                 <th>نام</th>
@@ -798,6 +798,7 @@ null => ""
     let tags = {};
     let collections = {};
     let calls_id = {{isset($calls_id) ? $calls_id : 'null'}};
+    //let callsText = "";
     var table;
     for (let tg of tmpTags) {
         tags[tg.id] = tg;
@@ -1801,17 +1802,23 @@ null => ""
                     $('#example2_paginate').removeClass('dataTables_paginate');
                     $('#example2 tr').click(function() {
                         var tr = this;
+                        //var x = this;
+                        if(!$(this).hasClass('table_header')){
                         var studentId = parseInt($(tr).find('td')[1].innerText, 10);
                         if (!isNaN(studentId)) {
+
                             for (var index in students) {
                                 if (students[index].id == studentId) {
                                     showMorePanel(index, tr);
                                 }
                             }
                         }
+                        }
                     });
                     @if(isset($students_id) && $students_id != null)
                     var tr = $('#example2 tr')[1];
+                    if(!$(this).hasClass('table_header')){
+
                     var studentId = parseInt($(tr).find('td')[1].innerText, 10);
                     if (!isNaN(studentId)) {
                         for (var index in students) {
@@ -1820,6 +1827,7 @@ null => ""
                                 $('#call_modal').modal('show');
                             }
                         }
+                    }
                     }
                     @endif
                 }

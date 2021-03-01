@@ -717,12 +717,15 @@ class SupporterController extends Controller
                     $getStudents[$index]->calls[$cindex]->next_call = ($getStudents[$index]->calls[$cindex]->next_call) ? jdate(strtotime($getStudents[$index]->calls[$cindex]->next_call))->format("Y/m/d") : null;
                 }
         }
+        foreach ($getStudents as $index => $student) {
+            $getStudents[$index]->pcreated_at = jdate(strtotime($student->created_at))->format("Y/m/d");
+        }
         // dd($callResults);
         if (request()->getMethod() == 'GET') {
             // dd($has_the_product);
             return view('supporters.student', [
                 'user' => $user,
-                'students' => $students,
+                'students' => $getStudents,
                 'sources' => $sources,
                 'name' => $name,
                 'sources_id' => $sources_id,
