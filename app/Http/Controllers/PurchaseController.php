@@ -282,7 +282,9 @@ class PurchaseController extends Controller
                 $fails[] = $purchase;
                 continue;
             }
-            $purchaseObject = new Purchase;
+            $purchaseObject = Purchase::where("factor_number", $purchase['factor_number'])->first();
+            if(!$purchaseObject)
+                $purchaseObject = new Purchase;
             $product = Product::where('woo_id', $purchase['woo_id'])->with('classrooms')->first();
             $student = Student::where('phone', $purchase['phone'])->where('banned', false)->first();
             if($product == null || $student == null){
@@ -321,7 +323,7 @@ class PurchaseController extends Controller
                 try{
                     $student->save();
                 }catch(Exception $e){
-                    $fails[] = $student;
+                    // $fails[] = $student;
                 }
             }
             if($purchaseSaved) {
