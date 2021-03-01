@@ -10,9 +10,12 @@ use App\Call;
 use App\CallResult;
 use Carbon\Carbon;
 use Morilog\Jalali\CalendarUtils;
+use App\Http\Traits\AllTypeCallsTrait;
 
 class DashboardController extends Controller
 {
+    use AllTypeCallsTrait;
+
     public static function fixDateDigits($inp){
         $out = explode('-', $inp);
         if(count($out)!=3){
@@ -36,29 +39,9 @@ class DashboardController extends Controller
         }
         $gates = $group->gates()->where('key', 'supporters')->get();
         if(count($gates)>0){
-            $call_results = CallResult::where('no_answer',1)->where('is_deleted',false)->get();
-            $all_missed_calls = 0;
-            $missed_calls_of_yesterday = 0;
-            $arrOfMissed = [];
-            if($call_results){
-                foreach($call_results as $result){
-                   $arrOfMissed[] = $result->id;
-                   $all_missed_calls = Call::where('users_id',Auth::user()->id)->whereIn('call_results_id',$arrOfMissed)->get();
-                   $missed_calls_of_yesterday = Call::where('users_id',Auth::user()->id)->whereIn('call_results_id',$arrOfMissed)->where('created_at', ">=", date("Y-m-d 00:00:00", strtotime("yesterday")))->where('created_at', "<=", date("Y-m-d 23:59:59", strtotime("yesterday")))->get();
-                }
-            }
-            $call_results_no_need = CallResult::where('no_call',1)->where('is_deleted',false)->get();
-            $no_need_calls = [];
-            $no_need_calls_students = [];
-            $arrOfNoNeed = [];
-            if($call_results_no_need){
-                foreach($call_results_no_need as $result){
-                    $arrOfNoNeed[] = $result->id;
-                    $no_need_calls = Call::where('users_id',Auth::user()->id)->whereIn('call_results_id',$arrOfNoNeed)->pluck('students_id')->implode(',');
-                }
-            }
-            $no_need_calls = array_unique(explode(',',$no_need_calls));
-            $no_need_calls_students = Student::where('is_deleted',false)->where('banned',false)->where('archived',false)->whereIn('id',$no_need_calls)->get();
+            $count_all_missed_calls = $this->missed_calls()['count'];
+            $count_yesterday_missed_calls = $this->yesterday_missed_calls()['count'];
+            $count_of_no_need_calls = $this->no_need_calls_students()['count'];
             $recalls = Call::where('calls_id', '!=', null)->pluck('calls_id');
             $calls = Call::where('next_call', '!=', null)->where('users_id', Auth::user()->id)->whereNotIn('id', $recalls);
             $calls = $calls->get();
@@ -89,11 +72,9 @@ class DashboardController extends Controller
                 'results'=>$results,
                 'todayCount' => $todayCount,
                 'arrOfReminders' => $arrayOfReminders,
-                'all_missed_calls' => $all_missed_calls,
-                'no_need_calls_students' => count($no_need_calls_students),
-                'count_of_all_missed_calls' => $all_missed_calls ? count($all_missed_calls) : 0,
-                'yesterday_missed_calls' => $missed_calls_of_yesterday ? count($missed_calls_of_yesterday) : 0,
-                'count_of_yesterday_missed_calls' => count($missed_calls_of_yesterday),
+                'count_no_need_calls_students' => $count_of_no_need_calls,
+                'count_of_all_missed_calls' =>  $count_all_missed_calls,
+                'count_of_yesterday_missed_calls' => $count_yesterday_missed_calls,
                 'yesterday_recalls'=>$yesterday_recalls
             ]);
         }
