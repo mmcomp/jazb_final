@@ -285,6 +285,7 @@ class StudentController extends Controller
             $columnIndex = $columnIndex_arr[0]['column']; // Column index
             $columnName = $columnName_arr[$columnIndex]['data']; // Column name
             $columnSortOrder = $order_arr[0]['dir']; // asc or desc
+
             if($columnName != 'row' && $columnName != 'end' && $columnName != "temps" && $columnName != "tags"){
                 $sw = "all";
                 $students = $students->orderBy($columnName,$columnSortOrder)
@@ -300,18 +301,16 @@ class StudentController extends Controller
                 ->with('supporter')
                 ->get();
             }else if($columnName == "tags"){
+                $joinStudents = $students->join('student_tags', 'students.id', '=', 'student_tags.students_id');
                 $sw = "tags";
-                $countStudents = $students
-                ->join('student_tags', 'students.id', '=', 'student_tags.students_id')
+                $countStudents = $joinStudents
                 ->select('students.*',DB::raw('count(*) as CID'))
                 ->where('student_tags.is_deleted',false)
                 ->groupBy('student_tags.students_id')
                 ->orderBy("CID",$columnSortOrder)
                 ->get();
-                $count = $countStudents ? count($countStudents) : 0;
-                dd($count);
-                $students = $students
-                ->join('student_tags', 'students.id', '=', 'student_tags.students_id')
+                $count = ($countStudents && is_countable($countStudents)) ? count($countStudents) : 0;
+                $students = $joinStudents
                 ->select('students.*',DB::raw('count(*) as CID'))
                 ->skip($req['start'])
                 ->take($req['length'])
@@ -326,7 +325,6 @@ class StudentController extends Controller
                 ->with('consultant')
                 ->with('supporter')
                 ->get();
-                dd($students);
             }else{
                 $sw = "other";
                 $students = $students->select('students.*')
@@ -406,7 +404,7 @@ class StudentController extends Controller
                     </a>'
                 ];
             }
-            if($sw == null){
+            if($sw == null || $sw == "all" || $sw == "other"){
                 $count = count($allStudents);
             }
 
