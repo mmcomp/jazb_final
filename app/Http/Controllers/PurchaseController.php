@@ -212,7 +212,7 @@ class PurchaseController extends Controller
 
             try{
                 $purchaseObject->save();
-                $ids[] = $purchaseObject->id;
+                $ids[] = $purchaseObject->factor_number;
             }catch(Exception $e){
                 $fails[] = $purchase;
             }
@@ -262,7 +262,7 @@ class PurchaseController extends Controller
 
             try{
                 $purchaseObject->save();
-                $ids[] = $purchaseObject->id;
+                $ids[] = $purchaseObject->factor_number;
             }catch(Exception $e){
                 $fails[] = $purchase;
             }
@@ -278,7 +278,7 @@ class PurchaseController extends Controller
         $ids = [];
         $fails = [];
         foreach($purchases as $purchase){
-            if(!isset($purchase['woo_id']) || !isset($purchase['phone']) || !isset($purchase['price'])){
+            if(!isset($purchase['woo_id']) || !isset($purchase['phone']) || !isset($purchase['price']) || !isset($purchase['factor_number'])){
                 $fails[] = $purchase;
                 continue;
             }
@@ -302,7 +302,7 @@ class PurchaseController extends Controller
             $purchaseSaved = false;
             try{
                 $purchaseObject->save();
-                $ids[] = $purchaseObject->id;
+                $ids[] = $purchaseObject->factor_number;
                 $purchaseSaved = true;
             }catch(Exception $e){
                 $fails[] = $purchase;
