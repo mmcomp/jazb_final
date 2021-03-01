@@ -9,6 +9,10 @@ $persons = [
 @extends('layouts.index')
 
 @section('css')
+<link rel="stylesheet" href="/plugins/datatables/css/jquery.dataTables.min.css" type="text/css">
+<link rel="stylesheet" href="/css/dataTableStyle.css">
+<meta name="csrf-token" content="{{ csrf_token() }}">
+
 <style>
     .students, .studenttags{
         display: none;
@@ -69,7 +73,7 @@ $persons = [
                   </tr>
                   </thead>
                   <tbody>
-                      @foreach ($calls as $index => $item)
+                      {{--  @foreach ($calls as $index => $item)
                       <tr>
                         <td>{{ $index + 1 }}</td>
                         <td>{{ $item->id }}</td>
@@ -93,7 +97,7 @@ $persons = [
                           </form>
                         </td>
                       </tr>
-                      @endforeach
+                      @endforeach  --}}
                   </tbody>
                 </table>
               </div>
@@ -114,6 +118,7 @@ $persons = [
 <script src="../../plugins/datatables-bs4/js/dataTables.bootstrap4.js"></script>
 <!-- page script -->
 <script>
+    var table;
     function showStudents(index){
         // $(".students").hide();
         $("#students-" + index).toggle();
@@ -126,9 +131,19 @@ $persons = [
 
         return false;
     }
+    $(".btn-danger").click(function(e){
+        alert('hello');
+        if(!confirm('آیا مطمئنید؟')){
+          e.preventDefault();
+        }
+    });
     $(function () {
-    //   $("#example1").DataTable();
-      $('#example2').DataTable({
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+      table = $('#example2').DataTable({
         "paging": true,
         "lengthChange": false,
         "searching": false,
@@ -143,14 +158,67 @@ $persons = [
             "emptyTable":     "داده ای برای نمایش وجود ندارد",
             "info":           "نمایش _START_ تا _END_ از _TOTAL_ داده",
             "infoEmpty":      "نمایش 0 تا 0 از 0 داده",
-        }
-      });
+        },
+        "columnDefs": [   ////define columns
+                    {
+                        "searchable": false,
+                        "orderable": false,
+                        "targets": 0
+                    },
+                    {
+                        "searchable": false,
+                        "orderable": false,
+                        "targets": 9
+                    },
+            ],
+        "order": [[1, 'asc']], /// sort columns 2
+            serverSide: true,
+            processing: true,
+            ajax: {
+                "type": "POST",
+                "url": "{{ route('reminders') }}",
+                "dataType": "json",
+                "contentType": 'application/json; charset=utf-8',
 
-      $(".btn-danger").click(function(e){
-          if(!confirm('آیا مطمئنید؟')){
-            e.preventDefault();
-          }
+                "data": function (data) {
+                    {{--  data['supporters_id'] = $("#supporters_id").val();
+                    data['sources_id'] = $("#sources_id").val();
+                    data['cities_id'] = $("#cities_id").val();
+                    data['egucation_level'] = $("#egucation_level").val();
+                    data['major'] = $("#major").val();
+                    data['school'] = $("#school").val();
+                    data['name'] = $("#name").val();
+                    data['phone'] = $("#phone").val();  --}}
+
+                    return JSON.stringify(data);
+                },
+                "complete": function(response) {
+                    $('#example2_paginate').removeClass('dataTables_paginate');
+                   // console.log(response);
+                }
+
+            },
+            columns: [
+                { data: null},
+                { data: 'id' },
+                { data: 'student' },
+                { data: 'product' },
+                { data: 'replier' },
+                { data: 'callresult'},
+                { data: 'next_call'},
+                { data: 'next_to_call'},
+                { data: 'description'},
+                { data : 'end'}
+            ],
       });
+      table.on('draw.dt', function () {
+        var info = table.page.info();
+        table.column(0, { search: 'applied', order: 'applied', page: 'applied' }).nodes().each(function (cell, i) {
+            cell.innerHTML = i + 1 + info.start;
+        });
+    });
+
+
     });
   </script>
 @endsection
