@@ -180,7 +180,7 @@ class ProductController extends Controller
             }
             try{
                 $productObject->save();
-                $ids[] = $productObject->id;
+                $ids[] = $productObject->woo_id;
             }catch(Exception $e){
                 $fails[] = $product;
             }
@@ -206,7 +206,7 @@ class ProductController extends Controller
                 $productDelete = false;
                 try{
                     $productObject->save();
-                    $ids[] = $productObject->id;
+                    $ids[] = $productObject->woo_id;
                     $productDelete = true;
                 }catch(Exception $e){
                     $fails[] = $product;
