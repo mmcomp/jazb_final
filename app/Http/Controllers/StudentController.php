@@ -240,7 +240,7 @@ class StudentController extends Controller
         // dd($students);
         if (request()->getMethod() == 'GET') {
             return view('students.index', [
-                'route' => 'student_all',
+                //'route' => 'student_all',
                 'students' => $students,
                 'supports' => $supports,
                 'sources' => $sources,
@@ -784,8 +784,8 @@ class StudentController extends Controller
 
         if (request()->getMethod() == 'GET') {
             // dd($students);
-            return view('students.index', [
-                'route' => 'students',
+            return view('students.student-input-and-division', [
+                //'route' => 'students',
                 'students' => $students,
                 'supports' => $supports,
                 'sources' => $sources,
