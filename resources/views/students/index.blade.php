@@ -396,6 +396,7 @@
 <!-- page script -->
 <script>
     let students = @JSON($students);
+    //console.log(students);
     let parentOnes = @JSON($parentOnes);
     let parentTwos = @JSON($parentTwos);
     let parentThrees = @JSON($parentThrees);
@@ -483,6 +484,7 @@
                             </div>
                             <div class="col">
                                 تاریخ ثبت دانش آموز :
+                               {{-- students[index].pcreated_at --}}
                                 ${ students[index].pcreated_at }
                             </div>
                             <div class="col">
@@ -955,8 +957,6 @@
                 "complete": function(response) {
                     $('#example2_paginate').removeClass('dataTables_paginate');
                    // console.log(response);
-                    if(students && isEmpty(students))
-                       students = JSON.parse(response.responseText).students;
                     $('#example2 tr').click(function() {
                         var x = this;
                         if($(this).hasClass('odd') || $(this).hasClass('even')){
@@ -964,7 +964,7 @@
                             var studentId = parseInt($(this).find('td')[1].innerText, 10);
                             if(!isNaN(studentId)){
                                 for(var index in students){
-                                    console.log('check', students[index].id, studentId);
+                                    //console.log('check', students[index].id, studentId);
                                     if(students[index].id==studentId){
                                         // console.log(students[index]);
                                         showMorePanel(index, this);

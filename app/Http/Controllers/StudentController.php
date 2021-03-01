@@ -234,14 +234,26 @@ class StudentController extends Controller
         $hotTemperatures = Temperature::where('is_deleted', false)->where('status', 'hot')->get();
         $coldTemperatures = Temperature::where('is_deleted', false)->where('status', 'cold')->get();
         $cities = City::where('is_deleted', false)->get();
-
-
+        //dd((array)$students->get());
+        $theStudents = $students
+        ->with('user')
+        ->with('studenttags.tag.parent_four')
+        ->with('studentcollections.collection.parent')
+        ->with('studenttemperatures.temperature')
+        ->with('source')
+        ->with('consultant')
+        ->with('supporter')
+        ->get();
+        foreach ($theStudents as $index => $student) {
+            $theStudents[$index]->pcreated_at = jdate(strtotime($student->created_at))->format("Y/m/d");
+        }
+        //dd($students->first());
 
         // dd($students);
         if (request()->getMethod() == 'GET') {
             return view('students.index', [
                 //'route' => 'student_all',
-                'students' => $students,
+                'students' => $theStudents,
                 'supports' => $supports,
                 'sources' => $sources,
                 'supporters_id' => $supporters_id,
@@ -339,9 +351,7 @@ class StudentController extends Controller
                 ->with('supporter')
                 ->get();
             }
-            foreach ($students as $index => $student) {
-                $students[$index]->pcreated_at = jdate(strtotime($student->created_at))->format("Y/m/d");
-            }
+
             $data = [];
             foreach ($students as $index => $item) {
                 $tags = "";
@@ -413,7 +423,7 @@ class StudentController extends Controller
                 "data" => $data,
                 "recordsTotal" => $count,
                 "recordsFiltered" => $count,
-                "students" => $students
+                //"students" => $students
             ];
 
             return $result;
@@ -785,7 +795,8 @@ class StudentController extends Controller
         if (request()->getMethod() == 'GET') {
             // dd($students);
             return view('students.student-input-and-division', [
-                //'route' => 'students',
+            //return view('students.index', [
+            //'route' => 'students',
                 'students' => $students,
                 'supports' => $supports,
                 'sources' => $sources,
