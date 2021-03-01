@@ -282,7 +282,7 @@ class PurchaseController extends Controller
                 $fails[] = $purchase;
                 continue;
             }
-            $purchaseObject = Purchase::where("factor_name", $purchase['factor_number'])->first();
+            $purchaseObject = Purchase::where("factor_number", $purchase['factor_number'])->first();
             if(!$purchaseObject)
                 $purchaseObject = new Purchase;
             $product = Product::where('woo_id', $purchase['woo_id'])->with('classrooms')->first();
