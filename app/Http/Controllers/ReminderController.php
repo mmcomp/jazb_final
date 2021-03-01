@@ -31,7 +31,9 @@ class ReminderController extends Controller
                 $calls = $calls->where('next_call', '>=', date("Y-m-d 00:00:00"))->where('next_call', '<=', date("Y-m-d 23:59:59"));
             }
         }
+        $theCalls = $calls->with('student')->with('product');
         $calls = $calls->with('student')->with('product')->orderBy('next_call', 'desc')->get();
+
         if(request()->getMethod() == "GET"){
             return view('reminders.index',[
                 'calls' => $calls,
@@ -46,6 +48,8 @@ class ReminderController extends Controller
                 $req['length'] = 10;
                 $req['draw'] = 1;
             }
+            $theCalls = $theCalls->skip($req['start'])
+            ->take($req['length'])->get();
             $columnIndex_arr = $req['order'];
             $columnName_arr = $req['columns'];
             $order_arr = $req['order'];
@@ -82,7 +86,7 @@ class ReminderController extends Controller
             //     ->get();
             // }
             $data = [];
-            foreach ($calls as $index => $item) {
+            foreach ($theCalls as $index => $item) {
                 $route_of_reminder_delete = route('reminder_delete',['id' => $item->id]);
                 $route_of_supporters_students = route('supporter_students');
                 $data[] = [
