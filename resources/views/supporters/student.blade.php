@@ -1565,8 +1565,6 @@ null => ""
                     alert('خطای بروز رسانی');
                 } else {
                     @if(isset($students_id) && $students_id != null)
-                    //window.location.href = '{{ route("reminders") }}';
-                    //window.history.back();
                     GoBackWithRefresh();
                     return false;
                     @else

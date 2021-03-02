@@ -28,7 +28,7 @@ $persons = [
             <div class="col-sm-6">
             </div>
             <div class="col-sm-6">
-              <h1>
+              <h1 id="today_header">
                 یادآورها@if($today)ی امروز@endif
               </h1>
             </div>
@@ -43,16 +43,19 @@ $persons = [
             <div class="card">
               <div class="card-header">
                 <h3 class="card-title">
-                  <form id="frm-today" method="post">
-                    @csrf
-                    <input type="hidden" id="today" name="today" value="true" />
-                    <a onclick="$('#today').val('true');$('#frm-today').submit();return false;" class="btn btn-success">
+                  {{--  <form id="frm-today" method="post" action="{{route('reminders_post')}}">  --}}
+                     {{--  @csrf  --}}
+                    {{--  @if($date == null)  --}}
+                    <input type="hidden" id="today" name="today" value="{{ $today ? 'true' : 'false'}}" />
+                    <button onclick="todayFunc()" class="btn btn-success">
                       امروز
-                    </a>
-                    <a onclick="$('#today').val('');$('#frm-today').submit();return false;" class="btn btn-warning">
+                    </button>
+                    <button onclick="allFunc()" class="btn btn-warning">
                       همه
-                    </a>
-                  </form>
+                    </button>
+                    {{--  @endif  --}}
+
+                  {{--  </form>  --}}
                 </h3>
               </div>
               <!-- /.card-header -->
@@ -73,31 +76,6 @@ $persons = [
                   </tr>
                   </thead>
                   <tbody>
-                      {{--  @foreach ($calls as $index => $item)
-                      <tr>
-                        <td>{{ $index + 1 }}</td>
-                        <td>{{ $item->id }}</td>
-                        <td>{{ ($item->student)?$item->student->first_name . ' ' . $item->student->last_name:'-' }}</td>
-                        <td>{{ ($item->product)?(($item->product->parents!='-')?$item->product->parents . '->':'') . $item->product->name:'-' }}</td>
-                        <td>{{ $persons[$item->replier] }}</td>
-                        <td>{{ ($item->callresult)?$item->callresult->title:'-' }}</td>
-                        <td>{{ ($item->next_call)?jdate($item->next_call)->format("Y/m/d"):'-' }}</td>
-                        <td>{{ ($item->next_to_call)?$persons[$item->next_to_call]:'-' }}</td>
-                        <td>{{ $item->description }}</td>
-                        <td>
-                          <a class="btn btn-danger" href="{{ route('reminder_delete', ['id'=>$item->id]) }}">
-                              حذف
-                          </a>
-                          <form method="get" action="{{ route('supporter_students') }}" >
-                            <input type="hidden" name="students_id" value="{{$item->students_id}}" />
-                            <input type="hidden" name="calls_id" value="{{$item->id}}" />
-                            <button class="btn btn-primary">
-                              تماس
-                            </button>
-                          </form>
-                        </td>
-                      </tr>
-                      @endforeach  --}}
                   </tbody>
                 </table>
               </div>
@@ -119,24 +97,36 @@ $persons = [
 <!-- page script -->
 <script>
     var table;
+    var date = "{{ $date }}";
+    var currentRoute = '{{Route::current()->getName()}}';
+
     function showStudents(index){
-        // $(".students").hide();
         $("#students-" + index).toggle();
 
         return false;
     }
     function showStudentTags(index){
-        // $(".students").hide();
         $("#studenttags-" + index).toggle();
 
         return false;
     }
-    $(".btn-danger").click(function(e){
-        alert('hello');
+    function todayFunc(){
+        $('#today_header').text('یادآورهای امروز');
+        $('#today').val('true');
+        table.ajax.reload();
+    }
+    function allFunc(){
+        $('#today_header').text('یادآورها');
+        $('#today').val('false');
+        window.location.replace('{{ route("reminders_post",["date" => null])}}')
+    }
+
+    function destroy(e){
         if(!confirm('آیا مطمئنید؟')){
           e.preventDefault();
         }
-    });
+    }
+
     $(function () {
     $.ajaxSetup({
         headers: {
@@ -176,35 +166,27 @@ $persons = [
             processing: true,
             ajax: {
                 "type": "POST",
-                "url": "{{ route('reminders') }}",
+                "url": "{{ route('reminders_post') }}",
                 "dataType": "json",
                 "contentType": 'application/json; charset=utf-8',
 
                 "data": function (data) {
-                    {{--  data['supporters_id'] = $("#supporters_id").val();
-                    data['sources_id'] = $("#sources_id").val();
-                    data['cities_id'] = $("#cities_id").val();
-                    data['egucation_level'] = $("#egucation_level").val();
-                    data['major'] = $("#major").val();
-                    data['school'] = $("#school").val();
-                    data['name'] = $("#name").val();
-                    data['phone'] = $("#phone").val();  --}}
-
+                    data['today'] = date == "today" ? "true" : $('#today').val();
+                    console.log(data['today']);
                     return JSON.stringify(data);
                 },
                 "complete": function(response) {
                     $('#example2_paginate').removeClass('dataTables_paginate');
-                   // console.log(response);
                 }
 
             },
             columns: [
                 { data: null},
                 { data: 'id' },
-                { data: 'student' },
-                { data: 'product' },
+                { data: 'students_id' },
+                { data: 'products_id' },
                 { data: 'replier' },
-                { data: 'callresult'},
+                { data: 'call_results_id'},
                 { data: 'next_call'},
                 { data: 'next_to_call'},
                 { data: 'description'},
@@ -217,8 +199,8 @@ $persons = [
             cell.innerHTML = i + 1 + info.start;
         });
     });
+});
 
 
-    });
   </script>
 @endsection
