@@ -785,32 +785,18 @@ class SupporterController extends Controller
 
             if($columnName != 'row' && $columnName != 'end' && $columnName != "temps" && $columnName != "tags"){
                 $sw = "all";
-                //dd($students);
                 $students = $theStudents->orderBy($columnName,$columnSortOrder)
                 ->select('students.*')
                 ->skip($req['start'])
                 ->take($req['length'])
                 ->get();
             }else if($columnName == "tags"){
-
                 $sw = "tags";
-                $joinStudents = $theStudents->join('student_tags', 'students.id', '=', 'student_tags.students_id');
-                //DB::enableQueryLog();
-                $countStudents = $joinStudents
-                ->select('students.*',DB::raw('count(*) as CID'))
-                ->where('student_tags.is_deleted',false)
-                ->groupBy('student_tags.students_id')
-                ->orderBy("CID",$columnSortOrder)
-                ->get();
-                //dd(DB::getQueryLog());
-                $count = ($countStudents && is_countable($countStudents)) ? count($countStudents) : 0;
-                $students = $joinStudents
-                ->select('students.*',DB::raw('count(*) as CID'))
+                $students = $theStudents
+                ->withCount('studenttags')
                 ->skip($req['start'])
                 ->take($req['length'])
-                ->where('student_tags.is_deleted',false)
-                ->groupBy('student_tags.students_id')
-                ->orderBy("CID",$columnSortOrder)
+                ->orderBy('studenttags_count',$columnSortOrder)
                 ->get();
             }else{
                 $sw = "other";
@@ -859,9 +845,9 @@ class SupporterController extends Controller
                     "end" => ""
                 ];
             }
-            if($sw == null || $sw == "all" || $sw == "other"){
-                $count = count($getStudents);
-            }
+            // if($sw == null || $sw == "all" || $sw == "other"){
+            //     $count = count($getStudents);
+            // }
 
             // $outdata = [];
             // for ($i = $req['start']; $i < min($req['length'] + $req['start'], count($data)); $i++) {
@@ -871,8 +857,8 @@ class SupporterController extends Controller
             $result = [
                 "draw" => $req['draw'],
                 "data" => $data,
-                "recordsTotal" => $count,
-                "recordsFiltered" => $count
+                "recordsTotal" => count($getStudents),
+                "recordsFiltered" => count($getStudents)
             ];
 
             return $result;

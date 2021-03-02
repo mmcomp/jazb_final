@@ -141,10 +141,6 @@ class StudentController extends Controller
 
     public function indexAll(Request $request)
     {
-        // $tag = Tag::where('id', 1)->with('parent_four')->first();
-        // dd($tag->);
-        $sw = null;
-        $count = 0;
         $students = Student::where('students.is_deleted', false)->where('students.banned', false)->where('students.archived', false);
         $supportGroupId = Group::getSupport();
         if ($supportGroupId)
@@ -299,7 +295,6 @@ class StudentController extends Controller
             $columnSortOrder = $order_arr[0]['dir']; // asc or desc
 
             if($columnName != 'row' && $columnName != 'end' && $columnName != "temps" && $columnName != "tags"){
-                $sw = "all";
                 $students = $students->orderBy($columnName,$columnSortOrder)
                 ->select('students.*')
                 ->skip($req['start'])
@@ -313,22 +308,11 @@ class StudentController extends Controller
                 ->with('supporter')
                 ->get();
             }else if($columnName == "tags"){
-                $joinStudents = $students->join('student_tags', 'students.id', '=', 'student_tags.students_id');
                 $sw = "tags";
-                $countStudents = $joinStudents
-                ->select('students.*',DB::raw('count(*) as CID'))
-                ->where('student_tags.is_deleted',false)
-                ->groupBy('student_tags.students_id')
-                ->orderBy("CID",$columnSortOrder)
-                ->get();
-                $count = ($countStudents && is_countable($countStudents)) ? count($countStudents) : 0;
-                $students = $joinStudents
-                ->select('students.*',DB::raw('count(*) as CID'))
+                $students = $students
+                ->withCount('studenttags')
                 ->skip($req['start'])
                 ->take($req['length'])
-                ->where('student_tags.is_deleted',false)
-                ->groupBy('student_tags.students_id')
-                ->orderBy("CID",$columnSortOrder)
                 ->with('user')
                 ->with('studenttags.tag.parent_four')
                 ->with('studentcollections.collection.parent')
@@ -336,9 +320,9 @@ class StudentController extends Controller
                 ->with('source')
                 ->with('consultant')
                 ->with('supporter')
+                ->orderBy('studenttags_count',$columnSortOrder)
                 ->get();
             }else{
-                $sw = "other";
                 $students = $students->select('students.*')
                 ->skip($req['start'])
                 ->take($req['length'])
@@ -414,15 +398,13 @@ class StudentController extends Controller
                     </a>'
                 ];
             }
-            if($sw == null || $sw == "all" || $sw == "other"){
-                $count = count($allStudents);
-            }
+
 
             $result = [
                 "draw" => $req['draw'],
                 "data" => $data,
-                "recordsTotal" => $count,
-                "recordsFiltered" => $count,
+                "recordsTotal" => count($allStudents),
+                "recordsFiltered" => count($allStudents),
                 //"students" => $students
             ];
 
