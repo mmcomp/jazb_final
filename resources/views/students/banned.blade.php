@@ -189,12 +189,12 @@
                         @if(($item->studenttags && count($item->studenttags)>0) || ($item->studentcollections && count($item->studentcollections)>0))
                         <td>
                             @for($i = 0; $i < count($item->studenttags);$i++)
-                            <span class="alert alert-info p-1">
+                            <span class="bg-cyan d-inline-block px-1 rounded small p-1 mt-2">
                                 {{ $item->studenttags[$i]->tag->name }}
                             </span><br/>
                             @endfor
                             @for($i = 0; $i < count($item->studentcollections);$i++)
-                            <span class="alert alert-warning p-1">
+                            <span class="bg-warning d-inline-block px-1 rounded small p-1 mt-2">
                                 {{ ($item->studentcollections[$i]->collection->parent) ? $item->studentcollections[$i]->collection->parent->name . '->' : '' }} {{ $item->studentcollections[$i]->collection->name }}
                             </span><br/>
                             @endfor
@@ -206,9 +206,9 @@
                         <td>
                             @foreach ($item->studenttemperatures as $sitem)
                             @if($sitem->temperature->status=='hot')
-                            <span class="alert alert-danger p-1">
+                            <span class="bg-danger d-inline-block px-1 rounded small p-1 mt-2">
                             @else
-                            <span class="alert alert-info p-1">
+                            <span class="bg-cyan d-inline-block px-1 rounded small p-1 mt-2">
                             @endif
                                 {{ $sitem->temperature->name }}
                             </span>
