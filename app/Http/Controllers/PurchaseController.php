@@ -282,7 +282,6 @@ class PurchaseController extends Controller
 
             if(!isset($purchase['woo_id']) || !isset($purchase['phone']) || !isset($purchase['price']) || !isset($purchase['factor_number'])){
                 $fails[] = $purchase;
-                Log::info('there is not woo_id or purchase or phone or price or factor_number');
                 continue;
             }
             $purchaseObject = Purchase::where("factor_number", $purchase['factor_number'])->first();
@@ -292,7 +291,6 @@ class PurchaseController extends Controller
             $student = Student::where('phone', $purchase['phone'])->where('banned', false)->first();
             if($product == null || $student == null){
                 $fails[] = $purchase;
-                Log::info('product is null or student is null');
                 continue;
             }
             foreach($purchase as $key=>$value){
@@ -310,7 +308,6 @@ class PurchaseController extends Controller
                 $ids[] = $purchaseObject->factor_number;
                 $purchaseSaved = true;
             }catch(Exception $e){
-                Log::info('purchaseObject can not be saved'.' '.$e);
                 $fails[] = $purchase;
             }
             if($student){
@@ -327,7 +324,7 @@ class PurchaseController extends Controller
                 try{
                     $student->save();
                 }catch(Exception $e){
-                    Log::info('student'.' '.$e);
+                    dd($e);
                     // $fails[] = $student;
                 }
             }
@@ -343,7 +340,7 @@ class PurchaseController extends Controller
                             try{
                                 $studentClassRoom->save();
                             }catch(Exception $e){
-                                Log::info('classroom '.$e);
+                                dd('classroom '.$e);
                             }
                         }
                     }
