@@ -72,7 +72,7 @@ class StudentsImport implements ToModel, WithChunkReading, ShouldQueue
 
         $student = Student::where('phone', ((strpos($this->perToEn($row[0]), '0')!==0)?'0':'') . $this->perToEn($row[0]))->first();
         if($student===null) {
-            Log::info("success:" . ((strpos($this->perToEn($row[0]), '0')!==0)?'0':'') . $this->perToEn($row[0]));
+            //Log::info("success:" . ((strpos($this->perToEn($row[0]), '0')!==0)?'0':'') . $this->perToEn($row[0]));
             return new Student([
                 'phone' => ((strpos($this->perToEn($row[0]), '0')!==0)?'0':'') . $this->perToEn($row[0]),
                 'first_name' => $row[1],
