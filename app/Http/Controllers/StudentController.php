@@ -141,10 +141,6 @@ class StudentController extends Controller
 
     public function indexAll(Request $request)
     {
-        // $tag = Tag::where('id', 1)->with('parent_four')->first();
-        // dd($tag->);
-        $sw = null;
-        $count = 0;
         $students = Student::where('students.is_deleted', false)->where('students.banned', false)->where('students.archived', false);
         $supportGroupId = Group::getSupport();
         if ($supportGroupId)
@@ -234,14 +230,26 @@ class StudentController extends Controller
         $hotTemperatures = Temperature::where('is_deleted', false)->where('status', 'hot')->get();
         $coldTemperatures = Temperature::where('is_deleted', false)->where('status', 'cold')->get();
         $cities = City::where('is_deleted', false)->get();
-
-
+        //dd((array)$students->get());
+        $theStudents = $students
+        ->with('user')
+        ->with('studenttags.tag.parent_four')
+        ->with('studentcollections.collection.parent')
+        ->with('studenttemperatures.temperature')
+        ->with('source')
+        ->with('consultant')
+        ->with('supporter')
+        ->get();
+        foreach ($theStudents as $index => $student) {
+            $theStudents[$index]->pcreated_at = jdate(strtotime($student->created_at))->format("Y/m/d");
+        }
+        //dd($students->first());
 
         // dd($students);
         if (request()->getMethod() == 'GET') {
             return view('students.index', [
                 //'route' => 'student_all',
-                'students' => $students,
+                'students' => $theStudents,
                 'supports' => $supports,
                 'sources' => $sources,
                 'supporters_id' => $supporters_id,
@@ -287,7 +295,6 @@ class StudentController extends Controller
             $columnSortOrder = $order_arr[0]['dir']; // asc or desc
 
             if($columnName != 'row' && $columnName != 'end' && $columnName != "temps" && $columnName != "tags"){
-                $sw = "all";
                 $students = $students->orderBy($columnName,$columnSortOrder)
                 ->select('students.*')
                 ->skip($req['start'])
@@ -301,22 +308,11 @@ class StudentController extends Controller
                 ->with('supporter')
                 ->get();
             }else if($columnName == "tags"){
-                $joinStudents = $students->join('student_tags', 'students.id', '=', 'student_tags.students_id');
                 $sw = "tags";
-                $countStudents = $joinStudents
-                ->select('students.*',DB::raw('count(*) as CID'))
-                ->where('student_tags.is_deleted',false)
-                ->groupBy('student_tags.students_id')
-                ->orderBy("CID",$columnSortOrder)
-                ->get();
-                $count = ($countStudents && is_countable($countStudents)) ? count($countStudents) : 0;
-                $students = $joinStudents
-                ->select('students.*',DB::raw('count(*) as CID'))
+                $students = $students
+                ->withCount('studenttags')
                 ->skip($req['start'])
                 ->take($req['length'])
-                ->where('student_tags.is_deleted',false)
-                ->groupBy('student_tags.students_id')
-                ->orderBy("CID",$columnSortOrder)
                 ->with('user')
                 ->with('studenttags.tag.parent_four')
                 ->with('studentcollections.collection.parent')
@@ -324,9 +320,9 @@ class StudentController extends Controller
                 ->with('source')
                 ->with('consultant')
                 ->with('supporter')
+                ->orderBy('studenttags_count',$columnSortOrder)
                 ->get();
             }else{
-                $sw = "other";
                 $students = $students->select('students.*')
                 ->skip($req['start'])
                 ->take($req['length'])
@@ -339,9 +335,7 @@ class StudentController extends Controller
                 ->with('supporter')
                 ->get();
             }
-            foreach ($students as $index => $student) {
-                $students[$index]->pcreated_at = jdate(strtotime($student->created_at))->format("Y/m/d");
-            }
+
             $data = [];
             foreach ($students as $index => $item) {
                 $tags = "";
@@ -404,16 +398,14 @@ class StudentController extends Controller
                     </a>'
                 ];
             }
-            if($sw == null || $sw == "all" || $sw == "other"){
-                $count = count($allStudents);
-            }
+
 
             $result = [
                 "draw" => $req['draw'],
                 "data" => $data,
-                "recordsTotal" => $count,
-                "recordsFiltered" => $count,
-                "students" => $students
+                "recordsTotal" => count($allStudents),
+                "recordsFiltered" => count($allStudents),
+                //"students" => $students
             ];
 
             return $result;
@@ -785,7 +777,8 @@ class StudentController extends Controller
         if (request()->getMethod() == 'GET') {
             // dd($students);
             return view('students.student-input-and-division', [
-                //'route' => 'students',
+            //return view('students.index', [
+            //'route' => 'students',
                 'students' => $students,
                 'supports' => $supports,
                 'sources' => $sources,

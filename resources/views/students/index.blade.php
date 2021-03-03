@@ -189,7 +189,7 @@
 
                 <table id="example2" class="table table-bordered table-hover">
                   <thead>
-                  <tr>
+                  <tr class="table_header">
                     <th>ردیف</th>
                     <th>کد</th>
                     <th>نام</th>
@@ -396,6 +396,7 @@
 <!-- page script -->
 <script>
     let students = @JSON($students);
+    //console.log(students);
     let parentOnes = @JSON($parentOnes);
     let parentTwos = @JSON($parentTwos);
     let parentThrees = @JSON($parentThrees);
@@ -406,6 +407,7 @@
     let majors = @JSON($majors);
     let tags = {};
     let collections = {};
+    let sw = 0;
     var table;
     for(let tg of tmpTags){
         tags[tg.id] = tg;
@@ -482,6 +484,7 @@
                             </div>
                             <div class="col">
                                 تاریخ ثبت دانش آموز :
+                               {{-- students[index].pcreated_at --}}
                                 ${ students[index].pcreated_at }
                             </div>
                             <div class="col">
@@ -941,15 +944,6 @@
                 "contentType": 'application/json; charset=utf-8',
 
                 "data": function (data) {
-                    // console.log(data);
-                    // Grab form values containing user options
-                    // var form = {};
-                    // $.each($("form").serializeArray(), function (i, field) {
-                    //     form[field.name] = field.value || "";
-                    // });
-                    // Add options used by Datatables
-                    // var info = { "start": 0, "length": 10, "draw": 1 };
-                    // $.extend(form, info);
                     data['supporters_id'] = $("#supporters_id").val();
                     data['sources_id'] = $("#sources_id").val();
                     data['cities_id'] = $("#cities_id").val();
@@ -958,28 +952,30 @@
                     data['school'] = $("#school").val();
                     data['name'] = $("#name").val();
                     data['phone'] = $("#phone").val();
-
                     return JSON.stringify(data);
                 },
                 "complete": function(response) {
                     $('#example2_paginate').removeClass('dataTables_paginate');
                    // console.log(response);
-                    if(students && isEmpty(students))
-                        students = JSON.parse(response.responseText).students;
                     $('#example2 tr').click(function() {
-                        var tr = this;
-                        var studentId = parseInt($(tr).find('td')[1].innerText, 10);
-                        if(!isNaN(studentId)){
-                            for(var index in students){
-                                // console.log('check', students[index].id, studentId);
-                                if(students[index].id==studentId){
-                                    // console.log(students[index]);
-                                    showMorePanel(index, tr);
-                                    // break;
+                        var x = this;
+                        if($(this).hasClass('odd') || $(this).hasClass('even')){
+                            //console.log('hello');
+                            var studentId = parseInt($(this).find('td')[1].innerText, 10);
+                            if(!isNaN(studentId)){
+                                for(var index in students){
+                                    //console.log('check', students[index].id, studentId);
+                                    if(students[index].id==studentId){
+                                        // console.log(students[index]);
+                                        showMorePanel(index, this);
+                                        break;
+                                    }
                                 }
                             }
                         }
-                        console.log(this, $(this).find('td')[1].innerText);
+
+
+
                     });
                 }
 

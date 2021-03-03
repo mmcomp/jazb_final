@@ -256,7 +256,8 @@ Route::group(['middleware' => ['auth', 'message','changeCharactersAllToBePersian
     });
 
     Route::group(['prefix' => '/reminders'], function () {
-        Route::any('/{date?}', 'ReminderController@index')->name('reminders');
+        Route::get('/{date?}', 'ReminderController@index')->name('reminders_get');
+        Route::post('/{date?}', 'ReminderController@indexPost')->name('reminders_post');
         Route::get('/delete/{id}', 'ReminderController@delete')->name('reminder_delete');
     });
 
