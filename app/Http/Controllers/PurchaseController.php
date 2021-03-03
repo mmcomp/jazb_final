@@ -9,6 +9,7 @@ use App\Purchase;
 use App\Student;
 use App\StudentClassRoom;
 use Illuminate\Support\Facades\DB;
+use Log;
 
 use Exception;
 
@@ -278,6 +279,7 @@ class PurchaseController extends Controller
         $ids = [];
         $fails = [];
         foreach($purchases as $purchase){
+
             if(!isset($purchase['woo_id']) || !isset($purchase['phone']) || !isset($purchase['price']) || !isset($purchase['factor_number'])){
                 $fails[] = $purchase;
                 continue;
@@ -327,7 +329,11 @@ class PurchaseController extends Controller
                 $student->today_purchases = $student->purchases()->where('created_at', '>=', date("Y-m-d 00:00:00"))->where('is_deleted',false)->where('type','!=','site_failed')->count();
                 try{
                     $student->save();
-                }catch(Exception $e){}
+
+                }catch(Exception $e){
+                    dd($e);
+                    // $fails[] = $student;
+             
             }
             if($purchaseSaved) {
                 if($product->classrooms) {
@@ -341,7 +347,7 @@ class PurchaseController extends Controller
                             try{
                                 $studentClassRoom->save();
                             }catch(Exception $e){
-                                // dd($e);
+                                dd('classroom '.$e);
                             }
                         }
                     }
