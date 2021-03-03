@@ -277,9 +277,12 @@ class PurchaseController extends Controller
         $purchases = $request->input('purchases', []);
         $ids = [];
         $fails = [];
+
         foreach($purchases as $purchase){
+
             if(!isset($purchase['woo_id']) || !isset($purchase['phone']) || !isset($purchase['price']) || !isset($purchase['factor_number'])){
                 $fails[] = $purchase;
+                dd('there is not woo_id or purchase or phone or price or factor_number');
                 continue;
             }
             $purchaseObject = Purchase::where("factor_number", $purchase['factor_number'])->first();
@@ -289,9 +292,9 @@ class PurchaseController extends Controller
             $student = Student::where('phone', $purchase['phone'])->where('banned', false)->first();
             if($product == null || $student == null){
                 $fails[] = $purchase;
+                dd('product is null or student is null');
                 continue;
             }
-
             foreach($purchase as $key=>$value){
                 if($key != 'woo_id' && $key != 'phone')
                     $purchaseObject->$key = $value;
@@ -307,6 +310,7 @@ class PurchaseController extends Controller
                 $ids[] = $purchaseObject->factor_number;
                 $purchaseSaved = true;
             }catch(Exception $e){
+                dd('purchaseObject can not be saved'.' '.$e);
                 $fails[] = $purchase;
             }
             if($student){
@@ -323,6 +327,7 @@ class PurchaseController extends Controller
                 try{
                     $student->save();
                 }catch(Exception $e){
+                    dd('student'.' '.$e);
                     // $fails[] = $student;
                 }
             }
@@ -338,7 +343,7 @@ class PurchaseController extends Controller
                             try{
                                 $studentClassRoom->save();
                             }catch(Exception $e){
-                                // dd($e);
+                                dd('classroom '.$e);
                             }
                         }
                     }
