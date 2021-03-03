@@ -1450,7 +1450,8 @@ class StudentController extends Controller
                 //     $studentObject->save();
                 //     $ids[] = $studentObject->id;
                 // }else{
-                $fails[] = $student;
+                // $fails[] = $student;
+                $ids[] = $studentObject->phone;
                 // }
             } else {
                 $studentObject = new Student;
