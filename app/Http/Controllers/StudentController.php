@@ -1460,7 +1460,7 @@ class StudentController extends Controller
                 $studentObject->is_from_site = true;
                 try {
                     $studentObject->save();
-                    $ids[] = $studentObject->id;
+                    $ids[] = $studentObject->phone;
                 } catch (Exception $e) {
                     $student['error'] = $e->getMessage();
                     $fails[] = $student;
@@ -1502,7 +1502,7 @@ class StudentController extends Controller
             $studentObject->is_from_site = true;
             try {
                 $studentObject->save();
-                $ids[] = $studentObject->id;
+                $ids[] = $studentObject->phone;
             } catch (Exception $e) {
                 // dump($e);
                 $student['error'] = $e->getMessage();
