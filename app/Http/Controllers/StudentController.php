@@ -1442,7 +1442,7 @@ class StudentController extends Controller
                 $fails[] = $student;
                 continue;
             }
-            $studentObject = Student::where('phone', $student['phone'])->where('banned', false)->first();
+            $studentObject = Student::where('phone', $student['phone'])->first();
             if ($studentObject/* && isset($student['marketers_id']) && $studentObject->marketers_id<=0*/) {
                 // $marketer = Marketer::where('users_id', $student['marketers_id'])->first();
                 // if($marketer){
@@ -1450,7 +1450,8 @@ class StudentController extends Controller
                 //     $studentObject->save();
                 //     $ids[] = $studentObject->id;
                 // }else{
-                $fails[] = $student;
+                // $fails[] = $student;
+                $ids[] = $studentObject->phone;
                 // }
             } else {
                 $studentObject = new Student;
