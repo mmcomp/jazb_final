@@ -291,6 +291,10 @@ class PurchaseController extends Controller
                 $fails[] = $purchase;
                 continue;
             }
+<<<<<<< HEAD
+=======
+
+>>>>>>> a791cbed747a6ab0ceed49bac2e28e30a0ee0e79
 
             $purchaseObject = Purchase::where("factor_number", $purchase['factor_number'])->where("products_id", $product->id)->first();
             if(!$purchaseObject)
@@ -329,11 +333,19 @@ class PurchaseController extends Controller
                 $student->today_purchases = $student->purchases()->where('created_at', '>=', date("Y-m-d 00:00:00"))->where('is_deleted',false)->where('type','!=','site_failed')->count();
                 try{
                     $student->save();
+<<<<<<< HEAD
 
                 }catch(Exception $e){
                     dd($e);
                     // $fails[] = $student;
              
+=======
+                }catch(Exception $e){
+                    dd($e);
+                    // $fails[] = $student;
+                }
+
+>>>>>>> a791cbed747a6ab0ceed49bac2e28e30a0ee0e79
             }
             if($purchaseSaved) {
                 if($product->classrooms) {
