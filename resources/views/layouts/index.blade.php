@@ -762,9 +762,9 @@
                         </li>
                         <li class="nav-item">
                             @if(strpos(\Request::route()->getName(), 'reminder')===0)
-                            <a href="{{ route('reminders') }}" class="nav-link active">
+                            <a href="{{ route('reminders_get') }}" class="nav-link active">
                             @else
-                            <a href="{{ route('reminders') }}" class="nav-link">
+                            <a href="{{ route('reminders_get') }}" class="nav-link">
                                 @endif
                                 <p>یادآورها</p>
                             </a>

@@ -29,6 +29,8 @@ null => ""
 @section('css')
 <link href="/plugins/select2/css/select2.min.css" rel="stylesheet" />
 <meta name="csrf-token" content="{{ csrf_token() }}">
+<link rel="stylesheet" href="/plugins/datatables/css/jquery.dataTables.min.css" type="text/css">
+<link rel="stylesheet" href="/css/dataTableStyle.css">
 <style>
     .morepanel {
         display: none;
@@ -279,7 +281,7 @@ null => ""
                     </div>-->
                     <table id="example2" class="table table-bordered table-hover">
                         <thead>
-                            <tr>
+                            <tr class="table_header">
                                 <th>ردیف</th>
                                 <th>کد</th>
                                 <th>نام</th>
@@ -796,6 +798,7 @@ null => ""
     let tags = {};
     let collections = {};
     let calls_id = {{isset($calls_id) ? $calls_id : 'null'}};
+    //let callsText = "";
     var table;
     for (let tg of tmpTags) {
         tags[tg.id] = tg;
@@ -1562,8 +1565,6 @@ null => ""
                     alert('خطای بروز رسانی');
                 } else {
                     @if(isset($students_id) && $students_id != null)
-                    //window.location.href = '{{ route("reminders") }}';
-                    //window.history.back();
                     GoBackWithRefresh();
                     return false;
                     @else
@@ -1731,21 +1732,40 @@ null => ""
         });
         $('select.select2').select2();
         table = $("#example2").DataTable({
-            "paging": true
-            , "lengthChange": false
-            , "searching": false
-            , "ordering": true
-            , "info": true
-            , "autoWidth": true
-            , "language": {
+            "paging": true,
+            "lengthChange": false,
+            "searching": false,
+            "ordering": true,
+            "info": true,
+            "autoWidth": false,
+            "language": {
                 "paginate": {
-                    "previous": "قبل"
-                    , "next": "بعد"
-                }
-                , "emptyTable": "داده ای برای نمایش وجود ندارد"
-                , "info": "نمایش _START_ تا _END_ از _TOTAL_ داده"
-                , "infoEmpty": "نمایش 0 تا 0 از 0 داده"
-            , }
+                    "previous": "قبل",
+                    "next": "بعد"
+                },
+                "emptyTable":     "داده ای برای نمایش وجود ندارد",
+                "info":           "نمایش _START_ تا _END_ از _TOTAL_ داده",
+                "infoEmpty":      "نمایش 0 تا 0 از 0 داده",
+                "proccessing": "در حال بروزرسانی"
+            },
+            "columnDefs": [   ////define columns
+                    {
+                        "searchable": false,
+                        "orderable": false,
+                        "targets": 0
+                    },
+                    {
+                        "searchable": false,
+                        "orderable": false,
+                        "targets": 7
+                    },
+                    {
+                        "searchable": false,
+                        "orderable": false,
+                        "targets": 8
+                    },
+            ],
+            "order": [[1, 'asc']] /// sort columns 2
             , serverSide: true
             , processing: true
             , ajax: {
@@ -1777,19 +1797,26 @@ null => ""
                 }
                 , "complete": function(response) {
                     //console.log(response);
+                    $('#example2_paginate').removeClass('dataTables_paginate');
                     $('#example2 tr').click(function() {
                         var tr = this;
+                        //var x = this;
+                        if(!$(this).hasClass('table_header')){
                         var studentId = parseInt($(tr).find('td')[1].innerText, 10);
                         if (!isNaN(studentId)) {
+
                             for (var index in students) {
                                 if (students[index].id == studentId) {
                                     showMorePanel(index, tr);
                                 }
                             }
                         }
+                        }
                     });
                     @if(isset($students_id) && $students_id != null)
                     var tr = $('#example2 tr')[1];
+                    if(!$(this).hasClass('table_header')){
+
                     var studentId = parseInt($(tr).find('td')[1].innerText, 10);
                     if (!isNaN(studentId)) {
                         for (var index in students) {
@@ -1799,10 +1826,28 @@ null => ""
                             }
                         }
                     }
+                    }
                     @endif
                 }
 
-            }
+            },
+            columns: [
+                { data: null},
+                { data: 'id' },
+                { data: 'first_name' },
+                { data: 'last_name' },
+                { data: 'users_id' },
+                { data: 'sources_id'},
+                { data: 'tags'},
+                { data: 'temps'},
+                { data : 'end'}
+            ],
+        });
+        table.on('draw.dt', function () {
+            var info = table.page.info();
+            table.column(0, { search: 'applied', order: 'applied', page: 'applied' }).nodes().each(function (cell, i) {
+                cell.innerHTML = i + 1 + info.start;
+            });
         });
     });
 
