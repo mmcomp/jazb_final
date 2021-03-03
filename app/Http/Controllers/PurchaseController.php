@@ -9,6 +9,7 @@ use App\Purchase;
 use App\Student;
 use App\StudentClassRoom;
 use Illuminate\Support\Facades\DB;
+use Log;
 
 use Exception;
 
@@ -277,12 +278,11 @@ class PurchaseController extends Controller
         $purchases = $request->input('purchases', []);
         $ids = [];
         $fails = [];
-
         foreach($purchases as $purchase){
 
             if(!isset($purchase['woo_id']) || !isset($purchase['phone']) || !isset($purchase['price']) || !isset($purchase['factor_number'])){
                 $fails[] = $purchase;
-                dd('there is not woo_id or purchase or phone or price or factor_number');
+                Log::info('there is not woo_id or purchase or phone or price or factor_number');
                 continue;
             }
             $purchaseObject = Purchase::where("factor_number", $purchase['factor_number'])->first();
@@ -292,7 +292,7 @@ class PurchaseController extends Controller
             $student = Student::where('phone', $purchase['phone'])->where('banned', false)->first();
             if($product == null || $student == null){
                 $fails[] = $purchase;
-                dd('product is null or student is null');
+                Log::info('product is null or student is null');
                 continue;
             }
             foreach($purchase as $key=>$value){
@@ -310,7 +310,7 @@ class PurchaseController extends Controller
                 $ids[] = $purchaseObject->factor_number;
                 $purchaseSaved = true;
             }catch(Exception $e){
-                dd('purchaseObject can not be saved'.' '.$e);
+                Log::info('purchaseObject can not be saved'.' '.$e);
                 $fails[] = $purchase;
             }
             if($student){
@@ -327,7 +327,7 @@ class PurchaseController extends Controller
                 try{
                     $student->save();
                 }catch(Exception $e){
-                    dd('student'.' '.$e);
+                    Log::info('student'.' '.$e);
                     // $fails[] = $student;
                 }
             }
@@ -343,7 +343,7 @@ class PurchaseController extends Controller
                             try{
                                 $studentClassRoom->save();
                             }catch(Exception $e){
-                                dd('classroom '.$e);
+                                Log::info('classroom '.$e);
                             }
                         }
                     }
