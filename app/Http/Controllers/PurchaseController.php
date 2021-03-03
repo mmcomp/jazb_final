@@ -284,19 +284,15 @@ class PurchaseController extends Controller
                 $fails[] = $purchase;
                 continue;
             }
-
+            $purchaseObject = Purchase::where("factor_number", $purchase['factor_number'])->first();
+            if(!$purchaseObject)
+                $purchaseObject = new Purchase;
             $product = Product::where('woo_id', $purchase['woo_id'])->with('classrooms')->first();
             $student = Student::where('phone', $purchase['phone'])->where('banned', false)->first();
             if($product == null || $student == null){
                 $fails[] = $purchase;
                 continue;
             }
-
-
-            $purchaseObject = Purchase::where("factor_number", $purchase['factor_number'])->where("products_id", $product->id)->first();
-            if(!$purchaseObject)
-                $purchaseObject = new Purchase;
-
             foreach($purchase as $key=>$value){
                 if($key != 'woo_id' && $key != 'phone')
                     $purchaseObject->$key = $value;
@@ -309,10 +305,7 @@ class PurchaseController extends Controller
             $purchaseSaved = false;
             try{
                 $purchaseObject->save();
-                $ids[] = [
-                    "factor_number" => $purchaseObject->factor_number,
-                    "woo_id" => $product->woo_id
-                ];
+                $ids[] = $purchaseObject->factor_number;
                 $purchaseSaved = true;
             }catch(Exception $e){
                 $fails[] = $purchase;
@@ -334,7 +327,6 @@ class PurchaseController extends Controller
                     dd($e);
                     // $fails[] = $student;
                 }
-
             }
             if($purchaseSaved) {
                 if($product->classrooms) {
@@ -377,7 +369,7 @@ class PurchaseController extends Controller
             }
             try{
                 $studentObject->save();
-                $ids[] = $studentObject->phone;
+                $ids[] = $studentObject->id;
             }catch(Exception $e){
                 $fails[] = $student;
             }
