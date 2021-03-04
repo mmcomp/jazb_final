@@ -274,7 +274,7 @@ class assignGroupsOfStudentsToASponserController extends Controller
                 $tags = "";
                 if (($item->studenttags && count($item->studenttags) > 0) || ($item->studentcollections && count($item->studentcollections) > 0)) {
                     for ($i = 0; $i < count($item->studenttags); $i++) {
-                        $tags .= '<span class="alert alert-' . (($item->studenttags[$i]->tag->type == 'moral') ? 'info' : 'warning') . ' p-1">
+                        $tags .= '<span class="d-inline-block px-1 rounded small  mt-2 ' . (($item->studenttags[$i]->tag->type == 'moral') ? 'bg-cyan' : 'bg-warning') . ' p-1">
                         ' . (($item->studenttags[$i]->tag->parent_four) ? $item->studenttags[$i]->tag->parent_four->name . '->' : '') . ' ' . $item->studenttags[$i]->tag->name . '
                     </span><br/>';
                     }
@@ -291,9 +291,9 @@ class assignGroupsOfStudentsToASponserController extends Controller
                 if ($item->studenttemperatures && count($item->studenttemperatures) > 0) {
                     foreach ($item->studenttemperatures as $sitem) {
                         if ($sitem->temperature->status == 'hot')
-                            $temps .= '<span class="alert alert-danger p-1">';
+                            $temps .= '<span class="bg-danger d-inline-block px-1 rounded small p-1 mt-2">';
                         else
-                            $temps .= '<span class="alert alert-info p-1">';
+                            $temps .= '<span class="bg-info d-inline-block px-1 rounded small p-1 mt-2">';
                         $temps .= $sitem->temperature->name . '</span>';
                     }
                 }

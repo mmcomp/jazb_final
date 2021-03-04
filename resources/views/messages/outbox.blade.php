@@ -53,7 +53,7 @@ table tr {
                     <th>ایجاد کننده</th>
                     <th>پیام</th>
                     <th>ضمیمه</th>
-                    <!--<th>گیرنده ها</th>-->
+                    <th>گیرنده ها</th>
                     <th>#</th>
                   </tr>
                   </thead>
@@ -69,15 +69,18 @@ table tr {
                         @else
                         <td href="{{ route('message_message_create', $item->id) }}"></td>
                         @endif
-                        <!--
                         <td>
                             @foreach ($item->flows as $fitem)
-                                <span class="alert alert-primary">
-                                {{ $fitem->user->first_name }} {{ $fitem->user->last_name }} {{ jdate(strtotime($fitem->created_at))->format("Y/m/d") }}
+                                <span class="small text-info p-2 d-inline-block">
+                                {{ $fitem->user->first_name }} {{ $fitem->user->last_name }}
+                                @if($fitem->status == "read")
+                                <i class="fa fa-check text-lime"></i>
+                                @else
+                                <i class="fa fa-times text-danger"></i>
+                                @endif
                                 </span>
                             @endforeach
                         </td>
-                        -->
                         <td>
                             @if(Gate::allows('parameters'))
                             <a class="btn btn-danger" href="{{ route('message_delete', $item->id) }}">
