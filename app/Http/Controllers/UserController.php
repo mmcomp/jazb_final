@@ -210,6 +210,7 @@ class UserController extends Controller
         $user->home_address = $request->input('home_address');
         $user->work_address = $request->input('work_address');
         $user->max_student = (int)$request->input('max_student');
+        //$user->default_commision = (int)$request->input('commision');
         if($request->file('image_path')){
             $filename = now()->timestamp . '.' . $request->file('image_path')->extension();
             $user->image_path = $request->file('image_path')->storeAs('supporters', $filename, 'public_uploads');
