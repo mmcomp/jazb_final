@@ -199,7 +199,7 @@
                             <input type="text" class="form-control" id="commision" name="commision" placeholder="کمیسیون" value="{{ $user->default_commision }}" disabled/>
                         </div>
                         <div class="form-group">
-                            <a href="{{ route('commision',['id' => $user->id]) }}">ورود به صفحه کمیسیون این کاربر</a>
+                            <a href="{{ route('commission',['id' => $user->id]) }}">ورود به صفحه کمیسیون این کاربر</a>
                         </div>
                         @endif
 

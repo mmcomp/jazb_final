@@ -306,11 +306,11 @@ Route::group(['middleware' => ['auth', 'message','changeCharactersAllToBePersian
         Route::any('/question/{exam_id}/create', 'ExamController@questionCreate')->name('exam_question_create');
         Route::get('/question/{exam_id}/delete/{id}', 'ExamController@questionDelete')->name('exam_question_delete');
     });
-    Route::group(['prefix' => '/commisions'],function(){
-        Route::get('/{id}','CommisionController@index')->name('commision');
-        Route::any('/create','CommisionController@create')->name('commision_create');
-        Route::any('/edit/{id}','CommisionController@edit')->name('commision_edit');
-        Route::any('/delete/{id}','CommisionController@destroy')->name('commision_delete');
+    Route::group(['prefix' => '/commissions'],function(){
+        Route::get('/index/{id}','CommissionController@index')->name('commission');
+        Route::any('/create','CommissionController@create')->name('commission_create');
+        Route::any('/edit/{id}','CommissionController@edit')->name('commission_edit');
+        Route::any('/delete/{id}','CommissionController@destroy')->name('commission_delete');
     });
 });
 

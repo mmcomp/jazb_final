@@ -27,7 +27,7 @@
             <div class="card">
               <div class="card-header">
                 <h3 class="card-title">
-                    <a class="btn btn-success" href="{{ route('commision_create') }}">کمیسیون جدید</a>
+                    <a class="btn btn-success" href="{{ route('commission_create') }}">کمیسیون جدید</a>
                 </h3>
               </div>
               <!-- /.card-header -->
@@ -43,8 +43,8 @@
                   </tr>
                   </thead>
                   <tbody>
-                      @if($commisions)
-                      @foreach ($commisions as $index => $item)
+                      @if($commissions)
+                      @foreach ($commissions as $index => $item)
                       <tr>
                         <td>{{ $index + 1 }}</td>
                         <td>{{ $item->id }}</td>
@@ -55,10 +55,10 @@
                            <td>{{  $item->user ? $item->user->default_commision : 0}}</td>
                         @endif
                         <td>
-                            <a class="btn btn-primary" href="{{ route('commision_edit', $item->id) }}">
+                            <a class="btn btn-primary" href="{{ route('commission_edit', $item->id) }}">
                                 ویرایش
                             </a>
-                            <a class="btn btn-danger" href="{{ route('commision_delete', $item->id) }}">
+                            <a class="btn btn-danger" href="{{ route('commission_delete', $item->id) }}">
                                 حذف
                             </a>
                         </td>

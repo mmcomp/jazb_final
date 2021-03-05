@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Commision extends Model
+class Commission extends Model
 {
     protected $table = 'commission_supporter';
     protected $fillable = [
