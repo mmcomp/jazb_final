@@ -11,6 +11,7 @@ use App\ClassRoom;
 use App\StudentClassRoom;
 
 use Exception;
+use Log;
 
 class ProductController extends Controller
 {
@@ -183,6 +184,7 @@ class ProductController extends Controller
                 $ids[] = $productObject->woo_id;
             }catch(Exception $e){
                 $fails[] = $product;
+                Log::info(json_encode($e));
             }
         }
         return [
