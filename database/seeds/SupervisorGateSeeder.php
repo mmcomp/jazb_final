@@ -13,11 +13,12 @@ class SupervisorGateSeeder extends Seeder
     {
         $result = DB::table('groups')->where('type', 'supervisor')->first();
         if(!$result) {
-            $result = DB::table('groups')->insert([
+            DB::table('groups')->insert([
                 "name"=>"Supervisor",
                 "type"=>"supervisor"
             ]);
         }
+        $result = DB::table('groups')->where('type', 'supervisor')->first();
         $aresult = DB::table('groups')->where('type', 'admin')->first();
         $gresult = DB::table('group_gates')->where('groups_id', $result->id)->where('key', 'supervisor')->first();
         if(!$gresult) {
