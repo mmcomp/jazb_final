@@ -20,6 +20,7 @@ class CommissionController extends Controller
         $commissions = Commission::where('is_deleted',false)->where('users_id',$id)->get();
         return view('commission.index')->with([
           'commissions' => $commissions,
+          'id' => $id,
           'msg_success' => request()->session()->get('msg_success'),
           'msg_error' => request()->session()->get('msg_error')
         ]);
@@ -30,21 +31,22 @@ class CommissionController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create(Request $request)
+    public function create(Request $request,$id)
     {
         $products = Product::where('is_deleted',false)->get();
         if($request->getMethod() == "GET"){
             return view('commission.create')->with([
-                'products' => $products
+                'products' => $products,
             ]);
         }
         $c = new Commission;
-        $c->users_id = $request->input('supporters_id');
+        $c->users_id = $id;
         $c->users_saver_id = Auth::user()->id;
         $c->products_id = $request->input('products_id');
         $c->commission = $request->input('commission');
         try{
             $c->save();
+            return redirect()->route('commission',['id' => $id]);
         }catch(Exception $e){
             dd($e);
         }
@@ -56,7 +58,7 @@ class CommissionController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(Request $request,$id)
+    public function edit(Request $request,$id,$supporters_id)
     {
         $products = Product::where('is_deleted',false)->get();
         $c = Commission::where('is_deleted',false)->where('id',$id)->first();
@@ -70,12 +72,13 @@ class CommissionController extends Controller
                 "products" => $products
             ]);
         }
-        $c->users_id = $request->input('supporters_id');
+        $c->users_id = $supporters_id;
         $c->users_saver_id = Auth::user()->id;
         $c->products_id = $request->input('products_id');
         $c->commission = $request->input('commission');
         try{
             $c->save();
+            return redirect()->route('commission',['id' => $supporters_id]);
         }catch(Exception $e){
             dd($e);
         }

@@ -27,7 +27,7 @@
             <div class="card">
               <div class="card-header">
                 <h3 class="card-title">
-                    <a class="btn btn-success" href="{{ route('commission_create') }}">کمیسیون جدید</a>
+                    <a class="btn btn-success" href="{{ route('commission_create',['id' => $id]) }}">کمیسیون جدید</a>
                 </h3>
               </div>
               <!-- /.card-header -->
@@ -55,7 +55,7 @@
                            <td>{{  $item->user ? $item->user->default_commision : 0}}</td>
                         @endif
                         <td>
-                            <a class="btn btn-primary" href="{{ route('commission_edit', $item->id) }}">
+                            <a class="btn btn-primary" href="{{ route('commission_edit', ['id' => $item->id, 'supporters_id' => $item->users_id]) }}">
                                 ویرایش
                             </a>
                             <a class="btn btn-danger" href="{{ route('commission_delete', $item->id) }}">

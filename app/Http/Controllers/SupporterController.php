@@ -31,6 +31,7 @@ use App\Notice;
 use App\Purchase;
 use App\StudentTag;
 use App\City;
+use App\Commission;
 use App\Http\Traits\AllTypeCallsTrait;
 use App\MergeStudents as AppMergeStudents;
 use App\SaleSuggestion;
@@ -42,12 +43,13 @@ use Illuminate\Support\Facades\DB;
 class SupporterController extends Controller
 {
     use AllTypeCallsTrait;
-    public function allMissedCalls(){
+    public function allMissedCalls()
+    {
         $persons = [
-            "student"=>"دانش آموز",
-            "father"=>"پدر",
-            "mother"=>"مادر",
-            "other"=>"غیره"
+            "student" => "دانش آموز",
+            "father" => "پدر",
+            "mother" => "مادر",
+            "other" => "غیره"
         ];
         $all_missed_calls = $this->missed_calls()['value'];
         return view('supporters.allMissedCalls')->with([
@@ -55,12 +57,13 @@ class SupporterController extends Controller
             'persons' => $persons
         ]);
     }
-    public function yesterdayMissedCalls(){
+    public function yesterdayMissedCalls()
+    {
         $persons = [
-            "student"=>"دانش آموز",
-            "father"=>"پدر",
-            "mother"=>"مادر",
-            "other"=>"غیره"
+            "student" => "دانش آموز",
+            "father" => "پدر",
+            "mother" => "مادر",
+            "other" => "غیره"
         ];
         $missed_calls_of_yesterday = $this->yesterday_missed_calls()['value'];
         return view('supporters.yesterdayMissedCalls')->with([
@@ -68,11 +71,12 @@ class SupporterController extends Controller
             'persons' => $persons
         ]);
     }
-    public function noNeedStudents(){
+    public function noNeedStudents()
+    {
 
         $no_need_calls_students = $this->no_need_calls_students()['value'];
         return view('supporters.noNeedStudents')->with([
-           'no_need_calls_students' => $no_need_calls_students
+            'no_need_calls_students' => $no_need_calls_students
         ]);
     }
     public static function persianToEnglishDigits($pnumber)
@@ -149,7 +153,7 @@ class SupporterController extends Controller
             $supporters = $supporters->with('students.purchases')->with('students.studenttags.tag')->orderBy('max_student', 'desc')->get();
         } else {
             $supporters = User::where('id', $theSupporters_id)->get();
-            $supportersForSelectInView = User::where('is_deleted',false)->get();
+            $supportersForSelectInView = User::where('is_deleted', false)->get();
         }
 
         $callResults = CallResult::where('is_deleted', false)->get();
@@ -482,7 +486,7 @@ class SupporterController extends Controller
         if (request()->input('students_id') != null) {
             $students_id = (int)request()->input('students_id');
             $calls_id = (int)request()->input('calls_id');
-            $call = Call::where('id',$calls_id)->where('students_id',$students_id)->first();
+            $call = Call::where('id', $calls_id)->where('students_id', $students_id)->first();
             $replier = $call ? $call->replier : '-';
             $products_id = $call ? $call->products_id : '-';
             $notices_id = $call ? $call->notices_id : '-';
@@ -677,7 +681,7 @@ class SupporterController extends Controller
             ->with('mergethirdauxilarystudent.auxilaryStudent')
             ->with('mergethirdauxilarystudent.secondAuxilaryStudent')
             ->with('mergethirdauxilarystudent.thirdAuxilaryStudent');
-            //->orderBy('created_at', 'desc');
+        //->orderBy('created_at', 'desc');
 
 
         $theStudents = $students;
@@ -783,27 +787,27 @@ class SupporterController extends Controller
             $columnName = $columnName_arr[$columnIndex]['data']; // Column name
             $columnSortOrder = $order_arr[0]['dir']; // asc or desc
 
-            if($columnName != 'row' && $columnName != 'end' && $columnName != "temps" && $columnName != "tags"){
+            if ($columnName != 'row' && $columnName != 'end' && $columnName != "temps" && $columnName != "tags") {
                 $sw = "all";
-                $students = $theStudents->orderBy($columnName,$columnSortOrder)
-                ->select('students.*')
-                ->skip($req['start'])
-                ->take($req['length'])
-                ->get();
-            }else if($columnName == "tags"){
+                $students = $theStudents->orderBy($columnName, $columnSortOrder)
+                    ->select('students.*')
+                    ->skip($req['start'])
+                    ->take($req['length'])
+                    ->get();
+            } else if ($columnName == "tags") {
                 $sw = "tags";
                 $students = $theStudents
-                ->withCount('studenttags')
-                ->skip($req['start'])
-                ->take($req['length'])
-                ->orderBy('studenttags_count',$columnSortOrder)
-                ->get();
-            }else{
+                    ->withCount('studenttags')
+                    ->skip($req['start'])
+                    ->take($req['length'])
+                    ->orderBy('studenttags_count', $columnSortOrder)
+                    ->get();
+            } else {
                 $sw = "other";
                 $students = $theStudents->select('students.*')
-                ->skip($req['start'])
-                ->take($req['length'])
-                ->get();
+                    ->skip($req['start'])
+                    ->take($req['length'])
+                    ->get();
             }
             $data = [];
             foreach ($students as $index => $item) {
@@ -836,7 +840,7 @@ class SupporterController extends Controller
                 $data[] = [
                     "row" => $index + 1,
                     "id" => $item->id,
-                    "first_name" =>$item->first_name,
+                    "first_name" => $item->first_name,
                     "last_name" => $item->last_name,
                     "users_id" => $registerer,
                     "sources_id" => ($item->source) ? $item->source->name : '-',
@@ -1049,12 +1053,11 @@ class SupporterController extends Controller
         $students = [];
         if (Gate::allows('purchases')) {
             $students = Student::where('is_deleted', false)->where('banned', false)->where('archived', false)->get();
-        }
-        else {
+        } else {
             $students = Student::where('is_deleted', false)->where('banned', false)->where('archived', false)->where('supporters_id', Auth::user()->id)->get();
         }
         foreach ($students as $index => $item) {
-            $item->today_purchases = $item->purchases()->where('created_at', '>=', date("Y-m-d 00:00:00"))->where('type','!=','site_failed')->where('is_deleted',false)->count();
+            $item->today_purchases = $item->purchases()->where('created_at', '>=', date("Y-m-d 00:00:00"))->where('type', '!=', 'site_failed')->where('is_deleted', false)->count();
             $item->save();
         }
 
@@ -1182,14 +1185,14 @@ class SupporterController extends Controller
         foreach ($students as $index => $item) {
             if ($item->supporters_id) {
                 $item->own_purchases = $item->purchases()->where('supporters_id', $item->supporters_id)
-                   ->where('is_deleted',false)->where('type','!=','site_failed')->count();
+                    ->where('is_deleted', false)->where('type', '!=', 'site_failed')->count();
             }
-            $item->other_purchases = $item->purchases()->where(function($query) use($item){
-                if($item->supporters_id)$query->where('supporters_id','!=',$item->supporters_id)->orWhere('supporters_id',0);
-            })->where('is_deleted',false)->where('type','!=','site_failed')->count();
+            $item->other_purchases = $item->purchases()->where(function ($query) use ($item) {
+                if ($item->supporters_id) $query->where('supporters_id', '!=', $item->supporters_id)->orWhere('supporters_id', 0);
+            })->where('is_deleted', false)->where('type', '!=', 'site_failed')->count();
             $item->today_purchases = $item->purchases()->where('created_at', '>=', date("Y-m-d 00:00:00"))->where(function ($query) use ($products_id) {
                 if ($products_id != null) $query->where('products_id', $products_id);
-            })->where('type','!=','site_failed')->where('is_deleted',false)->count();
+            })->where('type', '!=', 'site_failed')->where('is_deleted', false)->count();
             $item->save();
         }
         foreach ($students as $index => $item) {
@@ -1419,5 +1422,88 @@ class SupporterController extends Controller
             "error" => null,
             "data" => $student
         ];
+    }
+    public function showIncome()
+    {
+        $from_date = null;
+        $to_date = null;
+        // if (request()->getMethod() == 'POST') {
+        //     if (request()->input('from_date')) {
+        //         $from_date = $this->jalaliToGregorian(request()->input('from_date'));
+        //         $purchases = $purchases->where('created_at',$from_date);
+        //     }
+        //     if (request()->input('to_date')) {
+        //         $to_date = $this->jalaliToGregorian(request()->input('to_date'));
+        //         $purchases = $purchases->where('created_at',$to_date);
+        //     }
+        // }
+        // if($request->getMethod() == "GET"){
+        return view('supporters.income')->with([
+            'from_date' => $from_date,
+            'to_date' => $to_date,
+        ]);
+        //}
+    }
+    public function showIncomePost(Request $request){
+        $purchases = Purchase::where('is_deleted',false)->where('supporters_id',Auth::user()->id);
+        $user = User::where('is_deleted',false)->where('id',Auth::user()->id)->first();
+        $default_wage = $user->default_commision;
+        // if ($request->input('from_date')) {
+        //     $from_date = $this->jalaliToGregorian($request->input('from_date'));
+        //     $purchases = $purchases->where('created_at', $from_date);
+        // }
+        // if ($request->input('to_date')) {
+        //     $to_date = $this->jalaliToGregorian($request->input('to_date'));
+        //     $purchases = $purchases->where('created_at', $to_date);
+        // }
+        //$allPurchases = $purchases->orderBy('created_at', 'desc')->get();
+        $allPurchases = $purchases->orderBy('created_at','desc')->get();
+        $req =  request()->all();
+        if (!isset($req['start'])) {
+            $req['start'] = 0;
+            $req['length'] = 10;
+            $req['draw'] = 1;
+        }
+        $purchases = $purchases
+            ->with('student')
+            ->with('product')
+            ->orderBy('created_at', 'desc')
+            ->offset($req['start'])
+            ->limit($req['length'])
+            ->get();
+        $data = [];
+
+        foreach ($purchases as $index => $item) {
+            // $rel = Commission::where('users_id',$item->supporters_id)
+            // ->where('products_id',$item->products_id)
+            // ->where('is_deleted',false)
+            // ->first();
+            // if($rel != null && $rel->commission != 0 ){
+            //    $wage = $rel->commission;
+            // }
+            $wage = $default_wage;
+            if($item->commissionrelation && $item->commissionrelation->commission && $item->commissionrelation->products_id = $item->products_id){
+                $wage = $item->commissionrelation->commission;
+            }
+            dd($item->commissionrelation->products_id,$item->products_id);
+            $data[] = [
+                $req['start'] + $index + 1,
+                $item->id,
+                ($item->student)? ($item->student->first_name.' '.$item->student->last_name) : '-',
+                ($item->created_at) ? jdate($item->created_at)->format('Y-m-d') : jdate()->format("Y-m-d"),
+                ($item->product) ? $item->product->name : '-',
+                $item->price,
+                $wage
+            ];
+        }
+        $result = [
+            "draw" => $req['draw'],
+            "data" => $data,
+            "recordsTotal" => count($allPurchases),
+            "recordsFiltered" => count($allPurchases),
+        ];
+
+        return $result;
+
     }
 }

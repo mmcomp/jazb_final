@@ -193,10 +193,10 @@
                             <input type="text" class="form-control" id="work_address" name="work_address" placeholder="کار" value="{{ old('work_address') }}" />
                             @endif
                         </div>
-                        @if(isset($user) && $user->id != null)
+                        @if(isset($user) && $user->id != null && $user->group->name == "Support")
                         <div class="form-group">
                             <label for="commision">کمیسیون</label>
-                            <input type="text" class="form-control" id="commision" name="commision" placeholder="کمیسیون" value="{{ $user->default_commision }}" disabled/>
+                            <input type="text" class="form-control" id="commision" name="commision" placeholder="کمیسیون" value="{{ $user->default_commision }}"/>
                         </div>
                         <div class="form-group">
                             <a href="{{ route('commission',['id' => $user->id]) }}">ورود به صفحه کمیسیون این کاربر</a>

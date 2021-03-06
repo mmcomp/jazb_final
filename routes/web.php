@@ -236,6 +236,8 @@ Route::group(['middleware' => ['auth', 'message','changeCharactersAllToBePersian
     Route::group(['prefix' => '/supporter_students'], function () {
         Route::any('/', 'SupporterController@student')->name('supporter_students');
         Route::any('/students', 'SupporterController@newStudents')->name('supporter_student_new');
+        Route::get('/income','SupporterController@showIncome')->name('supporter_student_income');
+        Route::post('/income','SupporterController@showIncomePost')->name('supporter_student_income_post');
         Route::post('/call', 'SupporterController@call')->name('supporter_student_call');
         Route::post('/seen', 'SupporterController@seen')->name('supporter_student_seen');
         Route::any('/calls/{id}', 'SupporterController@calls')->name('supporter_student_allcall');
@@ -308,8 +310,8 @@ Route::group(['middleware' => ['auth', 'message','changeCharactersAllToBePersian
     });
     Route::group(['prefix' => '/commissions'],function(){
         Route::get('/index/{id}','CommissionController@index')->name('commission');
-        Route::any('/create','CommissionController@create')->name('commission_create');
-        Route::any('/edit/{id}','CommissionController@edit')->name('commission_edit');
+        Route::any('/create/{id}','CommissionController@create')->name('commission_create');
+        Route::any('/edit/{id}/{supporters_id}','CommissionController@edit')->name('commission_edit');
         Route::any('/delete/{id}','CommissionController@destroy')->name('commission_delete');
     });
 });

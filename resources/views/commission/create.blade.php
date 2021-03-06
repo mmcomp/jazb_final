@@ -40,16 +40,6 @@
                 <form method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="row">
-                    <div class="col">
-                        <div class="form-group">
-                            <label for="supporters_id">پشتیبان</label>
-                            @if (isset($c))
-                            <input type="text" class="form-control" id="name" name="supporters_id" placeholder="پشتیبان" value="{{ $c->user->first_name }} {{ $c->user->last_name }}" />
-                            @else
-                            <input type="text" class="form-control" id="supporters_id" name="supporters_id" placeholder="پشتیبان"  />
-                            @endif
-                        </div>
-                    </div>
                         <div class="col">
                             <div class="form-group">
                                 <label for="products_id">محصول</label>
@@ -75,7 +65,6 @@
                                 @endif
                             </div>
                         </div>
-
                 </div>
                 <div class="row">
                     <div class="col">

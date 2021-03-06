@@ -750,6 +750,15 @@
                                 </a>
                         </li>
                         <li class="nav-item">
+                            @if(strpos(\Request::route()->getName(), 'supporter_student_income')===0)
+                            <a href="{{ route('supporter_student_income') }}" class="nav-link active">
+                                @else
+                                <a href="{{ route('supporter_student_income') }}" class="nav-link">
+                                    @endif
+                                    <p>درآمد من</p>
+                                </a>
+                        </li>
+                        <li class="nav-item">
 
                             @if(strpos(\Request::route()->getName(), 'supporter_student_purchases')===0)
 
