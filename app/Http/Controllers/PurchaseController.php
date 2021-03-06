@@ -300,7 +300,7 @@ class PurchaseController extends Controller
             $student = Student::where('phone', $purchase['phone'])->where('banned', false)->first();
             if($product == null || $student == null){
                 $fails[] = $purchase;
-                Log::info("Fail 2 " . $purchase['factor_number']);
+                Log::info("Fail 2 " . $purchase['factor_number'] . " " . json_encode($product) . " " . json_encode($student));
                 continue;
             }
 
