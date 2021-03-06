@@ -166,6 +166,7 @@ class ProductController extends Controller
         foreach($products as $product){
             if(!isset($product['name']) || !isset($product['collections_id'])){
                 $fails[] = $product;
+                Log::info("addproduct". json_encode($product));
                 continue;
             }
             if(isset($product['woo_id']) && (int)$product['woo_id']>0) {
