@@ -73,8 +73,6 @@
 
             <!-- Right navbar links -->
             <ul class="navbar-nav mr-auto-navbav">
-                <!-- Messages Dropdown Menu -->
-
                 <li class="nav-item dropdown">
                     <a class="nav-link" data-toggle="dropdown" href="#">
                         <i class="far fa-comments"></i>
@@ -123,6 +121,7 @@
                     <a href="{{ route('circulars') }}" class="dropdown-item dropdown-footer">مشاهده همه</a>
                     </div>
                 </li>
+
 
                 <!--
       <li class="nav-item">

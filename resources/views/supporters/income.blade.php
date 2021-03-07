@@ -2,6 +2,7 @@
 
 @section('css')
 <link href="/plugins/select2/css/select2.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="/dist/css/custom.css">
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <style>
     .morepanel{
@@ -76,10 +77,10 @@
                     <th>نام دانش‌ آموز</th>
                     <th>تاریخ</th>
                     <th>محصول</th>
-                    <th>قیمت کل</th>
-                    <th>کارمزد</th>
-                    {{--<th>سهم پشتیبان</th>
-                    <th>#</th> --}}
+                    <th>قیمت کل(تومان)</th>
+                    <th>کارمزد(درصد)</th>
+                    <th>سهم پشتیبان(تومان)</th>
+                    {{-- <th>#</th> --}}
                   </tr>
                   </thead>
                   <tbody>
@@ -92,6 +93,15 @@
             <!-- /.card -->
           </div>
           <!-- /.col -->
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body text-center alert alert-success" id="price" style="display:none">
+                        {{-- جمع کل:<span class="price"></span> تومان --}}
+                    </div>
+                </div>
+            </div>
         </div>
         <!-- /.row -->
       </section>
@@ -113,12 +123,6 @@
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
-        //$(".btn-danger").click(function(e){
-        //    if(!confirm('آیا مطمئنید؟')){
-        //        e.preventDefault();
-        //    }
-        //});
-
         table = $("#example2").DataTable({
             "paging": true,
             "lengthChange": false,
@@ -149,10 +153,19 @@
                     return JSON.stringify(data);
                 },
                 "complete": function(response) {
+                    var sum = JSON.parse(response.responseText).sum;
+                    if(sum != 0){
+                        $('#price').css('display','block');
+                        $('#price').text(' جمع کل '+ sum + ' تومان ');
+                    }else{
+                        $('#price').css('display','none');
+                    }
                 }
 
-            }
+            },
         });
+
+
     });
 </script>
 

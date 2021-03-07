@@ -1427,36 +1427,27 @@ class SupporterController extends Controller
     {
         $from_date = null;
         $to_date = null;
-        // if (request()->getMethod() == 'POST') {
-        //     if (request()->input('from_date')) {
-        //         $from_date = $this->jalaliToGregorian(request()->input('from_date'));
-        //         $purchases = $purchases->where('created_at',$from_date);
-        //     }
-        //     if (request()->input('to_date')) {
-        //         $to_date = $this->jalaliToGregorian(request()->input('to_date'));
-        //         $purchases = $purchases->where('created_at',$to_date);
-        //     }
-        // }
-        // if($request->getMethod() == "GET"){
         return view('supporters.income')->with([
             'from_date' => $from_date,
             'to_date' => $to_date,
         ]);
-        //}
     }
     public function showIncomePost(Request $request){
         $purchases = Purchase::where('is_deleted',false)->where('supporters_id',Auth::user()->id);
+        $products_in_purchases = $purchases->distinct('products_id')->pluck('products_id');
+        $commissionRelations = Commission::where('is_deleted',false)->where('users_id',Auth::user()->id)->whereIn('products_id',$products_in_purchases)->get();
         $user = User::where('is_deleted',false)->where('id',Auth::user()->id)->first();
         $default_wage = $user->default_commision;
-        // if ($request->input('from_date')) {
-        //     $from_date = $this->jalaliToGregorian($request->input('from_date'));
-        //     $purchases = $purchases->where('created_at', $from_date);
-        // }
-        // if ($request->input('to_date')) {
-        //     $to_date = $this->jalaliToGregorian($request->input('to_date'));
-        //     $purchases = $purchases->where('created_at', $to_date);
-        // }
-        //$allPurchases = $purchases->orderBy('created_at', 'desc')->get();
+        $wage = [];
+        $sum = 0;
+        if ($request->input('from_date')) {
+            $from_date = $this->jalaliToGregorian($request->input('from_date'));
+            $purchases = $purchases->where('created_at','>=', $from_date);
+        }
+        if ($request->input('to_date')) {
+            $to_date = $this->jalaliToGregorian($request->input('to_date'));
+            $purchases = $purchases->where('created_at','<=', $to_date);
+        }
         $allPurchases = $purchases->orderBy('created_at','desc')->get();
         $req =  request()->all();
         if (!isset($req['start'])) {
@@ -1472,33 +1463,33 @@ class SupporterController extends Controller
             ->limit($req['length'])
             ->get();
         $data = [];
-
-        foreach ($purchases as $index => $item) {
-            // $rel = Commission::where('users_id',$item->supporters_id)
-            // ->where('products_id',$item->products_id)
-            // ->where('is_deleted',false)
-            // ->first();
-            // if($rel != null && $rel->commission != 0 ){
-            //    $wage = $rel->commission;
-            // }
-            $wage = $default_wage;
-            if($item->commissionrelation && $item->commissionrelation->commission && $item->commissionrelation->products_id = $item->products_id){
-                $wage = $item->commissionrelation->commission;
+        foreach($commissionRelations as $item){
+           $wage[$item->products_id] = $item->commission;
+        }
+        foreach($allPurchases as $index => $item){
+            if(isset($wage[$item->products_id])){
+                $sum += ($wage[$item->products_id])/100 *$item->price;
+            }else{
+                $sum += ($default_wage/100 * $item->price);
             }
-            dd($item->commissionrelation->products_id,$item->products_id);
+        }
+        foreach ($purchases as $index => $item) {
             $data[] = [
                 $req['start'] + $index + 1,
                 $item->id,
                 ($item->student)? ($item->student->first_name.' '.$item->student->last_name) : '-',
                 ($item->created_at) ? jdate($item->created_at)->format('Y-m-d') : jdate()->format("Y-m-d"),
                 ($item->product) ? $item->product->name : '-',
-                $item->price,
-                $wage
+                number_format($item->price),
+                isset($wage[$item->products_id])? $wage[$item->products_id]:$default_wage,
+                isset($wage[$item->products_id])? number_format(($wage[$item->products_id])/100 *$item->price) : number_format($default_wage/100 * $item->price),
             ];
+
         }
         $result = [
             "draw" => $req['draw'],
             "data" => $data,
+            "sum" => number_format($sum),
             "recordsTotal" => count($allPurchases),
             "recordsFiltered" => count($allPurchases),
         ];
