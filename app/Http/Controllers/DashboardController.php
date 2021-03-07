@@ -146,19 +146,20 @@ class DashboardController extends Controller
             $user = User::where('is_deleted',false)->where('id',Auth::user()->id)->first();
             $default_wage = $user->default_commision;
             $wage = [];
-            $products_in_purchases = $purchases->distinct('products_id')->pluck('products_id');
-            $commissionRelations = Commission::where('is_deleted',false)->where('users_id',Auth::user()->id)->whereIn('products_id',$products_in_purchases)->get();
-            foreach($commissionRelations as $item){
-                $wage[$item->products_id] = $item->commission;
-             }
-             foreach($thePurchases as $item){
-                 if(isset($wage[$item->products_id])){
-                     $sum += ($wage[$item->products_id])/100 *$item->price;
-                 }else{
-                     $sum += ($default_wage/100 * $item->price);
-                 }
-             }
-            //$sum = $this->computeMonthIncome($thePurchases,$wage,$default_wage);
+            //$products_in_purchases = $purchases->distinct('products_id')->pluck('products_id');
+            //$commissionRelations = Commission::where('is_deleted',false)->where('users_id',Auth::user()->id)->whereIn('products_id',$products_in_purchases)->get();
+            // foreach($commissionRelations as $item){
+            //     $wage[$item->products_id] = $item->commission;
+            //  }
+            //  foreach($thePurchases as $item){
+            //      if(isset($wage[$item->products_id])){
+            //          $sum += ($wage[$item->products_id])/100 *$item->price;
+            //      }else{
+            //          $sum += ($default_wage/100 * $item->price);
+            //      }
+            //  }
+            $out = $this->computeMonthIncome($purchases,$wage,$default_wage,$thePurchases);
+            $sum = $out[0];
             $sum = $this->toPersianNum(number_format($sum));
             return view('dashboard.support', [
                 'sum' => $sum,

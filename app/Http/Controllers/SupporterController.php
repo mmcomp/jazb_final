@@ -1435,8 +1435,9 @@ class SupporterController extends Controller
     }
     public function showIncomePost(Request $request){
         $purchases = Purchase::where('is_deleted',false)->where('supporters_id',Auth::user()->id);
-        //$products_in_purchases = $purchases->distinct('products_id')->pluck('products_id');
-        //$commissionRelations = Commission::where('is_deleted',false)->where('users_id',Auth::user()->id)->whereIn('products_id',$products_in_purchases)->get();
+        $thePurchases = $purchases;
+        $products_in_purchases = $purchases->distinct('products_id')->pluck('products_id');
+        $commissionRelations = Commission::where('is_deleted',false)->where('users_id',Auth::user()->id)->whereIn('products_id',$products_in_purchases)->get();
         $user = User::where('is_deleted',false)->where('id',Auth::user()->id)->first();
         $default_wage = $user->default_commision;
         $wage = [];
@@ -1474,7 +1475,9 @@ class SupporterController extends Controller
         //         $sum += ($default_wage/100 * $item->price);
         //     }
         // }
-        $sum = $this->computeMonthIncome($purchases,$wage,$default_wage);
+        $out = $this->computeMonthIncome($thePurchases,$wage,$default_wage,$allPurchases);
+        $sum = $out[0];
+        $wage = $out[1];
         foreach ($purchases as $index => $item) {
             $data[] = [
                 $req['start'] + $index + 1,
