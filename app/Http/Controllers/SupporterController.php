@@ -33,6 +33,7 @@ use App\StudentTag;
 use App\City;
 use App\Commission;
 use App\Http\Traits\AllTypeCallsTrait;
+use App\Http\Traits\IncomeTrait;
 use App\MergeStudents as AppMergeStudents;
 use App\SaleSuggestion;
 use Exception;
@@ -43,6 +44,7 @@ use Illuminate\Support\Facades\DB;
 class SupporterController extends Controller
 {
     use AllTypeCallsTrait;
+    use IncomeTrait;
     public function allMissedCalls()
     {
         $persons = [
@@ -119,7 +121,6 @@ class SupporterController extends Controller
         if ($supportGroupId)
             $supportGroupId = $supportGroupId->id;
         $supporters = User::where('is_deleted', false)->where('groups_id', $supportGroupId)->with('students.purchases')->with('students.studenttags.tag')->orderBy('max_student', 'desc')->get();
-        // dd($supporters);
         return view('supporters.index', [
             'supporters' => $supporters,
             'msg_success' => request()->session()->get('msg_success'),
@@ -1434,8 +1435,8 @@ class SupporterController extends Controller
     }
     public function showIncomePost(Request $request){
         $purchases = Purchase::where('is_deleted',false)->where('supporters_id',Auth::user()->id);
-        $products_in_purchases = $purchases->distinct('products_id')->pluck('products_id');
-        $commissionRelations = Commission::where('is_deleted',false)->where('users_id',Auth::user()->id)->whereIn('products_id',$products_in_purchases)->get();
+        //$products_in_purchases = $purchases->distinct('products_id')->pluck('products_id');
+        //$commissionRelations = Commission::where('is_deleted',false)->where('users_id',Auth::user()->id)->whereIn('products_id',$products_in_purchases)->get();
         $user = User::where('is_deleted',false)->where('id',Auth::user()->id)->first();
         $default_wage = $user->default_commision;
         $wage = [];
@@ -1463,16 +1464,17 @@ class SupporterController extends Controller
             ->limit($req['length'])
             ->get();
         $data = [];
-        foreach($commissionRelations as $item){
-           $wage[$item->products_id] = $item->commission;
-        }
-        foreach($allPurchases as $index => $item){
-            if(isset($wage[$item->products_id])){
-                $sum += ($wage[$item->products_id])/100 *$item->price;
-            }else{
-                $sum += ($default_wage/100 * $item->price);
-            }
-        }
+        // foreach($commissionRelations as $item){
+        //    $wage[$item->products_id] = $item->commission;
+        // }
+        // foreach($allPurchases as $index => $item){
+        //     if(isset($wage[$item->products_id])){
+        //         $sum += ($wage[$item->products_id])/100 *$item->price;
+        //     }else{
+        //         $sum += ($default_wage/100 * $item->price);
+        //     }
+        // }
+        $sum = $this->computeMonthIncome($purchases,$wage,$default_wage);
         foreach ($purchases as $index => $item) {
             $data[] = [
                 $req['start'] + $index + 1,

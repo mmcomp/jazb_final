@@ -8,6 +8,7 @@ use App\Group;
 use App\User;
 use App\Call;
 use App\CallResult;
+use App\Http\Traits\IncomeTrait;
 use App\Commission;
 use Carbon\Carbon;
 use Morilog\Jalali\CalendarUtils;
@@ -17,6 +18,7 @@ use App\Purchase;
 class DashboardController extends Controller
 {
     use AllTypeCallsTrait;
+    use IncomeTrait;
 
     public static function fixDateDigits($inp){
         $out = explode('-', $inp);
@@ -97,16 +99,6 @@ class DashboardController extends Controller
         $number = str_replace("0","۰",$number);
         return $number;
     }
-    // public function toFarsiNumber(n) {
-    //     const farsiDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
-
-    //     return n
-    //       .toString()
-    //       .split('')
-    //       .map(x => farsiDigits[x])
-    //       .join('');
-    // }
-
     public function index(){
         $user = Auth::user();
         $group = $user->group()->first();
@@ -150,7 +142,6 @@ class DashboardController extends Controller
             $gregorian_first_day_of_this_month = $this->jalaliToGregorian($first_day_of_this_month);
             $gregorian_last_day_of_this_month = $this->jalaliToGregorian($last_day_of_this_month);
             $purchases = Purchase::where('is_deleted',false)->where('supporters_id',Auth::user()->id)->where('created_at','>=',$gregorian_first_day_of_this_month)->where('created_at','<=',$gregorian_last_day_of_this_month);
-            //dd($gregorian_first_day_of_this_month,$gregorian_last_day_of_this_month);
             $thePurchases = Purchase::where('is_deleted',false)->where('supporters_id',Auth::user()->id)->where('created_at','>=',$gregorian_first_day_of_this_month)->where('created_at','<=',$gregorian_last_day_of_this_month)->get();
             $user = User::where('is_deleted',false)->where('id',Auth::user()->id)->first();
             $default_wage = $user->default_commision;
@@ -167,6 +158,7 @@ class DashboardController extends Controller
                      $sum += ($default_wage/100 * $item->price);
                  }
              }
+            //$sum = $this->computeMonthIncome($thePurchases,$wage,$default_wage);
             $sum = $this->toPersianNum(number_format($sum));
             return view('dashboard.support', [
                 'sum' => $sum,

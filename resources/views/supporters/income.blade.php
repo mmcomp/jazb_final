@@ -80,7 +80,6 @@
                     <th>قیمت کل(تومان)</th>
                     <th>کارمزد(درصد)</th>
                     <th>سهم پشتیبان(تومان)</th>
-                    {{-- <th>#</th> --}}
                   </tr>
                   </thead>
                   <tbody>
@@ -97,9 +96,7 @@
         <div class="row">
             <div class="col-12">
                 <div class="card">
-                    <div class="card-body text-center alert alert-success" id="price" style="display:none">
-                        {{-- جمع کل:<span class="price"></span> تومان --}}
-                    </div>
+                    <div class="card-body text-center alert alert-success" id="price" style="display:none"></div>
                 </div>
             </div>
         </div>
