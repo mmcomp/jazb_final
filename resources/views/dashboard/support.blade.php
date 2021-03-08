@@ -5,16 +5,20 @@
     <div class="content-header">
         <div class="container-fluid">
           <div class="row mb-2">
-            <div class="col-sm-6">
+            <div class="col-lg-10 col-md-10 col-sm-9 col-xs-6">
               <h1 class="m-0 text-dark">داشبورد</h1>
             </div><!-- /.col -->
-            <div class="col-sm-6">
-              <!--
-              <ol class="breadcrumb float-sm-right">
-                <li class="breadcrumb-item"><a href="#">Home</a></li>
-                <li class="breadcrumb-item active">Dashboard v1</li>
-              </ol>
-              -->
+            <div class="col-lg-2 col-md-2 col-sm-3 col-xs-6">
+               <div class="small-box bg-success">
+                   <div class="inner p-0">
+                     <p class="text-center">
+                        <span class="text-light btn">
+                            درآمد {{ jdate()->format('F') }} ماه من
+                        <span class="badge badge-light right">{{ $sum }} تومان</span>
+                        </span>
+                     </p>
+                   </div>
+               </div>
             </div><!-- /.col -->
           </div><!-- /.row -->
         </div><!-- /.container-fluid -->
@@ -248,17 +252,6 @@
             pointHighlightStroke: 'rgba(60,141,188,1)',
             data                : results
           },
-        //   {
-        //     label               : 'Electronics',
-        //     backgroundColor     : 'rgba(210, 214, 222, 1)',
-        //     borderColor         : 'rgba(210, 214, 222, 1)',
-        //     pointRadius         : false,
-        //     pointColor          : 'rgba(210, 214, 222, 1)',
-        //     pointStrokeColor    : '#c1c7d1',
-        //     pointHighlightFill  : '#fff',
-        //     pointHighlightStroke: 'rgba(220,220,220,1)',
-        //     data                : [65, 59, 80, 81, 56, 55]
-        //   },
         ]
       }
 
