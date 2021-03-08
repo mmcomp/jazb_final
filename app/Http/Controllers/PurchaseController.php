@@ -8,6 +8,7 @@ use App\Product;
 use App\Purchase;
 use App\Student;
 use App\StudentClassRoom;
+use App\User;
 use Illuminate\Support\Facades\DB;
 use App\Utils\Sms;
 use Log;
