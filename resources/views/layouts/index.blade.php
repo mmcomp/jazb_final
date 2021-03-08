@@ -156,8 +156,7 @@
                     </div>
                     <div class="info">
                         <a href="/login" class="d-block">
-                            {{ Auth::user()->first_name }} {{ Auth::user()->last_name }}
-
+                            {{ Auth::user()->first_name }} {{ Auth::user()->last_name }} 
                             <i class="fa fa-window-close"></i>
                         </a>
                     </div>
@@ -210,6 +209,7 @@
                                 </p>
                             </a>
                             <ul class="nav nav-treeview">
+                                @if(!Gate::allows('supervisor'))
                                 <li class="nav-item">
                                     @if(strpos(\Request::route()->getName(), 'need_parent_tag_one')===0)
                                     <a href="{{ route('need_parent_tag_ones') }}" class="nav-link active">
@@ -331,6 +331,7 @@
                                         <p>تعریف مدرسه</p>
                                     </a>
                                 </li>
+                                @endif
                                 <li class="nav-item">
                                     @if(strpos(\Request::route()->getName(), 'temperature')===0)
                                     <a href="{{ route('temperatures') }}" class="nav-link active">
@@ -342,6 +343,7 @@
                                         <p>داغ/سرد</p>
                                     </a>
                                 </li>
+                                @if(!Gate::allows('supervisor'))
                                 <li class="nav-item">
                                     @if(strpos(\Request::route()->getName(), 'collection')===0)
                                     <a href="{{ route('collections') }}" class="nav-link active">
@@ -364,6 +366,7 @@
                                         <p>محصول</p>
                                     </a>
                                 </li>
+                                @endif
                                 <li class="nav-item">
                                     @if(strpos(\Request::route()->getName(), 'source')===0)
                                     <a href="{{ route('sources') }}" class="nav-link active">
@@ -397,6 +400,7 @@
                                         <p>اطلاع رسانی</p>
                                     </a>
                                 </li>
+                                @if(!Gate::allows('supervisor'))
                                 <li class="nav-item">
                                     @if(strpos(\Request::route()->getName(), 'user_all')===0)
                                     <a href="{{ route('user_alls') }}" class="nav-link active">
@@ -407,6 +411,7 @@
                                         <p>تعریف پشتیبان</p>
                                     </a>
                                 </li>
+                                @endif
                                 <li class="nav-item">
                                     @if(strpos(\Request::route()->getName(), 'sale_suggestion')===0)
                                     <a href="{{ route('sale_suggestions') }}" class="nav-link active">
@@ -417,6 +422,7 @@
                                         <p>تعریف شروط</p>
                                     </a>
                                 </li>
+                                @if(!Gate::allows('supervisor'))
                                 <li class="nav-item">
                                     @if(strpos(\Request::route()->getName(), 'province')===0)
                                     <a href="{{ route('provinces') }}" class="nav-link active">
@@ -467,6 +473,7 @@
                                         <p>تعریف آزمون</p>
                                     </a>
                                 </li>
+                                @endif
                             </ul>
                         </li>
                         @endif
@@ -491,6 +498,7 @@
                                 <p>ثبت دانش آموز از اکسل</p>
                             </a>
                         </li>
+                        @if(!Gate::allows('supervisor'))
                         <li class="nav-item">
                             @if(strpos(\Request::route()->getName(), 'student_output_csv')===0)
                             <a href="{{ route('student_output_csv') }}" class="nav-link active">
@@ -501,6 +509,7 @@
                                 <p>خروجی اکسل</p>
                             </a>
                         </li>
+                        @endif
                         <li class="nav-item">
                             @if(strpos(\Request::route()->getName(), 'student_all')===0)
                             <a href="{{ route('student_all') }}" class="nav-link active">

@@ -8,8 +8,8 @@ use App\Group;
 use App\User;
 use App\Call;
 use App\CallResult;
-use App\Http\Traits\IncomeTrait;
 use App\Commission;
+use App\Utils\CommissionPurchaseRelation;
 use Carbon\Carbon;
 use Morilog\Jalali\CalendarUtils;
 use App\Http\Traits\AllTypeCallsTrait;
@@ -18,7 +18,6 @@ use App\Purchase;
 class DashboardController extends Controller
 {
     use AllTypeCallsTrait;
-    use IncomeTrait;
 
     public static function fixDateDigits($inp){
         $out = explode('-', $inp);
@@ -144,21 +143,7 @@ class DashboardController extends Controller
             $purchases = Purchase::where('is_deleted',false)->where('supporters_id',Auth::user()->id)->where('created_at','>=',$gregorian_first_day_of_this_month)->where('created_at','<=',$gregorian_last_day_of_this_month);
             $thePurchases = Purchase::where('is_deleted',false)->where('supporters_id',Auth::user()->id)->where('created_at','>=',$gregorian_first_day_of_this_month)->where('created_at','<=',$gregorian_last_day_of_this_month)->get();
             $user = User::where('is_deleted',false)->where('id',Auth::user()->id)->first();
-            $default_wage = $user->default_commision;
-            $wage = [];
-            //$products_in_purchases = $purchases->distinct('products_id')->pluck('products_id');
-            //$commissionRelations = Commission::where('is_deleted',false)->where('users_id',Auth::user()->id)->whereIn('products_id',$products_in_purchases)->get();
-            // foreach($commissionRelations as $item){
-            //     $wage[$item->products_id] = $item->commission;
-            //  }
-            //  foreach($thePurchases as $item){
-            //      if(isset($wage[$item->products_id])){
-            //          $sum += ($wage[$item->products_id])/100 *$item->price;
-            //      }else{
-            //          $sum += ($default_wage/100 * $item->price);
-            //      }
-            //  }
-            $out = $this->computeMonthIncome($purchases,$wage,$default_wage,$thePurchases);
+            $out = CommissionPurchaseRelation::computeMonthIncome($purchases,$thePurchases);
             $sum = $out[0];
             $sum = $this->toPersianNum(number_format($sum));
             return view('dashboard.support', [
