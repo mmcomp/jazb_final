@@ -921,6 +921,7 @@ class StudentController extends Controller
             ]);
         }
 
+        dd($request->all());
         $student->users_id = Auth::user()->id;
         $student->first_name = $request->input('first_name');
         $student->last_name = $request->input('last_name');
@@ -943,9 +944,9 @@ class StudentController extends Controller
         $student->outside_consultants = $request->input('outside_consultants');
         $student->description = $request->input('description');
         try {
-            $student->save();
+            // $student->save();
         } catch (Exception $e) {
-            dd($e);
+            // dd($e);
             if ($e->getCode() == 23000)
                 $request->session()->flash("msg_error", "شماره دانش آموز تکراری است");
             else
