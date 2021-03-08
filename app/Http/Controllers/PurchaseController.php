@@ -302,7 +302,6 @@ class PurchaseController extends Controller
                 continue;
             }
 
-
             $purchaseObject = Purchase::where("factor_number", $purchase['factor_number'])->where("products_id", $product->id)->first();
             if(!$purchaseObject)
                 $purchaseObject = new Purchase;
@@ -340,11 +339,11 @@ class PurchaseController extends Controller
                 $student->today_purchases = $student->purchases()->where('created_at', '>=', date("Y-m-d 00:00:00"))->where('is_deleted',false)->where('type','!=','site_failed')->count();
                 try{
                     $student->save();
+
                 }catch(Exception $e){
                     dd($e);
                     // $fails[] = $student;
                 }
-
             }
             if($purchaseSaved) {
                 if($product->classrooms) {

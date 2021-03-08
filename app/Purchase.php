@@ -17,4 +17,7 @@ class Purchase extends Model
     public function product(){
         return $this->hasOne('App\Product', 'id', 'products_id');
     }
+    // public function commissionrelation(){
+    //     return $this->hasOne('App\Commission',['users_id','products_id'],['supporters_id','products_id']);
+    // }
 }
