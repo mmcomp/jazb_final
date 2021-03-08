@@ -39,6 +39,7 @@ use App\MergeStudents as AppMergeStudents;
 use App\Purchase;
 use Illuminate\Support\Facades\Route;
 use Exception;
+use Log;
 
 class StudentController extends Controller
 {
@@ -1137,9 +1138,14 @@ class StudentController extends Controller
         if ($request->getMethod() == 'POST') {
             $msg = 'بروز رسانی با موفقیت انجام شد';
             $csvPath = $request->file('attachment')->getPathname();
+            $sources_id = $request->input('sources_id');
             if ($request->file('attachment')->extension() == 'xlsx') {
+                // Log::info("SID:" . json_encode($sources_id));
                 $importer = new StudentsImport;
-                $importer->import($csvPath, null, \Maatwebsite\Excel\Excel::XLSX);
+                $importer->source_id = $sources_id;
+                // Log::info("S:" . json_encode($importer));
+                $res = $importer->import($csvPath, null, \Maatwebsite\Excel\Excel::XLSX);
+                // Log::info("read fails:" . json_encode($res));
                 $fails = $importer->getFails();
                 return view('students.csv', [
                     'msg_success' => $msg,
@@ -1148,7 +1154,6 @@ class StudentController extends Controller
                 ]);
             }
             $csv = explode("\n", file_get_contents($csvPath));
-            $sources_id = $request->input('sources_id');
 
             foreach ($csv as $index => $line) {
                 $line = explode(',', $line);
