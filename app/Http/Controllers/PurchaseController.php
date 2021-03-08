@@ -9,6 +9,7 @@ use App\Purchase;
 use App\Student;
 use App\StudentClassRoom;
 use Illuminate\Support\Facades\DB;
+use App\Utils\Sms;
 use Log;
 
 use Exception;
@@ -57,6 +58,8 @@ class PurchaseController extends Controller
         }
 
         $student = Student::find($request->input('students_id'));
+        $product = Product::find($request->input('products_id'));
+        $supporter = User::find($student->supporters_id);
 
         $purchase->students_id = $request->input('students_id');
         $purchase->supporters_id = $student->supporters_id;
@@ -79,6 +82,13 @@ class PurchaseController extends Controller
             $student->save();
         }
         $request->session()->flash("msg_success", "پرداخت با موفقیت افزوده شد.");
+
+        if($supporter->mobile) {
+            $msg = "کاربر گرامی {$supporter->first_name} {$supporter->last_name}\n";
+            $msg .= "محصول {$product->name} توسط  {$student->first_name} {$student->last_name} به مبلغ {$purchase->price} خریداری شد.\nعارف";
+            Sms::send($supporter->mobile, $msg);    
+        }
+
         return redirect()->route('purchases');
     }
 
