@@ -78,9 +78,9 @@
                             <select class="form-control select2" id="products_id" name="products_id" >
                                 @foreach ($products as $item)
                                     @if (isset($purchase) && isset($purchase->id) && $purchase->products_id==$item->id)
-                                    <option value="{{ $item->id }}" selected>{{ (($item->parents!='-')?$item->parents . '->':'') . $item->name }}</option>
+                                    <option value="{{ $item->id }}" selected>{{ (($item->parents!='')?$item->parents . '->':'') . $item->name }}</option>
                                     @else
-                                    <option value="{{ $item->id }}">{{ (($item->parents!='-')?$item->parents . '->':'') . $item->name }}</option>
+                                    <option value="{{ $item->id }}">{{ (($item->parents!='')?$item->parents . '->':'') . $item->name }}</option>
                                     @endif
                                 @endforeach
                             </select>

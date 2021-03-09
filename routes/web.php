@@ -188,6 +188,7 @@ Route::group(['middleware' => ['auth', 'message','changeCharactersAllToBePersian
 
     Route::group(['prefix' => '/purchases'], function () {
         Route::get('/', 'PurchaseController@index')->name('purchases');
+        Route::post('/','PurchaseController@indexPost')->name('purchases_post');
         Route::any('/create', 'PurchaseController@create')->name('purchase_create');
         Route::any('/edit/{id}', 'PurchaseController@edit')->name('purchase_edit');
         Route::get('/delete/{id}', 'PurchaseController@delete')->name('purchase_delete');
