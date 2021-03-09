@@ -156,7 +156,7 @@
                     </div>
                     <div class="info">
                         <a href="/login" class="d-block">
-                            {{ Auth::user()->first_name }} {{ Auth::user()->last_name }} 
+                            {{ Auth::user()->first_name }} {{ Auth::user()->last_name }}
                             <i class="fa fa-window-close"></i>
                         </a>
                     </div>
@@ -195,7 +195,8 @@
                         strpos(\Request::route()->getName(), 'class_room')===0 ||
                         strpos(\Request::route()->getName(), 'cit')===0 ||
                         strpos(\Request::route()->getName(), 'lesson')===0 ||
-                        strpos(\Request::route()->getName(), 'exam')===0)
+                        strpos(\Request::route()->getName(), 'exam')===0 ||
+                        strpos(\Request::route()->getName(), 'commission')===0)
                         <li class="nav-item has-treeview menu-open">
                             @else
                         <li class="nav-item has-treeview">
@@ -402,7 +403,7 @@
                                 </li>
                                 @if(!Gate::allows('supervisor'))
                                 <li class="nav-item">
-                                    @if(strpos(\Request::route()->getName(), 'user_all')===0)
+                                    @if(strpos(\Request::route()->getName(), 'user_all')===0 || strpos(\Request::route()->getName(), 'commission') === 0)
                                     <a href="{{ route('user_alls') }}" class="nav-link active">
                                     @else
                                     <a href="{{ route('user_alls') }}" class="nav-link">
