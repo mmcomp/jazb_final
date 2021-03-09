@@ -1,5 +1,8 @@
 @extends('layouts.index')
 
+@section('css')
+<meta name="csrf-token" content="{{ csrf_token() }}">
+@endsection
 @section('content')
     <!-- Content Header (Page header) -->
     <section class="content-header">
@@ -47,46 +50,6 @@
                   </tr>
                   </thead>
                   <tbody>
-                      @if($purchases)
-                      @foreach ($purchases as $index => $item)
-                      <tr>
-                        <td>{{ $index + 1 }}</td>
-                        <td>{{ $item->id }}</td>
-                        <td>
-                            @if($item->type == 'manual')
-                            حضوری
-                            @elseif($item->type == 'site_successed')
-                            سایت
-                            @elseif($item->type == 'site_failed')
-                            انصرافی
-                            @endif
-                        </td>
-                        <td>
-                            {{ $item->student ? $item->student->first_name. ' '. $item->student->last_name.' ['.$item->student->phone.']' : '-' }}
-                        </td>
-                        <td>
-                            {{ $item->factor_number }}
-                        </td>
-                        <td>
-                            {{( $item->product && $item->product->collection && $item->product->collection->parent) ? $item->product->collection->parent->name : ''}}
-                            {{( $item->product && $item->product->collection && $item->product->collection->parent) ? '->' : ''}}
-                            {{( $item->product && $item->product->collection)?$item->product->collection->name : ''}}
-                            {{ $item->product && $item->product->collection ? '->' : ''}}
-                            {{ $item->product ? $item->product->name : '-' }}
-                        </td>
-                        <td>{{ number_format($item->price) }}</td>
-                        <td>{{ $item->description }}</td>
-                        <td>
-                            <a class="btn btn-primary" href="{{ route('purchase_edit', $item->id) }}">
-                                ویرایش
-                            </a>
-                            <a class="btn btn-danger" href="{{ route('purchase_delete', $item->id) }}">
-                                حذف
-                            </a>
-                        </td>
-                      </tr>
-                      @endforeach
-                      @endif
                   </tbody>
                 </table>
               </div>
@@ -107,13 +70,19 @@
 <script src="../../plugins/datatables-bs4/js/dataTables.bootstrap4.js"></script>
 <!-- page script -->
 <script>
-    $(function () {
-    $(".btn-danger").click(function(e){
+    let table = "";
+    function destroy(e){
         if(!confirm('آیا مطمئنید؟')){
-          e.preventDefault();
+            e.preventDefault();
+          }
+    }
+    $(function () {
+      $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         }
-    });
-      $('#example2').DataTable({
+      });
+      table = $('#example2').DataTable({
         "paging": true,
         "lengthChange": false,
         "searching": false,
@@ -128,7 +97,24 @@
             "emptyTable":     "داده ای برای نمایش وجود ندارد",
             "info":           "نمایش _START_ تا _END_ از _TOTAL_ داده",
             "infoEmpty":      "نمایش 0 تا 0 از 0 داده",
-        }
+        },
+        processing: true,
+        serverSide: true,
+        ajax: {
+            "type": "POST",
+            "url": "{{ route('purchases_post') }}",
+            "dataType": "json",
+            "contentType": 'application/json; charset=utf-8',
+
+            "data": function (data) {
+                //data['name'] = $("#name").val();
+                return JSON.stringify(data);
+            },
+            "complete": function(response) {
+                //$('#example2_paginate').removeClass('dataTables_paginate');
+            }
+
+        },
       });
     });
   </script>
