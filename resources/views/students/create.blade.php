@@ -304,7 +304,7 @@
                             <input type="text" class="form-control" id="introducing" name="introducing" placeholder="معرف"  />
                             @endif
                         </div>
-                        @if(Auth::user()->group->name == 'Admin')
+                        @if(Gate::allows('parameters'))
                         <div class="form-group">
                             <label for="supporters_id">پشتیبان</label>
                             <select  id="supporters_id" name="supporters_id" class="form-control">
