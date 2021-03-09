@@ -172,6 +172,27 @@
                                 <input type="text" class="form-control" id="school" name="school" placeholder="مدرسه"  value="{{ isset($school)?$school:'' }}" />
                             </div>
                         </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="products_id">محصول</label>
+                                <select  id="products_id" name="products_id" class="form-control select2">
+                                    <option value="">همه</option>
+                                    @foreach ($products as $item)
+                                        @if(isset($products_id) && $products_id==$item->id)
+                                        <option value="{{ $item->id }}" selected >
+                                        @else
+                                        <option value="{{ $item->id }}" >
+                                        {{ ($item->collection && $item->collection->parent) ? $item->collection->parent->name : ''}}
+                                        {{ ($item->collection && $item->collection->parent) ? '->' : ''}}
+                                        {{ ($item->collection) ? $item->collection->name : ''}}
+                                        {{ ($item->collection) ? '->' : ''}}
+                                        {{ $item->name }}
+                                        @endif
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
                         <div class="col" style="padding-top: 32px;">
                                 <button class="btn btn-success" onclick="theSearch(this)" id="theBtn">
                                     جستجو
@@ -1051,6 +1072,7 @@
                     data['name'] = $("#name").val();
                     data['phone'] = $("#phone").val();
                     data['arrOfCheckBoxes'] = $('#arrOfCheckBoxes').val();
+                    data['products_id'] = $('#products_id').val();
                     return JSON.stringify(data);
                 },
                 "complete": function(response) {
