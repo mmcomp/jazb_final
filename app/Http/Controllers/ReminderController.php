@@ -34,7 +34,7 @@ class ReminderController extends Controller
         }
     }
     public function indexPost($date=null){
-        $student_ids = Student::where('is_deleted',false)->where('banned',false)->where('archived',false)->where('supporters_id','=',Auth::user()->id)->pluck('id');
+        $student_ids = Student::where('is_deleted', false)->where('banned', false)->where('archived', false)->where('supporters_id', Auth::user()->id)->pluck('id');
         $recalls = Call::where('calls_id', '!=', null)->pluck('calls_id');
         $calls = Call::where('next_call', '!=', null)->where('users_id', Auth::user()->id)->whereNotIn('id', $recalls);
         $theCalls = $calls->whereIn('students_id',$student_ids)->with('student')->with('product');
