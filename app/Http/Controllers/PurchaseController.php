@@ -22,7 +22,7 @@ class PurchaseController extends Controller
         }
 
         $purchases = Purchase::where('is_deleted', false)
-            // ->where('type', '!=', 'site_failed')
+            ->where('type', '=', 'manual')
             ->with('user')
             ->with('student')
             ->with('product')
@@ -86,7 +86,7 @@ class PurchaseController extends Controller
         if($supporter->mobile) {
             $msg = "کاربر گرامی {$supporter->first_name} {$supporter->last_name}\n";
             $msg .= "محصول {$product->name} توسط  {$student->first_name} {$student->last_name} به مبلغ {$purchase->price} خریداری شد.\nعارف";
-            Sms::send($supporter->mobile, $msg);    
+            Sms::send($supporter->mobile, $msg);
         }
 
         return redirect()->route('purchases');
