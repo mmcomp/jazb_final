@@ -8,6 +8,7 @@ use App\Product;
 use App\Purchase;
 use App\Student;
 use App\StudentClassRoom;
+use App\User;
 use Illuminate\Support\Facades\DB;
 use App\Utils\Sms;
 use App\User;
@@ -349,13 +350,16 @@ class PurchaseController extends Controller
 
             if (!isset($purchase['woo_id']) || !isset($purchase['phone']) || !isset($purchase['price']) || !isset($purchase['factor_number'])) {
                 $fails[] = $purchase;
+                Log::info("Fail 1 " . $purchase['factor_number']);
                 continue;
             }
 
             $product = Product::where('woo_id', $purchase['woo_id'])->with('classrooms')->first();
-            $student = Student::where('phone', $purchase['phone'])->where('banned', false)->first();
-            if ($product == null || $student == null) {
+            $student = Student::where('phone', $purchase['phone'])->first();
+            if($product == null || $student == null){
+
                 $fails[] = $purchase;
+                Log::info("Fail 2 " . $purchase['factor_number'] . " " . $purchase['woo_id']);
                 continue;
             }
 
@@ -382,6 +386,7 @@ class PurchaseController extends Controller
                 $purchaseSaved = true;
             } catch (Exception $e) {
                 $fails[] = $purchase;
+                Log::info("Fail 3" . $purchase['factor_number']);
             }
             if ($student) {
                 if ($student->supporters_id) {
@@ -396,8 +401,8 @@ class PurchaseController extends Controller
                 $student->today_purchases = $student->purchases()->where('created_at', '>=', date("Y-m-d 00:00:00"))->where('is_deleted', false)->where('type', '!=', 'site_failed')->count();
                 try {
                     $student->save();
-                } catch (Exception $e) {
-                    dd($e);
+                }catch(Exception $e){
+                    // dd($e);
                     // $fails[] = $student;
                 }
             }
@@ -412,8 +417,8 @@ class PurchaseController extends Controller
                             $studentClassRoom->users_id = -1;
                             try {
                                 $studentClassRoom->save();
-                            } catch (Exception $e) {
-                                dd('classroom ' . $e);
+                            }catch(Exception $e){
+                                // dd('classroom '.$e);
                             }
                         }
                     }

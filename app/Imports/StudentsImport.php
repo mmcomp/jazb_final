@@ -15,6 +15,7 @@ class StudentsImport implements ToModel, WithChunkReading, ShouldQueue
 {
     use Importable;
     public $fails = [];
+    public $source_id = null;
 
     public function chunkSize(): int
     {
@@ -32,6 +33,8 @@ class StudentsImport implements ToModel, WithChunkReading, ShouldQueue
     */
     public function model(array $row)
     {
+        // Log::info("R:".json_encode($row[14]));
+        // Log::info("Si:".json_encode($this->source_id));
         $majors = [
             'ریاضی' => 'mathematics',
             'تجربی' => 'experimental',
@@ -73,7 +76,7 @@ class StudentsImport implements ToModel, WithChunkReading, ShouldQueue
         $student = Student::where('phone', ((strpos($this->perToEn($row[0]), '0')!==0)?'0':'') . $this->perToEn($row[0]))->first();
         if($student===null) {
             //Log::info("success:" . ((strpos($this->perToEn($row[0]), '0')!==0)?'0':'') . $this->perToEn($row[0]));
-            return new Student([
+            $st = [
                 'phone' => ((strpos($this->perToEn($row[0]), '0')!==0)?'0':'') . $this->perToEn($row[0]),
                 'first_name' => $row[1],
                 'last_name' => $row[2],
@@ -88,12 +91,21 @@ class StudentsImport implements ToModel, WithChunkReading, ShouldQueue
                 'introducing' => $row[11],
                 'student_phone' => $row[12],
                 'cities_id' => (int)$row[13],
-                'sources_id' => $row[14],
                 'supporters_id' => $row[15]
-            ]);
+            ];
+
+            $source_id = $row[14];
+            if(!$source_id)
+                $source_id = $this->source_id;
+            if($source_id) {
+                $st['sources_id'] = $source_id;
+            }
+            return new Student($st);
         }else {
             Log::info("fail:" . $student->phone);
             $this->fails[] = $student->phone;
+            Log::info("fails:" . json_encode($this->fails));
+
         }
 
         return $student;
