@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Call;
+use App\Student;
+use Illuminate\Support\Facades\DB;
 
 use Exception;
 
@@ -13,6 +15,7 @@ class ReminderController extends Controller
 
     public function index($date="null"){
         $recalls = Call::where('calls_id', '!=', null)->pluck('calls_id');
+        //dd($student_ids);
         $calls = Call::where('next_call', '!=', null)->where('users_id', Auth::user()->id)->whereNotIn('id', $recalls);
         $today = false;
         if($date == "today"){
@@ -31,9 +34,10 @@ class ReminderController extends Controller
         }
     }
     public function indexPost($date=null){
+        $student_ids = Student::where('is_deleted', false)->where('banned', false)->where('archived', false)->where('supporters_id', Auth::user()->id)->pluck('id');
         $recalls = Call::where('calls_id', '!=', null)->pluck('calls_id');
         $calls = Call::where('next_call', '!=', null)->where('users_id', Auth::user()->id)->whereNotIn('id', $recalls);
-        $theCalls = $calls->with('student')->with('product');
+        $theCalls = $calls->whereIn('students_id',$student_ids)->with('student')->with('product');
         $allCalls = $theCalls->count();
         $sw = null;
         $count = 0;
@@ -78,31 +82,32 @@ class ReminderController extends Controller
         }
 
         $data = [];
-
-        foreach ($theCalls as $index => $item) {
-            $route_of_reminder_delete = route('reminder_delete',['id' => $item->id]);
-            $route_of_supporters_students = route('supporter_students');
-            $data[] = [
-                "row" => $index + 1,
-                "id" => $item->id,
-                "students_id" => ($item->student)?$item->student->first_name . ' ' . $item->student->last_name:'-',
-                "products_id" => ($item->product)?(($item->product->parents!='')?$item->product->parents . '->':'') . $item->product->name:'-',
-                "replier" => $persons[$item->replier],
-                "call_results_id" => ($item->callresult)?$item->callresult->title:'-',
-                "next_call" => ($item->next_call)?jdate($item->next_call)->format("Y/m/d"):'-' ,
-                "next_to_call" => ($item->next_to_call)?$persons[$item->next_to_call]:'-',
-                "description" => $item->description,
-                "end" => "<a class='btn btn-danger' href='$route_of_reminder_delete' onclick='destroy(event)'>
-                              حذف
-                         </a>
-                        <form method='get' action='$route_of_supporters_students' >
-                        <input type='hidden' name='students_id' value='$item->students_id' />
-                        <input type='hidden' name='calls_id' value='$item->id' />
-                        <button class='btn btn-primary'>
-                           تماس
-                        </button>
-                       </form>"
-            ];
+        if($theCalls){
+            foreach ($theCalls as $index => $item) {
+                $route_of_reminder_delete = route('reminder_delete',['id' => $item->id]);
+                $route_of_supporters_students = route('supporter_students');
+                $data[] = [
+                    "row" => $index + 1,
+                    "id" => $item->id,
+                    "students_id" => ($item->student)?$item->student->first_name . ' ' . $item->student->last_name:'-',
+                    "products_id" => ($item->product)?(($item->product->parents!='')?$item->product->parents . '->':'') . $item->product->name:'-',
+                    "replier" => $persons[$item->replier],
+                    "call_results_id" => ($item->callresult)?$item->callresult->title:'-',
+                    "next_call" => ($item->next_call)?jdate($item->next_call)->format("Y/m/d"):'-' ,
+                    "next_to_call" => ($item->next_to_call)?$persons[$item->next_to_call]:'-',
+                    "description" => $item->description,
+                    "end" => "<a class='btn btn-danger' href='$route_of_reminder_delete' onclick='destroy(event)'>
+                                  حذف
+                             </a>
+                            <form method='get' action='$route_of_supporters_students' >
+                            <input type='hidden' name='students_id' value='$item->students_id' />
+                            <input type='hidden' name='calls_id' value='$item->id' />
+                            <button class='btn btn-primary'>
+                               تماس
+                            </button>
+                           </form>"
+                ];
+            }
         }
         if($sw == "all" || $sw == "other"){
             $count = $allCalls;
