@@ -34,7 +34,7 @@ use App\ClassRoom;
 use App\City;
 use App\Http\Traits\ChangeSupporterTrait;
 use App\Exports\StudentsExport;
-
+use Illuminate\Support\Facades\Gate;
 use App\MergeStudents as AppMergeStudents;
 use App\Purchase;
 use Illuminate\Support\Facades\Route;
@@ -1007,7 +1007,8 @@ class StudentController extends Controller
         if ($student->supporters_id != $request->input('supporters_id') && $student->supporter_seen) {
             $student->supporter_seen = false;
         }
-        if(Auth::user()->group->name == 'Admin'){
+        //if(Auth::user()->group->name == 'Admin'){
+        if(Gate::allows('parameters')){
           $student->supporters_id = $request->input('supporters_id');
         }
         $student->banned = ($request->input('banned') != null) ? true : false;
@@ -1015,6 +1016,9 @@ class StudentController extends Controller
         $student->outside_consultants = $request->input('outside_consultants');
         $student->description = $request->input('description');
         try {
+            if($student->banned || $student->archived){
+                $student->supporters_id = 0;
+            }
             $student->save();
         } catch (Exception $e) {
             // dd($e);

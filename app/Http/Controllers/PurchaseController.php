@@ -11,50 +11,104 @@ use App\StudentClassRoom;
 use App\User;
 use Illuminate\Support\Facades\DB;
 use App\Utils\Sms;
+use App\User;
 use Log;
 
 use Exception;
 
 class PurchaseController extends Controller
 {
-    public function index(){
-        if(request()->getMethod()=='POST'){
-
+    public function index()
+    {
+        return view('purchases.index', [
+            'msg_success' => request()->session()->get('msg_success'),
+            'msg_error' => request()->session()->get('msg_error')
+        ]);
+    }
+    public function indexPost(Request $request)
+    {
+        $type = null;
+        $product_part_1 = null;
+        $product_part_2 = null;
+        $product_part_3 = null;
+        $product_part_4 = null;
+        $product_part_5 = null;
+        $req =  $request->all();
+        if (!isset($req['start'])) {
+            $req['start'] = 0;
+            $req['length'] = 10;
+            $req['draw'] = 1;
         }
-
         $purchases = Purchase::where('is_deleted', false)
             ->where('type', '=', 'manual')
             ->with('user')
             ->with('student')
             ->with('product')
-            ->orderBy('created_at', 'desc')
+            ->orderBy('created_at', 'desc');
+        $allPurchases = $purchases->get();
+        $purchases = $purchases
+            ->offset($req['start'])
+            ->limit($req['length'])
             ->get();
 
-        return view('purchases.index',[
-            'purchases' => $purchases,
-            'msg_success' => request()->session()->get('msg_success'),
-            'msg_error' => request()->session()->get('msg_error')
-        ]);
+        $data = [];
+        if ($purchases) {
+            foreach ($purchases as $index => $item) {
+                if ($item->type == 'manual') {
+                    $type = "حضوری";
+                } else if ($item->type == "site_successed") {
+                    $type = "سایت";
+                } else if ($item->type == "site_failed") {
+                    $type = "انصرافی";
+                }
+                $product_part_1 = ($item->product && $item->product->collection && $item->product->collection->parent) ? $item->product->collection->parent->name : '';
+                $product_part_2 = ($item->product && $item->product->collection && $item->product->collection->parent) ? '->' : '';
+                $product_part_3 = ($item->product && $item->product->collection) ? $item->product->collection->name : '';
+                $product_part_4 = ($item->product && $item->product->collection) ? '->' : '';
+                $product_part_5 =  $item->product ? $item->product->name : '-';
+
+                $data[] = [
+                    $req['start'] + $index + 1,
+                    $item->id,
+                    $type,
+                    $item->student ? $item->student->first_name . ' ' . $item->student->last_name . ' [' . $item->student->phone . ']' : '-',
+                    $item->factor_number,
+                    $product_part_1 . $product_part_2 . $product_part_3 . $product_part_4 . $product_part_5,
+                    number_format($item->price),
+                    $item->description,
+                    '<a class="btn btn-primary" href="' . route('purchase_edit', $item->id) . '">ویرایش</a>
+                    <a class="btn btn-danger" href="' . route('purchase_delete', $item->id) . '" onclick="destroy(event)">حذف</a>'
+                ];
+            }
+        }
+        $result = [
+            "draw" => $req['draw'],
+            "data" => $data,
+            "recordsTotal" => count($allPurchases),
+            "recordsFiltered" => count($allPurchases),
+        ];
+
+        return $result;
     }
 
     public function create(Request $request)
     {
         $purchase = new Purchase();
-        $students = Student::where('is_deleted', false)->where('archived',false)->where('banned',false)->get();
+        $students = Student::where('is_deleted', false)->where('archived', false)->where('banned', false)->get();
         $products = Product::where('is_deleted', false)->with('collection')->orderBy('name')->get();
-        foreach($products as $index => $product){
+        foreach ($products as $index => $product) {
             $products[$index]->parents = "-";
-            if($product->collection) {
+            if ($product->collection) {
                 $parents = $product->collection->parents();
-                $name = ($parents!='')?$parents . "->" . $product->collection->name : $product->collection->name;
+                $name = ($parents != '') ? $parents . "->" . $product->collection->name : $product->collection->name;
                 $products[$index]->parents = $name;
             }
         }
-        if($request->getMethod()=='GET'){
+        if ($request->getMethod() == 'GET') {
             return view('purchases.create', [
-                'purchase'=>$purchase,
-                'students'=>$students,
-                'products'=>$products
+                'purchase' => $purchase,
+                'students' => $students,
+                'products' => $products
             ]);
         }
 
@@ -71,20 +125,20 @@ class PurchaseController extends Controller
         $purchase->factor_number = $request->input('factor_number');
         $purchase->type = 'manual';
         $purchase->save();
-        if($student){
+        if ($student) {
             if ($student->supporters_id) {
                 $student->own_purchases = $student->purchases()->where('supporters_id', $student->supporters_id)
-                   ->where('is_deleted',false)->where('type','!=','site_failed')->count();
+                    ->where('is_deleted', false)->where('type', '!=', 'site_failed')->count();
             }
-            $student->other_purchases = $student->purchases()->where(function($query) use($student){
-                if($student->supporters_id)$query->where('supporters_id','!=',$student->supporters_id)->orWhere('supporters_id',0);
-            })->where('is_deleted',false)->where('type','!=','site_failed')->count();
-            $student->today_purchases = $student->purchases()->where('created_at', '>=', date("Y-m-d 00:00:00"))->where('is_deleted',false)->where('type','!=','site_failed')->count();
+            $student->other_purchases = $student->purchases()->where(function ($query) use ($student) {
+                if ($student->supporters_id) $query->where('supporters_id', '!=', $student->supporters_id)->orWhere('supporters_id', 0);
+            })->where('is_deleted', false)->where('type', '!=', 'site_failed')->count();
+            $student->today_purchases = $student->purchases()->where('created_at', '>=', date("Y-m-d 00:00:00"))->where('is_deleted', false)->where('type', '!=', 'site_failed')->count();
             $student->save();
         }
         $request->session()->flash("msg_success", "پرداخت با موفقیت افزوده شد.");
 
-        if($supporter->mobile) {
+        if ($supporter->mobile) {
             $msg = "کاربر گرامی {$supporter->first_name} {$supporter->last_name}\n";
             $msg .= "محصول {$product->name} توسط  {$student->first_name} {$student->last_name} به مبلغ {$purchase->price} خریداری شد.\nعارف";
             Sms::send($supporter->mobile, $msg);
@@ -96,18 +150,18 @@ class PurchaseController extends Controller
     public function edit(Request $request, $id)
     {
         $purchase = Purchase::where('id', $id)->where('is_deleted', false)->where('type', 'manual')->first();
-        if($purchase==null){
+        if ($purchase == null) {
             $request->session()->flash("msg_error", "پرداخت پیدا نشد!");
             return redirect()->route('purchases');
         }
 
         $students = Student::where('is_deleted', false)->where('banned', false)->get();
         $products = Product::where('is_deleted', false)->get();
-        if($request->getMethod()=='GET'){
+        if ($request->getMethod() == 'GET') {
             return view('purchases.create', [
-                'purchase'=>$purchase,
-                'students'=>$students,
-                'products'=>$products
+                'purchase' => $purchase,
+                'students' => $students,
+                'products' => $products
             ]);
         }
 
@@ -120,11 +174,11 @@ class PurchaseController extends Controller
         $purchase->price = $request->input('price');
         $purchase->factor_number = $request->input('factor_number');
         $purchase->save();
-        if($student){
-            $student->today_purchases = $student->purchases()->where('created_at', '>=', date("Y-m-d 00:00:00"))->where('is_deleted',false)->where('type','!=','site_failed')->count();
+        if ($student) {
+            $student->today_purchases = $student->purchases()->where('created_at', '>=', date("Y-m-d 00:00:00"))->where('is_deleted', false)->where('type', '!=', 'site_failed')->count();
 
-            if($purchase->created_at < date("Y-m-d 00:00:00")){
-               $student->today_purchases = $student->today_purchases > 0 ? $student->today_purchases -1 : $student->today_purchases;
+            if ($purchase->created_at < date("Y-m-d 00:00:00")) {
+                $student->today_purchases = $student->today_purchases > 0 ? $student->today_purchases - 1 : $student->today_purchases;
             }
             $student->save();
         }
@@ -136,32 +190,32 @@ class PurchaseController extends Controller
     public function delete(Request $request, $id)
     {
         $purchase = Purchase::where('id', $id)->where('is_deleted', false)->first();
-        $student = Student::where('id',$purchase->students_id)->first();
-        if($purchase==null){
+        $student = Student::where('id', $purchase->students_id)->first();
+        if ($purchase == null) {
             $request->session()->flash("msg_error", "پرداخت پیدا نشد!");
             return redirect()->route('purchases');
         }
-        if($student){
-            $student->today_purchases = $student->purchases()->where('created_at', '>=', date("Y-m-d 00:00:00"))->where('is_deleted',false)->where('type','!=','site_failed')->count();
+        if ($student) {
+            $student->today_purchases = $student->purchases()->where('created_at', '>=', date("Y-m-d 00:00:00"))->where('is_deleted', false)->where('type', '!=', 'site_failed')->count();
 
-            if($student->supporters_id){
-                if($student->own_purchases > 0){
+            if ($student->supporters_id) {
+                if ($student->own_purchases > 0) {
                     $student->own_purchases -= 1;
-                }else{
+                } else {
                     $student->own_purchases = 0;
                 }
-            }else{
-                if($student->other_purchases > 0){
+            } else {
+                if ($student->other_purchases > 0) {
                     $student->other_purchases -= 1;
-                }else{
+                } else {
                     $student->other_purchases = 0;
                 }
             }
-            if($purchase->created_at >= date("Y-m-d 00:00:00")){
-                if($student->today_purchases > 0){
-                  $student->today_purchases -= 1;
-                }else{
-                  $student->today_purchases  = 0;
+            if ($purchase->created_at >= date("Y-m-d 00:00:00")) {
+                if ($student->today_purchases > 0) {
+                    $student->today_purchases -= 1;
+                } else {
+                    $student->today_purchases  = 0;
                 }
             }
             $student->save();
@@ -175,57 +229,58 @@ class PurchaseController extends Controller
     }
 
     //---------------------API------------------------------------
-    public function apiDeletePurchases(Request $request) {
+    public function apiDeletePurchases(Request $request)
+    {
         $purchases = $request->input('purchases', []);
         $ids = [];
         $fails = [];
-        foreach($purchases as $purchase){
-            if(!isset($purchase['factor_number'])){
+        foreach ($purchases as $purchase) {
+            if (!isset($purchase['factor_number'])) {
                 $fails[] = $purchase;
                 continue;
             }
-            $purchaseObject = Purchase::where("factor_number", $purchase['factor_number'])->where('is_deleted', false)->where('type','!=','manual')->first();
-            $student = Student::where('id',$purchaseObject->students_id)->first();
-            if($student){
-                $student->today_purchases = $student->purchases()->where('created_at', '>=', date("Y-m-d 00:00:00"))->where('is_deleted',false)->where('type','!=','site_failed')->count();
+            $purchaseObject = Purchase::where("factor_number", $purchase['factor_number'])->where('is_deleted', false)->where('type', '!=', 'manual')->first();
+            $student = Student::where('id', $purchaseObject->students_id)->first();
+            if ($student) {
+                $student->today_purchases = $student->purchases()->where('created_at', '>=', date("Y-m-d 00:00:00"))->where('is_deleted', false)->where('type', '!=', 'site_failed')->count();
 
-                if($student->supporters_id){
-                    if($student->own_purchases > 0){
+                if ($student->supporters_id) {
+                    if ($student->own_purchases > 0) {
                         $student->own_purchases -= 1;
-                    }else{
+                    } else {
                         $student->own_purchases = 0;
                     }
-                }else{
-                    if($student->other_purchases > 0){
+                } else {
+                    if ($student->other_purchases > 0) {
                         $student->other_purchases -= 1;
-                    }else{
+                    } else {
                         $student->other_purchases = 0;
                     }
                 }
-                if($purchaseObject->created_at >= date("Y-m-d 00:00:00")){
-                    if($student->today_purchases > 0){
-                      $student->today_purchases -= 1;
-                    }else{
-                      $student->today_purchases  = 0;
+                if ($purchaseObject->created_at >= date("Y-m-d 00:00:00")) {
+                    if ($student->today_purchases > 0) {
+                        $student->today_purchases -= 1;
+                    } else {
+                        $student->today_purchases  = 0;
                     }
                 }
-                try{
+                try {
                     $student->save();
-                }catch(Exception $e){
+                } catch (Exception $e) {
                     $fails[] = $student;
                 }
             }
-            if(!$purchaseObject){
+            if (!$purchaseObject) {
                 $fails[] = $purchase;
                 continue;
             }
             $purchaseObject->is_deleted = true;
             $purchaseObject->save();
 
-            try{
+            try {
                 $purchaseObject->save();
                 $ids[] = $purchaseObject->factor_number;
-            }catch(Exception $e){
+            } catch (Exception $e) {
                 $fails[] = $purchase;
             }
         }
@@ -235,36 +290,37 @@ class PurchaseController extends Controller
         ];
     }
 
-    public function apiUnDeletePurchases(Request $request) {
+    public function apiUnDeletePurchases(Request $request)
+    {
         $purchases = $request->input('purchases', []);
         $ids = [];
         $fails = [];
-        foreach($purchases as $purchase){
+        foreach ($purchases as $purchase) {
 
-            if(!isset($purchase['factor_number'])){
+            if (!isset($purchase['factor_number'])) {
                 $fails[] = $purchase;
                 continue;
             }
-            $purchaseObject = Purchase::where("factor_number", $purchase['factor_number'])->where('is_deleted', true)->where('type','!=','manual')->first();
-            if(!$purchaseObject){
+            $purchaseObject = Purchase::where("factor_number", $purchase['factor_number'])->where('is_deleted', true)->where('type', '!=', 'manual')->first();
+            if (!$purchaseObject) {
                 $fails[] = $purchase;
                 continue;
             }
-            $student = Student::where('id',$purchaseObject->students_id)->first();
-            if($student){
-                $student->today_purchases = $student->purchases()->where('created_at', '>=', date("Y-m-d 00:00:00"))->where('is_deleted',false)->where('type','!=','site_failed')->count();
+            $student = Student::where('id', $purchaseObject->students_id)->first();
+            if ($student) {
+                $student->today_purchases = $student->purchases()->where('created_at', '>=', date("Y-m-d 00:00:00"))->where('is_deleted', false)->where('type', '!=', 'site_failed')->count();
 
-                if($student->supporters_id){
+                if ($student->supporters_id) {
                     $student->own_purchases += 1;
-                }else{
+                } else {
                     $student->other_purchases += 1;
                 }
-                if($purchaseObject->created_at >= date("Y-m-d 00:00:00")){
+                if ($purchaseObject->created_at >= date("Y-m-d 00:00:00")) {
                     $student->today_purchases += 1;
                 }
-                try{
+                try {
                     $student->save();
-                }catch(Exception $e){
+                } catch (Exception $e) {
                     $fails[] = $student;
                 }
             }
@@ -272,10 +328,10 @@ class PurchaseController extends Controller
             $purchaseObject->is_deleted = false;
             $purchaseObject->save();
 
-            try{
+            try {
                 $purchaseObject->save();
                 $ids[] = $purchaseObject->factor_number;
-            }catch(Exception $e){
+            } catch (Exception $e) {
                 $fails[] = $purchase;
             }
         }
@@ -285,13 +341,14 @@ class PurchaseController extends Controller
         ];
     }
 
-    public function apiAddPurchases(Request $request){
+    public function apiAddPurchases(Request $request)
+    {
         $purchases = $request->input('purchases', []);
         $ids = [];
         $fails = [];
-        foreach($purchases as $purchase){
+        foreach ($purchases as $purchase) {
 
-            if(!isset($purchase['woo_id']) || !isset($purchase['phone']) || !isset($purchase['price']) || !isset($purchase['factor_number'])){
+            if (!isset($purchase['woo_id']) || !isset($purchase['phone']) || !isset($purchase['price']) || !isset($purchase['factor_number'])) {
                 $fails[] = $purchase;
                 Log::info("Fail 1 " . $purchase['factor_number']);
                 continue;
@@ -300,65 +357,65 @@ class PurchaseController extends Controller
             $product = Product::where('woo_id', $purchase['woo_id'])->with('classrooms')->first();
             $student = Student::where('phone', $purchase['phone'])->first();
             if($product == null || $student == null){
+
                 $fails[] = $purchase;
                 Log::info("Fail 2 " . $purchase['factor_number'] . " " . $purchase['woo_id']);
                 continue;
             }
 
             $purchaseObject = Purchase::where("factor_number", $purchase['factor_number'])->where("products_id", $product->id)->first();
-            if(!$purchaseObject)
+            if (!$purchaseObject)
                 $purchaseObject = new Purchase;
 
-            foreach($purchase as $key=>$value){
-                if($key != 'woo_id' && $key != 'phone')
+            foreach ($purchase as $key => $value) {
+                if ($key != 'woo_id' && $key != 'phone')
                     $purchaseObject->$key = $value;
             }
             $purchaseObject->products_id = $product->id;
             $purchaseObject->students_id = $student->id;
             $purchaseObject->supporters_id = $student->supporters_id;
-            $purchaseObject->price = isset($purchase['price'])?$purchase['price']:0;
+            $purchaseObject->price = isset($purchase['price']) ? $purchase['price'] : 0;
             $purchaseObject->users_id = 0;
             $purchaseSaved = false;
-            try{
+            try {
                 $purchaseObject->save();
                 $ids[] = [
                     "factor_number" => $purchaseObject->factor_number,
                     "woo_id" => $product->woo_id
                 ];
                 $purchaseSaved = true;
-            }catch(Exception $e){
+            } catch (Exception $e) {
                 $fails[] = $purchase;
                 Log::info("Fail 3" . $purchase['factor_number']);
             }
-            if($student){
-                if($student->supporters_id){
-                    $student->own_purchases = $student->purchases()->where('supporters_id',$student->supporters_id)
-                    ->where('is_deleted',false)->where('type','!=','site_failed')->count();
+            if ($student) {
+                if ($student->supporters_id) {
+                    $student->own_purchases = $student->purchases()->where('supporters_id', $student->supporters_id)
+                        ->where('is_deleted', false)->where('type', '!=', 'site_failed')->count();
                 }
-                $student->other_purchases = $student->purchases()->where(function($query) use($student){
-                    if($student->supporters_id) $query->where('supporters_id','!=',$student->supporters_id)->orWhere('supporters_id',0);;
+                $student->other_purchases = $student->purchases()->where(function ($query) use ($student) {
+                    if ($student->supporters_id) $query->where('supporters_id', '!=', $student->supporters_id)->orWhere('supporters_id', 0);;
                 })
-                ->where('is_deleted',false)->where('type','!=','site_failed')
-                ->count();
-                $student->today_purchases = $student->purchases()->where('created_at', '>=', date("Y-m-d 00:00:00"))->where('is_deleted',false)->where('type','!=','site_failed')->count();
-                try{
+                    ->where('is_deleted', false)->where('type', '!=', 'site_failed')
+                    ->count();
+                $student->today_purchases = $student->purchases()->where('created_at', '>=', date("Y-m-d 00:00:00"))->where('is_deleted', false)->where('type', '!=', 'site_failed')->count();
+                try {
                     $student->save();
-
                 }catch(Exception $e){
                     // dd($e);
                     // $fails[] = $student;
                 }
             }
-            if($purchaseSaved) {
-                if($product->classrooms) {
-                    foreach($product->classrooms as $classroom) {
+            if ($purchaseSaved) {
+                if ($product->classrooms) {
+                    foreach ($product->classrooms as $classroom) {
                         $studentClassRoom = StudentClassRoom::where('students_id', $student->id)->where("class_rooms_id", $classroom->id)->first();
-                        if($studentClassRoom==null) {
+                        if ($studentClassRoom == null) {
                             $studentClassRoom = new StudentClassRoom();
                             $studentClassRoom->students_id = $student->id;
                             $studentClassRoom->class_rooms_id = $classroom->id;
                             $studentClassRoom->users_id = -1;
-                            try{
+                            try {
                                 $studentClassRoom->save();
                             }catch(Exception $e){
                                 // dd('classroom '.$e);
@@ -375,23 +432,24 @@ class PurchaseController extends Controller
     }
 
     //---------------------API------------------------------------
-    public function apiAddStudents(Request $request){
+    public function apiAddStudents(Request $request)
+    {
         $students = $request->input('students', []);
         $ids = [];
         $fails = [];
-        foreach($students as $student){
-            if(!isset($student['phone']) || !isset($student['last_name'])){
+        foreach ($students as $student) {
+            if (!isset($student['phone']) || !isset($student['last_name'])) {
                 $fails[] = $student;
                 continue;
             }
             $studentObject = new Student;
-            foreach($student as $key=>$value){
+            foreach ($student as $key => $value) {
                 $studentObject->$key = $value;
             }
-            try{
+            try {
                 $studentObject->save();
                 $ids[] = $studentObject->phone;
-            }catch(Exception $e){
+            } catch (Exception $e) {
                 $fails[] = $student;
             }
         }
@@ -400,31 +458,31 @@ class PurchaseController extends Controller
             "fails" => $fails
         ];
     }
-    public function test(){
+    public function test()
+    {
         $col_ones = DB::table('new_students')
             ->select('phone')
             ->get();
         $students = [];
         $ids = [];
-        foreach($col_ones as $item){
-            $item->phone = '0'.substr($item->phone,0,-3);
-            $students[] = Student::where('is_deleted',false)->where('phone',$item->phone)->first();
+        foreach ($col_ones as $item) {
+            $item->phone = '0' . substr($item->phone, 0, -3);
+            $students[] = Student::where('is_deleted', false)->where('phone', $item->phone)->first();
         }
-        for($i = 0; $i< count($students);$i++){
-            if($students[$i]){
+        for ($i = 0; $i < count($students); $i++) {
+            if ($students[$i]) {
                 $ids[$i] = $students[$i]->id;
             }
         }
-        foreach($ids as $id){
-          $purchase = new Purchase;
-          $purchase->products_id = 425;
-          $purchase->users_id = 0;
-          $purchase->type = 'manual';
-          $purchase->description = 'همایش ۱۰ بهمن';
-          $purchase->students_id = $id;
-          $purchase->price = 0;
-          $purchase->save();
-
+        foreach ($ids as $id) {
+            $purchase = new Purchase;
+            $purchase->products_id = 425;
+            $purchase->users_id = 0;
+            $purchase->type = 'manual';
+            $purchase->description = 'همایش ۱۰ بهمن';
+            $purchase->students_id = $id;
+            $purchase->price = 0;
+            $purchase->save();
         }
     }
 }
