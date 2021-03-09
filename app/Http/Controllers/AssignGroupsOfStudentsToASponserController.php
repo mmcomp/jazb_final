@@ -19,6 +19,8 @@ use App\NeedTagParentOne;
 use App\NeedTagParentTwo;
 use App\NeedTagParentThree;
 use App\NeedTagParentFour;
+use App\Product;
+use App\Purchase;
 use App\Temperature;
 use Illuminate\Support\Facades\DB;
 use App\MergeStudents as AppMergeStudents;
@@ -54,6 +56,7 @@ class assignGroupsOfStudentsToASponserController extends Controller
             $supportGroupId = $supportGroupId->id;
         $supports = User::where('is_deleted', false)->where('groups_id', $supportGroupId)->get();
         $sources = Source::where('is_deleted', false)->get();
+        $products = Product::where('is_deleted', false)->get();
         $supporters_id = null;
         $name = null;
         $sources_id = null;
@@ -63,7 +66,6 @@ class assignGroupsOfStudentsToASponserController extends Controller
         $school = null;
         $major = null;
         if (request()->getMethod() == 'POST') {
-            // dump(request()->all());
             if (request()->input('supporters_id') != null) {
                 $supporters_id = (int)request()->input('supporters_id');
                 $students = $students->where('supporters_id', $supporters_id);
@@ -77,6 +79,15 @@ class assignGroupsOfStudentsToASponserController extends Controller
                         $query->orWhere('first_name', 'like', '%' . $tmpName . '%')->orWhere('last_name', 'like', '%' . $tmpName . '%');
                     }
                 });
+            }
+            if(request()->input('products_id') != null){
+                $products_id = (int)request()->input('products_id');
+                $purchases_students_id = Purchase::select('is_deleted','products_id','students_id')
+                            ->distinct('students_id')
+                            ->where('is_deleted',false)
+                            ->where('products_id', $products_id)
+                            ->pluck('students_id');
+                $students = $students->whereIn('id',$purchases_students_id);
             }
             if (request()->input('sources_id') != null) {
                 $sources_id = (int)request()->input('sources_id');
@@ -136,6 +147,7 @@ class assignGroupsOfStudentsToASponserController extends Controller
                 'students' => $students,
                 'supports' => $supports,
                 'sources' => $sources,
+                'products' => $products,
                 'supporters_id' => $supporters_id,
                 'name' => $name,
                 'sources_id' => $sources_id,
