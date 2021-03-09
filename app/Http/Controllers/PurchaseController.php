@@ -376,6 +376,7 @@ class PurchaseController extends Controller
             $purchaseObject->price = isset($purchase['price']) ? $purchase['price'] : 0;
             $purchaseObject->users_id = 0;
             $purchaseSaved = false;
+            $supporter = User::find($student->supporters_id);
             try {
                 $purchaseObject->save();
                 $ids[] = [
@@ -383,6 +384,12 @@ class PurchaseController extends Controller
                     "woo_id" => $product->woo_id
                 ];
                 $purchaseSaved = true;
+
+                if ($supporter->mobile) {
+                    $msg = "کاربر گرامی {$supporter->first_name} {$supporter->last_name}\n";
+                    $msg .= "محصول {$product->name} توسط  {$student->first_name} {$student->last_name} به مبلغ {$purchase->price} خریداری شد.\nعارف";
+                    Sms::send($supporter->mobile, $msg);
+                }
             } catch (Exception $e) {
                 $fails[] = $purchase;
                 Log::info("Fail 3" . $purchase['factor_number']);
