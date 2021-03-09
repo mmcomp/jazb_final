@@ -483,6 +483,7 @@ class SupporterController extends Controller
         $notices_id = null;
         $call_results_id = null;
         $next_to_call = null;
+       // dd(count($students->get()));
         if (request()->input('students_id') != null) {
             $students_id = (int)request()->input('students_id');
             $calls_id = (int)request()->input('calls_id');
@@ -686,6 +687,7 @@ class SupporterController extends Controller
 
         $theStudents = $students;
         $getStudents = $students->get();
+        //dd($getStudents);
 
         if (request()->input('order_collection') != null) {
             $order_collection = request()->input('order_collection');
@@ -1044,22 +1046,22 @@ class SupporterController extends Controller
         $sources_id = null;
         $phone = null;
         $moralTags = Tag::where('is_deleted', false)
-            // ->with('parent_one')
-            // ->with('parent_two')
-            // ->with('parent_three')
-            // ->with('parent_four')
             ->where('type', 'moral')
             ->get();
         $students = [];
         if (Gate::allows('purchases')) {
             $students = Student::where('is_deleted', false)->where('banned', false)->where('archived', false)->get();
+            $supportGroupId = Group::getSupport();
+            if ($supportGroupId)
+                $supportGroupId = $supportGroupId->id;
+            $supports = User::where('is_deleted', false)->where('groups_id', $supportGroupId)->get();
         } else {
             $students = Student::where('is_deleted', false)->where('banned', false)->where('archived', false)->where('supporters_id', Auth::user()->id)->get();
         }
-        foreach ($students as $index => $item) {
-            $item->today_purchases = $item->purchases()->where('created_at', '>=', date("Y-m-d 00:00:00"))->where('type', '!=', 'site_failed')->where('is_deleted', false)->count();
-            $item->save();
-        }
+        // foreach ($students as $index => $item) {
+        //     $item->today_purchases = $item->purchases()->where('created_at', '>=', date("Y-m-d 00:00:00"))->where('type', '!=', 'site_failed')->where('is_deleted', false)->count();
+        //     $item->save();
+        // }
 
         $parentOnes = TagParentOne::has('tags')->get();
         $parentTwos = TagParentTwo::has('tags')->get();
