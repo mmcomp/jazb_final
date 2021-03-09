@@ -11,7 +11,6 @@ use App\StudentClassRoom;
 use App\User;
 use Illuminate\Support\Facades\DB;
 use App\Utils\Sms;
-use App\User;
 use Log;
 
 use Exception;
