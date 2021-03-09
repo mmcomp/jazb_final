@@ -193,7 +193,7 @@
                             <input type="text" class="form-control" id="work_address" name="work_address" placeholder="کار" value="{{ old('work_address') }}" />
                             @endif
                         </div>
-                        @if(isset($user) && $user->id != null && $user->group->name == "Support")
+                        @if(isset($user) && $user->id != null && $user->group->type == "support")
                         <div class="form-group">
                             <label for="commision">کمیسیون</label>
                             <input type="text" class="form-control" id="commision" name="commision" placeholder="کمیسیون" value="{{ $user->default_commision }}"/>
