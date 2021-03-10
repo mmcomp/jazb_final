@@ -158,43 +158,7 @@
                         </div>
                     </div>
                 </form>
-                <!--
-                <h3 class="text-center">
-                    مرتب سازی
-                </h3>
-                <div class="row">
-                  <div class="col text-center p-1">
-                    <a class="btn btn-warning btn-block" href="#">سطح بندی</a>
-                  </div>
-                  <div class="col text-center p-1">
-                    <a class="btn btn-warning btn-block" href="#">پیشنهاد فروش</a>
-                  </div>
-                  <div class="col text-center p-1">
-                    <a class="btn btn-warning btn-block" href="#">محصول</a>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col text-center p-1">
-                    <a class="btn btn-warning btn-block" href="#">سایت</a>
-                  </div>
-                  <div class="col text-center p-1">
-                    <a class="btn btn-warning btn-block" href="#">تعداد پیشنهاد فروش</a>
-                  </div>
-                  <div class="col text-center p-1">
-                    <a class="btn btn-warning btn-block" href="#">یادآور</a>
-                  </div>
-                </div>
-                <div class="row">
-                    <div class="col text-center p-1">
-                      <a class="btn btn-warning btn-block" href="#">برچسب اخلاقی</a>
-                    </div>
-                    <div class="col text-center p-1">
-                      <a class="btn btn-warning btn-block" href="#">برچسب ارزیابی</a>
-                    </div>
-                    <div class="col text-center p-1">
-                    </div>
-                </div>
-                -->
+
 
                 <table id="example2" class="table table-bordered table-hover">
                   <thead>
@@ -211,17 +175,7 @@
                   </thead>
                   <tbody>
                   </tbody>
-                  <!--
-                  <tfoot>
-                  <tr>
-                    <th>Rendering engine</th>
-                    <th>Browser</th>
-                    <th>Platform(s)</th>
-                    <th>Engine version</th>
-                    <th>CSS grade</th>
-                  </tr>
-                  </tfoot>
-                  -->
+
                 </table>
               </div>
               <!-- /.card-body -->
@@ -236,104 +190,6 @@
 @endsection
 
 @section('js')
-<!--
-<div class="modal" id="tag_modal" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">برچسب</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-            <p>
-                <input type="hidden" id="students_index" />
-                <div class="morals">
-                <h3 class="text-center">
-                    اخلاقی
-                </h3>
-                <div>
-                    <select id="parent-one" onchange="selectParentOne(this);">
-                        <option value="">همه</option>
-                        @foreach ($parentOnes as $item)
-                        <option value="{{ $item->id }}">{{$item->name}}</option>
-                        @endforeach
-                    </select>
-
-                    <select id="parent-two" onchange="selectParentTwo(this);">
-                        <option value="">همه</option>
-                        @foreach ($parentTwos as $item)
-                        <option value="{{ $item->id }}">{{$item->name}}</option>
-                        @endforeach
-                    </select>
-
-                    <select id="parent-three" onchange="selectParentThree(this);">
-                        <option value="">همه</option>
-                        @foreach ($parentThrees as $item)
-                        <option value="{{ $item->id }}">{{$item->name}}</option>
-                        @endforeach
-                    </select>
-
-                    <select id="parent-four" onchange="selectParentFour(this);">
-                        <option value="">همه</option>
-                        @foreach ($parentFours as $item)
-                        <option value="{{ $item->id }}">{{$item->name}}</option>
-                        @endforeach
-                    </select>
-                </div>
-                @foreach ($moralTags as $index => $item)
-                    <input type="checkbox" class="tag-checkbox" id="tag_{{ $item->id }}" value="{{ $item->id }}" />
-                    <span class="tag-title" id="tag-title-{{ $item->id }}">
-                    {{ $item->name }}
-                    </span>
-                    <br/>
-                @endforeach
-                </div>
-                <div class="needs">
-                <h3 class="text-center">
-                    نیازسنجی
-                </h3>
-                <div>
-                    <select id="collection-one" onchange="selectCollectionOne(this);">
-                        <option value="">همه</option>
-                        @foreach ($firstCollections as $item)
-                        <option value="{{ $item->id }}">{{$item->name}}</option>
-                        @endforeach
-                    </select>
-
-                    <select id="collection-two" onchange="selectCollectionTwo(this);">
-                        <option value="">همه</option>
-                        @foreach ($secondCollections as $item)
-                        <option value="{{ $item->id }}" data-parent_id="{{$item->parent_id}}">{{$item->name}}</option>
-                        @endforeach
-                    </select>
-
-                    <select id="collection-three" onchange="selectCollectionThree(this);">
-                        <option value="">همه</option>
-                        @foreach ($thirdCollections as $item)
-                        <option value="{{ $item->id }}" data-parent_id="{{$item->parent_id}}" data-parent_parent_id="{{$item->parent->parent_id}}">{{$item->name}}</option>
-                        @endforeach
-                    </select>
-                </div>
-                @foreach ($needTags as $index => $item)
-                    <input type="checkbox" class="collection-checkbox" id="collection_{{ $item->id }}" value="{{ $item->id }}" />
-                    <span class="collection-title" id="collection-title-{{ $item->id }}">
-                    {{ $item->name }}
-                    </span>
-                    <br/>
-                @endforeach
-                </div>
-            </p>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-primary" onclick="saveTags();">اعمال</button>
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">انصراف</button>
-        </div>
-      </div>
-    </div>
-</div>
--->
 <div class="modal" id="tag_modal" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
       <div class="modal-content">

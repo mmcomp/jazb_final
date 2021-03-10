@@ -416,6 +416,7 @@ class StudentController extends Controller
     public function archived()
     {
         $students = Student::where('is_deleted', false)->where('archived', true);
+        $students_builder = $students;
 
         $supportGroupId = Group::getSupport();
         if ($supportGroupId)
@@ -447,7 +448,6 @@ class StudentController extends Controller
                 $students = $students->where('phone', $phone);
             }
         }
-        // DB::enableQueryLog();
         $students = $students
             ->with('user')
             ->with('studenttags.tag')
@@ -458,12 +458,8 @@ class StudentController extends Controller
             ->with('supporter')
             ->orderBy('created_at', 'desc')
             ->get();
-        // dd(DB::getQueryLog());
+        $count = is_countable($students) ? count($students) : 0;
         $moralTags = Tag::where('is_deleted', false)
-            // ->with('parent_one')
-            // ->with('parent_two')
-            // ->with('parent_three')
-            // ->with('parent_four')
             ->where('type', 'moral')
             ->get();
         $parentOnes = TagParentOne::where('is_deleted', false)->has('tags')->get();
@@ -508,14 +504,25 @@ class StudentController extends Controller
             ]);
         } else {
             $req =  request()->all();
-            // dd($req);
+
             if (!isset($req['start'])) {
                 $req['start'] = 0;
                 $req['length'] = 10;
                 $req['draw'] = 1;
             }
+            $students_for_post_method = $students_builder->with('user')
+            ->with('studenttags.tag')
+            ->with('studentcollections.collection.parent')
+            ->with('studenttemperatures.temperature')
+            ->with('source')
+            ->with('consultant')
+            ->with('supporter')
+            ->orderBy('created_at', 'desc')
+            ->offset($req['start'])
+            ->limit($req['length'])
+            ->get();
             $data = [];
-            foreach ($students as $index => $item) {
+            foreach ($students_for_post_method as $index => $item) {
                 $tags = "";
                 if (($item->studenttags && count($item->studenttags) > 0) || ($item->studentcollections && count($item->studentcollections) > 0)) {
                     for ($i = 0; $i < count($item->studenttags); $i++) {
@@ -554,7 +561,7 @@ class StudentController extends Controller
                     $supportersToSelect .= '>' . $sitem->first_name . ' ' . $sitem->last_name . '</option>';
                 }
                 $data[] = [
-                    $index + 1,
+                    $req['start'] + $index + 1,
                     $item->id,
                     $item->first_name,
                     $item->last_name,
@@ -566,17 +573,11 @@ class StudentController extends Controller
                 ];
             }
 
-
-            $outdata = [];
-            for ($i = $req['start']; $i < min($req['length'] + $req['start'], count($data)); $i++) {
-                $outdata[] = $data[$i];
-            }
-
             $result = [
                 "draw" => $req['draw'],
-                "data" => $outdata,
-                "recordsTotal" => count($students),
-                "recordsFiltered" => count($students)
+                "data" => $data,
+                "recordsTotal" => $count,
+                "recordsFiltered" => $count
             ];
 
             return $result;
@@ -586,6 +587,7 @@ class StudentController extends Controller
     public function banned()
     {
         $students = Student::where('is_deleted', false)->where('banned', true);
+        $students_builder = $students;
         $supportGroupId = Group::getSupport();
         if ($supportGroupId)
             $supportGroupId = $supportGroupId->id;
@@ -616,7 +618,6 @@ class StudentController extends Controller
                 $students = $students->where('phone', $phone);
             }
         }
-        // DB::enableQueryLog();
         $students = $students
             ->with('user')
             ->with('studenttags.tag')
@@ -627,12 +628,8 @@ class StudentController extends Controller
             ->with('supporter')
             ->orderBy('created_at', 'desc')
             ->get();
-        // dd(DB::getQueryLog());
+        $count = is_countable($students) ? count($students) : 0;
         $moralTags = Tag::where('is_deleted', false)
-            // ->with('parent_one')
-            // ->with('parent_two')
-            // ->with('parent_three')
-            // ->with('parent_four')
             ->where('type', 'moral')
             ->get();
         $parentOnes = TagParentOne::where('is_deleted', false)->has('tags')->get();
@@ -650,29 +647,98 @@ class StudentController extends Controller
             $students[$index]->pcreated_at = jdate(strtotime($student->created_at))->format("Y/m/d");
         }
 
-        // dd($students);
-        return view('students.banned', [
-            'students' => $students,
-            'supports' => $supports,
-            'sources' => $sources,
-            'supporters_id' => $supporters_id,
-            'name' => $name,
-            'sources_id' => $sources_id,
-            'phone' => $phone,
-            'moralTags' => $moralTags,
-            'needTags' => $collections,
-            'hotTemperatures' => $hotTemperatures,
-            'coldTemperatures' => $coldTemperatures,
-            "parentOnes" => $parentOnes,
-            "parentTwos" => $parentTwos,
-            "parentThrees" => $parentThrees,
-            "parentFours" => $parentFours,
-            "firstCollections" => $firstCollections,
-            "secondCollections" => $secondCollections,
-            "thirdCollections" => $thirdCollections,
-            'msg_success' => request()->session()->get('msg_success'),
-            'msg_error' => request()->session()->get('msg_error')
-        ]);
+        if(request()->getMethod() == "GET"){
+            return view('students.banned', [
+                'students' => $students,
+                'supports' => $supports,
+                'sources' => $sources,
+                'supporters_id' => $supporters_id,
+                'name' => $name,
+                'sources_id' => $sources_id,
+                'phone' => $phone,
+                'moralTags' => $moralTags,
+                'needTags' => $collections,
+                'hotTemperatures' => $hotTemperatures,
+                'coldTemperatures' => $coldTemperatures,
+                "parentOnes" => $parentOnes,
+                "parentTwos" => $parentTwos,
+                "parentThrees" => $parentThrees,
+                "parentFours" => $parentFours,
+                "firstCollections" => $firstCollections,
+                "secondCollections" => $secondCollections,
+                "thirdCollections" => $thirdCollections,
+                'msg_success' => request()->session()->get('msg_success'),
+                'msg_error' => request()->session()->get('msg_error')
+            ]);
+        }else{
+            $req =  request()->all();
+            if (!isset($req['start'])) {
+                $req['start'] = 0;
+                $req['length'] = 10;
+                $req['draw'] = 1;
+            }
+            $students_for_post_method = $students_builder
+            ->with('user')
+            ->with('studenttags.tag')
+            ->with('studentcollections.collection.parent')
+            ->with('studenttemperatures.temperature')
+            ->with('source')
+            ->with('consultant')
+            ->with('supporter')
+            ->orderBy('created_at', 'desc')
+            ->offset($req['start'])
+            ->limit($req['length'])
+            ->get();
+            $data = [];
+            foreach ($students_for_post_method as $index => $item) {
+                $tags = "";
+                if (($item->studenttags && count($item->studenttags) > 0) || ($item->studentcollections && count($item->studentcollections) > 0)) {
+                    for ($i = 0; $i < count($item->studenttags); $i++) {
+                        $tags .= '<span class="d-inline-block px-1 rounded small mt-2 ' . (($item->studenttags[$i]->tag->type == 'moral') ? 'bg-cyan' : 'bg-warning') . ' p-1">
+                        ' . $item->studenttags[$i]->tag->name . '
+                    </span><br/>';
+                    }
+                }
+                $registerer = "-";
+                if ($item->user)
+                    $registerer =  $item->user->first_name . ' ' . $item->user->last_name;
+                elseif ($item->saloon)
+                    $registerer = $item->saloon;
+                elseif ($item->is_from_site)
+                    $registerer =  'سایت';
+                $temps = "";
+                if ($item->studenttemperatures && count($item->studenttemperatures) > 0) {
+                    foreach ($item->studenttemperatures as $sitem) {
+                        if ($sitem->temperature->status == 'hot')
+                            $temps .= '<span class="bg-danger d-inline-block px-1 rounded small mt-2 p-1">';
+                        else
+                            $temps .= '<span class="bg-cyan d-inline-block px-1 rounded small mt-2 p-1">';
+                        $temps .= $sitem->temperature->name . '</span>';
+                    }
+                }
+                $data[] = [
+                    $req['start'] + $index + 1,
+                    $item->id,
+                    $item->first_name,
+                    $item->last_name,
+                    $registerer,
+                    ($item->source) ? $item->source->name : '-',
+                    $tags,
+                    $temps,
+                    $item->description,
+                ];
+            }
+            $result = [
+                "draw" => $req['draw'],
+                "data" => $data,
+                "recordsTotal" => $count,
+                "recordsFiltered" => $count
+            ];
+
+            return $result;
+        }
+
+
     }
 
     public function index()

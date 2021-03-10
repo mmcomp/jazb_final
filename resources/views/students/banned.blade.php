@@ -33,12 +33,6 @@
               <h1>دانش آموزان لیست سیاه</h1>
             </div>
             <div class="col-sm-6">
-              <!--
-              <ol class="breadcrumb float-sm-right">
-                <li class="breadcrumb-item"><a href="#">Home</a></li>
-                <li class="breadcrumb-item active">DataTables</li>
-              </ol>
-              -->
             </div>
           </div>
         </div><!-- /.container-fluid -->
@@ -65,7 +59,7 @@
                         <div class="col">
                             <div class="form-group">
                                 <label for="supporters_id">پشتیبان</label>
-                                <select  id="supporters_id" name="supporters_id" class="form-control">
+                                <select  id="supporters_id" name="supporters_id" class="form-control" onchange="theChange()">
                                     <option value="">همه</option>
                                     @foreach ($supports as $item)
                                         @if(isset($supporters_id) && $supporters_id==$item->id)
@@ -82,7 +76,7 @@
                         <div class="col">
                             <div class="form-group">
                                 <label for="sources_id">منبع</label>
-                                <select  id="sources_id" name="sources_id" class="form-control">
+                                <select  id="sources_id" name="sources_id" class="form-control" onchange="theChange()">
                                     <option value="">همه</option>
                                     @foreach ($sources as $item)
                                         @if(isset($sources_id) && $sources_id==$item->id)
@@ -99,60 +93,23 @@
                         <div class="col">
                             <div class="form-group">
                                 <label for="name">نام و نام خانوادگی</label>
-                                <input type="text" class="form-control" id="name" name="name" placeholder="نام و نام خانوادگی" value="{{ isset($name)?$name:'' }}" />
+                                <input type="text" class="form-control" id="name" name="name" placeholder="نام و نام خانوادگی" value="{{ isset($name)?$name:'' }}" onkeypress="handle(event)"/>
                             </div>
                         </div>
                         <div class="col">
                             <div class="form-group">
                                 <label for="phone">تلفن</label>
-                                <input type="number" class="form-control" id="phone" name="phone" placeholder="تلفن"  value="{{ isset($phone)?$phone:'' }}" />
+                                <input type="number" class="form-control" id="phone" name="phone" placeholder="تلفن"  value="{{ isset($phone)?$phone:'' }}" onkeydown="handle(event)"/>
                             </div>
                         </div>
                         <div class="col" style="padding-top: 32px;">
-                            <button class="btn btn-success">
+                            <a class="btn btn-success" onclick="theSearch()" href="#">
                                 جستجو
-                            </button>
+                            </a>
+                            <img id="loading" src="/dist/img/loading.gif" style="height: 20px;display: none;" />
                         </div>
                     </div>
                 </form>
-                <!--
-                <h3 class="text-center">
-                    مرتب سازی
-                </h3>
-                <div class="row">
-                  <div class="col text-center p-1">
-                    <a class="btn btn-warning btn-block" href="#">سطح بندی</a>
-                  </div>
-                  <div class="col text-center p-1">
-                    <a class="btn btn-warning btn-block" href="#">پیشنهاد فروش</a>
-                  </div>
-                  <div class="col text-center p-1">
-                    <a class="btn btn-warning btn-block" href="#">محصول</a>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col text-center p-1">
-                    <a class="btn btn-warning btn-block" href="#">سایت</a>
-                  </div>
-                  <div class="col text-center p-1">
-                    <a class="btn btn-warning btn-block" href="#">تعداد پیشنهاد فروش</a>
-                  </div>
-                  <div class="col text-center p-1">
-                    <a class="btn btn-warning btn-block" href="#">یادآور</a>
-                  </div>
-                </div>
-                <div class="row">
-                    <div class="col text-center p-1">
-                      <a class="btn btn-warning btn-block" href="#">برچسب اخلاقی</a>
-                    </div>
-                    <div class="col text-center p-1">
-                      <a class="btn btn-warning btn-block" href="#">برچسب ارزیابی</a>
-                    </div>
-                    <div class="col text-center p-1">
-                    </div>
-                </div>
-                -->
-
                 <table id="example2" class="table table-bordered table-hover">
                   <thead>
                   <tr>
@@ -164,62 +121,10 @@
                     <th>منبع ورودی شماره</th>
                     <th>برچسب</th>
                     <th>داغ/سرد</th>
-                    <!--<th>پشتیبان</th>-->
                     <th>توضیحات</th>
-                    <!--<th>#</th>-->
                   </tr>
                   </thead>
                   <tbody>
-                      {{-- @foreach ($students as $index => $item)
-                      <tr id="tr-{{ $index }}">
-                        <td onclick="showMorePanel({{ $index }});">{{ $index + 1 }}</td>
-                        <td onclick="showMorePanel({{ $index }});">{{ $item->id }}</td>
-                        <td onclick="showMorePanel({{ $index }});">{{ $item->first_name }}</td>
-                        <td onclick="showMorePanel({{ $index }});">{{ $item->last_name }}</td>
-                        @if($item->user)
-                        <td onclick="showMorePanel({{ $index }});">{{ $item->user->first_name . ' ' . $item->user->last_name }}</td>
-                        @elseif($item->is_from_site)
-                        <td onclick="showMorePanel({{ $index }});">سایت</td>
-                        @elseif($item->saloon)
-                        <td onclick="showMorePanel({{ $index }});">{{ $item->saloon }}</td>
-                        @else
-                        <td onclick="showMorePanel({{ $index }});">-</td>
-                        @endif
-                        <td onclick="showMorePanel({{ $index }});">{{ ($item->source)?$item->source->name:'-' }}</td>
-                        @if(($item->studenttags && count($item->studenttags)>0) || ($item->studentcollections && count($item->studentcollections)>0))
-                        <td>
-                            @for($i = 0; $i < count($item->studenttags);$i++)
-                            <span class="bg-cyan d-inline-block px-1 rounded small p-1 mt-2">
-                                {{ $item->studenttags[$i]->tag->name }}
-                            </span><br/>
-                            @endfor
-                            @for($i = 0; $i < count($item->studentcollections);$i++)
-                            <span class="bg-warning d-inline-block px-1 rounded small p-1 mt-2">
-                                {{ ($item->studentcollections[$i]->collection->parent) ? $item->studentcollections[$i]->collection->parent->name . '->' : '' }} {{ $item->studentcollections[$i]->collection->name }}
-                            </span><br/>
-                            @endfor
-                        </td>
-                        @else
-                        <td></td>
-                        @endif
-                        @if($item->studenttemperatures && count($item->studenttemperatures)>0)
-                        <td>
-                            @foreach ($item->studenttemperatures as $sitem)
-                            @if($sitem->temperature->status=='hot')
-                            <span class="bg-danger d-inline-block px-1 rounded small p-1 mt-2">
-                            @else
-                            <span class="bg-cyan d-inline-block px-1 rounded small p-1 mt-2">
-                            @endif
-                                {{ $sitem->temperature->name }}
-                            </span>
-                            @endforeach
-                        </td>
-                        @else
-                        <td></td>
-                        @endif
-                        <td onclick="showMorePanel({{ $index }});">{{ $item->description }}</td>
-                      </tr>
-                      @endforeach --}}
                   </tbody>
                 </table>
               </div>
@@ -397,11 +302,29 @@
         parent3: '',
         parent4: ''
     }
-    function showMorePanel(index){
-        // $('.morepanel').hide();
-        // $('#morepanel-' + index).show();
-        var editRoute = `{{ route('student_edit', ['call_back'=>'student_banned', 'id'=>-1]) }}`;
+    function showMorePanel(index, tr){
+        console.log(index, tr);
+        var persons = {
+            student:"دانش آموز",
+            father:"پدر",
+            mother:"مادر",
+            other:"غیره"
+        };
+        var editRoute = `{{ route('student_edit', ['call_back'=>'supporter_student_purchases_post', 'id'=>-1]) }}`;
         var purchaseRoute = `{{ route('student_purchases', -1) }}`;
+        var supporterStudentAllCallRoute = `{{ route('supporter_student_allcall', -1) }}`;
+        var tmpCall = `
+            <tr>
+                <td>#index#</td>
+                <td>#id#</td>
+                <td>#product#</td>
+                <td>#notice#</td>
+                <td>#replier#</td>
+                <td>#callresult#</td>
+                <td>#next_call#</td>
+                <td>#next_to_call#</td>
+                <td>#description#</td>
+            </tr>`;
         var test = `<table style="width: 100%">
             <tr>
                 <td>
@@ -460,11 +383,8 @@
                                 ${ students[index].pcreated_at }
                             </div>
                             <div class="col">
-                                تلفن دانش آموز:
-                                ${ students[index].phone }
                             </div>
                         </div>
-                        <!--
                         <div class="row">
                             <div class="col">
                                 <a href="#" onclick="$('#students_index').val(${ index });preloadTagModal('moral');$('#tag_modal').modal('show'); return false;">
@@ -479,7 +399,6 @@
                                 </a>
                             </div>
                         </div>
-                        -->
                         <div class="row">
                             <div class="col">
                                 <a target="_blank" href="${ purchaseRoute.replace('-1', students[index].id) }">
@@ -492,7 +411,6 @@
             </tr>
         </table>`;
 
-        var tr = $("#tr-" + index)[0];
         var row = table.row(tr);
         if ( row.child.isShown() ) {
             row.child.hide();
@@ -501,6 +419,7 @@
             row.child( test ).show();
         }
     }
+
     function changeSupporter(studentsIndex,id){
         if(students[studentsIndex]){
             var students_id = id;
@@ -766,6 +685,24 @@
             }
         }
     }
+    function theSearch(){
+        $('#loading').css('display','inline');
+        table.ajax.reload();
+        return false;
+    }
+    function theChange(){
+        $('#loading').css('display','inline');
+        table.ajax.reload();
+        return false;
+    }
+    function handle(e){
+        if(e.keyCode === 13){
+            $('#loading').css('display','inline');
+            e.preventDefault(); // Ensure it is only this code that runs
+            table.ajax.reload();
+            return false;
+        }
+    }
     $(function () {
         $.ajaxSetup({
             headers: {
@@ -794,6 +731,38 @@
                 "emptyTable":     "داده ای برای نمایش وجود ندارد",
                 "info":           "نمایش _START_ تا _END_ از _TOTAL_ داده",
                 "infoEmpty":      "نمایش 0 تا 0 از 0 داده",
+            },
+            serverSide: true,
+            processing: true,
+            ajax: {
+                "type": "POST",
+                "url": "{{ route('student_banned') }}",
+                "dataType": "json",
+                "contentType": 'application/json; charset=utf-8',
+
+                "data": function (data) {
+                    data["supporters_id"] = $('#supporters_id').val();
+                    data["sources_id"] = $('#sources_id').val();
+                    data["name"] = $('#name').val();
+                    data["phone"] = $('#phone').val();
+                    return JSON.stringify(data);
+                },
+                "complete": function(response) {
+                    $('#loading').css('display','none');
+                    $('#example2 tbody tr').addClass('cursor_pointer');
+                    $('#example2 tr').click(function() {
+                        var tr = this;
+                        var studentId = parseInt($(tr).find('td')[1].innerText, 10);
+                        if(!isNaN(studentId)){
+                            for(var index in students){
+                                if(students[index].id==studentId){
+                                    showMorePanel(index, tr);
+                                }
+                            }
+                        }
+                    });
+                }
+
             }
         });
 

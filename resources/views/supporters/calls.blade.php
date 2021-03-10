@@ -31,12 +31,6 @@ $persons = [
               @endif
             </div>
             <div class="col-sm-6">
-              <!--
-              <ol class="breadcrumb float-sm-right">
-                <li class="breadcrumb-item"><a href="#">Home</a></li>
-                <li class="breadcrumb-item active">DataTables</li>
-              </ol>
-              -->
             </div>
           </div>
         </div><!-- /.container-fluid -->
@@ -246,20 +240,18 @@ $persons = [
 <script src="../../plugins/datatables-bs4/js/dataTables.bootstrap4.js"></script>
 <!-- page script -->
 <script>
+    let table = "";
     function showStudents(index){
-        // $(".students").hide();
         $("#students-" + index).toggle();
 
         return false;
     }
     function showStudentTags(index){
-        // $(".students").hide();
         $("#studenttags-" + index).toggle();
 
         return false;
     }
     function changePass(user_id) {
-        // alert(user_id);
         var password = prompt('لطفا رمز عبور جدید را وارد کنید:');
         if(!confirm(`آیا رمز عبور به ${password} تغییر یابد؟`)){
             return false;
@@ -277,8 +269,12 @@ $persons = [
         return false;
     }
     $(function () {
-    //   $("#example1").DataTable();
-      $('#example2').DataTable({
+        $(".btn-danger").click(function(e){
+          if(!confirm('آیا مطمئنید؟')){
+            e.preventDefault();
+          }
+      });
+      table = $('#example2').DataTable({
         "paging": true,
         "lengthChange": false,
         "searching": false,
@@ -296,11 +292,7 @@ $persons = [
         }
       });
 
-      $(".btn-danger").click(function(e){
-          if(!confirm('آیا مطمئنید؟')){
-            e.preventDefault();
-          }
-      });
+
     });
   </script>
 @endsection
