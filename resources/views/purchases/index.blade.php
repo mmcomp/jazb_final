@@ -115,6 +115,7 @@
                                 جستجو
                             </a>
                             <img id="loading" src="/dist/img/loading.gif" style="height: 20px;display: none;" />
+                            {{-- <i class="fas fa-spinner" id="loading" style="display: none"></i> --}}
                         </div>
                      </div>
                  </form>
