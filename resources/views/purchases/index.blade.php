@@ -2,6 +2,7 @@
 
 @section('css')
 <meta name="csrf-token" content="{{ csrf_token() }}">
+<link href="/plugins/select2/css/select2.min.css" rel="stylesheet" />
 @endsection
 @section('content')
     <!-- Content Header (Page header) -->
@@ -35,7 +36,89 @@
               </div>
               <!-- /.card-header -->
               <div class="card-body">
-                <table id="example2" class="table table-bordered table-hover">
+                <h3 class="text-center">
+                    فیلتر
+                 </h3>
+                 <form method="post">
+                     @csrf
+                     <div class="row">
+                         <div class="col">
+                             <div class="form-group">
+                                 <label for="theId">کد</label>
+                                 <input type="text" class="form-control" id="theId" name="theId" placeholder="کد" onkeypress="handle(event)" />
+                             </div>
+                         </div>
+                         <div class="col">
+                             <div class="form-group">
+                                 <label for="place">محل</label>
+                                 <select id="place" name="place" class="form-control" onchange="theChange()">
+                                     <option value="">-</option>
+                                     @foreach($types as $index => $type)
+                                         <option value="{{ $index }}">{{ $type }}</option>
+                                     @endforeach
+                                 </select>
+                             </div>
+                         </div>
+                         <div class="col">
+                             <div class="form-group">
+                                 <label for="name">نام و نام خانوادگی</label>
+                                 <input type="text" class="form-control" id="name" name="name" placeholder="نام و نام خانوادگی" onkeypress="handle(event)" />
+                             </div>
+                         </div>
+                         <div class="col">
+                            <div class="form-group">
+                                <label for="phone">شماره تلفن</label>
+                                <input type="text" class="form-control" id="phone" name="phone" placeholder="شماره تلفن" onkeypress="handle(event)"/>
+                            </div>
+                        </div>
+                     </div>
+                     <div class="row">
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="factor_number">شماره فاکتور</label>
+                                <input type="number" class="form-control" id="factor_number" name="factor_number" placeholder="شماره فاکتور" onkeypress="handle(event)"/>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="products_id">محصول</label>
+                                <select id="products_id" name="products_id" class="form-control select2" onchange="theChange()">
+                                    <option value="">-</option>
+                                    @foreach($products as $product )
+                                        <option value="{{ $product->id }}">
+                                            {{ ($product->collection && $product->collection->parent) ? $product->collection->parent->name : '' }}
+                                            {{ ($product->collection && $product->collection->parent) ? '->' : ''}}
+                                            {{ $product->collection ? $product->collection->name : ''}}
+                                            {{ $product->collection ? '->' : ''}}
+                                            {{ $product->name}}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="price">مبلغ</label>
+                                <input type="number" class="form-control" id="price" name="price" placeholder="مبلغ" onkeypress="handle(event)"/>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="description">توضیحات</label>
+                                <input type="text" class="form-control" id="description" name="description" placeholder="توضیحات" onkeypress="handle(event)"/>
+                            </div>
+                        </div>
+                     </div>
+                     <div class="row">
+                        <div class="col">
+                            <a class="btn btn-success" onclick="theSearch()" href="#">
+                                جستجو
+                            </a>
+                            <img id="loading" src="/dist/img/loading.gif" style="height: 20px;display: none;" />
+                        </div>
+                     </div>
+                 </form>
+                <table id="example2" class="table table-bordered table-hover mt-2">
                   <thead>
                   <tr>
                     <th>ردیف</th>
@@ -66,15 +149,33 @@
 
 @section('js')
 <!-- DataTables -->
+<script src="/plugins/select2/js/select2.full.min.js"></script>
 <script src="../../plugins/datatables/jquery.dataTables.js"></script>
 <script src="../../plugins/datatables-bs4/js/dataTables.bootstrap4.js"></script>
 <!-- page script -->
 <script>
+    $('select.select2').select2();
     let table = "";
+    function theSearch(){
+        $('#loading').css('display','inline');
+        table.ajax.reload();
+        return false;
+    }
     function destroy(e){
         if(!confirm('آیا مطمئنید؟')){
             e.preventDefault();
           }
+    }
+    function theChange(){
+        table.ajax.reload();
+        return false;
+    }
+    function handle(e){
+        if(e.keyCode === 13){
+            e.preventDefault(); // Ensure it is only this code that runs
+            table.ajax.reload();
+            return false;
+        }
     }
     $(function () {
       $.ajaxSetup({
@@ -107,11 +208,18 @@
             "contentType": 'application/json; charset=utf-8',
 
             "data": function (data) {
-                //data['name'] = $("#name").val();
+                data['theId'] = $('#theId').val();
+                data['place'] = $('#place').val();
+                data['name'] = $("#name").val();
+                data['phone'] = $('#phone').val();
+                data['factor_number'] = $('#factor_number').val();
+                data['products_id'] = $('#products_id').val();
+                data['price'] = $('#price').val();
+                data['description'] = $('#description').val();
                 return JSON.stringify(data);
             },
             "complete": function(response) {
-                //$('#example2_paginate').removeClass('dataTables_paginate');
+                $('#loading').css('display','none');
             }
 
         },
