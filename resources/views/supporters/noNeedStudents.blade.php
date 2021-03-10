@@ -64,13 +64,13 @@
                                 count($item->studentcollections)>0))
                                 <td>
                                     @for($i = 0; $i < count($item->studenttags);$i++)
-                                        <span class="alert alert-info p-1">
+                                        <span class="d-inline-block px-1 rounded small mt-2 bg-cyan p-1">
                                             {{ $item->studenttags[$i]->tag->name }}
                                         </span><br />
                                         @endfor
                                         @for($i = 0; $i < count($item->studentcollections);$i++)
                                             @if(isset($item->studentcollections[$i]->collection))
-                                            <span class="alert alert-warning p-1">
+                                            <span class="d-inline-block px-1 rounded small mt-2 bg-warning p-1">
                                                 {{ ($item->studentcollections[$i]->collection->parent) ? $item->studentcollections[$i]->collection->parent->name . '->' : '' }}
                                                 {{ $item->studentcollections[$i]->collection->name }}
                                             </span><br />
