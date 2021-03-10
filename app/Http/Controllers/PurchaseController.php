@@ -32,6 +32,7 @@ class PurchaseController extends Controller
     {
 
         $type = null;
+        $btn = '';
         $product_part_1 = null;
         $product_part_2 = null;
         $product_part_3 = null;
@@ -115,10 +116,14 @@ class PurchaseController extends Controller
             foreach ($purchases as $index => $item) {
                 if ($item->type == 'manual') {
                     $type = "حضوری";
+                    $btn =  '<a class="btn btn-primary" href="' . route('purchase_edit', $item->id) . '">ویرایش</a>
+                    <a class="btn btn-danger" href="' . route('purchase_delete', $item->id) . '" onclick="destroy(event)">حذف</a>';
                 } else if ($item->type == "site_successed") {
                     $type = "سایت";
+                    $btn =  '<a class="btn btn-primary" href="' . route('purchase_edit', $item->id) . '">ویرایش</a>';
                 } else if ($item->type == "site_failed") {
                     $type = "انصرافی";
+                    $btn = '';
                 }
                 $product_part_1 = ($item->product && $item->product->collection && $item->product->collection->parent) ? $item->product->collection->parent->name : '';
                 $product_part_2 = ($item->product && $item->product->collection && $item->product->collection->parent) ? '->' : '';
@@ -135,8 +140,7 @@ class PurchaseController extends Controller
                     $product_part_1 . $product_part_2 . $product_part_3 . $product_part_4 . $product_part_5,
                     number_format($item->price),
                     $item->description,
-                    '<a class="btn btn-primary" href="' . route('purchase_edit', $item->id) . '">ویرایش</a>
-                    <a class="btn btn-danger" href="' . route('purchase_delete', $item->id) . '" onclick="destroy(event)">حذف</a>'
+                    $btn
                 ];
             }
         }
@@ -217,7 +221,7 @@ class PurchaseController extends Controller
         $students = Student::where('is_deleted', false)->where('banned', false)->get();
         $products = Product::where('is_deleted', false)->get();
         if ($request->getMethod() == 'GET') {
-            return view('purchases.create', [
+            return view('purchases.edit', [
                 'purchase' => $purchase,
                 'students' => $students,
                 'products' => $products
@@ -225,14 +229,20 @@ class PurchaseController extends Controller
         }
 
         $student = Student::find($request->input('students_id'));
-        $purchase->students_id = $request->input('students_id');
-        $purchase->supporters_id = $student->supporters_id;
-        $purchase->users_id = Auth::user()->id;
-        $purchase->products_id = $request->input('products_id');
-        $purchase->description = $request->input('description');
-        $purchase->price = $request->input('price');
-        $purchase->factor_number = $request->input('factor_number');
-        $purchase->save();
+        if($purchase->type == "manual"){
+            $purchase->students_id = $request->input('students_id');
+            $purchase->supporters_id = $student->supporters_id;
+            $purchase->users_id = Auth::user()->id;
+            $purchase->products_id = $request->input('products_id');
+            $purchase->description = $request->input('description');
+            $purchase->price = $request->input('price');
+            $purchase->factor_number = $request->input('factor_number');
+            $purchase->save();
+        }else if($purchase->type == "site_successed"){
+            $purchase->price = $request->input('price');
+            $purchase->save();
+        }
+
         if ($student) {
             $student->today_purchases = $student->purchases()->where('created_at', '>=', date("Y-m-d 00:00:00"))->where('is_deleted', false)->where('type', '!=', 'site_failed')->count();
 

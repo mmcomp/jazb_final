@@ -35,6 +35,7 @@
               <div class="card-body">
                 <form method="POST" enctype="multipart/form-data">
                 @csrf
+                @if($purchase->type == "manual")
                 <div class="row">
                     <div class="col">
 
@@ -43,7 +44,7 @@
                             <select required class="form-control select2" id="students_id" name="students_id">
                                 <option value="" disabled selected>جستجو</option>
                                 @foreach ($students as $item)
-                                    <option value="{{ $item->id }}">{{ $item->first_name }} {{ $item->last_name }} [{{ $item->phone }}]</option>
+                                    <option value="{{ $item->id }}" {{ $item->id == $purchase->students_id ? "selected" : ''}}>{{ $item->first_name }} {{ $item->last_name }} [{{ $item->phone }}]</option>
                                 @endforeach
                             </select>
                         </div>
@@ -51,7 +52,7 @@
                     <div class="col">
                         <div class="form-group">
                             <label for="description">توضیحات</label>
-                            <input type="text" class="form-control" id="description" name="description" placeholder="توضیحات"  />
+                            <input type="text" class="form-control" id="description" name="description" placeholder="توضیحات" value="{{ $purchase->description }}" />
                         </div>
 
 
@@ -64,7 +65,7 @@
                             <label for="products_id">محصول</label>
                             <select class="form-control select2" id="products_id" name="products_id" >
                                 @foreach ($products as $item)
-                                    <option value="{{ $item->id }}">{{ (($item->parents!='')?$item->parents . '->':'') . $item->name }}</option>
+                                    <option value="{{ $item->id }}" {{ $item->id == $purchase->products_id ? "selected" : ''}}>{{ (($item->parents!='')?$item->parents . '->':'') . $item->name }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -74,22 +75,23 @@
                     <div class="col">
                         <div class="form-group">
                             <label for="factor_number">شماره سند</label>
-                            <input type="text" class="form-control" id="factor_number" name="factor_number" placeholder="شماره سند"  />
+                            <input type="text" class="form-control" id="factor_number" name="factor_number" placeholder="شماره سند"  value="{{ $purchase->factor_number }}" />
                         </div>
                     </div>
                 </div>
+                @endif
                 <div class="row">
                     <div class="col">
                         <div class="form-group">
                             <label for="price">مبلغ</label>
-                            <input type="number" class="form-control" id="price" name="price" placeholder="مبلغ"  />
+                            <input type="number" class="form-control" id="price" name="price" placeholder="مبلغ"  value="{{ $purchase->price }}" />
                         </div>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col">
-                        <button class="btn btn-primary">
-                            ذخیره
+                        <button class="btn btn-warning text-white">
+                            ویرایش
                         </button>
                     </div>
                 </div>

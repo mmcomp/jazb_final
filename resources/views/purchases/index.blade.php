@@ -45,7 +45,6 @@
                          <div class="col">
                              <div class="form-group">
                                  <label for="theId">کد</label>
-                                 {{-- <input type="text" class="form-control" id="theId" name="theId" placeholder="کد" value="{{ isset($theId)?$theId:'' }}" /> --}}
                                  <input type="text" class="form-control" id="theId" name="theId" placeholder="کد" onkeypress="handle(event)" />
                              </div>
                          </div>
@@ -54,15 +53,6 @@
                                  <label for="place">محل</label>
                                  <select id="place" name="place" class="form-control" onchange="theChange()">
                                      <option value="">-</option>
-                                     {{-- @foreach ($sources as $item)
-                                         @if(isset($sources_id) && $sources_id==$item->id)
-                                         <option value="{{ $item->id }}" selected >
-                                         @else
-                                         <option value="{{ $item->id }}" >
-                                         @endif
-                                         {{ $item->name }}
-                                         </option>
-                                     @endforeach --}}
                                      @foreach($types as $index => $type)
                                          <option value="{{ $index }}">{{ $type }}</option>
                                      @endforeach
@@ -94,15 +84,6 @@
                                 <label for="products_id">محصول</label>
                                 <select id="products_id" name="products_id" class="form-control select2" onchange="theChange()">
                                     <option value="">-</option>
-                                    {{-- @foreach ($sources as $item)
-                                        @if(isset($sources_id) && $sources_id==$item->id)
-                                        <option value="{{ $item->id }}" selected >
-                                        @else
-                                        <option value="{{ $item->id }}" >
-                                        @endif
-                                        {{ $item->name }}
-                                        </option>
-                                    @endforeach --}}
                                     @foreach($products as $product )
                                         <option value="{{ $product->id }}">
                                             {{ ($product->collection && $product->collection->parent) ? $product->collection->parent->name : '' }}
@@ -123,8 +104,8 @@
                         </div>
                         <div class="col">
                             <div class="form-group">
-                                <label for="description">توصیف</label>
-                                <input type="text" class="form-control" id="description" name="description" placeholder="توصیف" onkeypress="handle(event)"/>
+                                <label for="description">توضیحات</label>
+                                <input type="text" class="form-control" id="description" name="description" placeholder="توضیحات" onkeypress="handle(event)"/>
                             </div>
                         </div>
                      </div>
@@ -239,7 +220,6 @@
             },
             "complete": function(response) {
                 $('#loading').css('display','none');
-                //$('#example2_paginate').removeClass('dataTables_paginate');
             }
 
         },
