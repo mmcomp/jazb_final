@@ -74,12 +74,12 @@ class Student extends Model
 
     public function calls()
     {
-        return $this->hasMany('App\Call', 'students_id', 'id')->orderBy('created_at', 'desc');
+        return $this->hasMany('App\Call', 'students_id', 'id')->where('is_deleted', false)->orderBy('created_at', 'desc');
     }
 
     public function remindercalls()
     {
-        return $this->hasMany('App\Call', 'students_id', 'id')->where('next_call', '!=', null);
+        return $this->hasMany('App\Call', 'students_id', 'id')->where('is_deleted', false)->where('next_call', '!=', null);
     }
 
 
