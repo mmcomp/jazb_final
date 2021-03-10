@@ -66,7 +66,7 @@
                         <div class="col">
                             <div class="form-group">
                                 <label for="sources_id">منبع</label>
-                                <select  id="sources_id" name="sources_id" class="form-control">
+                                <select  id="sources_id" name="sources_id" class="form-control" onchange="theChange()">
                                     <option value="">همه</option>
                                     @foreach ($sources as $item)
                                         @if(isset($sources_id) && $sources_id==$item->id)
@@ -83,19 +83,20 @@
                         <div class="col">
                             <div class="form-group">
                                 <label for="name">نام و نام خانوادگی</label>
-                                <input type="text" class="form-control" id="name" name="name" placeholder="نام و نام خانوادگی" value="{{ isset($name)?$name:'' }}" />
+                                <input type="text" class="form-control" id="name" name="name" placeholder="نام و نام خانوادگی" value="{{ isset($name)?$name:'' }}" onkeypress="handle(event)"/>
                             </div>
                         </div>
                         <div class="col">
                             <div class="form-group">
                                 <label for="phone">تلفن</label>
-                                <input type="number" class="form-control" id="phone" name="phone" placeholder="تلفن"  value="{{ isset($phone)?$phone:'' }}" />
+                                <input type="number" class="form-control" id="phone" name="phone" placeholder="تلفن"  value="{{ isset($phone)?$phone:'' }}" onkeypress="handle(event)" />
                             </div>
                         </div>
                         <div class="col" style="padding-top: 32px;">
-                            <a class="btn btn-success" onclick="table.ajax.reload(); return false;" href="#">
+                            <a class="btn btn-success" onclick="theSearch()" href="#">
                                 جستجو
                             </a>
+                            <img id="loading" src="/dist/img/loading.gif" style="height: 20px;display: none;" />
                         </div>
                     </div>
                 </form>
@@ -153,149 +154,6 @@
                   </tr>
                   </thead>
                   <tbody>
-                    <!--
-                      @foreach ($students as $index => $item)
-                      <tr id="main-tr-{{ $item->id }}">
-                        <td onclick="showMorePanel({{ $index }});">{{ $index + 1 }}</td>
-                        <td onclick="showMorePanel({{ $index }});">{{ $item->id }}</td>
-                        <td onclick="showMorePanel({{ $index }});">{{ $item->first_name }}</td>
-                        <td onclick="showMorePanel({{ $index }});">{{ $item->last_name }}</td>
-                        @if($item->user)
-                        <td onclick="showMorePanel({{ $index }});">{{ $item->user->first_name . ' ' . $item->user->last_name }}</td>
-                        @elseif($item->is_from_site)
-                        <td onclick="showMorePanel({{ $index }});">سایت</td>
-                        @else
-                        <td onclick="showMorePanel({{ $index }});">-</td>
-                        @endif
-                        <td onclick="showMorePanel({{ $index }});">{{ ($item->source)?$item->source->name:'-' }}</td>
-                        @if($item->studenttags && count($item->studenttags)>0)
-                        <td>
-                            @for($i = 0; $i < count($item->studenttags);$i++)
-                            <span class="alert alert-info p-1">
-                                {{ $item->studenttags[$i]->tag->name }}
-                            </span>
-                            @endfor
-                        </td>
-                        @else
-                        <td></td>
-                        @endif
-                        @if($item->studenttemperatures && count($item->studenttemperatures)>0)
-                        <td>
-                            @foreach ($item->studenttemperatures as $sitem)
-                            @if($sitem->temperature->status=='hot')
-                            <span class="alert alert-danger p-1">
-                            @else
-                            <span class="alert alert-info p-1">
-                            @endif
-                                {{ $sitem->temperature->name }}
-                            </span>
-                            @endforeach
-                        </td>
-                        @else
-                        <td></td>
-                        @endif
-                        <td onclick="showMorePanel({{ $index }});">{{ $item->description }}</td>
-                        <td>
-                            <a class="btn btn-warning" href="#" onclick="$('#students_index2').val({{ $index }});preloadTemperatureModal();$('#temperature_modal').modal('show'); return false;">
-                                داغ/سرد
-                            </a>
-                            <a class="btn btn-danger" href="#" onclick="seenStudent({{ $item->id }}); return false;">
-                                مشاهده شد!
-                            </a>
-                            <a class="btn btn-primary" href="{{ route('student_edit', ["call_back"=>'supporter_student_new', "id"=>$item->id]) }}">
-                                ویرایش
-                            </a>
-                        </td>
-                      </tr>
-
-                      <tr class="morepanel" id="morepanel-{{ $index }}">
-                          <td colspan="10">
-                              <div class="container">
-                                <div class="row">
-                                    <div class="col">
-                                        تراز یا رتبه سال قبل :
-                                        {{ $item->last_year_grade }}
-                                    </div>
-                                    <div class="col">
-                                        مشاور :
-                                        {{ ($item->consultant)?$item->consultant->first_name . ' ' . $item->consultant->last_name:'' }}
-                                    </div>
-                                    <div class="col">
-                                        شغل پدر یا مادر :
-                                        {{ $item->parents_job_title }}
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col">
-                                        شماره منزل :
-                                        {{ $item->home_phone }}
-                                    </div>
-                                    <div class="col">
-                                        مقطع :
-                                        {{ isset($egucation_levels[$item->egucation_level])?$egucation_levels[$item->egucation_level]:$item->egucation_level }}
-                                    </div>
-                                    <div class="col">
-                                        شماره موبایل والدین :
-                                        {{ $item->father_phone }}
-                                        {{ $item->mother_phone }}
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col">
-                                        مدرسه :
-                                        {{ $item->school }}
-                                    </div>
-                                    <div class="col">
-                                        معدل :
-                                        {{ $item->average }}
-                                    </div>
-                                    <div class="col">
-                                        رشته تحصیلی :
-                                        {{ isset($majors[$item->major])?$majors[$item->major]:'-' }}
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col">
-
-                                        <a href="{{ route('student_edit', ["call_back"=>'supporter_student_new', "id"=>$item->id]) }}">
-                                            ویرایش مشخصات
-                                        </a>
-
-                                    </div>
-                                    <div class="col">
-                                        تاریخ ثبت دانش آموز :
-                                        {{ jdate(strtotime($item->created_at))->format("Y/m/d") }}
-                                    </div>
-                                    <div class="col">
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col">
-                                        <a href="#" onclick="$('#students_index').val({{ $index }});preloadTagModal('moral');$('#tag_modal').modal('show'); return false;">
-                                            برچسب روحیات اخلاقی
-                                        </a>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col">
-                                        <a href="#" onclick="$('#students_index').val({{ $index }});preloadTagModal('need');$('#tag_modal').modal('show'); return false;">
-                                            برچسب نیازهای دانش آموز
-                                        </a>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col">
-                                        <a target="_blank" href="{{ route('student_purchases', $item->id) }}">
-                                            گزارش خریدهای قطعی دانش آموز
-                                        </a>
-                                    </div>
-                                </div>
-                              </div>
-                          </td>
-                      </tr>
-
-                      @endforeach
-                    -->
                   </tbody>
                   <!--
                   <tfoot>
@@ -997,6 +855,24 @@
             }
         }
     }
+    function theSearch(){
+        $('#loading').css('display','inline');
+        table.ajax.reload();
+        return false;
+    }
+    function theChange(){
+        $('#loading').css('display','inline');
+        table.ajax.reload();
+        return false;
+    }
+    function handle(e){
+        if(e.keyCode === 13){
+            $('#loading').css('display','inline');
+            e.preventDefault(); // Ensure it is only this code that runs
+            table.ajax.reload();
+            return false;
+        }
+    }
     $(function () {
         $.ajaxSetup({
             headers: {
@@ -1041,7 +917,7 @@
                     return JSON.stringify(data);
                 },
                 "complete": function(response) {
-                    console.log(response);
+                    $('#loading').css('display','none');
                     $('#example2 tr').click(function() {
                         var tr = this;
                         var studentId = parseInt($(tr).find('td')[1].innerText, 10);

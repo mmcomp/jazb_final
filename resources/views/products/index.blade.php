@@ -141,6 +141,7 @@
       });
       $('#name').on('keypress',function(e) {
         if(e.which == 13) {
+           $('#loading').css('display','inline');
            table.ajax.reload();
            return false;
         }

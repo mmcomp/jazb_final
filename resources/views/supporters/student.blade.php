@@ -109,7 +109,7 @@ null => ""
                             <div class="col">
                                 <div class="form-group">
                                     <label for="name">نام و نام خانوادگی</label>
-                                    <input type="text" class="form-control" id="name" name="name" placeholder="نام و نام خانوادگی" value="{{ isset($name)?$name:'' }}" />
+                                    <input type="text" class="form-control" id="name" name="name" placeholder="نام و نام خانوادگی" value="{{ isset($name)?$name:'' }}"/>
                                 </div>
                             </div>
                             <div class="col">
@@ -133,6 +133,7 @@ null => ""
                                 <a class="btn btn-success" onclick="theSearch()" href="#">
                                     جستجو
                                 </a>
+                                <img id="loading" src="/dist/img/loading.gif" style="height: 20px;display: none;" />
                             </div>
                         </div>
                         <input type="hidden" id="has_collection" name="has_collection" value="{{ isset($has_collection)?$has_collection:'false' }}" />
@@ -1663,6 +1664,7 @@ null => ""
     }
 
     function selectProduct() {
+        $('#loading').css('display','inline');
         emptySomeData();
         $("#has_the_product").val($("#has_product").val().join(','));
         // $("#search-frm").submit();
@@ -1674,6 +1676,7 @@ null => ""
     }
 
     function selectCallResult() {
+        $('#loading').css('display','inline');
         emptySomeData();
         $("#has_call_result").val($("#has_cal_result").val());
         // $("#search-frm").submit();
@@ -1681,6 +1684,7 @@ null => ""
     }
 
     function selectMajors() {
+        $('#loading').css('display','inline');
         emptySomeData();
         $('#major').val($('#major').val());
         table.ajax.reload();
@@ -1688,18 +1692,21 @@ null => ""
 
 
     function selectSources() {
+        $('#loading').css('display','inline');
         emptySomeData();
         $('#sources_id').val($('#sources_id').val());
         table.ajax.reload();
     }
 
     function selectEducationLevels() {
+        $('#loading').css('display','inline');
         emptySomeData();
         $('#eduction_level').val($('#education_level').val());
         table.ajax.reload();
     }
 
     function theSearch() {
+        $('#loading').css('display','inline');
         emptySomeData();
         table.ajax.reload();
         return false;
@@ -1710,6 +1717,7 @@ null => ""
         $('input').keypress(function(event) {
             var keycode = (event.keyCode ? event.keyCode : event.which);
             if (keycode == '13') {
+                $('#loading').css('display','inline');
                 emptySomeData();
                 table.ajax.reload();
             }
@@ -1796,7 +1804,7 @@ null => ""
                     return JSON.stringify(data);
                 }
                 , "complete": function(response) {
-                    //console.log(response);
+                    $('#loading').css('display','none');
                     $('#example2_paginate').removeClass('dataTables_paginate');
                     $('#example2 tr').click(function() {
                         var tr = this;

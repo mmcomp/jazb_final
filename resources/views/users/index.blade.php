@@ -50,9 +50,10 @@
                              </div>
                          </div>
                          <div class="col" style="padding-top: 32px;">
-                            <a class="btn btn-success" onclick="table.ajax.reload(); return false;" href="#">
+                            <a class="btn btn-success" onclick="theSearch()" href="#">
                                 جستجو
                             </a>
+                            <img id="loading" src="/dist/img/loading.gif" style="height: 20px;display: none;" />
                         </div>
                      </div>
                  </form>
@@ -91,7 +92,11 @@
 <!-- page script -->
 <script>
         var table;
-
+        function theSearch(){
+            $('#loading').css('display','inline');
+            table.ajax.reload();
+            return false;
+        }
         function destroy(e){
             if(!confirm('آیا مطمئنید؟')){
                 e.preventDefault();
@@ -148,6 +153,7 @@
                 },
                 "complete": function(response) {
                     $('#example2_paginate').removeClass('dataTables_paginate');
+                    $('#loading').css('display','none');
                 }
 
             },
@@ -171,6 +177,7 @@
 
           $('#name').on('keypress',function(e) {
             if(e.which == 13) {
+               $('#loading').css('display','inline');
                table.ajax.reload();
                return false;
             }

@@ -170,7 +170,7 @@
                   </tr>
                   </thead>
                   <tbody>
-                      @foreach ($students as $index => $item)
+                      {{-- @foreach ($students as $index => $item)
                       <tr id="tr-{{ $index }}">
                         <td onclick="showMorePanel({{ $index }});">{{ $index + 1 }}</td>
                         <td onclick="showMorePanel({{ $index }});">{{ $item->id }}</td>
@@ -217,49 +217,10 @@
                         @else
                         <td></td>
                         @endif
-                        <!--
-                        <td>
-                            <select id="supporters_id_{{ $index }}" class="form-control select2">
-                                <option>-</option>
-                                @foreach ($supports as $sitem)
-                                    @if ($sitem->id==$item->supporters_id)
-                                    <option value="{{ $sitem->id }}" selected>
-                                    @else
-                                    <option value="{{ $sitem->id }}">
-                                    @endif
-                                    {{ $sitem->first_name }} {{ $sitem->last_name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            <a class="btn btn-success btn-sm" href="#" onclick="return changeSupporter({{ $index }});">
-                                ذخیره
-                            </a>
-                            <br/>
-                            <img id="loading-{{ $index }}" src="/dist/img/loading.gif" style="height: 20px;display: none;" />
-                        </td>
-                        -->
                         <td onclick="showMorePanel({{ $index }});">{{ $item->description }}</td>
-                        <!--
-                        <td>
-                            <a class="btn btn-warning" href="#" onclick="$('#students_index2').val({{ $index }});preloadTemperatureModal();$('#temperature_modal').modal('show'); return false;">
-                                داغ/سرد
-                            </a>
-                        </td>
-                        -->
                       </tr>
-                      @endforeach
+                      @endforeach --}}
                   </tbody>
-                  <!--
-                  <tfoot>
-                  <tr>
-                    <th>Rendering engine</th>
-                    <th>Browser</th>
-                    <th>Platform(s)</th>
-                    <th>Engine version</th>
-                    <th>CSS grade</th>
-                  </tr>
-                  </tfoot>
-                  -->
                 </table>
               </div>
               <!-- /.card-body -->
