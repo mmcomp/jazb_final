@@ -16,7 +16,7 @@ class ReminderController extends Controller
     public function index($date="null"){
         $recalls = Call::where('calls_id', '!=', null)->pluck('calls_id');
         //dd($student_ids);
-        $calls = Call::where('next_call', '!=', null)->where('users_id', Auth::user()->id)->whereNotIn('id', $recalls);
+        $calls = Call::where('next_call', '!=', null)->where('users_id', Auth::user()->id)->whereNotIn('id', $recalls)->where('is_deleted',false);
         $today = false;
         if($date == "today"){
             $today = true;
@@ -36,7 +36,7 @@ class ReminderController extends Controller
     public function indexPost($date=null){
         $student_ids = Student::where('is_deleted', false)->where('banned', false)->where('archived', false)->where('supporters_id', Auth::user()->id)->pluck('id');
         $recalls = Call::where('calls_id', '!=', null)->pluck('calls_id');
-        $calls = Call::where('next_call', '!=', null)->where('users_id', Auth::user()->id)->whereNotIn('id', $recalls);
+        $calls = Call::where('next_call', '!=', null)->where('users_id', Auth::user()->id)->whereNotIn('id', $recalls)->where('is_deleted',false);
         $theCalls = $calls->whereIn('students_id',$student_ids)->with('student')->with('product');
         $allCalls = $theCalls->count();
         $sw = null;
@@ -132,8 +132,13 @@ class ReminderController extends Controller
             request()->session()->flash("msg_error", "تماس مورد نظر پیدا نشد!");
             return redirect()->route('reminders_get');
         }
-        $call->delete();
-        request()->session()->flash("msg_success", "تماس با موفقیت حذف شد.");
-        return redirect()->route('reminders_get');
+        $call->is_deleted = 1;
+        try{
+            $call->save();
+            request()->session()->flash("msg_success", "تماس با موفقیت حذف شد.");
+            return redirect()->route('reminders_get');
+        }catch(Exception $e){
+            dd($e);
+        }
     }
 }

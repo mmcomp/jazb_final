@@ -14,8 +14,8 @@ trait AllTypeCallsTrait {
         $count = 0;
         if ($call_results) {
             foreach ($call_results as $result) {
-                $all_missed_calls = Call::where('users_id', Auth::user()->id)->where('call_results_id', $result->id)->get();
-                $count = Call::where('users_id', Auth::user()->id)->where('call_results_id', $result->id)->count();
+                $all_missed_calls = Call::where('users_id', Auth::user()->id)->where('call_results_id', $result->id)->where('is_deleted',false)->get();
+                $count = Call::where('users_id', Auth::user()->id)->where('call_results_id', $result->id)->where('is_deleted',false)->count();
             }
         }
         return ['value' => $all_missed_calls, 'count' => $count];
@@ -27,8 +27,8 @@ trait AllTypeCallsTrait {
         $count = 0;
         if ($call_results) {
             foreach ($call_results as $result) {
-                $missed_calls_of_yesterday = Call::where('users_id', Auth::user()->id)->where('call_results_id', $result->id)->where('created_at', ">=", date("Y-m-d 00:00:00", strtotime("yesterday")))->where('created_at', "<=", date("Y-m-d 23:59:59", strtotime("yesterday")))->get();
-                $count = Call::where('users_id', Auth::user()->id)->where('call_results_id', $result->id)->where('created_at', ">=", date("Y-m-d 00:00:00", strtotime("yesterday")))->where('created_at', "<=", date("Y-m-d 23:59:59", strtotime("yesterday")))->count();
+                $missed_calls_of_yesterday = Call::where('users_id', Auth::user()->id)->where('call_results_id', $result->id)->where('created_at', ">=", date("Y-m-d 00:00:00", strtotime("yesterday")))->where('created_at', "<=", date("Y-m-d 23:59:59", strtotime("yesterday")))->where('is_deleted',false)->get();
+                $count = Call::where('users_id', Auth::user()->id)->where('call_results_id', $result->id)->where('created_at', ">=", date("Y-m-d 00:00:00", strtotime("yesterday")))->where('created_at', "<=", date("Y-m-d 23:59:59", strtotime("yesterday")))->where('is_deleted',false)->count();
             }
         }
         return ['value' => $missed_calls_of_yesterday,'count' => $count ] ;
@@ -42,7 +42,7 @@ trait AllTypeCallsTrait {
         if ($call_results_no_need) {
             foreach ($call_results_no_need as $result) {
                 $arrOfNoNeed[] = $result->id;
-                $no_need_calls = Call::where('users_id', Auth::user()->id)->whereIn('call_results_id', $arrOfNoNeed)->pluck('students_id')->implode(',');
+                $no_need_calls = Call::where('is_deleted',false)->where('users_id', Auth::user()->id)->whereIn('call_results_id', $arrOfNoNeed)->pluck('students_id')->implode(',');
             }
         }
         if(!is_array($no_need_calls)){

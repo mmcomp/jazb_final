@@ -166,7 +166,7 @@ class SupporterController extends Controller
         $sources_id = null;
 
         foreach ($supporters as $index => $supporter) {
-            $call = Call::where("users_id", $supporter->id);
+            $call = Call::where("users_id", $supporter->id)->where('is_deleted',false);
             $supporterCallResults = $callResults->ToArray();
             foreach ($supporterCallResults as $sindex => $supporterCallResult) {
                 $supporterCallResults[$sindex]['count'] = 0;
@@ -260,12 +260,17 @@ class SupporterController extends Controller
         $fullName = null;
         if ($request->getMethod() == 'POST') {
             if (request()->input('call_id')) {
-                $call =  Call::where("users_id", $id)->where('id', request()->input('call_id'))->first();
+                $call =  Call::where("users_id", $id)->where('id', request()->input('call_id'))->where('is_deleted',false)->first();
                 if ($call) {
-                    $call->delete();
+                    $call->is_deleted = 1;
+                    try {
+                        $call->save();
+                    } catch (Exception $e) {
+                        dd($e);
+                    }
                 }
             }
-            $calls = Call::where("users_id", $id);
+            $calls = Call::where("users_id", $id)->where('is_deleted',false);
             if (request()->input('from_date')) {
                 $from_date = request()->input('from_date');
                 if ($from_date != '')
@@ -483,11 +488,11 @@ class SupporterController extends Controller
         $notices_id = null;
         $call_results_id = null;
         $next_to_call = null;
-       // dd(count($students->get()));
+        // dd(count($students->get()));
         if (request()->input('students_id') != null) {
             $students_id = (int)request()->input('students_id');
             $calls_id = (int)request()->input('calls_id');
-            $call = Call::where('id', $calls_id)->where('students_id', $students_id)->first();
+            $call = Call::where('id', $calls_id)->where('students_id', $students_id)->where('is_deleted',false)->first();
             $replier = $call ? $call->replier : '-';
             $products_id = $call ? $call->products_id : '-';
             $notices_id = $call ? $call->notices_id : '-';
@@ -537,12 +542,11 @@ class SupporterController extends Controller
             if (request()->input('has_call_result') != null && request()->input('has_call_result') != '') {
                 //dd('1');
                 $has_call_result = request()->input('has_call_result');
-                $calls = Call::where('call_results_id', $has_call_result);
+                $calls = Call::where('call_results_id', $has_call_result)->where('is_deleted',false);
                 if ($has_the_product != '') {
                     $calls = $calls->whereIn('products_id', explode(',', $has_the_product));
                 }
                 $calls = $calls->pluck('students_id');
-                // $students = $students->whereIn('id', $purchases)->orWhereIn('id', $calls);
                 $students = $students->where(function ($query) use ($calls) {
                     $query->whereIn('students.id', $calls);
                 });
@@ -552,16 +556,16 @@ class SupporterController extends Controller
                     $purchases = Purchase::where('is_deleted', false)->where('type', '!=', 'site_failed')->whereIn('products_id', explode(',', $has_the_product))->pluck('students_id');
                     $students = $students->whereIn('students.id', $purchases);
                 }
-                if (request()->input('has_call_result') != null && request()->input('has_call_result') != '') {
+                // if (request()->input('has_call_result') != null && request()->input('has_call_result') != '') {
 
-                    $has_call_result = request()->input('has_call_result');
-                    $calls = Call::where('call_results_id', $has_call_result);
-                    if ($has_the_product != '') {
-                        $calls = $calls->whereIn('products_id', explode(',', $has_the_product));
-                    }
-                    $calls = $calls->pluck('students_id');
-                    $students = $students->whereIn('students.id', $calls);
-                }
+                //     $has_call_result = request()->input('has_call_result');
+                //     $calls = Call::where('call_results_id', $has_call_result)->where('is_deleted',false);
+                //     if ($has_the_product != '') {
+                //         $calls = $calls->whereIn('products_id', explode(',', $has_the_product));
+                //     }
+                //     $calls = $calls->pluck('students_id');
+                //     $students = $students->whereIn('students.id', $calls);
+                // }
             }
             if (request()->input('has_the_tags') != null && request()->input('has_the_tags') != '') {
                 $has_the_tags = request()->input('has_the_tags');
@@ -1222,16 +1226,29 @@ class SupporterController extends Controller
     public function deleteCall($users_id, $id)
     {
         $call = Call::find($id);
-        if ($call)
-            $call->delete();
-        return redirect()->route('supporter_student_allcall', ["id" => $users_id]);
+        if (!$call->is_deleted){
+            $call->is_deleted = 1;
+            try {
+                $call->save();
+                return redirect()->route('supporter_student_allcall', ["id" => $users_id]);
+            } catch (Exception $e) {
+                dd($e);
+            }
+        }
     }
     public function newDeleteCall($users_id, $id)
     {
         $call = Call::find($id);
-        if ($call)
-            $call->delete();
-        return redirect()->route('user_supporter_acall', ["id" => $users_id]);
+        //$call = Call::where('id',$id)->where('is_deleted',false)->get();
+        if (!$call->is_deleted){
+            $call->is_deleted = 1;
+            try {
+                $call->save();
+                return redirect()->route('user_supporter_acall', ["id" => $users_id]);
+            } catch (Exception $e) {
+                dd($e);
+            }
+        }
     }
 
     public function calls($id)
@@ -1434,21 +1451,22 @@ class SupporterController extends Controller
             'to_date' => $to_date,
         ]);
     }
-    public function showIncomePost(Request $request){
-        $purchases = Purchase::where('is_deleted',false)->where('supporters_id',Auth::user()->id);
+    public function showIncomePost(Request $request)
+    {
+        $purchases = Purchase::where('is_deleted', false)->where('supporters_id', Auth::user()->id);
         $thePurchases = $purchases;
         $wage = [];
         $sum = 0;
         if ($request->input('from_date')) {
             $from_date = $this->jalaliToGregorian($request->input('from_date'));
-            $purchases = $purchases->where('created_at','>=', $from_date);
+            $purchases = $purchases->where('created_at', '>=', $from_date);
         }
         if ($request->input('to_date')) {
             $to_date = $this->jalaliToGregorian($request->input('to_date'));
-            $purchases = $purchases->where('created_at','<=', $to_date);
+            $purchases = $purchases->where('created_at', '<=', $to_date);
         }
-        $allPurchases = $purchases->orderBy('id','desc')->get();
-        $out = CommissionPurchaseRelation::computeMonthIncome($thePurchases,$allPurchases);
+        $allPurchases = $purchases->orderBy('id', 'desc')->get();
+        $out = CommissionPurchaseRelation::computeMonthIncome($thePurchases, $allPurchases);
         $sum = $out[0];
         $wage = $out[1];
         $default_wage = $out[2];
@@ -1470,14 +1488,13 @@ class SupporterController extends Controller
             $data[] = [
                 $req['start'] + $index + 1,
                 $item->id,
-                ($item->student)? ($item->student->first_name.' '.$item->student->last_name) : '-',
+                ($item->student) ? ($item->student->first_name . ' ' . $item->student->last_name) : '-',
                 ($item->created_at) ? jdate($item->created_at)->format('Y-m-d') : jdate()->format("Y-m-d"),
                 ($item->product) ? $item->product->name : '-',
                 number_format($item->price),
-                isset($wage[$item->products_id])? $wage[$item->products_id]:$default_wage,
-                isset($wage[$item->products_id])? number_format(($wage[$item->products_id])/100 *$item->price) : number_format($default_wage/100 * $item->price),
+                isset($wage[$item->products_id]) ? $wage[$item->products_id] : $default_wage,
+                isset($wage[$item->products_id]) ? number_format(($wage[$item->products_id]) / 100 * $item->price) : number_format($default_wage / 100 * $item->price),
             ];
-
         }
         $result = [
             "draw" => $req['draw'],
@@ -1488,6 +1505,5 @@ class SupporterController extends Controller
         ];
 
         return $result;
-
     }
 }
