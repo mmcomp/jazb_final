@@ -143,82 +143,25 @@ class SupporterController extends Controller
                 $supportGroupId = $supportGroupId->id;
             $supporters_id = null;
             $supporters = User::where('is_deleted', false)->where('groups_id', $supportGroupId);
-            $count = $supporters->get() ? count($supporters->get()) : 0;
             $supportersForSelectInView = $supporters->get();
-            if (request()->getMethod() == 'POST') {
-                if (request()->input('supporters_id')) {
-                    $supporters_id = request()->input('supporters_id');
-                    $supporters = $supporters->where('id', $supporters_id);
-                }
-            }
-            $supporters_builder = $supporters->with('students.purchases')->with('students.studenttags.tag');
             $supporters = $supporters->with('students.purchases')->with('students.studenttags.tag')->orderBy('max_student', 'desc')->get();
         } else {
-            $supporters_builder = User::where('id', $theSupporters_id);
             $supporters = User::where('id', $theSupporters_id)->get();
             $supportersForSelectInView = User::where('is_deleted', false)->get();
         }
-
+        $persons = [
+            "student" => "دانش آموز",
+            "father" => "پدر",
+            "mother" => "مادر",
+            "other" => "غیره"
+        ];
         $callResults = CallResult::where('is_deleted', false)->get();
-
         $from_date = null;
         $to_date = null;
         $products_id = null;
         $notices_id = null;
         $replier_id = null;
         $sources_id = null;
-
-        // foreach ($supporters as $index => $supporter) {
-        //     $call = Call::where("users_id", $supporter->id)->where('is_deleted', false);
-        //     $supporterCallResults = $callResults->ToArray();
-        //     foreach ($supporterCallResults as $sindex => $supporterCallResult) {
-        //         $supporterCallResults[$sindex]['count'] = 0;
-        //     }
-
-
-        //     // if (request()->getMethod() == 'POST') {
-        //     //     if (request()->input('from_date')) {
-        //     //         $from_date = SupporterController::jalaliToGregorian(request()->input('from_date'));
-        //     //         if ($from_date != '')
-        //     //             $call->where('created_at', '>=', $from_date);
-        //     //     }
-        //     //     if (request()->input('to_date')) {
-        //     //         $to_date = SupporterController::jalaliToGregorian(request()->input('to_date'));
-        //     //         if ($to_date != '')
-        //     //             $call->where('created_at', '<=', $to_date);
-        //     //     }
-        //     //     if (request()->input('products_id')) {
-        //     //         $products_id = (int)request()->input('products_id');
-        //     //         if ($products_id > 0)
-        //     //             $call->where('products_id', $products_id);
-        //     //     }
-        //     //     if (request()->input('notices_id')) {
-        //     //         $notices_id = (int)request()->input('notices_id');
-        //     //         if ($notices_id > 0)
-        //     //             $call->where('notices_id', $notices_id);
-        //     //     }
-        //     //     if (request()->input('sources_id')) {
-        //     //         $sources_id = (int)request()->input('sources_id');
-        //     //         if ($sources_id > 0) {
-        //     //             $students = Student::where('sources_id', $sources_id)->where('is_deleted', false)->where('banned', false)->pluck('id');
-        //     //             $call->whereIn('students_id', $students);
-        //     //         }
-        //     //     }
-        //     // }
-        //     if ($from_date == null && $to_date == null) {
-        //         $call->where('created_at', '<=', date("Y-m-d 23:59:59"))->where('created_at', '>=', date("Y-m-d 00:00:00"));
-        //     }
-        //     $calls = $call->get();
-        //     foreach ($calls as $theCall) {
-        //         foreach ($supporterCallResults as $sindex => $supporterCallResult) {
-        //             if ($supporterCallResult['id'] == $theCall->call_results_id) {
-        //                 $supporterCallResults[$sindex]['count']++;
-        //             }
-        //         }
-        //     }
-        //     $supporters[$index]->callCount = count($calls);
-        //     $supporters[$index]->supporterCallResults = $supporterCallResults;
-        // }
         $products = Product::where('is_deleted', false)->with('collection')->orderBy('name')->get();
         foreach ($products as $index => $product) {
             $products[$index]->parents = "-";
@@ -230,130 +173,162 @@ class SupporterController extends Controller
         }
         $notices = Notice::where('is_deleted', false)->get();
         $sources = Source::where('is_deleted', false)->get();
-        if (request()->getMethod() == "GET") {
-            return view('supporters.calls', [
-                'supportersForSelectInView' => $supportersForSelectInView,
-                'supporters' => $supporters,
-                'products' => $products,
-                'notices' => $notices,
-                'sources' => $sources,
-                'from_date' => $from_date,
-                'to_date' => $to_date,
-                'products_id' => $products_id,
-                'notices_id' => $notices_id,
-                'supporters_id' => $supporters_id,
-                'replier_id' => $replier_id,
-                'sources_id' => $sources_id,
-                'callResults' => $callResults,
-                "isSingle" => ($theSupporters_id != null),
-                'msg_success' => request()->session()->get('msg_success'),
-                'msg_error' => request()->session()->get('msg_error')
-            ]);
-        } else {
-            $isSingle = ($theSupporters_id != null);
-            $req =  request()->all();
-            if (!isset($req['start'])) {
-                $req['start'] = 0;
-                $req['length'] = 10;
-                $req['draw'] = 1;
-            }
-            $data = [];
-            $next_data = [];
-            $supporters = $supporters_builder
-                ->offset($req['start'])
-                ->limit($req['length'])
-                ->get();
-            $from_date = ($from_date) ? $from_date : date("Y-m-d");
-            $to_date = ($to_date) ? $to_date : date("Y-m-d");
-            $products_id = ($products_id) ? $products_id : '';
-            $notices_id = ($notices_id) ? $notices_id : '';
-            $replier_id = ($replier_id) ? $replier_id : '';
-            $sources_id = ($sources_id) ? $sources_id : '';
-            $lastTds = [];
-            //$callResults = CallResult::where('is_deleted', false)->get();
-            foreach ($supporters as $index => $supporter) {
-                $call = Call::where("users_id", $supporter->id)->where('is_deleted', false);
-                $supporterCallResults = $callResults->ToArray();
-                foreach ($supporterCallResults as $sindex => $supporterCallResult) {
-                    $supporterCallResults[$sindex]['count'] = 0;
-                }
-                if (request()->input('from_date')) {
-                    $from_date = SupporterController::jalaliToGregorian(request()->input('from_date'));
-                    if ($from_date != '')
-                        $call->where('created_at', '>=', $from_date);
-                }
-                // if (request()->input('supporters_id')) {
-                //     $supporters_id = request()->input('supporters_id');
-                //     $supporters =  $x->where('id', $supporters_id);
-                // }
-                if (request()->input('to_date')) {
-                    $to_date = SupporterController::jalaliToGregorian(request()->input('to_date'));
-                    if ($to_date != '')
-                        $call->where('created_at', '<=', $to_date);
-                }
-                if (request()->input('products_id')) {
-                    $products_id = (int)request()->input('products_id');
-                    if ($products_id > 0)
-                        $call->where('products_id', $products_id);
-                }
-                if (request()->input('notices_id')) {
-                    $notices_id = (int)request()->input('notices_id');
-                    if ($notices_id > 0)
-                        $call->where('notices_id', $notices_id);
-                }
-                if (request()->input('sources_id')) {
-                    $sources_id = (int)request()->input('sources_id');
-                    if ($sources_id > 0) {
-                        $students = Student::where('sources_id', $sources_id)->where('is_deleted', false)->where('banned', false)->pluck('id');
-                        $call->whereIn('students_id', $students);
-                    }
-                }
-                if ($from_date == null && $to_date == null) {
-                    $call->where('created_at', '<=', date("Y-m-d 23:59:59"))->where('created_at', '>=', date("Y-m-d 00:00:00"));
-                }
-                $calls = $call->get();
-                foreach ($calls as $theCall) {
-                    foreach ($supporterCallResults as $sindex => $supporterCallResult) {
-                        if ($supporterCallResult['id'] == $theCall->call_results_id) {
-                            $supporterCallResults[$sindex]['count']++;
-                        }
-                    }
-                }
-                $supporter->callCount = count($calls);
-                $supporter->supporterCallResults = $supporterCallResults;
-            }
-            foreach ($supporters as $index => $item) {
-
-                $countCall = '<form method="GET" action="' . route('user_supporter_acall', $item->id) . '" target="_blank" >
-                <input type="hidden" name="from_date" value="' . $from_date . '" />
-                <input type="hidden" name="to_date" value="' . $to_date . '" />
-                <input type="hidden" name="products_id" value="' . $products_id . '" />
-                <input type="hidden" name="notices_id" value="' . $notices_id . '" />
-                <input type="hidden" name="replier_id" value="' . $replier_id . '" />
-                <input type="hidden" name="sources_id" value="' . $sources_id . '" />
-                <input type="hidden" name="id" value="' . $item->id . '" />
-                <button class="btn btn-link">' . $item->callCount . '</button>
-                </form>';
-                if ($item->supporterCallResults) {
-                    foreach ($item->supporterCallResults as $sitem) {
-                        $lastTds[] = (isset($sitem['count'])) ? $sitem['count'] : '0';
-                    }
-                }
-                $data[] = array_merge([ $req['start'] + $index + 1,
-                (!$isSingle) ? $item->id : '',
-                (!$isSingle) ? $item->first_name : '',
-                (!$isSingle) ? $item->last_name : '',$countCall],$lastTds);
-            }
-
-            $result = [
-                "draw" => $req['draw'],
-                "data" => $data,
-                "recordsTotal" => $count,
-                "recordsFiltered" => $count
-            ];
-
-            return $result;
+        return view('supporters.calls', [
+            'supportersForSelectInView' => $supportersForSelectInView,
+            'products' => $products,
+            'notices' => $notices,
+            'sources' => $sources,
+            'from_date' => $from_date,
+            'to_date' => $to_date,
+            'products_id' => $products_id,
+            'notices_id' => $notices_id,
+            'supporters_id' => $supporters_id,
+            'replier_id' => $replier_id,
+            'sources_id' => $sources_id,
+            'callResults' => $callResults,
+            "isSingle" => ($theSupporters_id != null),
+            'persons' => $persons,
+            'msg_success' => request()->session()->get('msg_success'),
+            'msg_error' => request()->session()->get('msg_error')
+        ]);
+    }
+    public function callIndexPost()
+    {
+        $theSupporters_id = null;
+        $from_date = null;
+        $to_date = null;
+        $products_id = null;
+        $notices_id = null;
+        $replier_id = null;
+        $sources_id = null;
+        $count = 0;
+        $callResults = CallResult::where('is_deleted', false)->get();
+        $user_id = Auth::user()->id;
+        $foundUser = User::where('is_deleted', false)->where('id', $user_id)->first();
+        if ($foundUser && $foundUser->group->type == "support") {
+            $theSupporters_id = $user_id;
         }
+        if ($theSupporters_id == null) {
+            $supportGroupId = Group::getSupport();
+            if ($supportGroupId)
+                $supportGroupId = $supportGroupId->id;
+            $supporters_id = null;
+            $supporters = User::where('is_deleted', false)->where('groups_id', $supportGroupId);
+            $count = $supporters->get() ? count($supporters->get()) : 0;
+            if (request()->input('supporters_id')) {
+                $supporters_id = request()->input('supporters_id');
+                $supporters = $supporters->where('id', $supporters_id);
+            }
+            $supporters_builder = $supporters->with('students.purchases')->with('students.studenttags.tag');
+        } else {
+            $supporters_builder = User::where('id', $theSupporters_id);
+            $count = $supporters_builder->get() ? count($supporters_builder->get()) : 0;
+        }
+        $isSingle = ($theSupporters_id != null);
+        $req =  request()->all();
+        if (!isset($req['start'])) {
+            $req['start'] = 0;
+            $req['length'] = 10;
+            $req['draw'] = 1;
+        }
+        $data = [];
+        $supporters = $supporters_builder
+            ->offset($req['start'])
+            ->limit($req['length'])
+            ->get();
+
+        $lastTds = [];
+        foreach ($supporters as $index => $supporter) {
+            $call = Call::where("users_id", $supporter->id)->where('is_deleted', false);
+            $supporterCallResults = $callResults->ToArray();
+            foreach ($supporterCallResults as $sindex => $supporterCallResult) {
+                $supporterCallResults[$sindex]['count'] = 0;
+            }
+            if (request()->input('from_date')) {
+                $from_date = SupporterController::jalaliToGregorian(request()->input('from_date'));
+                if ($from_date != '')
+                    $call->where('created_at', '>=', $from_date);
+            }
+            if (request()->input('to_date')) {
+                $to_date = SupporterController::jalaliToGregorian(request()->input('to_date'));
+                if ($to_date != '')
+                    $call->where('created_at', '<=', $to_date);
+            }
+            if (request()->input('products_id')) {
+                $products_id = (int)request()->input('products_id');
+                if ($products_id > 0)
+                    $call->where('products_id', $products_id);
+            }
+            if (request()->input('notices_id')) {
+                $notices_id = (int)request()->input('notices_id');
+                if ($notices_id > 0)
+                    $call->where('notices_id', $notices_id);
+            }
+            if (request()->input('sources_id')) {
+                $sources_id = (int)request()->input('sources_id');
+                if ($sources_id > 0) {
+                    $students = Student::where('sources_id', $sources_id)->where('is_deleted', false)->where('banned', false)->pluck('id');
+                    $call->whereIn('students_id', $students);
+                }
+            }
+            if ($from_date == null && $to_date == null) {
+                $call->where('created_at', '<=', date("Y-m-d 23:59:59"))->where('created_at', '>=', date("Y-m-d 00:00:00"));
+            }
+            $calls = $call->get();
+            foreach ($calls as $theCall) {
+                foreach ($supporterCallResults as $sindex => $supporterCallResult) {
+                    if ($supporterCallResult['id'] == $theCall->call_results_id) {
+                        $supporterCallResults[$sindex]['count']++;
+                    }
+                }
+            }
+            $supporter->callCount = count($calls);
+            $supporter->supporterCallResults = $supporterCallResults;
+        }
+        $from_date = ($from_date) ? $from_date : date("Y-m-d");
+        $to_date = ($to_date) ? $to_date : date("Y-m-d");
+        $products_id = ($products_id) ? $products_id : '';
+        $notices_id = ($notices_id) ? $notices_id : '';
+        $replier_id = ($replier_id) ? $replier_id : '';
+        $sources_id = ($sources_id) ? $sources_id : '';
+        foreach ($supporters as $index => $item) {
+            $countCall = '<form method="GET" action="' . route('user_supporter_acall', $item->id) . '" target="_blank" >
+            <input type="hidden" name="from_date" value="' . $from_date . '" />
+            <input type="hidden" name="to_date" value="' . $to_date . '" />
+            <input type="hidden" name="products_id" value="' . $products_id . '" />
+            <input type="hidden" name="notices_id" value="' . $notices_id . '" />
+            <input type="hidden" name="replier_id" value="' . $replier_id . '" />
+            <input type="hidden" name="sources_id" value="' . $sources_id . '" />
+            <input type="hidden" name="id" value="' . $item->id . '" />
+            <button class="btn btn-link">' . $item->callCount . '</button>
+            </form>';
+            if ($item->supporterCallResults) {
+                foreach ($item->supporterCallResults as $sitem) {
+                    $lastTds[] = (isset($sitem['count'])) ? $sitem['count'] : '0';
+                }
+            }
+            if ($isSingle) {
+                $data[] = array_merge([
+                    $req['start'] + $index + 1, $countCall
+                ], $lastTds);
+            } else {
+                $data[] = array_merge([
+                    $req['start'] + $index + 1,
+                    $item->id,
+                    $item->first_name,
+                    $item->last_name, $countCall
+                ], $lastTds);
+            }
+        }
+
+        $result = [
+            "draw" => $req['draw'],
+            "data" => $data,
+            "recordsTotal" => $count,
+            "recordsFiltered" => $count
+        ];
+
+        return $result;
     }
 
 

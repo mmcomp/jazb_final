@@ -1,14 +1,4 @@
 @extends('layouts.index')
-
-@php
-$persons = [
-    "student"=>"دانش آموز",
-    "father"=>"پدر",
-    "mother"=>"مادر",
-    "other"=>"غیره"
-];
-@endphp
-
 @section('css')
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <style>
@@ -186,41 +176,6 @@ $persons = [
                   </tr>
                   </thead>
                   <tbody>
-                      {{-- @foreach ($supporters as $index => $item)
-                      @php
-                        $purchaseCount = 0;
-                        $tags = [];
-                      @endphp
-                      <tr>
-                        <td>{{ $index + 1 }}</td>
-                        @if(!$isSingle)
-                        <td>{{ $item->id }}</td>
-                        <td>{{ $item->first_name }}</td>
-                        <td>{{ $item->last_name }}</td>
-                        @endif
-                        <td>
-                            <form method="GET" action="{{ route('user_supporter_acall',$item->id) }}" target="_blank" >
-                                <input type="hidden" name="from_date" value="{{ ($from_date)?$from_date:date("Y-m-d") }}" />
-                                <input type="hidden" name="to_date" value="{{ ($to_date)?$to_date:date("Y-m-d") }}" />
-                                <input type="hidden" name="products_id" value="{{ ($products_id)?$products_id:'' }}" />
-                                <input type="hidden" name="notices_id" value="{{ ($notices_id)?$notices_id:'' }}" />
-                                <input type="hidden" name="replier_id" value="{{ ($replier_id)?$replier_id:'' }}" />
-                                <input type="hidden" name="sources_id" value="{{ ($sources_id)?$sources_id:'' }}" />
-                                {{-- <input type="hidden" name="id" value="{{ $item->id }}" /> --}}
-                                {{-- <button class="btn btn-link">
-                                    {{ $item->callCount }}
-                                </button>
-                            </form>
-                        </td>
-                        @if($item->supporterCallResults)
-                        @foreach ($item->supporterCallResults as $sitem)
-                            <td>
-                                {{ (isset($sitem['count']))?$sitem['count']:'0' }}
-                            </td>
-                        @endforeach
-                        @endif --}}
-                     {{-- </tr>
-                      @endforeach --}}
                   </tbody>
                 </table>
               </div>
@@ -317,7 +272,7 @@ $persons = [
             processing: true,
             ajax: {
                 "type": "POST",
-                "url": "{{ route('user_supporter_calls') }}",
+                "url": "{{ route('user_supporter_calls_post') }}",
                 "dataType": "json",
                 "contentType": 'application/json; charset=utf-8',
 
