@@ -143,6 +143,7 @@ class SupporterController extends Controller
                 $supportGroupId = $supportGroupId->id;
             $supporters_id = null;
             $supporters = User::where('is_deleted', false)->where('groups_id', $supportGroupId);
+            $count = $supporters->get() ? count($supporters->get()) : 0;
             $supportersForSelectInView = $supporters->get();
             if (request()->getMethod() == 'POST') {
                 if (request()->input('supporters_id')) {
@@ -150,8 +151,10 @@ class SupporterController extends Controller
                     $supporters = $supporters->where('id', $supporters_id);
                 }
             }
+            $supporters_builder = $supporters->with('students.purchases')->with('students.studenttags.tag');
             $supporters = $supporters->with('students.purchases')->with('students.studenttags.tag')->orderBy('max_student', 'desc')->get();
         } else {
+            $supporters_builder = User::where('id', $theSupporters_id);
             $supporters = User::where('id', $theSupporters_id)->get();
             $supportersForSelectInView = User::where('is_deleted', false)->get();
         }
@@ -165,20 +168,124 @@ class SupporterController extends Controller
         $replier_id = null;
         $sources_id = null;
 
-        foreach ($supporters as $index => $supporter) {
-            $call = Call::where("users_id", $supporter->id);
-            $supporterCallResults = $callResults->ToArray();
-            foreach ($supporterCallResults as $sindex => $supporterCallResult) {
-                $supporterCallResults[$sindex]['count'] = 0;
+        // foreach ($supporters as $index => $supporter) {
+        //     $call = Call::where("users_id", $supporter->id)->where('is_deleted', false);
+        //     $supporterCallResults = $callResults->ToArray();
+        //     foreach ($supporterCallResults as $sindex => $supporterCallResult) {
+        //         $supporterCallResults[$sindex]['count'] = 0;
+        //     }
+
+
+        //     // if (request()->getMethod() == 'POST') {
+        //     //     if (request()->input('from_date')) {
+        //     //         $from_date = SupporterController::jalaliToGregorian(request()->input('from_date'));
+        //     //         if ($from_date != '')
+        //     //             $call->where('created_at', '>=', $from_date);
+        //     //     }
+        //     //     if (request()->input('to_date')) {
+        //     //         $to_date = SupporterController::jalaliToGregorian(request()->input('to_date'));
+        //     //         if ($to_date != '')
+        //     //             $call->where('created_at', '<=', $to_date);
+        //     //     }
+        //     //     if (request()->input('products_id')) {
+        //     //         $products_id = (int)request()->input('products_id');
+        //     //         if ($products_id > 0)
+        //     //             $call->where('products_id', $products_id);
+        //     //     }
+        //     //     if (request()->input('notices_id')) {
+        //     //         $notices_id = (int)request()->input('notices_id');
+        //     //         if ($notices_id > 0)
+        //     //             $call->where('notices_id', $notices_id);
+        //     //     }
+        //     //     if (request()->input('sources_id')) {
+        //     //         $sources_id = (int)request()->input('sources_id');
+        //     //         if ($sources_id > 0) {
+        //     //             $students = Student::where('sources_id', $sources_id)->where('is_deleted', false)->where('banned', false)->pluck('id');
+        //     //             $call->whereIn('students_id', $students);
+        //     //         }
+        //     //     }
+        //     // }
+        //     if ($from_date == null && $to_date == null) {
+        //         $call->where('created_at', '<=', date("Y-m-d 23:59:59"))->where('created_at', '>=', date("Y-m-d 00:00:00"));
+        //     }
+        //     $calls = $call->get();
+        //     foreach ($calls as $theCall) {
+        //         foreach ($supporterCallResults as $sindex => $supporterCallResult) {
+        //             if ($supporterCallResult['id'] == $theCall->call_results_id) {
+        //                 $supporterCallResults[$sindex]['count']++;
+        //             }
+        //         }
+        //     }
+        //     $supporters[$index]->callCount = count($calls);
+        //     $supporters[$index]->supporterCallResults = $supporterCallResults;
+        // }
+        $products = Product::where('is_deleted', false)->with('collection')->orderBy('name')->get();
+        foreach ($products as $index => $product) {
+            $products[$index]->parents = "-";
+            if ($product->collection) {
+                $parents = $product->collection->parents();
+                $name = ($parents != '') ? $parents . "->" . $product->collection->name : $product->collection->name;
+                $products[$index]->parents = $name;
             }
-
-
-            if (request()->getMethod() == 'POST') {
+        }
+        $notices = Notice::where('is_deleted', false)->get();
+        $sources = Source::where('is_deleted', false)->get();
+        if (request()->getMethod() == "GET") {
+            return view('supporters.calls', [
+                'supportersForSelectInView' => $supportersForSelectInView,
+                'supporters' => $supporters,
+                'products' => $products,
+                'notices' => $notices,
+                'sources' => $sources,
+                'from_date' => $from_date,
+                'to_date' => $to_date,
+                'products_id' => $products_id,
+                'notices_id' => $notices_id,
+                'supporters_id' => $supporters_id,
+                'replier_id' => $replier_id,
+                'sources_id' => $sources_id,
+                'callResults' => $callResults,
+                "isSingle" => ($theSupporters_id != null),
+                'msg_success' => request()->session()->get('msg_success'),
+                'msg_error' => request()->session()->get('msg_error')
+            ]);
+        } else {
+            $isSingle = ($theSupporters_id != null);
+            $req =  request()->all();
+            if (!isset($req['start'])) {
+                $req['start'] = 0;
+                $req['length'] = 10;
+                $req['draw'] = 1;
+            }
+            $data = [];
+            $next_data = [];
+            $supporters = $supporters_builder
+                ->offset($req['start'])
+                ->limit($req['length'])
+                ->get();
+            $from_date = ($from_date) ? $from_date : date("Y-m-d");
+            $to_date = ($to_date) ? $to_date : date("Y-m-d");
+            $products_id = ($products_id) ? $products_id : '';
+            $notices_id = ($notices_id) ? $notices_id : '';
+            $replier_id = ($replier_id) ? $replier_id : '';
+            $sources_id = ($sources_id) ? $sources_id : '';
+            $lastTds = [];
+            //$callResults = CallResult::where('is_deleted', false)->get();
+            foreach ($supporters as $index => $supporter) {
+                $call = Call::where("users_id", $supporter->id)->where('is_deleted', false);
+                $supporterCallResults = $callResults->ToArray();
+                foreach ($supporterCallResults as $sindex => $supporterCallResult) {
+                    $supporterCallResults[$sindex]['count'] = 0;
+                }
                 if (request()->input('from_date')) {
                     $from_date = SupporterController::jalaliToGregorian(request()->input('from_date'));
                     if ($from_date != '')
                         $call->where('created_at', '>=', $from_date);
                 }
+                // if (request()->input('supporters_id')) {
+                //     $supporters_id = request()->input('supporters_id');
+                //     $supporters =  $x->where('id', $supporters_id);
+                // }
                 if (request()->input('to_date')) {
                     $to_date = SupporterController::jalaliToGregorian(request()->input('to_date'));
                     if ($to_date != '')
@@ -201,50 +308,52 @@ class SupporterController extends Controller
                         $call->whereIn('students_id', $students);
                     }
                 }
-            }
-            if ($from_date == null && $to_date == null) {
-                $call->where('created_at', '<=', date("Y-m-d 23:59:59"))->where('created_at', '>=', date("Y-m-d 00:00:00"));
-            }
-            $calls = $call->get();
-            foreach ($calls as $theCall) {
-                foreach ($supporterCallResults as $sindex => $supporterCallResult) {
-                    if ($supporterCallResult['id'] == $theCall->call_results_id) {
-                        $supporterCallResults[$sindex]['count']++;
+                if ($from_date == null && $to_date == null) {
+                    $call->where('created_at', '<=', date("Y-m-d 23:59:59"))->where('created_at', '>=', date("Y-m-d 00:00:00"));
+                }
+                $calls = $call->get();
+                foreach ($calls as $theCall) {
+                    foreach ($supporterCallResults as $sindex => $supporterCallResult) {
+                        if ($supporterCallResult['id'] == $theCall->call_results_id) {
+                            $supporterCallResults[$sindex]['count']++;
+                        }
                     }
                 }
+                $supporter->callCount = count($calls);
+                $supporter->supporterCallResults = $supporterCallResults;
             }
-            $supporters[$index]->callCount = count($calls);
-            $supporters[$index]->supporterCallResults = $supporterCallResults;
-        }
-        $products = Product::where('is_deleted', false)->with('collection')->orderBy('name')->get();
-        foreach ($products as $index => $product) {
-            $products[$index]->parents = "-";
-            if ($product->collection) {
-                $parents = $product->collection->parents();
-                $name = ($parents != '') ? $parents . "->" . $product->collection->name : $product->collection->name;
-                $products[$index]->parents = $name;
+            foreach ($supporters as $index => $item) {
+
+                $countCall = '<form method="GET" action="' . route('user_supporter_acall', $item->id) . '" target="_blank" >
+                <input type="hidden" name="from_date" value="' . $from_date . '" />
+                <input type="hidden" name="to_date" value="' . $to_date . '" />
+                <input type="hidden" name="products_id" value="' . $products_id . '" />
+                <input type="hidden" name="notices_id" value="' . $notices_id . '" />
+                <input type="hidden" name="replier_id" value="' . $replier_id . '" />
+                <input type="hidden" name="sources_id" value="' . $sources_id . '" />
+                <input type="hidden" name="id" value="' . $item->id . '" />
+                <button class="btn btn-link">' . $item->callCount . '</button>
+                </form>';
+                if ($item->supporterCallResults) {
+                    foreach ($item->supporterCallResults as $sitem) {
+                        $lastTds[] = (isset($sitem['count'])) ? $sitem['count'] : '0';
+                    }
+                }
+                $data[] = array_merge([ $req['start'] + $index + 1,
+                (!$isSingle) ? $item->id : '',
+                (!$isSingle) ? $item->first_name : '',
+                (!$isSingle) ? $item->last_name : '',$countCall],$lastTds);
             }
+
+            $result = [
+                "draw" => $req['draw'],
+                "data" => $data,
+                "recordsTotal" => $count,
+                "recordsFiltered" => $count
+            ];
+
+            return $result;
         }
-        $notices = Notice::where('is_deleted', false)->get();
-        $sources = Source::where('is_deleted', false)->get();
-        return view('supporters.calls', [
-            'supportersForSelectInView' => $supportersForSelectInView,
-            'supporters' => $supporters,
-            'products' => $products,
-            'notices' => $notices,
-            'sources' => $sources,
-            'from_date' => $from_date,
-            'to_date' => $to_date,
-            'products_id' => $products_id,
-            'notices_id' => $notices_id,
-            'supporters_id' => $supporters_id,
-            'replier_id' => $replier_id,
-            'sources_id' => $sources_id,
-            'callResults' => $callResults,
-            "isSingle" => ($theSupporters_id != null),
-            'msg_success' => request()->session()->get('msg_success'),
-            'msg_error' => request()->session()->get('msg_error')
-        ]);
     }
 
 
@@ -483,7 +592,7 @@ class SupporterController extends Controller
         $notices_id = null;
         $call_results_id = null;
         $next_to_call = null;
-       // dd(count($students->get()));
+        // dd(count($students->get()));
         if (request()->input('students_id') != null) {
             $students_id = (int)request()->input('students_id');
             $calls_id = (int)request()->input('calls_id');
@@ -1434,21 +1543,22 @@ class SupporterController extends Controller
             'to_date' => $to_date,
         ]);
     }
-    public function showIncomePost(Request $request){
-        $purchases = Purchase::where('is_deleted',false)->where('supporters_id',Auth::user()->id);
+    public function showIncomePost(Request $request)
+    {
+        $purchases = Purchase::where('is_deleted', false)->where('supporters_id', Auth::user()->id);
         $thePurchases = $purchases;
         $wage = [];
         $sum = 0;
         if ($request->input('from_date')) {
             $from_date = $this->jalaliToGregorian($request->input('from_date'));
-            $purchases = $purchases->where('created_at','>=', $from_date);
+            $purchases = $purchases->where('created_at', '>=', $from_date);
         }
         if ($request->input('to_date')) {
             $to_date = $this->jalaliToGregorian($request->input('to_date'));
-            $purchases = $purchases->where('created_at','<=', $to_date);
+            $purchases = $purchases->where('created_at', '<=', $to_date);
         }
-        $allPurchases = $purchases->orderBy('id','desc')->get();
-        $out = CommissionPurchaseRelation::computeMonthIncome($thePurchases,$allPurchases);
+        $allPurchases = $purchases->orderBy('id', 'desc')->get();
+        $out = CommissionPurchaseRelation::computeMonthIncome($thePurchases, $allPurchases);
         $sum = $out[0];
         $wage = $out[1];
         $default_wage = $out[2];
@@ -1470,14 +1580,13 @@ class SupporterController extends Controller
             $data[] = [
                 $req['start'] + $index + 1,
                 $item->id,
-                ($item->student)? ($item->student->first_name.' '.$item->student->last_name) : '-',
+                ($item->student) ? ($item->student->first_name . ' ' . $item->student->last_name) : '-',
                 ($item->created_at) ? jdate($item->created_at)->format('Y-m-d') : jdate()->format("Y-m-d"),
                 ($item->product) ? $item->product->name : '-',
                 number_format($item->price),
-                isset($wage[$item->products_id])? $wage[$item->products_id]:$default_wage,
-                isset($wage[$item->products_id])? number_format(($wage[$item->products_id])/100 *$item->price) : number_format($default_wage/100 * $item->price),
+                isset($wage[$item->products_id]) ? $wage[$item->products_id] : $default_wage,
+                isset($wage[$item->products_id]) ? number_format(($wage[$item->products_id]) / 100 * $item->price) : number_format($default_wage / 100 * $item->price),
             ];
-
         }
         $result = [
             "draw" => $req['draw'],
@@ -1488,6 +1597,5 @@ class SupporterController extends Controller
         ];
 
         return $result;
-
     }
 }

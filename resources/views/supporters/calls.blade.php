@@ -56,7 +56,7 @@ $persons = [
                 <div class="col-3">
                     <div class="form-group">
                         <label for="products_id">محصول</label>
-                        <select id="products_id" name="products_id" class="form-control" >
+                        <select id="products_id" name="products_id" class="form-control" onchange="theChange()" >
                             <option value="">همه</option>
                             @foreach ($products as $item)
                                 @if($products_id && $products_id == $item->id)
@@ -75,7 +75,7 @@ $persons = [
                 <div class="col-3">
                     <div class="form-group">
                         <label for="notices_id">اطلاع رسانی</label>
-                        <select id="notices_id" name="notices_id" class="form-control" >
+                        <select id="notices_id" name="notices_id" class="form-control" onchange="theChange()">
                             <option value="">همه</option>
                             @foreach ($notices as $item)
                                 @if($notices_id && $notices_id == $item->id)
@@ -95,7 +95,7 @@ $persons = [
                 <div class="col-3">
                     <div class="form-group">
                         <label for="supporters_id">پشتیبان</label>
-                        <select id="supporters_id" name="supporters_id" class="form-control" >
+                        <select id="supporters_id" name="supporters_id" class="form-control" onchange="theChange()" >
                             <option value="">همه</option>
                             @foreach ($supportersForSelectInView as $item)
                                 @if($supporters_id && $supporters_id == $item->id)
@@ -115,7 +115,7 @@ $persons = [
                 <div class="col-3">
                     <div class="form-group">
                         <label for="replier_id">پاسخ دهنده</label>
-                        <select id="replier_id" name="replier_id" class="form-control" >
+                        <select id="replier_id" name="replier_id" class="form-control" onchange="theChange()">
                             <option value="">همه</option>
                             @foreach ($persons as $key=>$item)
                                 @if($replier_id && $replier_id == $key)
@@ -134,7 +134,7 @@ $persons = [
                 <div class="col-3">
                     <div class="form-group">
                         <label for="to_date">منبع ورودی</label>
-                        <select id="sources_id" name="sources_id" class="form-control" >
+                        <select id="sources_id" name="sources_id" class="form-control" onchange="theChange()">
                             <option value="">همه</option>
                             @foreach ($sources as $item)
                                 @if($sources_id && $sources_id == $item->id)
@@ -153,7 +153,8 @@ $persons = [
                 <div class="col-3">
                     <div class="form-group">
                         <label for="to_date">&nbsp;</label>
-                        <input type="submit" class="btn btn-success form-control" value="جستجو" />
+                        <a href="#" class="btn btn-success form-control" onclick="theSearch()" >جستجو</a>
+                        <img id="loading" src="/dist/img/loading.gif" style="height: 20px;display: none;" />
                     </div>
                 </div>
             </div>
@@ -185,7 +186,7 @@ $persons = [
                   </tr>
                   </thead>
                   <tbody>
-                      @foreach ($supporters as $index => $item)
+                      {{-- @foreach ($supporters as $index => $item)
                       @php
                         $purchaseCount = 0;
                         $tags = [];
@@ -206,7 +207,7 @@ $persons = [
                                 <input type="hidden" name="replier_id" value="{{ ($replier_id)?$replier_id:'' }}" />
                                 <input type="hidden" name="sources_id" value="{{ ($sources_id)?$sources_id:'' }}" />
                                 {{-- <input type="hidden" name="id" value="{{ $item->id }}" /> --}}
-                                <button class="btn btn-link">
+                                {{-- <button class="btn btn-link">
                                     {{ $item->callCount }}
                                 </button>
                             </form>
@@ -217,9 +218,9 @@ $persons = [
                                 {{ (isset($sitem['count']))?$sitem['count']:'0' }}
                             </td>
                         @endforeach
-                        @endif
-                      </tr>
-                      @endforeach
+                        @endif --}}
+                     {{-- </tr>
+                      @endforeach --}}
                   </tbody>
                 </table>
               </div>
@@ -241,6 +242,24 @@ $persons = [
 <!-- page script -->
 <script>
     let table = "";
+    function theSearch(){
+        $('#loading').css('display','inline');
+        table.ajax.reload();
+        return false;
+    }
+    function theChange(){
+        $('#loading').css('display','inline');
+        table.ajax.reload();
+        return false;
+    }
+    function handle(e){
+        if(e.keyCode === 13){
+            $('#loading').css('display','inline');
+            e.preventDefault(); // Ensure it is only this code that runs
+            table.ajax.reload();
+            return false;
+        }
+    }
     function showStudents(index){
         $("#students-" + index).toggle();
 
@@ -262,7 +281,6 @@ $persons = [
             password,
             _token: "{{ csrf_token() }}"
         }, function(res){
-            console.log(res);
             if(res.error==null)
                 window.location.reload();
         });
@@ -274,23 +292,51 @@ $persons = [
             e.preventDefault();
           }
       });
-      table = $('#example2').DataTable({
-        "paging": true,
-        "lengthChange": false,
-        "searching": false,
-        "ordering": true,
-        "info": true,
-        "autoWidth": false,
-        "language": {
-            "paginate": {
-                "previous": "قبل",
-                "next": "بعد"
-            },
-            "emptyTable":     "داده ای برای نمایش وجود ندارد",
-            "info":           "نمایش _START_ تا _END_ از _TOTAL_ داده",
-            "infoEmpty":      "نمایش 0 تا 0 از 0 داده",
-        }
+      $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
       });
+      table = $('#example2').DataTable({
+            "paging": true,
+            "lengthChange": false,
+            "searching": false,
+            "ordering": true,
+            "info": true,
+            "autoWidth": false,
+            "language": {
+                "paginate": {
+                    "previous": "قبل",
+                    "next": "بعد"
+                },
+                "emptyTable":     "داده ای برای نمایش وجود ندارد",
+                "info":           "نمایش _START_ تا _END_ از _TOTAL_ داده",
+                "infoEmpty":      "نمایش 0 تا 0 از 0 داده",
+            },
+            serverSide: true,
+            processing: true,
+            ajax: {
+                "type": "POST",
+                "url": "{{ route('user_supporter_calls') }}",
+                "dataType": "json",
+                "contentType": 'application/json; charset=utf-8',
+
+                "data": function (data) {
+                    data["from_date"] = $('#from_date').val();
+                    data["to_date"] = $('#to_date').val();
+                    data["products_id"] = $('#products_id').val();
+                    data["notices_id"] = $('#notices_id').val();
+                    data["supporters_id"] = $('#supporters_id').val();
+                    data["replier_id"] = $('#replier_id').val();
+                    data["sources_id"] = $('#sources_id').val();
+                    return JSON.stringify(data);
+                },
+                "complete": function(response) {
+                    $('#loading').css('display','none');
+                }
+
+            }
+        });
 
 
     });
