@@ -426,7 +426,7 @@ class SupporterController extends Controller
                 $data[] = [
                     $index + 1,
                     $item->id,
-                    $item->student->first_name . ' ' . $item->student->last_name,
+                    ($item->student) ? $item->student->first_name . ' ' . $item->student->last_name : '-',
                     ($item->product) ? (($item->product->parents != '-') ? $item->product->parents . '->' : '') . $item->product->name : '-',
                     ($item->notice) ? $item->notice->name : '-',
                     $persons[$item->replier],
