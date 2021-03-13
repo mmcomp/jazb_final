@@ -41,14 +41,7 @@ class UserController extends Controller
     }
 
     public function index(Request $request){
-        $users = User::where('is_deleted', false)->with('group')->get();
-        // $name = null;
-        // if($request->getMethod() == 'POST'){
-        //     if($request->input('name')!=null){
-        //         $name = trim($request->input('name'));
-        //         $users = User::where(DB::raw('CONCAT(first_Name, " ", last_Name)'),'like','%'.$name.'%')->where('is_deleted',false)->get();
-        //     }
-        // }
+        $users = User::where(DB::raw('CONCAT(first_Name, " ", last_Name)'),'like','%'.$request->input('name').'%')->where('is_deleted', false)->with('group')->get();
         if($request->getMethod() == 'GET'){
             return view('users.index',[
                 'users' => $users,
@@ -71,9 +64,6 @@ class UserController extends Controller
             $columnSortOrder = $order_arr[0]['dir']; // asc or desc
             $searchValue = $request->input('name'); // Search value
 
-            // Total records
-            //$totalRecords = User::select('count(*) as allcount')->count();
-            //$totalRecordswithFilter = User::select('count(*) as allcount')->where('is_deleted',false)->where(DB::raw('CONCAT(first_Name, " ", last_Name)'), 'like', '%' .$searchValue . '%')->count();
 
             // Fetch records
             if($columnName != 'row' && $columnName != 'end'){

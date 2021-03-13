@@ -24,8 +24,6 @@
 @section('css')
 <link href="/plugins/select2/css/select2.min.css" rel="stylesheet" />
 <meta name="csrf-token" content="{{ csrf_token() }}">
-<link rel="stylesheet" href="/plugins/datatables/css/jquery.dataTables.min.css" type="text/css">
-<link rel="stylesheet" href="/css/dataTableStyle.css">
 <style>
     .morepanel{
         display: none;
@@ -976,17 +974,13 @@
                 "complete": function(response) {
                     $('#example2_paginate').removeClass('dataTables_paginate');
                     $('#loading').css('display','none');
-                   // console.log(response);
                     $('#example2 tr').click(function() {
                         var x = this;
                         if($(this).hasClass('odd') || $(this).hasClass('even')){
-                            //console.log('hello');
                             var studentId = parseInt($(this).find('td')[1].innerText, 10);
                             if(!isNaN(studentId)){
                                 for(var index in students){
-                                    //console.log('check', students[index].id, studentId);
                                     if(students[index].id==studentId){
-                                        // console.log(students[index]);
                                         showMorePanel(index, this);
                                         break;
                                     }

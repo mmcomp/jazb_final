@@ -35,6 +35,8 @@
     <link rel="stylesheet" href="/dist/css/custom.css">
     <!-- PersianCalender -->
     <link href="/plugins/persiancalender/jquery.md.bootstrap.datetimepicker.style.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="/plugins/datatables/css/jquery.dataTables.min.css" type="text/css">
+    <link rel="stylesheet" href="/css/dataTableStyle.css">
     @yield('css')
 </head>
 
@@ -1351,6 +1353,7 @@
         $.widget.bridge('uibutton', $.ui.button)
 
     </script>
+
     <!-- Bootstrap 4 rtl -->
     <script src="/dist/js/bootstrap.min.js"></script>
     <!-- Bootstrap 4 -->
@@ -1389,6 +1392,11 @@
             });
         });
     </script>
+    <script src="/js/datatable_farsi_plugin.js"></script>
+
+    {{-- <script type="text/javascript">
+        $('#example2_paginate').removeClass('dataTables_paginate');
+     </script> --}}
 
 </body>
 

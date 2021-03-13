@@ -121,6 +121,19 @@
             "info":           "نمایش _START_ تا _END_ از _TOTAL_ داده",
             "infoEmpty":      "نمایش 0 تا 0 از 0 داده",
         },
+        "columnDefs": [   ////define column 1 and 5
+                    {
+                        "searchable": false,
+                        "orderable": false,
+                        "targets": 0
+                    },
+                    {
+                        "searchable": false,
+                        "orderable": false,
+                        "targets": 5
+                    },
+        ],
+        "order": [[1, 'asc']], /// sort columns 2
         serverSide: true,
         processing: true,
         ajax: {
@@ -134,11 +147,27 @@
                 return JSON.stringify(data);
             },
             "complete": function(response) {
+                $('#example2_paginate').removeClass('dataTables_paginate');
                 $('#loading').css('display','none');
             }
 
-        }
+        },
+        columns: [
+            { data: null},
+            { data: 'id' },
+            { data: 'name' },
+            { data: 'collections_id' },
+            { data: 'price' },
+            { data: 'end'}
+
+         ]
       });
+      table.on('draw.dt', function () {
+        var info = table.page.info();
+        table.column(0, { search: 'applied', order: 'applied', page: 'applied' }).nodes().each(function (cell, i) {
+            cell.innerHTML = i + 1 + info.start;
+      });
+     });
       $('#name').on('keypress',function(e) {
         if(e.which == 13) {
            $('#loading').css('display','inline');

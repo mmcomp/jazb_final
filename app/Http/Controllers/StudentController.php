@@ -197,24 +197,12 @@ class StudentController extends Controller
                 $students = $students->where('school', 'like',  '%' . $school . '%');
             }
         }
-        // DB::enableQueryLog();
-
-        // dd(DB::getQueryLog());
         $moralTags = Tag::where('is_deleted', false)
-            // ->with('parent_one')
-            // ->with('parent_two')
-            // ->with('parent_three')
-            // ->with('parent_four')
             ->where('type', 'moral')
             ->get();
         $needTags = Tag::where('is_deleted', false)
-            // ->with('parent_one')
-            // ->with('parent_two')
-            // ->with('parent_three')
-            // ->with('parent_four')
             ->where('type', 'need')
             ->get();
-        // dd($needTags);
         $parentOnes = TagParentOne::where('is_deleted', false)->has('tags')->get();
         $parentTwos = TagParentTwo::where('is_deleted', false)->has('tags')->get();
         $parentThrees = TagParentThree::where('is_deleted', false)->has('tags')->get();
@@ -227,11 +215,9 @@ class StudentController extends Controller
         $firstCollections = Collection::where('is_deleted', false)->where('parent_id', 0)->get();
         $secondCollections = Collection::where('is_deleted', false)->whereIn('parent_id', $firstCollections->pluck('id'))->get();
         $thirdCollections = Collection::where('is_deleted', false)->with('parent')->whereIn('parent_id', $secondCollections->pluck('id'))->get();
-        // $fourthCollections = Collection::where('is_deleted', false)->with('parent')->whereIn('parent_id', $thirdCollections->pluck('id'))->get();
         $hotTemperatures = Temperature::where('is_deleted', false)->where('status', 'hot')->get();
         $coldTemperatures = Temperature::where('is_deleted', false)->where('status', 'cold')->get();
         $cities = City::where('is_deleted', false)->get();
-        //dd((array)$students->get());
         $theStudents = $students
         ->with('user')
         ->with('studenttags.tag.parent_four')
@@ -244,9 +230,7 @@ class StudentController extends Controller
         foreach ($theStudents as $index => $student) {
             $theStudents[$index]->pcreated_at = jdate(strtotime($student->created_at))->format("Y/m/d");
         }
-        //dd($students->first());
 
-        // dd($students);
         if (request()->getMethod() == 'GET') {
             return view('students.index', [
                 //'route' => 'student_all',
@@ -406,7 +390,6 @@ class StudentController extends Controller
                 "data" => $data,
                 "recordsTotal" => count($allStudents),
                 "recordsFiltered" => count($allStudents),
-                //"students" => $students
             ];
 
             return $result;
@@ -741,7 +724,7 @@ class StudentController extends Controller
 
     }
 
-    public function index()
+    public function index(Request $request)
     {
         $students = Student::where('is_deleted', false)->where('banned', false)->where('archived', false)->where('supporters_id', 0);
         $supportGroupId = Group::getSupport();
@@ -794,33 +777,12 @@ class StudentController extends Controller
                 $students = $students->where('school', 'like',  '%' . $school . '%');
             }
         }
-        // DB::enableQueryLog();
-        $students = $students
-            ->with('user')
-            ->with('studenttags.tag')
-            ->with('studentcollections.collection.parent')
-            ->with('studenttemperatures.temperature')
-            ->with('source')
-            ->with('consultant')
-            ->with('supporter')
-            ->orderBy('created_at', 'desc')
-            ->get();
-        // dd(DB::getQueryLog());
         $moralTags = Tag::where('is_deleted', false)
-            // ->with('parent_one')
-            // ->with('parent_two')
-            // ->with('parent_three')
-            // ->with('parent_four')
             ->where('type', 'moral')
             ->get();
         $needTags = Tag::where('is_deleted', false)
-            // ->with('parent_one')
-            // ->with('parent_two')
-            // ->with('parent_three')
-            // ->with('parent_four')
             ->where('type', 'need')
             ->get();
-        // dd($needTags);
         $parentOnes = TagParentOne::where('is_deleted', false)->has('tags')->get();
         $parentTwos = TagParentTwo::where('is_deleted', false)->has('tags')->get();
         $parentThrees = TagParentThree::where('is_deleted', false)->has('tags')->get();
@@ -836,17 +798,22 @@ class StudentController extends Controller
         $hotTemperatures = Temperature::where('is_deleted', false)->where('status', 'hot')->get();
         $coldTemperatures = Temperature::where('is_deleted', false)->where('status', 'cold')->get();
         $cities = City::where('is_deleted', false)->get();
-
-        foreach ($students as $index => $student) {
-            $students[$index]->pcreated_at = jdate(strtotime($student->created_at))->format("Y/m/d");
+        $theStudents = $students
+        ->with('user')
+        ->with('studenttags.tag.parent_four')
+        ->with('studentcollections.collection.parent')
+        ->with('studenttemperatures.temperature')
+        ->with('source')
+        ->with('consultant')
+        ->with('supporter')
+        ->get();
+        foreach ($theStudents as $index => $student) {
+            $theStudents[$index]->pcreated_at = jdate(strtotime($student->created_at))->format("Y/m/d");
         }
 
         if (request()->getMethod() == 'GET') {
-            // dd($students);
             return view('students.student-input-and-division', [
-            //return view('students.index', [
-            //'route' => 'students',
-                'students' => $students,
+                'students' => $students->get(),
                 'supports' => $supports,
                 'sources' => $sources,
                 'supporters_id' => $supporters_id,
@@ -873,12 +840,59 @@ class StudentController extends Controller
                 'msg_error' => request()->session()->get('msg_error')
             ]);
         } else {
+            $allStudents = $students->get();
             $req =  request()->all();
-            // dd($req);
             if (!isset($req['start'])) {
                 $req['start'] = 0;
                 $req['length'] = 10;
                 $req['draw'] = 1;
+            }
+            $columnIndex_arr = $request->get('order');
+            $columnName_arr = $request->get('columns');
+            $order_arr = $request->get('order');
+            $columnIndex = $columnIndex_arr[0]['column']; // Column index
+            $columnName = $columnName_arr[$columnIndex]['data']; // Column name
+            $columnSortOrder = $order_arr[0]['dir']; // asc or desc
+
+            if($columnName != 'row' && $columnName != 'end' && $columnName != "temps" && $columnName != "tags"){
+                $students = $students->orderBy($columnName,$columnSortOrder)
+                ->select('students.*')
+                ->skip($req['start'])
+                ->take($req['length'])
+                ->with('user')
+                ->with('studenttags.tag.parent_four')
+                ->with('studentcollections.collection.parent')
+                ->with('studenttemperatures.temperature')
+                ->with('source')
+                ->with('consultant')
+                ->with('supporter')
+                ->get();
+            }else if($columnName == "tags"){
+                $students = $students
+                ->withCount('studenttags')
+                ->skip($req['start'])
+                ->take($req['length'])
+                ->with('user')
+                ->with('studenttags.tag.parent_four')
+                ->with('studentcollections.collection.parent')
+                ->with('studenttemperatures.temperature')
+                ->with('source')
+                ->with('consultant')
+                ->with('supporter')
+                ->orderBy('studenttags_count',$columnSortOrder)
+                ->get();
+            }else{
+                $students = $students->select('students.*')
+                ->skip($req['start'])
+                ->take($req['length'])
+                ->with('user')
+                ->with('studenttags.tag.parent_four')
+                ->with('studentcollections.collection.parent')
+                ->with('studenttemperatures.temperature')
+                ->with('source')
+                ->with('consultant')
+                ->with('supporter')
+                ->get();
             }
             $data = [];
             foreach ($students as $index => $item) {
@@ -889,12 +903,6 @@ class StudentController extends Controller
                         ' . $item->studenttags[$i]->tag->name . '
                     </span><br/>';
                     }
-                    // for($i = 0; $i < count($item->studentcollections);$i++){
-                    //     if(isset($item->studentcollections[$i]->collection))
-                    //         $tags .= '<span class="alert alert-warning p-1">
-                    //             '. (($item->studentcollections[$i]->collection->parent) ? $item->studentcollections[$i]->collection->parent->name . '->' : '' ) . ' ' . $item->studentcollections[$i]->collection->name .'
-                    //         </span><br/>';
-                    // }
                 }
                 $registerer = "-";
                 if ($item->user)
@@ -921,15 +929,15 @@ class StudentController extends Controller
                     $supportersToSelect .= '>' . $sitem->first_name . ' ' . $sitem->last_name . '</option>';
                 }
                 $data[] = [
-                    $index + 1,
-                    $item->id,
-                    $item->first_name,
-                    $item->last_name,
-                    $registerer,
-                    ($item->source) ? $item->source->name : '-',
-                    $tags,
-                    $temps,
-                    '<select id="supporters_id_' . $index . '" class="form-control select2">
+                    "row" => $index + 1,
+                    "id" => $item->id,
+                    "first_name" => $item->first_name,
+                    "last_name" => $item->last_name,
+                    "users_id" => $registerer,
+                    "sources_id" => ($item->source) ? $item->source->name : '-',
+                    "tags" => $tags,
+                    "temps" => $temps,
+                    "supporters_id"=> '<select id="supporters_id_' . $index . '" class="form-control select2">
                         <option>-</option>
                         ' . $supportersToSelect . '
                         </select>
@@ -938,24 +946,17 @@ class StudentController extends Controller
                         </a>
                         <br/>
                         <img id="loading-' . $index . '" src="/dist/img/loading.gif" style="height: 20px;display: none;" />',
-                    $item->description,
-                    '<a class="btn btn-warning" href="#" onclick="$(\'#students_index2\').val(' . $index . ');preloadTemperatureModal();$(\'#temperature_modal\').modal(\'show\'); return false;">
+                    "description" => $item->description,
+                    "end" => '<a class="btn btn-warning" href="#" onclick="$(\'#students_index2\').val(' . $index . ');preloadTemperatureModal();$(\'#temperature_modal\').modal(\'show\'); return false;">
                         داغ/سرد
                     </a>'
                 ];
             }
-
-
-            $outdata = [];
-            for ($i = $req['start']; $i < min($req['length'] + $req['start'], count($data)); $i++) {
-                $outdata[] = $data[$i];
-            }
-
             $result = [
                 "draw" => $req['draw'],
-                "data" => $outdata,
-                "recordsTotal" => count($students),
-                "recordsFiltered" => count($students)
+                "data" => $data,
+                "recordsTotal" => count($allStudents),
+                "recordsFiltered" => count($allStudents)
             ];
 
             return $result;

@@ -29,8 +29,6 @@ null => ""
 @section('css')
 <link href="/plugins/select2/css/select2.min.css" rel="stylesheet" />
 <meta name="csrf-token" content="{{ csrf_token() }}">
-<link rel="stylesheet" href="/plugins/datatables/css/jquery.dataTables.min.css" type="text/css">
-<link rel="stylesheet" href="/css/dataTableStyle.css">
 <style>
     .morepanel {
         display: none;

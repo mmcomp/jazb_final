@@ -1064,7 +1064,8 @@
                 "infoEmpty":      "نمایش 0 تا 0 از 0 داده",
                 "proccessing": "در حال بروزرسانی"
             },
-            columnDefs: [ { orderable: false, targets: [0] } ],
+            columnDefs: [ { orderable: false, targets: [0,1,11] } ],
+            "order": [[2, 'asc']], /// sort columns 2
             serverSide: true,
             processing: true,
             ajax: {
@@ -1121,16 +1122,13 @@
                             $('#ch_' + value).prop('checked',false);
                         });
                     }
-                    if(students && isEmpty(students))
-                        students = JSON.parse(response.responseText).students;
-                    $('#example2 tr').click(function(e) {
+                    $('#example2 tr.even tr.odd').click(function(e) {
                         if ($(e.target).is("label,input")) {
                             return
                         } else {
                             var tr = this;
-                            //if(parseInt($(tr).find('td')[2])){
+                            console.log($(tr).find('td')[2].innerText);
                             var studentId = parseInt($(tr).find('td')[2].innerText, 10);
-                            //}
                             if(!isNaN(studentId)){
                                 for(var index in students){
                                     if(students[index].id==studentId){
@@ -1141,7 +1139,27 @@
                         }
                     });
                 }
-            }
+            },
+            columns: [
+                { data: 'checkbox'},
+                { data: 'row'},
+                { data: 'id' },
+                { data: 'first_name' },
+                { data: 'last_name' },
+                { data: 'users_id' },
+                { data: 'sources_id'},
+                { data: 'tags'},
+                { data: 'temps'},
+                { data: 'supporters_id'},
+                { data: 'description'},
+                { data : 'end'}
+            ],
+        });
+        table.on('draw.dt', function () {
+            var info = table.page.info();
+            table.column(1, { search: 'applied', order: 'applied', page: 'applied' }).nodes().each(function (cell, i) {
+                cell.innerHTML = i + 1 + info.start;
+            });
         });
         $("#input").keyup(e => {
             console.log(e);

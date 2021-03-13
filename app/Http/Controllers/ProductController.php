@@ -16,7 +16,7 @@ use Log;
 class ProductController extends Controller
 {
     public function index(Request $request){
-        $products = Product::where('is_deleted', false)->with('collection')->orderBy('name')->get();
+        $products = Product::where('is_deleted', false)->with('collection')->where('name','like','%'.$request->get('name').'%')->get();
         foreach($products as $index => $product){
             $products[$index]->parents = "-";
             if($product->collection) {
@@ -25,13 +25,8 @@ class ProductController extends Controller
                 $products[$index]->parents = $name;
             }
         }
+        $count = count($products);
         $name = null;
-        if($request->getMethod() == 'POST'){
-            if($request->input('name')!=null){
-                $name = trim($request->input('name'));
-                $products = Product::where('is_deleted',false)->where('name','like','%'.$name.'%')->get();
-            }
-        }
         if($request->getMethod() == 'GET'){
             return view('products.index',[
                 'route' => 'products',
@@ -46,43 +41,56 @@ class ProductController extends Controller
                 $req['length'] = 10;
                 $req['draw'] = 1;
             }
+            $columnIndex_arr = $request->get('order');
+            $columnName_arr = $request->get('columns');
+            $order_arr = $request->get('order');
+            $columnIndex = $columnIndex_arr[0]['column']; // Column index
+            $columnName = $columnName_arr[$columnIndex]['data']; // Column name
+            $columnSortOrder = $order_arr[0]['dir']; // asc or desc
+            $searchValue = $request->input('name'); // Search value
+            if($columnName != 'row' && $columnName != 'end'){
+                $products = Product::orderBy($columnName,$columnSortOrder)
+                ->where('name','like','%'.$searchValue.'%')
+                ->where('is_deleted',false)
+                ->with('collection')
+                ->select('products.*')
+                ->skip($req['start'])
+                ->take($req['length'])
+                ->get();
+            }else{
+                $products = Product::where('name','like','%'.$searchValue.'%')->where('is_deleted',false)
+                ->with('collection')
+                ->select('products.*')
+                ->get();
+            }
             $data = [];
+
             foreach($products as $index => $item){
                 if($item->collection) {
                     $parents = $item->collection->parents();
-                    //$name = ($parents!='')?$parents . "->" . $item->collection->name : $item->collection->name;
                     $name = ($parents!='')?$parents : $item->collection->name;
                     $products[$index]->parents = $name;
                 }
                 $data[] = [
-                    $index+1,
-                    $item->id,
-                    $item->name,
-                    $item->parents,
-                    number_format($item->price),
-                    '<a class="btn btn-primary" href="'.route('product_edit',$item->id).'"> ویرایش</a>
+                    "row" => $index +1,
+                    "id" => $item->id,
+                    "name" => $item->name,
+                    "collections_id" => $item->parents,
+                    "price" => number_format($item->price),
+                    "end" => '<a class="btn btn-primary" href="'.route('product_edit',$item->id).'"> ویرایش</a>
                      <a class="btn btn-danger" onclick="destroy(event)" href="'.route('product_delete',$item->id).'">حذف</a>'
                 ];
             }
 
-
-            $outdata = [];
-            for($i = $req['start'];$i<min($req['length']+$req['start'], count($data));$i++){
-                $outdata[] = $data[$i];
-            }
-
             $result = [
                 "draw" => $req['draw'],
-                "data" => $outdata,
-                "recordsTotal" => count($products),
-                "recordsFiltered" => count($products)
+                "data" => $data,
+                "recordsTotal" => $count,
+                "recordsFiltered" => $count
             ];
 
             return $result;
         }
-
-
-
     }
 
     public function create(Request $request)
