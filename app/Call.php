@@ -27,6 +27,6 @@ class Call extends Model
     }
 
     public function recall(){
-        return $this->hasOne('App\Call', 'id', 'calls_id');
+        return $this->hasOne('App\Call', 'id', 'calls_id')->where('is_deleted', false);
     }
 }
