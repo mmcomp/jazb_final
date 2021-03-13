@@ -11,7 +11,7 @@ use App\Province;
 class ProvinceController extends Controller
 {
     public function index(){
-        $provinces = Province::where("is_deleted", false)->orderBy('name')->get();
+        $provinces = Province::orderBy('name')->get();
 
         return view('provinces.index',[
             'provinces' => $provinces,
@@ -38,7 +38,7 @@ class ProvinceController extends Controller
 
     public function edit(Request $request, $id)
     {
-        $province = Province::where('id', $id)->where("is_deleted", false)->first();
+        $province = Province::where('id', $id)->first();
         if($province==null){
             $request->session()->flash("msg_error", "استان مورد نظر پیدا نشد!");
             return redirect()->route('provinces');
@@ -59,7 +59,7 @@ class ProvinceController extends Controller
 
     public function delete(Request $request, $id)
     {
-        $province = Province::where('id', $id)->where("is_deleted", false)->first();
+        $province = Province::where('id', $id)->first();
         if($province==null){
             $request->session()->flash("msg_error", "استان مورد نظر پیدا نشد!");
             return redirect()->route('provinces');

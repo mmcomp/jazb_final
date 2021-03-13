@@ -68,7 +68,7 @@
                         <div class="col">
                             <div class="form-group">
                                 <label for="sources_id">منبع</label>
-                                <select  id="sources_id" name="sources_id" class="form-control">
+                                <select  id="sources_id" name="sources_id" class="form-control" onchange="theChange()">
                                     <option value="">همه</option>
                                     @foreach ($sources as $item)
                                         @if(isset($sources_id) && $sources_id==$item->id)
@@ -85,19 +85,19 @@
                         <div class="col">
                             <div class="form-group">
                                 <label for="name">نام و نام خانوادگی</label>
-                                <input type="text" class="form-control" id="name" name="name" placeholder="نام و نام خانوادگی" value="{{ isset($name)?$name:'' }}" />
+                                <input type="text" class="form-control" id="name" name="name" placeholder="نام و نام خانوادگی" value="{{ isset($name)?$name:'' }}" onkeypress="handle(event)" />
                             </div>
                         </div>
                         <div class="col">
                             <div class="form-group">
                                 <label for="phone">تلفن</label>
-                                <input type="number" class="form-control" id="phone" name="phone" placeholder="تلفن"  value="{{ isset($phone)?$phone:'' }}" />
+                                <input type="number" class="form-control" id="phone" name="phone" placeholder="تلفن"  value="{{ isset($phone)?$phone:'' }}" onkeypress="handle(event)" />
                             </div>
                         </div>
                         <div class="col">
                             <div class="form-group">
                                 <label for="products_id">محصول</label>
-                                <select  id="products_id" name="products_id" class="form-control select2">
+                                <select  id="products_id" name="products_id" class="form-control select2" onchange="theChange()">
                                     <option value="">همه</option>
                                     @foreach ($products as $item)
                                         @if(isset($products_id) && $products_id==$item->id)
@@ -119,7 +119,7 @@
                         <div class="col">
                             <div class="form-group">
                                 <label for="supporters_id">پشتیبان</label>
-                                <select  id="supporters_id" name="supporters_id" class="form-control select2">
+                                <select  id="supporters_id" name="supporters_id" class="form-control select2" onchange="theChange()">
                                     <option value="">همه</option>
                                     @foreach ($supports as $item)
                                         @if(isset($supporters_id) && $supporters_id==$item->id)
@@ -151,49 +151,14 @@
                         </div>
                         @endif
                         <div class="col" style="padding-top: 32px;">
-                            <a class="btn btn-success" onclick="table.ajax.reload(); return false;" href="#">
+                            <a class="btn btn-success" onclick="theSearch()" href="#">
                                 جستجو
                             </a>
+                            <img id="loading" src="/dist/img/loading.gif" style="height: 20px;display: none;" />
                         </div>
                     </div>
                 </form>
-                <!--
-                <h3 class="text-center">
-                    مرتب سازی
-                </h3>
-                <div class="row">
-                  <div class="col text-center p-1">
-                    <a class="btn btn-warning btn-block" href="#">سطح بندی</a>
-                  </div>
-                  <div class="col text-center p-1">
-                    <a class="btn btn-warning btn-block" href="#">پیشنهاد فروش</a>
-                  </div>
-                  <div class="col text-center p-1">
-                    <a class="btn btn-warning btn-block" href="#">محصول</a>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col text-center p-1">
-                    <a class="btn btn-warning btn-block" href="#">سایت</a>
-                  </div>
-                  <div class="col text-center p-1">
-                    <a class="btn btn-warning btn-block" href="#">تعداد پیشنهاد فروش</a>
-                  </div>
-                  <div class="col text-center p-1">
-                    <a class="btn btn-warning btn-block" href="#">یادآور</a>
-                  </div>
-                </div>
-                <div class="row">
-                    <div class="col text-center p-1">
-                      <a class="btn btn-warning btn-block" href="#">برچسب اخلاقی</a>
-                    </div>
-                    <div class="col text-center p-1">
-                      <a class="btn btn-warning btn-block" href="#">برچسب ارزیابی</a>
-                    </div>
-                    <div class="col text-center p-1">
-                    </div>
-                </div>
-                -->
+
 
                 <table id="example2" class="table table-bordered table-hover">
                   <thead>
@@ -209,113 +174,8 @@
                   </tr>
                   </thead>
                   <tbody>
-                      {{--  @foreach ($students as $index => $item)
-                      <!--
-                      <tr id="main-tr-{{ $item->id }}">
-                        <td onclick="showMorePanel({{ $index }});">{{ $index + 1 }}</td>
-                        <td onclick="showMorePanel({{ $index }});">{{ $item->id }}</td>
-                        <td onclick="showMorePanel({{ $index }});">{{ $item->first_name }}</td>
-                        <td onclick="showMorePanel({{ $index }});">{{ $item->last_name }}</td>
-                        <td onclick="showMorePanel({{ $index }});">{{ count($item->otherPurchases) }}</td>
-                        <td onclick="showMorePanel({{ $index }});">{{ count($item->ownPurchases) }}</td>
-                        <td onclick="showMorePanel({{ $index }});">{{ count($item->todayPurchases) }}</td>
-                        <td></td>
-                      </tr>
-
-                      <tr class="morepanel" id="morepanel-{{ $index }}">
-                          <td colspan="10">
-                              <div class="container">
-                                <div class="row">
-                                    <div class="col">
-                                        تراز یا رتبه سال قبل :
-                                        {{ $item->last_year_grade }}
-                                    </div>
-                                    <div class="col">
-                                        مشاور :
-                                        {{ ($item->consultant)?$item->consultant->first_name . ' ' . $item->consultant->last_name:'' }}
-                                    </div>
-                                    <div class="col">
-                                        شغل پدر یا مادر :
-                                        {{ $item->parents_job_title }}
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col">
-                                        شماره منزل :
-                                        {{ $item->home_phone }}
-                                    </div>
-                                    <div class="col">
-                                        مقطع :
-                                        {{ isset($egucation_levels[$item->egucation_level])?$egucation_levels[$item->egucation_level]:$item->egucation_level }}
-                                    </div>
-                                    <div class="col">
-                                        شماره موبایل والدین :
-                                        {{ $item->father_phone }}
-                                        {{ $item->mother_phone }}
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col">
-                                        مدرسه :
-                                        {{ $item->school }}
-                                    </div>
-                                    <div class="col">
-                                        معدل :
-                                        {{ $item->average }}
-                                    </div>
-                                    <div class="col">
-                                        رشته تحصیلی :
-                                        {{ isset($majors[$item->major])?$majors[$item->major]:'-' }}
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col">
-                                    </div>
-                                    <div class="col">
-                                        تاریخ ثبت دانش آموز :
-                                        {{ jdate(strtotime($item->created_at))->format("Y/m/d") }}
-                                    </div>
-                                    <div class="col">
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col">
-                                        <a href="#" onclick="$('#students_index').val({{ $index }});preloadTagModal('moral');$('#tag_modal').modal('show'); return false;">
-                                            برچسب روحیات اخلاقی
-                                        </a>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col">
-                                        <a href="#" onclick="$('#students_index').val({{ $index }});preloadTagModal('need');$('#tag_modal').modal('show'); return false;">
-                                            برچسب نیازهای دانش آموز
-                                        </a>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col">
-                                        <a target="_blank" href="{{ route('student_purchases', $item->id) }}">
-                                            گزارش خریدهای قطعی دانش آموز
-                                        </a>
-                                    </div>
-                                </div>
-                              </div>
-                          </td>
-                      </tr>
-                      -->
-                      @endforeach  --}}
                   </tbody>
-                  <!--
-                  <tfoot>
-                  <tr>
-                    <th>Rendering engine</th>
-                    <th>Browser</th>
-                    <th>Platform(s)</th>
-                    <th>Engine version</th>
-                    <th>CSS grade</th>
-                  </tr>
-                  </tfoot>
-                  -->
+
                 </table>
               </div>
               <!-- /.card-body -->
@@ -330,104 +190,6 @@
 @endsection
 
 @section('js')
-<!--
-<div class="modal" id="tag_modal" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">برچسب</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-            <p>
-                <input type="hidden" id="students_index" />
-                <div class="morals">
-                <h3 class="text-center">
-                    اخلاقی
-                </h3>
-                <div>
-                    <select id="parent-one" onchange="selectParentOne(this);">
-                        <option value="">همه</option>
-                        @foreach ($parentOnes as $item)
-                        <option value="{{ $item->id }}">{{$item->name}}</option>
-                        @endforeach
-                    </select>
-
-                    <select id="parent-two" onchange="selectParentTwo(this);">
-                        <option value="">همه</option>
-                        @foreach ($parentTwos as $item)
-                        <option value="{{ $item->id }}">{{$item->name}}</option>
-                        @endforeach
-                    </select>
-
-                    <select id="parent-three" onchange="selectParentThree(this);">
-                        <option value="">همه</option>
-                        @foreach ($parentThrees as $item)
-                        <option value="{{ $item->id }}">{{$item->name}}</option>
-                        @endforeach
-                    </select>
-
-                    <select id="parent-four" onchange="selectParentFour(this);">
-                        <option value="">همه</option>
-                        @foreach ($parentFours as $item)
-                        <option value="{{ $item->id }}">{{$item->name}}</option>
-                        @endforeach
-                    </select>
-                </div>
-                @foreach ($moralTags as $index => $item)
-                    <input type="checkbox" class="tag-checkbox" id="tag_{{ $item->id }}" value="{{ $item->id }}" />
-                    <span class="tag-title" id="tag-title-{{ $item->id }}">
-                    {{ $item->name }}
-                    </span>
-                    <br/>
-                @endforeach
-                </div>
-                <div class="needs">
-                <h3 class="text-center">
-                    نیازسنجی
-                </h3>
-                <div>
-                    <select id="collection-one" onchange="selectCollectionOne(this);">
-                        <option value="">همه</option>
-                        @foreach ($firstCollections as $item)
-                        <option value="{{ $item->id }}">{{$item->name}}</option>
-                        @endforeach
-                    </select>
-
-                    <select id="collection-two" onchange="selectCollectionTwo(this);">
-                        <option value="">همه</option>
-                        @foreach ($secondCollections as $item)
-                        <option value="{{ $item->id }}" data-parent_id="{{$item->parent_id}}">{{$item->name}}</option>
-                        @endforeach
-                    </select>
-
-                    <select id="collection-three" onchange="selectCollectionThree(this);">
-                        <option value="">همه</option>
-                        @foreach ($thirdCollections as $item)
-                        <option value="{{ $item->id }}" data-parent_id="{{$item->parent_id}}" data-parent_parent_id="{{$item->parent->parent_id}}">{{$item->name}}</option>
-                        @endforeach
-                    </select>
-                </div>
-                @foreach ($needTags as $index => $item)
-                    <input type="checkbox" class="collection-checkbox" id="collection_{{ $item->id }}" value="{{ $item->id }}" />
-                    <span class="collection-title" id="collection-title-{{ $item->id }}">
-                    {{ $item->name }}
-                    </span>
-                    <br/>
-                @endforeach
-                </div>
-            </p>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-primary" onclick="saveTags();">اعمال</button>
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">انصراف</button>
-        </div>
-      </div>
-    </div>
-</div>
--->
 <div class="modal" id="tag_modal" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
@@ -1057,6 +819,24 @@
             }
         }
     }
+    function theSearch(){
+        $('#loading').css('display','inline');
+        table.ajax.reload();
+        return false;
+    }
+    function theChange(){
+        $('#loading').css('display','inline');
+        table.ajax.reload();
+        return false;
+    }
+    function handle(e){
+        if(e.keyCode === 13){
+            $('#loading').css('display','inline');
+            e.preventDefault(); // Ensure it is only this code that runs
+            table.ajax.reload();
+            return false;
+        }
+    }
     $(function () {
         $('#from_date_persian').MdPersianDateTimePicker({
             targetTextSelector: '#from_date_persian',
@@ -1116,7 +896,7 @@
                     return JSON.stringify(data);
                 },
                 "complete": function(response) {
-                    //console.log(response);
+                    $('#loading').css('display','none');
                     $('#example2 tbody tr').addClass('cursor_pointer');
                     $('#example2 tr').click(function() {
                         var tr = this;

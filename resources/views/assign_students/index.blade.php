@@ -68,7 +68,7 @@
                         <div class="col">
                             <div class="form-group">
                                 <label for="supporters_id">پشتیبان</label>
-                                <select  id="supporters_id" name="supporters_id" class="form-control">
+                                <select  id="supporters_id" name="supporters_id" class="form-control" onchange="theChange()">
                                     <option value="">همه</option>
                                     @foreach ($supports as $item)
                                         @if(isset($supporters_id) && $supporters_id==$item->id)
@@ -85,7 +85,7 @@
                         <div class="col">
                             <div class="form-group">
                                 <label for="sources_id">منبع</label>
-                                <select  id="sources_id" name="sources_id" class="form-control">
+                                <select  id="sources_id" name="sources_id" class="form-control" onchange="theChange()">
                                     <option value="">همه</option>
                                     @foreach ($sources as $item)
                                         @if(isset($sources_id) && $sources_id==$item->id)
@@ -102,19 +102,19 @@
                         <div class="col">
                             <div class="form-group">
                                 <label for="name">نام و نام خانوادگی</label>
-                                <input type="text" class="form-control" id="name" name="name" placeholder="نام و نام خانوادگی" value="{{ isset($name)?$name:'' }}" />
+                                <input type="text" class="form-control" id="name" name="name" placeholder="نام و نام خانوادگی" value="{{ isset($name)?$name:'' }}" onkeypress="handle(event)"/>
                             </div>
                         </div>
                         <div class="col">
                             <div class="form-group">
                                 <label for="phone">تلفن</label>
-                                <input type="number" class="form-control" id="phone" name="phone" placeholder="تلفن"  value="{{ isset($phone)?$phone:'' }}" />
+                                <input type="number" class="form-control" id="phone" name="phone" placeholder="تلفن"  value="{{ isset($phone)?$phone:'' }}" onkeypress="handle(event)" />
                             </div>
                         </div>
                         <div class="col">
                             <div class="form-group">
                                 <label for="cities_id">شهر</label>
-                                <select  id="cities_id" name="cities_id" class="form-control">
+                                <select  id="cities_id" name="cities_id" class="form-control" onchange="theChange()">
                                     <option value="">همه</option>
                                     @foreach ($cities as $item)
                                         @if(isset($cities_id) && $cities_id==$item->id)
@@ -133,7 +133,7 @@
                         <div class="col">
                             <div class="form-group">
                                 <label for="egucation_level">مقطع</label>
-                                <select  id="egucation_level" name="egucation_level" class="form-control">
+                                <select  id="egucation_level" name="egucation_level" class="form-control" onchange="theChange()">
                                     <option value="">همه</option>
                                     @foreach ($egucation_levels as $key => $item)
                                         @if($key!=null)
@@ -152,7 +152,7 @@
                         <div class="col">
                             <div class="form-group">
                                 <label for="major">رشته</label>
-                                <select  id="major" name="major" class="form-control">
+                                <select  id="major" name="major" class="form-control" onchange="theChange()">
                                     <option value="">همه</option>
                                     @foreach ($majors as $key => $item)
                                         @if(isset($egucation_level) && $egucation_level==$key)
@@ -169,13 +169,13 @@
                         <div class="col">
                             <div class="form-group">
                                 <label for="school">مدرسه</label>
-                                <input type="text" class="form-control" id="school" name="school" placeholder="مدرسه"  value="{{ isset($school)?$school:'' }}" />
+                                <input type="text" class="form-control" id="school" name="school" placeholder="مدرسه"  value="{{ isset($school)?$school:'' }}" onkeypress="handle(event)" />
                             </div>
                         </div>
                         <div class="col">
                             <div class="form-group">
                                 <label for="products_id">محصول</label>
-                                <select  id="products_id" name="products_id" class="form-control select2">
+                                <select  id="products_id" name="products_id" class="form-control select2" onchange="theChange()">
                                     <option value="">همه</option>
                                     @foreach ($products as $item)
                                         @if(isset($products_id) && $products_id==$item->id)
@@ -511,6 +511,19 @@
         $('#loading').css('display','inline');
         table.ajax.reload();
         return false;
+    }
+    function theChange(){
+        $('#loading').css('display','inline');
+        table.ajax.reload();
+        return false;
+    }
+    function handle(e){
+        if(e.keyCode === 13){
+            $('#loading').css('display','inline');
+            e.preventDefault(); // Ensure it is only this code that runs
+            table.ajax.reload();
+            return false;
+        }
     }
     function myFunc(theItem){
         if(theItem.checked){

@@ -66,7 +66,7 @@
                         <div class="col">
                             <div class="form-group">
                                 <label for="supporters_id">پشتیبان</label>
-                                <select  id="supporters_id" name="supporters_id" class="form-control">
+                                <select  id="supporters_id" name="supporters_id" class="form-control" onchange="theChange()">
                                     <option value="">همه</option>
                                     @foreach ($supports as $item)
                                         @if(isset($supporters_id) && $supporters_id==$item->id)
@@ -83,7 +83,7 @@
                         <div class="col">
                             <div class="form-group">
                                 <label for="sources_id">منبع</label>
-                                <select  id="sources_id" name="sources_id" class="form-control">
+                                <select  id="sources_id" name="sources_id" class="form-control" onchange="theChange()">
                                     <option value="">همه</option>
                                     @foreach ($sources as $item)
                                         @if(isset($sources_id) && $sources_id==$item->id)
@@ -100,19 +100,20 @@
                         <div class="col">
                             <div class="form-group">
                                 <label for="name">نام و نام خانوادگی</label>
-                                <input type="text" class="form-control" id="name" name="name" placeholder="نام و نام خانوادگی" value="{{ isset($name)?$name:'' }}" />
+                                <input type="text" class="form-control" id="name" name="name" placeholder="نام و نام خانوادگی" value="{{ isset($name)?$name:'' }}" onkeypress="handle(event)" />
                             </div>
                         </div>
                         <div class="col">
                             <div class="form-group">
                                 <label for="phone">تلفن</label>
-                                <input type="number" class="form-control" id="phone" name="phone" placeholder="تلفن"  value="{{ isset($phone)?$phone:'' }}" />
+                                <input type="number" class="form-control" id="phone" name="phone" placeholder="تلفن"  value="{{ isset($phone)?$phone:'' }}" onkeypress="handle(event)" />
                             </div>
                         </div>
                         <div class="col" style="padding-top: 32px;">
-                            <a class="btn btn-success" onclick="table.ajax.reload(); return false;" href="#">
+                            <a class="btn btn-success" onclick="theSearch()" href="#">
                                 جستجو
                             </a>
+                            <img id="loading" src="/dist/img/loading.gif" style="height: 20px;display: none;" />
                         </div>
                     </div>
                 </form>
@@ -656,6 +657,24 @@
             }
         }
     }
+    function theSearch(){
+        $('#loading').css('display','inline');
+        table.ajax.reload();
+        return false;
+    }
+    function theChange(){
+        $('#loading').css('display','inline');
+        table.ajax.reload();
+        return false;
+    }
+    function handle(e){
+        if(e.keyCode === 13){
+            $('#loading').css('display','inline');
+            e.preventDefault(); // Ensure it is only this code that runs
+            table.ajax.reload();
+            return false;
+        }
+    }
     $(function () {
         $.ajaxSetup({
             headers: {
@@ -695,15 +714,6 @@
                 "contentType": 'application/json; charset=utf-8',
 
                 "data": function (data) {
-                    // console.log(data);
-                    // Grab form values containing user options
-                    // var form = {};
-                    // $.each($("form").serializeArray(), function (i, field) {
-                    //     form[field.name] = field.value || "";
-                    // });
-                    // Add options used by Datatables
-                    // var info = { "start": 0, "length": 10, "draw": 1 };
-                    // $.extend(form, info);
                     data['supporters_id'] = $("#supporters_id").val();
                     data['sources_id'] = $("#sources_id").val();
                     data['name'] = $("#name").val();
@@ -711,21 +721,17 @@
                     return JSON.stringify(data);
                 },
                 "complete": function(response) {
-                    console.log(response);
+                    $('#loading').css('display','none');
                     $('#example2 tr').click(function() {
                         var tr = this;
                         var studentId = parseInt($(tr).find('td')[1].innerText, 10);
                         if(!isNaN(studentId)){
                             for(var index in students){
-                                // console.log('check', students[index].id, studentId);
                                 if(students[index].id==studentId){
-                                    // console.log(students[index]);
                                     showMorePanel(index, tr);
-                                    // break;
                                 }
                             }
                         }
-                        console.log(this, $(this).find('td')[1].innerText);
                     });
                 }
 

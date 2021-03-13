@@ -1,14 +1,4 @@
 @extends('layouts.index')
-
-@php
-$persons = [
-    "student"=>"دانش آموز",
-    "father"=>"پدر",
-    "mother"=>"مادر",
-    "other"=>"غیره"
-];
-@endphp
-
 @section('css')
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <style>
@@ -31,12 +21,6 @@ $persons = [
               @endif
             </div>
             <div class="col-sm-6">
-              <!--
-              <ol class="breadcrumb float-sm-right">
-                <li class="breadcrumb-item"><a href="#">Home</a></li>
-                <li class="breadcrumb-item active">DataTables</li>
-              </ol>
-              -->
             </div>
           </div>
         </div><!-- /.container-fluid -->
@@ -62,7 +46,7 @@ $persons = [
                 <div class="col-3">
                     <div class="form-group">
                         <label for="products_id">محصول</label>
-                        <select id="products_id" name="products_id" class="form-control" >
+                        <select id="products_id" name="products_id" class="form-control" onchange="theChange()" >
                             <option value="">همه</option>
                             @foreach ($products as $item)
                                 @if($products_id && $products_id == $item->id)
@@ -81,7 +65,7 @@ $persons = [
                 <div class="col-3">
                     <div class="form-group">
                         <label for="notices_id">اطلاع رسانی</label>
-                        <select id="notices_id" name="notices_id" class="form-control" >
+                        <select id="notices_id" name="notices_id" class="form-control" onchange="theChange()">
                             <option value="">همه</option>
                             @foreach ($notices as $item)
                                 @if($notices_id && $notices_id == $item->id)
@@ -101,7 +85,7 @@ $persons = [
                 <div class="col-3">
                     <div class="form-group">
                         <label for="supporters_id">پشتیبان</label>
-                        <select id="supporters_id" name="supporters_id" class="form-control" >
+                        <select id="supporters_id" name="supporters_id" class="form-control" onchange="theChange()" >
                             <option value="">همه</option>
                             @foreach ($supportersForSelectInView as $item)
                                 @if($supporters_id && $supporters_id == $item->id)
@@ -121,7 +105,7 @@ $persons = [
                 <div class="col-3">
                     <div class="form-group">
                         <label for="replier_id">پاسخ دهنده</label>
-                        <select id="replier_id" name="replier_id" class="form-control" >
+                        <select id="replier_id" name="replier_id" class="form-control" onchange="theChange()">
                             <option value="">همه</option>
                             @foreach ($persons as $key=>$item)
                                 @if($replier_id && $replier_id == $key)
@@ -140,7 +124,7 @@ $persons = [
                 <div class="col-3">
                     <div class="form-group">
                         <label for="to_date">منبع ورودی</label>
-                        <select id="sources_id" name="sources_id" class="form-control" >
+                        <select id="sources_id" name="sources_id" class="form-control" onchange="theChange()">
                             <option value="">همه</option>
                             @foreach ($sources as $item)
                                 @if($sources_id && $sources_id == $item->id)
@@ -159,7 +143,8 @@ $persons = [
                 <div class="col-3">
                     <div class="form-group">
                         <label for="to_date">&nbsp;</label>
-                        <input type="submit" class="btn btn-success form-control" value="جستجو" />
+                        <a href="#" class="btn btn-success form-control" onclick="theSearch()" >جستجو</a>
+                        <img id="loading" src="/dist/img/loading.gif" style="height: 20px;display: none;" />
                     </div>
                 </div>
             </div>
@@ -191,41 +176,6 @@ $persons = [
                   </tr>
                   </thead>
                   <tbody>
-                      @foreach ($supporters as $index => $item)
-                      @php
-                        $purchaseCount = 0;
-                        $tags = [];
-                      @endphp
-                      <tr>
-                        <td>{{ $index + 1 }}</td>
-                        @if(!$isSingle)
-                        <td>{{ $item->id }}</td>
-                        <td>{{ $item->first_name }}</td>
-                        <td>{{ $item->last_name }}</td>
-                        @endif
-                        <td>
-                            <form method="GET" action="{{ route('user_supporter_acall',$item->id) }}" target="_blank" >
-                                <input type="hidden" name="from_date" value="{{ ($from_date)?$from_date:date("Y-m-d") }}" />
-                                <input type="hidden" name="to_date" value="{{ ($to_date)?$to_date:date("Y-m-d") }}" />
-                                <input type="hidden" name="products_id" value="{{ ($products_id)?$products_id:'' }}" />
-                                <input type="hidden" name="notices_id" value="{{ ($notices_id)?$notices_id:'' }}" />
-                                <input type="hidden" name="replier_id" value="{{ ($replier_id)?$replier_id:'' }}" />
-                                <input type="hidden" name="sources_id" value="{{ ($sources_id)?$sources_id:'' }}" />
-                                {{-- <input type="hidden" name="id" value="{{ $item->id }}" /> --}}
-                                <button class="btn btn-link">
-                                    {{ $item->callCount }}
-                                </button>
-                            </form>
-                        </td>
-                        @if($item->supporterCallResults)
-                        @foreach ($item->supporterCallResults as $sitem)
-                            <td>
-                                {{ (isset($sitem['count']))?$sitem['count']:'0' }}
-                            </td>
-                        @endforeach
-                        @endif
-                      </tr>
-                      @endforeach
                   </tbody>
                 </table>
               </div>
@@ -246,20 +196,36 @@ $persons = [
 <script src="../../plugins/datatables-bs4/js/dataTables.bootstrap4.js"></script>
 <!-- page script -->
 <script>
+    let table = "";
+    function theSearch(){
+        $('#loading').css('display','inline');
+        table.ajax.reload();
+        return false;
+    }
+    function theChange(){
+        $('#loading').css('display','inline');
+        table.ajax.reload();
+        return false;
+    }
+    function handle(e){
+        if(e.keyCode === 13){
+            $('#loading').css('display','inline');
+            e.preventDefault(); // Ensure it is only this code that runs
+            table.ajax.reload();
+            return false;
+        }
+    }
     function showStudents(index){
-        // $(".students").hide();
         $("#students-" + index).toggle();
 
         return false;
     }
     function showStudentTags(index){
-        // $(".students").hide();
         $("#studenttags-" + index).toggle();
 
         return false;
     }
     function changePass(user_id) {
-        // alert(user_id);
         var password = prompt('لطفا رمز عبور جدید را وارد کنید:');
         if(!confirm(`آیا رمز عبور به ${password} تغییر یابد؟`)){
             return false;
@@ -270,37 +236,64 @@ $persons = [
             password,
             _token: "{{ csrf_token() }}"
         }, function(res){
-            console.log(res);
             if(res.error==null)
                 window.location.reload();
         });
         return false;
     }
     $(function () {
-    //   $("#example1").DataTable();
-      $('#example2').DataTable({
-        "paging": true,
-        "lengthChange": false,
-        "searching": false,
-        "ordering": true,
-        "info": true,
-        "autoWidth": false,
-        "language": {
-            "paginate": {
-                "previous": "قبل",
-                "next": "بعد"
-            },
-            "emptyTable":     "داده ای برای نمایش وجود ندارد",
-            "info":           "نمایش _START_ تا _END_ از _TOTAL_ داده",
-            "infoEmpty":      "نمایش 0 تا 0 از 0 داده",
-        }
-      });
-
-      $(".btn-danger").click(function(e){
+        $(".btn-danger").click(function(e){
           if(!confirm('آیا مطمئنید؟')){
             e.preventDefault();
           }
       });
+      $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+      });
+      table = $('#example2').DataTable({
+            "paging": true,
+            "lengthChange": false,
+            "searching": false,
+            "ordering": true,
+            "info": true,
+            "autoWidth": false,
+            "language": {
+                "paginate": {
+                    "previous": "قبل",
+                    "next": "بعد"
+                },
+                "emptyTable":     "داده ای برای نمایش وجود ندارد",
+                "info":           "نمایش _START_ تا _END_ از _TOTAL_ داده",
+                "infoEmpty":      "نمایش 0 تا 0 از 0 داده",
+            },
+            serverSide: true,
+            processing: true,
+            ajax: {
+                "type": "POST",
+                "url": "{{ route('user_supporter_calls_post') }}",
+                "dataType": "json",
+                "contentType": 'application/json; charset=utf-8',
+
+                "data": function (data) {
+                    data["from_date"] = $('#from_date').val();
+                    data["to_date"] = $('#to_date').val();
+                    data["products_id"] = $('#products_id').val();
+                    data["notices_id"] = $('#notices_id').val();
+                    data["supporters_id"] = $('#supporters_id').val();
+                    data["replier_id"] = $('#replier_id').val();
+                    data["sources_id"] = $('#sources_id').val();
+                    return JSON.stringify(data);
+                },
+                "complete": function(response) {
+                    $('#loading').css('display','none');
+                }
+
+            }
+        });
+
+
     });
   </script>
 @endsection
