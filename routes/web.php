@@ -197,7 +197,8 @@ Route::group(['middleware' => ['auth', 'message','changeCharactersAllToBePersian
 
     Route::group(['prefix' => '/user_supporters'], function () {
         Route::get('/', 'SupporterController@index')->name('user_supporters');
-        Route::any('/calls', 'SupporterController@callIndex')->name('user_supporter_calls');
+        Route::get('/calls', 'SupporterController@callIndex')->name('user_supporter_calls');
+        Route::post('/calls','SupporterController@callIndexPost')->name('user_supporter_calls_post');
         Route::any('/supporter_calls', 'SupporterController@supporterCallIndex')->name('user_a_supporter_calls');
         Route::any('/call/{id}', 'SupporterController@acallIndex')->name('user_supporter_acall');
         Route::any('/students/{id}', 'SupporterController@students')->name('supporter_allstudents');

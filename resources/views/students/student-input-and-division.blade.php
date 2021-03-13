@@ -72,7 +72,7 @@
                     <div class="row">
                         <div class="col">
                             <div class="form-group">
-                                <label for="supporters_id">پشتیبان</label>
+                                <label for="supporters_id" onchange="theChange()">پشتیبان</label>
                                 <select  id="supporters_id" name="supporters_id" class="form-control">
                                     <option value="">همه</option>
                                     @foreach ($supports as $item)
@@ -90,7 +90,7 @@
                         <div class="col">
                             <div class="form-group">
                                 <label for="sources_id">منبع</label>
-                                <select  id="sources_id" name="sources_id" class="form-control">
+                                <select  id="sources_id" name="sources_id" class="form-control" onchange="theChange()">
                                     <option value="">همه</option>
                                     @foreach ($sources as $item)
                                         @if(isset($sources_id) && $sources_id==$item->id)
@@ -107,19 +107,19 @@
                         <div class="col">
                             <div class="form-group">
                                 <label for="name">نام و نام خانوادگی</label>
-                                <input type="text" class="form-control" id="name" name="name" placeholder="نام و نام خانوادگی" value="{{ isset($name)?$name:'' }}" />
+                                <input type="text" class="form-control" id="name" name="name" placeholder="نام و نام خانوادگی" value="{{ isset($name)?$name:'' }}" onkeypress="handle(event)" />
                             </div>
                         </div>
                         <div class="col">
                             <div class="form-group">
                                 <label for="phone">تلفن</label>
-                                <input type="number" class="form-control" id="phone" name="phone" placeholder="تلفن"  value="{{ isset($phone)?$phone:'' }}" />
+                                <input type="number" class="form-control" id="phone" name="phone" placeholder="تلفن"  value="{{ isset($phone)?$phone:'' }}" onkeypress="handle(event)" />
                             </div>
                         </div>
                         <div class="col">
                             <div class="form-group">
                                 <label for="cities_id">شهر</label>
-                                <select  id="cities_id" name="cities_id" class="form-control">
+                                <select  id="cities_id" name="cities_id" class="form-control" onchange="theChange()">
                                     <option value="">همه</option>
                                     @foreach ($cities as $item)
                                         @if(isset($cities_id) && $cities_id==$item->id)
@@ -138,7 +138,7 @@
                         <div class="col">
                             <div class="form-group">
                                 <label for="egucation_level">مقطع</label>
-                                <select  id="egucation_level" name="egucation_level" class="form-control">
+                                <select  id="egucation_level" name="egucation_level" class="form-control" onchange="theChange()">
                                     <option value="">همه</option>
                                     @foreach ($egucation_levels as $key => $item)
                                         @if($key!=null)
@@ -157,7 +157,7 @@
                         <div class="col">
                             <div class="form-group">
                                 <label for="major">رشته</label>
-                                <select  id="major" name="major" class="form-control">
+                                <select  id="major" name="major" class="form-control" onchange="theChange()">
                                     <option value="">همه</option>
                                     @foreach ($majors as $key => $item)
                                         @if(isset($egucation_level) && $egucation_level==$key)
@@ -174,13 +174,14 @@
                         <div class="col">
                             <div class="form-group">
                                 <label for="school">مدرسه</label>
-                                <input type="text" class="form-control" id="school" name="school" placeholder="مدرسه"  value="{{ isset($school)?$school:'' }}" />
+                                <input type="text" class="form-control" id="school" name="school" placeholder="مدرسه"  value="{{ isset($school)?$school:'' }}" onkeypress="handle(event)" />
                             </div>
                         </div>
                         <div class="col" style="padding-top: 32px;">
-                            <a class="btn btn-success" onclick="table.ajax.reload(); return false;" href="#">
+                            <a class="btn btn-success" onclick="theSearch()" href="#">
                                 جستجو
                             </a>
+                            <img id="loading" src="/dist/img/loading.gif" style="height: 20px;display: none;" />
                         </div>
                     </div>
                 </form>
@@ -882,6 +883,24 @@
 
         return JSON.stringify(obj) === JSON.stringify({});
     }
+    function theSearch(){
+        $('#loading').css('display','inline');
+        table.ajax.reload();
+        return false;
+    }
+    function theChange(){
+        $('#loading').css('display','inline');
+        table.ajax.reload();
+        return false;
+    }
+    function handle(e){
+        if(e.keyCode === 13){
+            $('#loading').css('display','inline');
+            e.preventDefault(); // Ensure it is only this code that runs
+            table.ajax.reload();
+            return false;
+        }
+    }
     $(function () {
         $.ajaxSetup({
             headers: {
@@ -943,6 +962,7 @@
                 },
                 "complete": function(response) {
                    // console.log(response);
+                   $('#loading').css('display','none');
                     if(students && isEmpty(students))
                         students = JSON.parse(response.responseText).students;
                     $('#example2 tr').click(function() {
