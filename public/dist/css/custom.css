@@ -69,3 +69,6 @@
 .cursor_pointer{
     cursor:pointer;
 }
+.mt-32{
+    margin-top:32px !important;
+}
