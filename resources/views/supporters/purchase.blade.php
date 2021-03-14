@@ -874,6 +874,8 @@
                 "info": "نمایش _START_ تا _END_ از _TOTAL_ داده",
                 "infoEmpty": "نمایش 0 تا 0 از 0 داده",
             },
+            columnDefs: [ { orderable: false, targets: [0,7] } ],
+            "order": [[1, 'asc']], /// sort columns 1
             serverSide: true,
             processing: true,
             ajax: {
@@ -914,7 +916,17 @@
                     });
                 }
 
-            }
+            },
+            columns: [
+                { data: 'row'},
+                { data: 'id' },
+                { data: 'first_name' },
+                { data: 'last_name' },
+                { data: 'other_purchases' },
+                { data: 'own_purchases'},
+                { data: 'today_purchases'},
+                { data: 'end'}
+            ],
         });
     });
   </script>

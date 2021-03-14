@@ -1,6 +1,7 @@
 @extends('layouts.index')
 
 @section('css')
+<meta name="csrf-token" content="{{ csrf_token() }}">
 <style>
     .students,
     .studenttags {
@@ -51,7 +52,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @if(!empty($no_need_calls_students))
+                            {{--  @if(!empty($no_need_calls_students))
                             @foreach ($no_need_calls_students as $index => $item)
                             <tr>
                                 <td>{{ $index + 1 }}</td>
@@ -98,7 +99,7 @@
                                 <td>{{ $item->description }}</td>
                             </tr>
                             @endforeach
-                            @endif
+                            @endif  --}}
                         </tbody>
                     </table>
                 </div>
@@ -119,15 +120,14 @@
 <script src="../../plugins/datatables-bs4/js/dataTables.bootstrap4.js"></script>
 <!-- page script -->
 <script>
+    var table = "";
     function showStudents(index) {
-        // $(".students").hide();
         $("#students-" + index).toggle();
 
         return false;
     }
 
     function showStudentTags(index) {
-        // $(".students").hide();
         $("#studenttags-" + index).toggle();
 
         return false;
@@ -138,27 +138,59 @@
         }
     });
     $(function() {
-        //   $("#example1").DataTable();
-        $('#example2').DataTable({
-            "paging": true
-            , "lengthChange": false
-            , "searching": false
-            , "ordering": true
-            , "info": true
-            , "autoWidth": false
-            , "language": {
-                "paginate": {
-                    "previous": "قبل"
-                    , "next": "بعد"
-                }
-                , "emptyTable": "داده ای برای نمایش وجود ندارد"
-                , "info": "نمایش _START_ تا _END_ از _TOTAL_ داده"
-                , "infoEmpty": "نمایش 0 تا 0 از 0 داده"
-            , }
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
         });
+        table = $("#example2").DataTable({
+            "paging": true,
+            "lengthChange": false,
+            "searching": false,
+            "ordering": true,
+            "info": true,
+            "autoWidth": true,
+            "language": {
+                "paginate": {
+                    "previous": "قبل",
+                    "next": "بعد"
+                },
+                "emptyTable": "داده ای برای نمایش وجود ندارد",
+                "info": "نمایش _START_ تا _END_ از _TOTAL_ داده",
+                "infoEmpty": "نمایش 0 تا 0 از 0 داده",
+            },
+            columnDefs: [ { orderable: false, targets: [0,7] } ],
+            "order": [[1, 'asc']], /// sort columns 1
+            serverSide: true,
+            processing: true,
+            ajax: {
+                "type": "POST",
+                "url": "{{ route('no_need_students') }}",
+                "dataType": "json",
+                "contentType": 'application/json; charset=utf-8',
 
+                "data": function (data) {
+                    return JSON.stringify(data);
+                },
+                "complete": function(response) {
+                }
 
+            },
+            columns: [
+                { data: 'row'},
+                { data: 'id' },
+                { data: 'first_name' },
+                { data: 'last_name' },
+                { data: 'users_id' },
+                { data: 'sources_id'},
+                { data: 'tags'},
+                { data: 'temps'},
+                { data: 'description'}
+            ],
+        });
     });
+
+
 
 </script>
 @endsection

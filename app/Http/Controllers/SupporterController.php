@@ -72,14 +72,121 @@ class SupporterController extends Controller
             'persons' => $persons
         ]);
     }
-    public function noNeedStudents()
+    public function noNeedStudents(Request $request)
     {
+        $call_results_no_need = CallResult::where('no_call', 1)->where('is_deleted', false)->get();
+        $no_need_calls = [];
+        $no_need_calls_students = [];
+        $no_need_calls_students_builder = "";
+        $count = 0;
+        $arrOfNoNeed = [];
+        if ($call_results_no_need) {
+            foreach ($call_results_no_need as $result) {
+                $arrOfNoNeed[] = $result->id;
+                $no_need_calls = Call::where('is_deleted', false)->where('users_id', Auth::user()->id)->whereIn('call_results_id', $arrOfNoNeed)->pluck('students_id')->implode(',');
+            }
+        }
+        if (!is_array($no_need_calls)) {
+            $no_need_calls = array_unique(explode(',', $no_need_calls));
+            $no_need_calls_students_builder =  Student::where('is_deleted', false)->where('banned', false)->where('archived', false)->whereIn('id', $no_need_calls);
+            $no_need_calls_students = Student::where('is_deleted', false)->where('banned', false)->where('archived', false)->whereIn('id', $no_need_calls)->get();
+            $count = Student::where('is_deleted', false)->where('banned', false)->where('archived', false)->whereIn('id', $no_need_calls)->count();
+        }
+        if ($request->getMethod() == "GET") {
+            return view('supporters.noNeedStudents');
+        } else {
+            $data = [];
+            $req =  request()->all();
+            if (!isset($req['start'])) {
+                $req['start'] = 0;
+                $req['length'] = 10;
+                $req['draw'] = 1;
+            }
+            $columnIndex_arr = $request->get('order');
+            $columnName_arr = $request->get('columns');
+            $order_arr = $request->get('order');
+            $columnIndex = $columnIndex_arr[0]['column']; // Column index
+            $columnName = $columnName_arr[$columnIndex]['data']; // Column name
+            $columnSortOrder = $order_arr[0]['dir']; // asc or desc
+            if ($no_need_calls_students_builder != "") {
+                if ($columnName != 'row' && $columnName != "temps" && $columnName != "tags") {
+                    $students = $no_need_calls_students_builder->orderBy($columnName, $columnSortOrder)
+                        ->select('students.*')
+                        ->skip($req['start'])
+                        ->take($req['length'])
+                        ->get();
+                } else if ($columnName == "tags") {
+                    $students = $no_need_calls_students_builder
+                        ->withCount('studenttags')
+                        ->skip($req['start'])
+                        ->take($req['length'])
+                        ->orderBy('studenttags_count', $columnSortOrder)
+                        ->get();
+                } else {
+                    $students = $no_need_calls_students_builder->select('students.*')
+                        ->skip($req['start'])
+                        ->take($req['length'])
+                        ->get();
+                }
+            } else {
+                $students = null;
+            }
+            if ($students) {
+                foreach ($students as $index => $item) {
+                    $tags = "";
+                    if (($item->studenttags && count($item->studenttags) > 0) || ($item->studentcollections && count($item->studentcollections) > 0)) {
+                        for ($i = 0; $i < count($item->studenttags); $i++) {
+                            $tags .= '<span class="d-inline-block px-1 rounded small p-1 mt-2 ' . (($item->studenttags[$i]->tag->type == 'moral') ? 'bg-cyan' : 'bg-warning') . ' p-1">
+                                ' . (($item->studenttags[$i]->tag->parent_four) ? $item->studenttags[$i]->tag->parent_four->name . '->' : '') . ' ' . $item->studenttags[$i]->tag->name . '
+                            </span><br/>';
+                        }
+                    }
+                    $registerer = "-";
+                    if ($item->user)
+                        $registerer =  $item->user->first_name . ' ' . $item->user->last_name;
+                    elseif ($item->saloon)
+                        $registerer = $item->saloon;
+                    elseif ($item->is_from_site)
+                        $registerer =  'سایت';
 
-        $no_need_calls_students = $this->no_need_calls_students()['value'];
-        return view('supporters.noNeedStudents')->with([
-            'no_need_calls_students' => $no_need_calls_students
-        ]);
+                    $temps = "";
+                    if ($item->studenttemperatures && count($item->studenttemperatures) > 0) {
+                        foreach ($item->studenttemperatures as $sitem) {
+                            if ($sitem->temperature->status == 'hot')
+                                $temps .= '<span class="bg-danger d-inline-block px-1 rounded small p-1 mt-2">';
+                            else
+                                $temps .= '<span class="bg-info d-inline-block px-1 rounded small p-1 mt-2">';
+                            $temps .= $sitem->temperature->name . '</span>';
+                        }
+                    }
+                    $data[] = [
+                        "row" => $index + 1,
+                        "id" => $item->id,
+                        "first_name" => $item->first_name,
+                        "last_name" => $item->last_name,
+                        "users_id" => $registerer,
+                        "sources_id" => ($item->source) ? $item->source->name : '-',
+                        "tags" => $tags,
+                        "temps" => $temps,
+                        "description" => $item->description,
+                    ];
+                }
+            }
+
+
+
+            $result = [
+                "draw" => $req['draw'],
+                "data" => $data,
+                "recordsTotal" => $count,
+                "recordsFiltered" => $count,
+            ];
+
+            return $result;
+        }
     }
+
+
     public static function persianToEnglishDigits($pnumber)
     {
         $number = str_replace('۰', '0', $pnumber);
@@ -231,42 +338,39 @@ class SupporterController extends Controller
             $req['length'] = 10;
             $req['draw'] = 1;
         }
-        if(!$isSingle){
+        if (!$isSingle) {
             $columnIndex_arr = $request->get('order');
             $columnName_arr = $request->get('columns');
             $order_arr = $request->get('order');
             $columnIndex = $columnIndex_arr[0]['column']; // Column index
             $columnName = $columnName_arr[$columnIndex]['data']; // Column name
             $columnSortOrder = $order_arr[0]['dir']; // asc or desc
-
-            if($columnName != 'row' && $columnName != "call_count"){
-                $supporters = $supporters_builder->orderBy($columnName,$columnSortOrder)
-                ->select('users.*')
-                ->skip($req['start'])
-                ->take($req['length'])
-                ->get();
+            if ($columnName != 'row' && $columnName != "call_count" && !strpos($columnName, "call_result")) {
+                $supporters = $supporters_builder->orderBy($columnName, $columnSortOrder)
+                    ->select('users.*')
+                    ->skip($req['start'])
+                    ->take($req['length'])
+                    ->get();
+            } else if ($columnName == "call_count") {
+                $supporters = $supporters_builder
+                    ->withCount('calls')
+                    ->skip($req['start'])
+                    ->take($req['length'])
+                    ->orderBy('calls_count', $columnSortOrder)
+                    ->get();
+            } else {
+                $supporters = $supporters_builder->select('users.*')
+                    ->skip($req['start'])
+                    ->take($req['length'])
+                    ->get();
             }
+        } else {
+            $supporters = $supporters_builder
+                ->offset($req['start'])
+                ->limit($req['length'])
+                ->get();
         }
-
-        // else if($columnName == "call_count"){
-        //     $supporters = $supporters_builder
-        //     ->withCount('calls')
-        //     ->skip($req['start'])
-        //     ->take($req['length'])
-        //     ->orderBy('calls_count',$columnSortOrder)
-        //     ->get();
-        // }else{
-        //     $supporters = $supporters_builder->select('users.*')
-        //     ->skip($req['start'])
-        //     ->take($req['length'])
-        //     ->get();
-        // }
         $data = [];
-        $supporters = $supporters_builder
-            ->offset($req['start'])
-            ->limit($req['length'])
-            ->get();
-
         $lastTds = [];
         foreach ($supporters as $index => $supporter) {
             $call = Call::where("users_id", $supporter->id)->where('is_deleted', false);
@@ -335,7 +439,7 @@ class SupporterController extends Controller
             if ($item->supporterCallResults) {
                 $i = 1;
                 foreach ($item->supporterCallResults as $sitem) {
-                    $lastTds["call_result".$i] = (isset($sitem['count'])) ? $sitem['count'] : '0';
+                    $lastTds["call_result" . $i] = (isset($sitem['count'])) ? $sitem['count'] : '0';
                     $i++;
                 }
             }
@@ -348,7 +452,7 @@ class SupporterController extends Controller
                 $data[] = array_merge([
                     "row" => $req['start'] + $index + 1,
                     "id" => $item->id,
-                    "first_name" =>$item->first_name,
+                    "first_name" => $item->first_name,
                     "last_name" => $item->last_name,
                     "call_count" => $countCall
                 ], $lastTds);
@@ -963,15 +1067,6 @@ class SupporterController extends Controller
                     "end" => ""
                 ];
             }
-            // if($sw == null || $sw == "all" || $sw == "other"){
-            //     $count = count($getStudents);
-            // }
-
-            // $outdata = [];
-            // for ($i = $req['start']; $i < min($req['length'] + $req['start'], count($data)); $i++) {
-            //     $outdata[] = $data[$i];
-            // }
-
             $result = [
                 "draw" => $req['draw'],
                 "data" => $data,
@@ -991,7 +1086,6 @@ class SupporterController extends Controller
         $sources_id = null;
         $phone = null;
         if (request()->getMethod() == 'POST') {
-            // dump(request()->all());
             if (request()->input('name') != null) {
                 $name = trim(request()->input('name'));
                 $students = $students->where(function ($query) use ($name) {
@@ -1007,8 +1101,10 @@ class SupporterController extends Controller
                 $students = $students->where('phone', $phone);
             }
         }
-        // DB::enableQueryLog();
-        $students = $students
+        $theStudents = $students;
+        $getStudents = $students->get();
+        $count = $getStudents ? count($getStudents) : 0;
+        $students = $theStudents
             ->with('user')
             ->with('studenttags.tag.parent_four')
             ->with('studentcollections.collection')
@@ -1016,21 +1112,11 @@ class SupporterController extends Controller
             ->with('source')
             ->with('consultant')
             ->with('supporter')
-            ->orderBy('created_at', 'desc')
             ->get();
-        // dd(DB::getQueryLog());
         $moralTags = Tag::where('is_deleted', false)
-            // ->with('parent_one')
-            // ->with('parent_two')
-            // ->with('parent_three')
-            // ->with('parent_four')
             ->where('type', 'moral')
             ->get();
         $needTags = Tag::where('is_deleted', false)
-            // ->with('parent_one')
-            // ->with('parent_two')
-            // ->with('parent_three')
-            // ->with('parent_four')
             ->where('type', 'need')
             ->get();
         $parentOnes = TagParentOne::has('tags')->get();
@@ -1048,8 +1134,8 @@ class SupporterController extends Controller
         $hotTemperatures = Temperature::where('is_deleted', false)->where('status', 'hot')->get();
         $coldTemperatures = Temperature::where('is_deleted', false)->where('status', 'cold')->get();
 
-        foreach ($students as $index => $student) {
-            $students[$index]->pcreated_at = jdate(strtotime($student->created_at))->format("Y/m/d");
+        foreach ($getStudents as $index => $student) {
+            $getStudents[$index]->pcreated_at = jdate(strtotime($student->created_at))->format("Y/m/d");
         }
 
         if (request()->getMethod() == 'GET') {
@@ -1079,71 +1165,89 @@ class SupporterController extends Controller
             ]);
         } else {
             $req =  request()->all();
-            // dd($req);
             if (!isset($req['start'])) {
                 $req['start'] = 0;
                 $req['length'] = 10;
                 $req['draw'] = 1;
             }
+            $columnIndex_arr = $req['order'];
+            $columnName_arr = $req['columns'];
+            $order_arr = $req['order'];
+            $columnIndex = $columnIndex_arr[0]['column']; // Column index
+            $columnName = $columnName_arr[$columnIndex]['data']; // Column name
+            $columnSortOrder = $order_arr[0]['dir']; // asc or desc
+
+            if ($columnName != 'row' && $columnName != 'end' && $columnName != "temps" && $columnName != "tags") {
+                $students = $theStudents->orderBy($columnName, $columnSortOrder)
+                    ->select('students.*')
+                    ->skip($req['start'])
+                    ->take($req['length'])
+                    ->get();
+            } else if ($columnName == "tags") {
+                $students = $theStudents
+                    ->withCount('studenttags')
+                    ->skip($req['start'])
+                    ->take($req['length'])
+                    ->orderBy('studenttags_count', $columnSortOrder)
+                    ->get();
+            } else {
+                $students = $theStudents->select('students.*')
+                    ->skip($req['start'])
+                    ->take($req['length'])
+                    ->get();
+            }
             $data = [];
-            foreach ($students as $index => $item) {
-                $tags = "";
-                if (($item->studenttags && count($item->studenttags) > 0) || ($item->studentcollections && count($item->studentcollections) > 0)) {
-                    for ($i = 0; $i < count($item->studenttags); $i++) {
-                        $tags .= '<span class="d-inline-block px-1 rounded small mt-2 ' . (($item->studenttags[$i]->tag->type == 'moral') ? 'bg-cyan' : 'bg-warning') . ' p-1">
-                        ' . (($item->studenttags[$i]->tag->parent_four) ? $item->studenttags[$i]->tag->parent_four->name . '->' : '') . ' ' . $item->studenttags[$i]->tag->name . '
-                        </span><br/>';
+            if ($students) {
+                foreach ($students as $index => $item) {
+                    $tags = "";
+                    if (($item->studenttags && count($item->studenttags) > 0) || ($item->studentcollections && count($item->studentcollections) > 0)) {
+                        for ($i = 0; $i < count($item->studenttags); $i++) {
+                            $tags .= '<span class="d-inline-block px-1 rounded small mt-2 ' . (($item->studenttags[$i]->tag->type == 'moral') ? 'bg-cyan' : 'bg-warning') . ' p-1">
+                            ' . (($item->studenttags[$i]->tag->parent_four) ? $item->studenttags[$i]->tag->parent_four->name . '->' : '') . ' ' . $item->studenttags[$i]->tag->name . '
+                            </span><br/>';
+                        }
                     }
-                    // for($i = 0; $i < count($item->studentcollections);$i++){
-                    //     $tags .= '<span class="alert alert-warning p-1">
-                    //         '. (($item->studentcollections[$i]->collection->parent) ? $item->studentcollections[$i]->collection->parent->name . '->' : '' ) . ' ' . $item->studentcollections[$i]->collection->name .'
-                    //     </span><br/>';
-                    // }
-                }
-                $registerer = "-";
-                if ($item->user)
-                    $registerer =  $item->user->first_name . ' ' . $item->user->last_name;
-                elseif ($item->saloon)
-                    $registerer = $item->saloon;
-                elseif ($item->is_from_site)
-                    $registerer =  'سایت';
+                    $registerer = "-";
+                    if ($item->user)
+                        $registerer =  $item->user->first_name . ' ' . $item->user->last_name;
+                    elseif ($item->saloon)
+                        $registerer = $item->saloon;
+                    elseif ($item->is_from_site)
+                        $registerer =  'سایت';
 
-                $temps = "";
-                if ($item->studenttemperatures && count($item->studenttemperatures) > 0) {
-                    foreach ($item->studenttemperatures as $sitem) {
-                        if ($sitem->temperature->status == 'hot')
-                            $temps .= '<span class="d-inline-block px-1 rounded small mt-2 bg-danger p-1">';
-                        else
-                            $temps .= '<span class="d-inline-block px-1 rounded small mt-2 bg-cyan p-1">';
-                        $temps .= $sitem->temperature->name . '</span>';
+                    $temps = "";
+                    if ($item->studenttemperatures && count($item->studenttemperatures) > 0) {
+                        foreach ($item->studenttemperatures as $sitem) {
+                            if ($sitem->temperature->status == 'hot')
+                                $temps .= '<span class="d-inline-block px-1 rounded small mt-2 bg-danger p-1">';
+                            else
+                                $temps .= '<span class="d-inline-block px-1 rounded small mt-2 bg-cyan p-1">';
+                            $temps .= $sitem->temperature->name . '</span>';
+                        }
                     }
+                    $data[] = [
+                        "row" => $req['start'] + $index + 1,
+                        "id" => $item->id,
+                        "first_name" => $item->first_name,
+                        "last_name" => $item->last_name,
+                        "users_id" => $registerer,
+                        "sources_id" => ($item->source) ? $item->source->name : '-',
+                        "tags" => $tags,
+                        "temps" => $temps,
+                        "description" => $item->description,
+                        "end" => '<a class="btn btn-success btn-sm" href="#" onclick="return seeStudent(this, ' . $item->id . ');">
+                        مشاهده شد
+                        </a>'
+                    ];
                 }
-                $data[] = [
-                    $index + 1,
-                    $item->id,
-                    $item->first_name,
-                    $item->last_name,
-                    $registerer,
-                    ($item->source) ? $item->source->name : '-',
-                    $tags,
-                    $temps,
-                    $item->description,
-                    '<a class="btn btn-success btn-sm" href="#" onclick="return seeStudent(this, ' . $item->id . ');">
-                    مشاهده شد
-                    </a>'
-                ];
             }
 
-            $outdata = [];
-            for ($i = $req['start']; $i < min($req['length'] + $req['start'], count($data)); $i++) {
-                $outdata[] = $data[$i];
-            }
 
             $result = [
                 "draw" => $req['draw'],
-                "data" => $outdata,
-                "recordsTotal" => count($students),
-                "recordsFiltered" => count($students)
+                "data" => $data,
+                "recordsTotal" => $count,
+                "recordsFiltered" => $count
             ];
 
             return $result;
@@ -1274,7 +1378,7 @@ class SupporterController extends Controller
                 $students = $students->whereIn('id', $studentIds);
             }
         }
-        $allStudents = $students->orderBy('id', 'desc')->get();
+        $allStudents = $students->get();
 
         $req =  request()->all();
         if (!isset($req['start'])) {
@@ -1282,19 +1386,43 @@ class SupporterController extends Controller
             $req['length'] = 10;
             $req['draw'] = 1;
         }
-        $students = $students
-            ->with('user')
-            ->with('studenttags.tag')
-            ->with('studentcollections.collection')
-            ->with('studenttags.tag.parent_four')
-            ->with('studenttemperatures.temperature')
-            ->with('source')
-            ->with('consultant')
-            ->with('supporter')
-            ->orderBy('created_at', 'desc')
-            ->offset($req['start'])
-            ->limit($req['length'])
-            ->get();
+        $columnIndex_arr = $request->get('order');
+        $columnName_arr = $request->get('columns');
+        $order_arr = $request->get('order');
+        $columnIndex = $columnIndex_arr[0]['column']; // Column index
+        $columnName = $columnName_arr[$columnIndex]['data']; // Column name
+        $columnSortOrder = $order_arr[0]['dir']; // asc or desc
+
+        if ($columnName != 'row' && $columnName != "end") {
+            DB::enableQueryLog();
+            $students = $students->orderBy($columnName, $columnSortOrder)
+                ->select('students.*')
+                // ->with('user')
+                // ->with('studenttags.tag')
+                // ->with('studentcollections.collection')
+                // ->with('studenttags.tag.parent_four')
+                // ->with('studenttemperatures.temperature')
+                // ->with('source')
+                // ->with('consultant')
+                // ->with('supporter')
+                ->skip($req['start'])
+                ->take($req['length'])
+                ->get();
+            //dd(DB::getQueryLog());
+        } else {
+            $students = $students->select('students.*')
+                ->with('user')
+                ->with('studenttags.tag')
+                ->with('studentcollections.collection')
+                ->with('studenttags.tag.parent_four')
+                ->with('studenttemperatures.temperature')
+                ->with('source')
+                ->with('consultant')
+                ->with('supporter')
+                ->skip($req['start'])
+                ->take($req['length'])
+                ->get();
+        }
         $data = [];
         foreach ($students as $index => $item) {
             if ($item->supporters_id) {
@@ -1311,14 +1439,14 @@ class SupporterController extends Controller
         }
         foreach ($students as $index => $item) {
             $data[] = [
-                $req['start'] + $index + 1,
-                $item->id,
-                $item->first_name,
-                $item->last_name,
-                $item->other_purchases,
-                $item->own_purchases,
-                $item->today_purchases,
-                ""
+                "row" => $req['start'] + $index + 1,
+                "id" => $item->id,
+                "first_name" => $item->first_name,
+                "last_name" => $item->last_name,
+                "other_purchases" => $item->other_purchases,
+                "own_purchases" => $item->own_purchases,
+                "today_purchases" => $item->today_purchases,
+                "end" => ""
             ];
         }
         $result = [
@@ -1569,7 +1697,7 @@ class SupporterController extends Controller
             $to_date = $this->jalaliToGregorian($request->input('to_date'));
             $purchases = $purchases->where('created_at', '<=', $to_date);
         }
-        $allPurchases = $purchases->orderBy('id', 'desc')->get();
+        $allPurchases = $purchases->get();
         $out = CommissionPurchaseRelation::computeMonthIncome($thePurchases, $allPurchases);
         $sum = $out[0];
         $wage = $out[1];
@@ -1580,24 +1708,44 @@ class SupporterController extends Controller
             $req['length'] = 10;
             $req['draw'] = 1;
         }
-        $purchases = $purchases
-            ->with('student')
-            ->with('product')
-            ->orderBy('created_at', 'desc')
-            ->offset($req['start'])
-            ->limit($req['length'])
-            ->get();
+        $columnIndex_arr = $request->get('order');
+        $columnName_arr = $request->get('columns');
+        $order_arr = $request->get('order');
+        $columnIndex = $columnIndex_arr[0]['column']; // Column index
+        $columnName = $columnName_arr[$columnIndex]['data']; // Column name
+        $columnSortOrder = $order_arr[0]['dir']; // asc or desc
+        if ($columnName != 'row' && $columnName != "wage" && $columnName != "portion") {
+            $purchases = $purchases->orderBy($columnName, $columnSortOrder)
+                ->select('purchases.*')
+                ->skip($req['start'])
+                ->take($req['length'])
+                ->get();
+        }
+        // } else if ($columnName == "tags") {
+        //     $purchases = $purchases
+        //         ->withCount('studenttags')
+        //         ->skip($req['start'])
+        //         ->take($req['length'])
+        //         ->orderBy('studenttags_count', $columnSortOrder)
+        //         ->get();
+        // }
+        else {
+            $purchases = $purchases->select('purchases.*')
+                ->skip($req['start'])
+                ->take($req['length'])
+                ->get();
+        }
         $data = [];
         foreach ($purchases as $index => $item) {
             $data[] = [
-                $req['start'] + $index + 1,
-                $item->id,
-                ($item->student) ? ($item->student->first_name . ' ' . $item->student->last_name) : '-',
-                ($item->created_at) ? jdate($item->created_at)->format('Y-m-d') : jdate()->format("Y-m-d"),
-                ($item->product) ? $item->product->name : '-',
-                number_format($item->price),
-                isset($wage[$item->products_id]) ? $wage[$item->products_id] : $default_wage,
-                isset($wage[$item->products_id]) ? number_format(($wage[$item->products_id]) / 100 * $item->price) : number_format($default_wage / 100 * $item->price),
+                "row" => $req['start'] + $index + 1,
+                "id" => $item->id,
+                "students_id" => ($item->student) ? ($item->student->first_name . ' ' . $item->student->last_name) : '-',
+                "created_at" => ($item->created_at) ? jdate($item->created_at)->format('Y-m-d') : jdate()->format("Y-m-d"),
+                "products_id" => ($item->product) ? $item->product->name : '-',
+                "price" => number_format($item->price),
+                "wage" => isset($wage[$item->products_id]) ? $wage[$item->products_id] : $default_wage,
+                "portion" => isset($wage[$item->products_id]) ? number_format(($wage[$item->products_id]) / 100 * $item->price) : number_format($default_wage / 100 * $item->price),
             ];
         }
         $result = [
