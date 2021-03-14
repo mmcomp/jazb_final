@@ -1064,7 +1064,7 @@
                 "infoEmpty":      "نمایش 0 تا 0 از 0 داده",
                 "proccessing": "در حال بروزرسانی"
             },
-            columnDefs: [ { orderable: false, targets: [0,1,11] } ],
+            columnDefs: [ { orderable: false, targets: [0,1,8,11] } ],
             "order": [[2, 'asc']], /// sort columns 2
             serverSide: true,
             processing: true,

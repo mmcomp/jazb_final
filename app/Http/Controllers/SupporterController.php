@@ -192,7 +192,7 @@ class SupporterController extends Controller
             'msg_error' => request()->session()->get('msg_error')
         ]);
     }
-    public function callIndexPost()
+    public function callIndexPost(Request $request)
     {
         $theSupporters_id = null;
         $from_date = null;
@@ -231,6 +231,36 @@ class SupporterController extends Controller
             $req['length'] = 10;
             $req['draw'] = 1;
         }
+        if(!$isSingle){
+            $columnIndex_arr = $request->get('order');
+            $columnName_arr = $request->get('columns');
+            $order_arr = $request->get('order');
+            $columnIndex = $columnIndex_arr[0]['column']; // Column index
+            $columnName = $columnName_arr[$columnIndex]['data']; // Column name
+            $columnSortOrder = $order_arr[0]['dir']; // asc or desc
+
+            if($columnName != 'row' && $columnName != "call_count"){
+                $supporters = $supporters_builder->orderBy($columnName,$columnSortOrder)
+                ->select('users.*')
+                ->skip($req['start'])
+                ->take($req['length'])
+                ->get();
+            }
+        }
+
+        // else if($columnName == "call_count"){
+        //     $supporters = $supporters_builder
+        //     ->withCount('calls')
+        //     ->skip($req['start'])
+        //     ->take($req['length'])
+        //     ->orderBy('calls_count',$columnSortOrder)
+        //     ->get();
+        // }else{
+        //     $supporters = $supporters_builder->select('users.*')
+        //     ->skip($req['start'])
+        //     ->take($req['length'])
+        //     ->get();
+        // }
         $data = [];
         $supporters = $supporters_builder
             ->offset($req['start'])
@@ -303,20 +333,24 @@ class SupporterController extends Controller
             <button class="btn btn-link">' . $item->callCount . '</button>
             </form>';
             if ($item->supporterCallResults) {
+                $i = 1;
                 foreach ($item->supporterCallResults as $sitem) {
-                    $lastTds[] = (isset($sitem['count'])) ? $sitem['count'] : '0';
+                    $lastTds["call_result".$i] = (isset($sitem['count'])) ? $sitem['count'] : '0';
+                    $i++;
                 }
             }
             if ($isSingle) {
                 $data[] = array_merge([
-                    $req['start'] + $index + 1, $countCall
+                    "row" => $req['start'] + $index + 1,
+                    "call_count" => $countCall
                 ], $lastTds);
             } else {
                 $data[] = array_merge([
-                    $req['start'] + $index + 1,
-                    $item->id,
-                    $item->first_name,
-                    $item->last_name, $countCall
+                    "row" => $req['start'] + $index + 1,
+                    "id" => $item->id,
+                    "first_name" =>$item->first_name,
+                    "last_name" => $item->last_name,
+                    "call_count" => $countCall
                 ], $lastTds);
             }
         }
