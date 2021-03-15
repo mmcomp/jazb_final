@@ -320,7 +320,7 @@ class SupporterController extends Controller
             if ($supportGroupId)
                 $supportGroupId = $supportGroupId->id;
             $supporters_id = null;
-            $supporters = User::where('is_deleted', false)->where('groups_id', $supportGroupId);
+            $supporters = User::where('users.is_deleted', false)->where('users.groups_id', $supportGroupId);
             $count = $supporters->get() ? count($supporters->get()) : 0;
             if (request()->input('supporters_id')) {
                 $supporters_id = request()->input('supporters_id');
@@ -353,11 +353,45 @@ class SupporterController extends Controller
                     ->get();
             } else if ($columnName == "call_count") {
                 $supporters = $supporters_builder
-                    ->withCount('calls')
-                    ->skip($req['start'])
-                    ->take($req['length'])
-                    ->orderBy('calls_count', $columnSortOrder)
-                    ->get();
+                ->withCount([
+                    'calls',
+                    'calls as count' => function ($query) use($req) {
+                        $query->where(function($q) use($req){
+                            $from_date = $req['from_date'];
+                            if($from_date != "") $q->where('created_at', '>=',SupporterController::jalaliToGregorian($from_date));
+                        });
+                        $query->where(function($q) use($req){
+                            $to_date = $req['to_date'];
+                            if($to_date != "") $q->where('created_at', '<=',SupporterController::jalaliToGregorian($to_date));
+                        });
+                        $query->where(function($q) use($req){
+                            $products_id = (int)$req['products_id'];
+                            if($products_id > 0) $q->where('products_id',$products_id);
+                        });
+                        $query->where(function($q) use($req){
+                            $notices_id = (int)$req['notices_id'];
+                            if($notices_id > 0) $q->where('notices_id',$notices_id);
+                        });
+                        $query->where(function($q) use($req){
+                            $sources_id = (int)$req['sources_id'];
+                            if($sources_id > 0){
+                                $students = Student::where('sources_id', $sources_id)->where('is_deleted', false)->where('banned', false)->pluck('id');
+                                $q->whereIn('students_id',$students);
+                            }
+                        });
+                        $query->where(function($q) use($req){
+                            $from_date = $req['from_date'];
+                            $to_date = $req['to_date'];
+                            if($from_date == null && $to_date == null){
+                                $q->where('created_at', '<=', date("Y-m-d 23:59:59"))->where('created_at', '>=', date("Y-m-d 00:00:00"));
+                            }
+                        });
+                    },
+                ])
+                ->skip($req['start'])
+                ->take($req['length'])
+                ->orderBy('count', $columnSortOrder)
+                ->get();
             } else {
                 $supporters = $supporters_builder->select('users.*')
                     ->skip($req['start'])
