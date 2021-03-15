@@ -532,12 +532,25 @@ class SupporterController extends Controller
     {
         $request != null ? $students = $students->where('id', (int)$request) : $students = '';
     }
+    public function arrOfAuxilaries($input, $arr)
+    {
+        if ($input) $arr[] = $input;
+        return $arr;
+    }
 
     public function student($id = null)
     {
+
         $user = null;
         $sw = null;
         $count = 0;
+        $megeStudents = AppMergeStudents::where('is_deleted', false)->get();
+        $arr_of_auxilaries = [];
+        foreach ($megeStudents as $index => $student) {
+            $arr_of_auxilaries = $this->arrOfAuxilaries($student->auxilary_students_id, $arr_of_auxilaries);
+            $arr_of_auxilaries = $this->arrOfAuxilaries($student->second_auxilary_students_id, $arr_of_auxilaries);
+            $arr_of_auxilaries = $this->arrOfAuxilaries($student->third_auxilary_students_id, $arr_of_auxilaries);
+        }
         $saleSuggestions = SaleSuggestion::all();
         if ($id == null) {
             $id = Auth::user()->id;
@@ -735,6 +748,7 @@ class SupporterController extends Controller
         }
 
         $students = $students
+            ->whereNotIn('id',$arr_of_auxilaries)
             ->with('user')
             ->with('studentcollections.collection')
             ->with('studenttags.tag.parent_four')
@@ -852,14 +866,13 @@ class SupporterController extends Controller
                 'msg_error' => request()->session()->get('msg_error')
             ]);
         } else {
-            //$allStudents = $students->get();
             $req =  request()->all();
-            // dd($req);
             if (!isset($req['start'])) {
                 $req['start'] = 0;
                 $req['length'] = 10;
                 $req['draw'] = 1;
             }
+
             $columnIndex_arr = $req['order'];
             $columnName_arr = $req['columns'];
             $order_arr = $req['order'];
@@ -871,12 +884,14 @@ class SupporterController extends Controller
                 $sw = "all";
                 $students = $theStudents->orderBy($columnName, $columnSortOrder)
                     ->select('students.*')
+                    ->whereNotIn('students.id', $arr_of_auxilaries)
                     ->skip($req['start'])
                     ->take($req['length'])
                     ->get();
             } else if ($columnName == "tags") {
                 $sw = "tags";
                 $students = $theStudents
+                    ->whereNotIn('students.id', $arr_of_auxilaries)
                     ->withCount('studenttags')
                     ->skip($req['start'])
                     ->take($req['length'])
@@ -885,6 +900,7 @@ class SupporterController extends Controller
             } else {
                 $sw = "other";
                 $students = $theStudents->select('students.*')
+                    ->whereNotIn('students.id', $arr_of_auxilaries)
                     ->skip($req['start'])
                     ->take($req['length'])
                     ->get();
@@ -929,14 +945,6 @@ class SupporterController extends Controller
                     "end" => ""
                 ];
             }
-            // if($sw == null || $sw == "all" || $sw == "other"){
-            //     $count = count($getStudents);
-            // }
-
-            // $outdata = [];
-            // for ($i = $req['start']; $i < min($req['length'] + $req['start'], count($data)); $i++) {
-            //     $outdata[] = $data[$i];
-            // }
 
             $result = [
                 "draw" => $req['draw'],
@@ -1575,5 +1583,20 @@ class SupporterController extends Controller
         ];
 
         return $result;
+    }
+    public function mergeStudents()
+    {
+        $user = Auth::user()->id;
+        $supporter_students = Student::where('is_deleted',false)->where('banned',false)->where('archived',false)->where('supporters_id',$user)->pluck('id');
+        $mergedStudents = AppMergeStudents::where('is_deleted', false)
+        ->where(function ($query) use ($supporter_students) {
+            $query->whereIn('auxilary_students_id', $supporter_students)
+                ->orWhereIn('second_auxilary_students_id', $supporter_students)
+                ->orWhereIn('third_auxilary_students_id', $supporter_students)
+                ->orWhereIn('main_students_id', $supporter_students);
+        })->get();
+        return view('supporters.mergeStudents', [
+            'mergedStudents' => $mergedStudents,
+        ]);
     }
 }

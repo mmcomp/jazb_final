@@ -760,22 +760,33 @@ null => ""
                     [${item.main_student.phone}]</p>`;
             }
             if (item.auxilary_student && selfId != item.auxilary_student.id) {
-                second = `<p class="cursor_pointer" id="${item.auxilary_student.id}"
-                onclick="searchAuxilary(${item.auxilary_student.id})">
+                // second = `<p class="cursor_pointer" id="${item.auxilary_student.id}"
+                // onclick="searchAuxilary(${item.auxilary_student.id})">
+                //     ${item.auxilary_student.first_name}
+                //     ${item.auxilary_student.last_name}
+                //     [${item.auxilary_student.phone}]</p>`;
+                second = `<p id="${item.auxilary_student.id}">
                     ${item.auxilary_student.first_name}
                     ${item.auxilary_student.last_name}
                     [${item.auxilary_student.phone}]</p>`;
             }
             if (item.second_auxilary_student && selfId != item.second_auxilary_student.id) {
-                third = `<p class="cursor_pointer" id="${item.second_auxilary_student.id}"
-                onclick="searchSecondAuxilary(${item.second_auxilary_student.id})">
+                // third = `<p class="cursor_pointer" id="${item.second_auxilary_student.id}"
+                // onclick="searchSecondAuxilary(${item.second_auxilary_student.id})">
+                // ${item.second_auxilary_student.first_name}
+                // ${item.second_auxilary_student.last_name}
+                // [${item.second_auxilary_student.phone}]</p>`;
+                third = `<p id="${item.second_auxilary_student.id}">
                 ${item.second_auxilary_student.first_name}
                 ${item.second_auxilary_student.last_name}
                 [${item.second_auxilary_student.phone}]</p>`;
             }
             if (item.third_auxilary_student && selfId != item.third_auxilary_student.id) {
-                forth = `<p class="cursor_pointer" id="${item.third_auxilary_student.id}"
-                onclick="searchThirdAuxilary(${item.third_auxilary_student.id})">${item.third_auxilary_student.first_name}
+                // forth = `<p class="cursor_pointer" id="${item.third_auxilary_student.id}"
+                // onclick="searchThirdAuxilary(${item.third_auxilary_student.id})">${item.third_auxilary_student.first_name}
+                // ${item.third_auxilary_student.last_name}
+                // [${item.third_auxilary_student.phone}]</p>`;
+                forth = `<p id="${item.third_auxilary_student.id}">${item.third_auxilary_student.first_name}
                 ${item.third_auxilary_student.last_name}
                 [${item.third_auxilary_student.phone}]</p>`;
             }
