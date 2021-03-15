@@ -172,7 +172,8 @@ class PurchaseController extends Controller
                     $product_part_1 . $product_part_2 . $product_part_3 . $product_part_4 . $product_part_5,
                     number_format($item->price),
                     $item->description,
-                    ($item->created_at) ? jdate($item->created_at)->format("Y/m/d") : jdate()->format("Y/m/d"),
+                    ($item->created_at) ? jdate($item->created_at)->format("Y/m/d") : '-',
+                    ($item->student && $item->student->saloon != null) ? $item->student->saloon : '-',
                     $btn
                 ];
             }
