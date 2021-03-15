@@ -12,18 +12,42 @@ use App\User;
 use Illuminate\Support\Facades\DB;
 use App\Utils\Sms;
 use Log;
+use Morilog\Jalali\CalendarUtils;
 
 use Exception;
 
 class PurchaseController extends Controller
 {
+    public static function jalaliToGregorian($pdate)
+    {
+        $pdate = explode('/', SupporterController::persianToEnglishDigits($pdate));
+        $date = "";
+        if (count($pdate) == 3) {
+            $y = (int)$pdate[0];
+            $m = (int)$pdate[1];
+            $d = (int)$pdate[2];
+            if ($d > $y) {
+                $tmp = $d;
+                $d = $y;
+                $y = $tmp;
+            }
+            $y = (($y < 1000) ? $y + 1300 : $y);
+            $gregorian = CalendarUtils::toGregorian($y, $m, $d);
+            $gregorian = $gregorian[0] . "-" . $gregorian[1] . "-" . $gregorian[2];
+        }
+        return $gregorian;
+    }
     public function index()
     {
         $types = ["site_successed" => "سایت","site_failed" => "انصرافی","manual" => "حضوری"];
+        $from_date = null;
+        $to_date = null;
         $products = Product::where('is_deleted',false)->get();
         return view('purchases.index', [
             'types' => $types,
             'products' => $products,
+            'from_date' => $from_date,
+            'to_date' => $to_date,
             'msg_success' => request()->session()->get('msg_success'),
             'msg_error' => request()->session()->get('msg_error')
         ]);
@@ -88,6 +112,14 @@ class PurchaseController extends Controller
             ->pluck('id');
             $purchases = $purchases->whereIn('students_id',$student_ids);
         }
+        if ($request->input('from_date')) {
+            $from_date = $this->jalaliToGregorian($request->input('from_date'));
+            $purchases = $purchases->where('created_at', '>=', $from_date);
+        }
+        if ($request->input('to_date')) {
+            $to_date = $this->jalaliToGregorian($request->input('to_date'));
+            $purchases = $purchases->where('created_at', '<=', $to_date);
+        }
         if($request->input('products_id') != null){
             $products_id = (int)$request->input('products_id');
             $purchases = $purchases->where('products_id',$products_id);
@@ -140,6 +172,7 @@ class PurchaseController extends Controller
                     $product_part_1 . $product_part_2 . $product_part_3 . $product_part_4 . $product_part_5,
                     number_format($item->price),
                     $item->description,
+                    ($item->created_at) ? jdate($item->created_at)->format("Y/m/d") : '-',
                     ($item->student && $item->student->saloon != null) ? $item->student->saloon : '-',
                     $btn
                 ];
