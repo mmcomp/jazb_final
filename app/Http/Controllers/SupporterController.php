@@ -1590,10 +1590,10 @@ class SupporterController extends Controller
         $supporter_students = Student::where('is_deleted',false)->where('banned',false)->where('archived',false)->where('supporters_id',$user)->pluck('id');
         $mergedStudents = AppMergeStudents::where('is_deleted', false)
         ->where(function ($query) use ($supporter_students) {
-            $query->whereIn('auxilary_students_id', $supporter_students)
-                ->orWhereIn('second_auxilary_students_id', $supporter_students)
-                ->orWhereIn('third_auxilary_students_id', $supporter_students)
-                ->orWhereIn('main_students_id', $supporter_students);
+            $query->whereIn('main_students_id', $supporter_students);
+                //->orWhereIn('second_auxilary_students_id', $supporter_students)
+                //->orWhereIn('third_auxilary_students_id', $supporter_students)
+                //->orWhereIn('auxilary_students_id', $supporter_students);
         })->get();
         return view('supporters.mergeStudents', [
             'mergedStudents' => $mergedStudents,
