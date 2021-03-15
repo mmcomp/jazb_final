@@ -110,13 +110,33 @@
                         </div>
                      </div>
                      <div class="row">
+                        <div class="col-3">
+                            <div class="form-group">
+                                <label for="from_date">از تاریخ</label>
+                                <input type="text" id="from_date" name="from_date" class="form-control pdate" value="{{ ($from_date)?jdate($from_date)->format("Y/m/d"):jdate()->format("Y/m/d") }}" />
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="form-group">
+                                <label for="to_date">تا تاریخ</label>
+                                <input type="text" id="to_date" name="to_date" class="form-control pdate" value="{{ ($to_date)?jdate($to_date)->format("Y/m/d"):jdate()->format("Y/m/d") }}" />
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <a class="btn btn-success mt-32" onclick="theSearch()" href="#">
+                                جستجو
+                            </a>
+                            <img id="loading" src="/dist/img/loading.gif" style="height: 20px;display: none;" />
+                        </div>
+                     </div>
+                     {{--  <div class="row">
                         <div class="col">
                             <a class="btn btn-success" onclick="theSearch()" href="#">
                                 جستجو
                             </a>
                             <img id="loading" src="/dist/img/loading.gif" style="height: 20px;display: none;" />
                         </div>
-                     </div>
+                     </div>  --}}
                  </form>
                 <table id="example2" class="table table-bordered table-hover mt-2">
                   <thead>
@@ -129,6 +149,8 @@
                     <th>محصول</th>
                     <th>مبلغ</th>
                     <th>توضیحات</th>
+                    <th>تاریخ</th>
+                    <th>سالن</th>
                     <th>#</th>
                   </tr>
                   </thead>
@@ -218,6 +240,8 @@
                 data['products_id'] = $('#products_id').val();
                 data['price'] = $('#price').val();
                 data['description'] = $('#description').val();
+                data['from_date'] = $('#from_date').val();
+                data['to_date'] = $('#to_date').val();
                 return JSON.stringify(data);
             },
             "complete": function(response) {
