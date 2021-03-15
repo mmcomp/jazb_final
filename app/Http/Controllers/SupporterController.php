@@ -1395,23 +1395,19 @@ class SupporterController extends Controller
         $columnSortOrder = $order_arr[0]['dir']; // asc or desc
 
         if ($columnName != 'row' && $columnName != "end") {
-            //DB::enableQueryLog();
             $students = $students->orderBy($columnName, $columnSortOrder)
-                //->select('students.id','students.is_deleted','students.banned','students.archived','students.other_purchases')
                 ->select('students.*')
-                // ->with('user')
-                // ->with('studenttags.tag')
-                // ->with('studentcollections.collection')
-                // ->with('studenttags.tag.parent_four')
-                // ->with('studenttemperatures.temperature')
-                // ->with('source')
-                // ->with('consultant')
-                // ->with('supporter')
+                ->with('user')
+                ->with('studenttags.tag')
+                ->with('studentcollections.collection')
+                ->with('studenttags.tag.parent_four')
+                ->with('studenttemperatures.temperature')
+                ->with('source')
+                ->with('consultant')
+                ->with('supporter')
                 ->skip($req['start'])
                 ->take($req['length'])
                 ->get();
-            //dd($students);
-            //dd(DB::getQueryLog());
         } else {
             $students = $students->select('students.*')
                 ->with('user')
@@ -1727,7 +1723,7 @@ class SupporterController extends Controller
             $purchases = null;
         }
         else if($columnName == "portion"){
-            
+
         }
         else {
             $purchases = $purchases->select('purchases.*')
