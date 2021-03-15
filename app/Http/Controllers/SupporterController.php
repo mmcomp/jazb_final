@@ -1278,7 +1278,9 @@ class SupporterController extends Controller
         //     $item->today_purchases = $item->purchases()->where('created_at', '>=', date("Y-m-d 00:00:00"))->where('type', '!=', 'site_failed')->where('is_deleted', false)->count();
         //     $item->save();
         // }
-
+        foreach ($students as $index => $student) {
+            $students[$index]->pcreated_at = jdate(strtotime($student->created_at))->format("Y/m/d");
+        }
         $parentOnes = TagParentOne::has('tags')->get();
         $parentTwos = TagParentTwo::has('tags')->get();
         $parentThrees = TagParentThree::has('tags')->get();
@@ -1294,9 +1296,8 @@ class SupporterController extends Controller
         $needTagParentThrees = NeedTagParentThree::where('is_deleted', false)->has('tags')->get();
         $needTagParentFours = NeedTagParentFour::where('is_deleted', false)->has('tags')->get();
         $products = Product::where('is_deleted', false)->get();
-        $finalStudents = [];
         return view('supporters.purchase', [
-            'students' => $finalStudents,
+            'students' => $students,
             'sources' => $sources,
             'name' => $name,
             'sources_id' => $sources_id,
@@ -1394,8 +1395,9 @@ class SupporterController extends Controller
         $columnSortOrder = $order_arr[0]['dir']; // asc or desc
 
         if ($columnName != 'row' && $columnName != "end") {
-            DB::enableQueryLog();
+            //DB::enableQueryLog();
             $students = $students->orderBy($columnName, $columnSortOrder)
+                //->select('students.id','students.is_deleted','students.banned','students.archived','students.other_purchases')
                 ->select('students.*')
                 // ->with('user')
                 // ->with('studenttags.tag')
@@ -1408,6 +1410,7 @@ class SupporterController extends Controller
                 ->skip($req['start'])
                 ->take($req['length'])
                 ->get();
+            //dd($students);
             //dd(DB::getQueryLog());
         } else {
             $students = $students->select('students.*')
@@ -1446,7 +1449,7 @@ class SupporterController extends Controller
                 "other_purchases" => $item->other_purchases,
                 "own_purchases" => $item->own_purchases,
                 "today_purchases" => $item->today_purchases,
-                "end" => ""
+                "end" => "<a href='".route('student_purchases',['id' => $item->id])."'>مشاهده کلیه خریدها</a>"
             ];
         }
         $result = [
@@ -1720,15 +1723,12 @@ class SupporterController extends Controller
                 ->skip($req['start'])
                 ->take($req['length'])
                 ->get();
+        } else if ($columnName == "wage") {
+            $purchases = null;
         }
-        // } else if ($columnName == "tags") {
-        //     $purchases = $purchases
-        //         ->withCount('studenttags')
-        //         ->skip($req['start'])
-        //         ->take($req['length'])
-        //         ->orderBy('studenttags_count', $columnSortOrder)
-        //         ->get();
-        // }
+        else if($columnName == "portion"){
+            
+        }
         else {
             $purchases = $purchases->select('purchases.*')
                 ->skip($req['start'])
