@@ -101,4 +101,38 @@ class CollectionController extends Controller
         $request->session()->flash("msg_success", "دسته با موفقیت حذف شد.");
         return redirect()->route('collections');
     }
+      /**
+     * get tag4 using select2 with ajax
+     *
+     *
+     * @return \Illuminate\Http\Response
+     */
+    //---------------------AJAX-----------------------------------
+    public function getParent(Request $request)
+    {
+
+        $search = trim($request->search);
+        if ($search == '') {
+            $collections = Collection::orderby('id', 'desc')->select('id', 'name','is_deleted')->where('is_deleted',false)->get();
+        } else {
+            $collections = Collection::select('id','name','is_deleted')->where(
+                'is_deleted',
+                false
+            )->where(function ($query) use ($search) {
+                $query->where('name','like','%'.$search.'%');
+            })->orderby('id','desc')->get();
+        }
+        $response = array();
+        foreach ($collections as $item) {
+            $response[] = array(
+                "id" => $item->id,
+                "text" => ($item->parents()!='')?$item->parents() . "->" . $item->name : $item->name
+            );
+        }
+        $response[] = [
+            "id" => 0,
+            "text" => "-"
+        ];
+        return $response;
+    }
 }

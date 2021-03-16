@@ -145,20 +145,15 @@
             case '#need_parent1':
               route = "{{ route('needtag1_ajax_get')}}";
               break;
-            case 2:
-               day = "Tuesday";
+            case '#need_parent2':
+              route = "{{ route('needtag2_ajax_get')}}";
               break;
-            case 3:
-              day = "Wednesday";
+            case '#need_parent3':
+              route = "{{ route('needtag3_ajax_get')}}";
               break;
-            case 4:
-              day = "Thursday";
+            case '#need_parent4':
+              route = "{{ route('needtag4_ajax_get')}}";
               break;
-            case 5:
-              day = "Friday";
-              break;
-            case 6:
-              day = "Saturday";
         }
         $(item).select2({
             ajax: {

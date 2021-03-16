@@ -2,6 +2,7 @@
 
 @section('css')
 <link href="/plugins/select2/css/select2.min.css" rel="stylesheet" />
+<meta name="csrf-token" content="{{ csrf_token() }}">
 @endsection
 
 @section('content')
@@ -126,10 +127,52 @@
 
 @section('js')
 <!-- Select2 -->
-<script src="/plugins/select2/js/select2.full.min.js"></script>
-<script>
-    $(document).ready(function(){
-        $('select.select2').select2();
-    });
+<script src="/plugins/select2/js/select2.min.js"></script>
+<script type="text/javascript">
+    let route = "";
+    function select2_load_remote_data_with_ajax(item) {
+        // CSRF Token
+        var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+        switch (item) {
+            case '#parent1':
+              route = "{{ route('tag1_ajax_get')}}";
+              break;
+            case '#parent2':
+              route = "{{ route('tag2_ajax_get')}}";
+              break;
+            case '#parent3':
+              route = "{{ route('tag3_ajax_get')}}";
+              break;
+            case '#parent4':
+              route = "{{ route('tag4_ajax_get')}}";
+              break;
+        }
+        $(item).select2({
+            ajax: {
+                url: route
+                , type: 'post'
+                , dataType: 'json'
+                , delay: 250
+                , data: function(params) {
+                    return {
+                        _token: CSRF_TOKEN
+                        , search: params.term
+                    };
+                }
+                , processResults: function(response) {
+                    return {
+                        results: response
+                    };
+                }
+                , cache: true
+            }
+            ,
+           minimumInputLength: 3
+        });
+    }
+    select2_load_remote_data_with_ajax('#parent1');
+    select2_load_remote_data_with_ajax('#parent2');
+    select2_load_remote_data_with_ajax('#parent3');
+    select2_load_remote_data_with_ajax('#parent4');
 </script>
 @endsection

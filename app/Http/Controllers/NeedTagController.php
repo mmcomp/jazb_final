@@ -200,4 +200,106 @@ class NeedTagController extends Controller
         ];
         return $response;
     }
+     /**
+     * get needtag2 using select2 with ajax
+     *
+     *
+     * @return \Illuminate\Http\Response
+     */
+    //---------------------AJAX-----------------------------------
+    public function getNeedTag2(Request $request)
+    {
+
+        $search = trim($request->search);
+        if ($search == '') {
+            $needtag1 = NeedTagParentTwo::orderby('id', 'desc')->select('id', 'name','is_deleted')->where('is_deleted',false)->get();
+        } else {
+            $needtag1 = NeedTagParentTwo::select('id','name','is_deleted')->where(
+                'is_deleted',
+                false
+            )->where(function ($query) use ($search) {
+                $query->where('name','like','%'.$search.'%');
+            })->orderby('id','desc')->get();
+        }
+        $response = array();
+        foreach ($needtag1 as $item) {
+            $response[] = array(
+                "id" => $item->id,
+                "text" => $item->name
+            );
+        }
+        $response[] = [
+            "id" => 0,
+            "text" => "-"
+        ];
+        return $response;
+    }
+     /**
+     * get needtag3 using select2 with ajax
+     *
+     *
+     * @return \Illuminate\Http\Response
+     */
+    //---------------------AJAX-----------------------------------
+    public function getNeedTag3(Request $request)
+    {
+
+        $search = trim($request->search);
+        if ($search == '') {
+            $needtag1 = NeedTagParentThree::orderby('id', 'desc')->select('id', 'name','is_deleted')->where('is_deleted',false)->get();
+        } else {
+            $needtag1 = NeedTagParentThree::select('id','name','is_deleted')->where(
+                'is_deleted',
+                false
+            )->where(function ($query) use ($search) {
+                $query->where('name','like','%'.$search.'%');
+            })->orderby('id','desc')->get();
+        }
+        $response = array();
+        foreach ($needtag1 as $item) {
+            $response[] = array(
+                "id" => $item->id,
+                "text" => $item->name
+            );
+        }
+        $response[] = [
+            "id" => 0,
+            "text" => "-"
+        ];
+        return $response;
+    }
+      /**
+     * get needtag4 using select2 with ajax
+     *
+     *
+     * @return \Illuminate\Http\Response
+     */
+    //---------------------AJAX-----------------------------------
+    public function getNeedTag4(Request $request)
+    {
+
+        $search = trim($request->search);
+        if ($search == '') {
+            $needtag1 = NeedTagParentFour::orderby('id', 'desc')->select('id', 'name','is_deleted')->where('is_deleted',false)->get();
+        } else {
+            $needtag1 = NeedTagParentFour::select('id','name','is_deleted')->where(
+                'is_deleted',
+                false
+            )->where(function ($query) use ($search) {
+                $query->where('name','like','%'.$search.'%');
+            })->orderby('id','desc')->get();
+        }
+        $response = array();
+        foreach ($needtag1 as $item) {
+            $response[] = array(
+                "id" => $item->id,
+                "text" => $item->name
+            );
+        }
+        $response[] = [
+            "id" => 0,
+            "text" => "-"
+        ];
+        return $response;
+    }
 }

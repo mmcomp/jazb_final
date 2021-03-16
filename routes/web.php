@@ -82,6 +82,10 @@ Route::group(['middleware' => ['auth', 'message','changeCharactersAllToBePersian
         Route::any('/create', 'TagController@create')->name('tag_create');
         Route::any('/edit/{id}', 'TagController@edit')->name('tag_edit');
         Route::get('/delete/{id}', 'TagController@delete')->name('tag_delete');
+        Route::post('/getTag1','TagController@getTag1')->name('tag1_ajax_get');
+        Route::post('/getTag2','TagController@getTag2')->name('tag2_ajax_get');
+        Route::post('/getTag3','TagController@getTag3')->name('tag3_ajax_get');
+        Route::post('/getTag4','TagController@getTag4')->name('tag4_ajax_get');
     });
 
     Route::group(['prefix' => '/need_tags'], function () {
@@ -91,9 +95,9 @@ Route::group(['middleware' => ['auth', 'message','changeCharactersAllToBePersian
         Route::get('/delete/{id}', 'NeedTagController@delete')->name('need_tag_delete');
         Route::post('/getProducts','NeedTagController@getProducts')->name('product_ajax_get');
         Route::post('/getNeedTag1','NeedTagController@getNeedTag1')->name('needtag1_ajax_get');
-        // Route::post('/getNeedTag2','NeedTagController@getProducts')->name('product_ajax_get');
-        // Route::post('/getNeedTag3','NeedTagController@getProducts')->name('product_ajax_get');
-        // Route::post('/getNeedTag4','NeedTagController@getProducts')->name('product_ajax_get');
+        Route::post('/getNeedTag2','NeedTagController@getNeedTag2')->name('needtag2_ajax_get');
+        Route::post('/getNeedTag3','NeedTagController@getNeedTag3')->name('needtag3_ajax_get');
+        Route::post('/getNeedTag4','NeedTagController@getNeedTag4')->name('needtag4_ajax_get');
     });
 
     Route::group(['prefix' => '/collections'], function () {
@@ -101,6 +105,7 @@ Route::group(['middleware' => ['auth', 'message','changeCharactersAllToBePersian
         Route::any('/create', 'CollectionController@create')->name('collection_create');
         Route::any('/edit/{id}', 'CollectionController@edit')->name('collection_edit');
         Route::get('/delete/{id}', 'CollectionController@delete')->name('collection_delete');
+        Route::post('/getParent','CollectionController@getParent')->name('parent_ajax_get');
     });
 
     Route::group(['prefix' => '/products'], function () {
