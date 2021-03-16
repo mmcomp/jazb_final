@@ -129,6 +129,7 @@
                     <th>محصول</th>
                     <th>مبلغ</th>
                     <th>توضیحات</th>
+                    <th>سالن</th>
                     <th>#</th>
                   </tr>
                   </thead>
@@ -236,6 +237,7 @@
             { data: 'products_id'},
             { data: 'price'},
             { data: 'description'},
+            { data: 'saloon'},
             { data: 'end'}
         ],
       });

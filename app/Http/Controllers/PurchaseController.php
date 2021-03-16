@@ -152,6 +152,7 @@ class PurchaseController extends Controller
                     "products_id" => $product_part_1 . $product_part_2 . $product_part_3 . $product_part_4 . $product_part_5,
                     "price" => number_format($item->price),
                     "description" => $item->description,
+                    "saloon" => ($item->student && $item->student->saloon != null) ? $item->student->saloon : '-',
                     "end" => $btn
                 ];
             }
