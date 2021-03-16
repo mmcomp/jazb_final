@@ -48,4 +48,15 @@ class User extends Authenticatable
     public function calls(){
         return $this->hasMany('App\Call','users_id','id')->where('is_deleted',false);
     }
+    public function callresult()
+    {
+        return $this->hasOneThrough(
+            'App\CallResult',
+            'App\Call',
+            'users_id',//Foreign key on calls table
+            'id',//Foreign key on callresults table
+            'id',//Local key on users table
+            'call_results_id'//local key on calls table
+            );
+    }
 }

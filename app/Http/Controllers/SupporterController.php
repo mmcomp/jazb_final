@@ -299,6 +299,51 @@ class SupporterController extends Controller
             'msg_error' => request()->session()->get('msg_error')
         ]);
     }
+    public function withCountCallResultForUser($req,$supporters_builder,$columnSortOrder,$call_results_id){
+        $supporters = $supporters_builder
+        ->withCount([
+            'calls',
+            'callresult',
+            'callresult as count' => function ($query) use($req,$call_results_id) {
+                $query->where('call_results.id',$call_results_id);
+                $query->where(function($q) use($req){
+                    $from_date = $req['from_date'];
+                    if($from_date != "") $q->where('calls.created_at', '>=',SupporterController::jalaliToGregorian($from_date));
+                });
+                $query->where(function($q) use($req){
+                    $to_date = $req['to_date'];
+                    if($to_date != "") $q->where('calls.created_at', '<=',SupporterController::jalaliToGregorian($to_date));
+                });
+                $query->where(function($q) use($req){
+                    $products_id = (int)$req['products_id'];
+                    if($products_id > 0) $q->where('calls.products_id',$products_id);
+                });
+                $query->where(function($q) use($req){
+                    $notices_id = (int)$req['notices_id'];
+                    if($notices_id > 0) $q->where('calls.notices_id',$notices_id);
+                });
+                $query->where(function($q) use($req){
+                    $sources_id = (int)$req['sources_id'];
+                    if($sources_id > 0){
+                        $students = Student::where('sources_id', $sources_id)->where('is_deleted', false)->where('banned', false)->pluck('id');
+                        $q->whereIn('students_id',$students);
+                    }
+                });
+                $query->where(function($q) use($req){
+                    $from_date = $req['from_date'];
+                    $to_date = $req['to_date'];
+                    if($from_date == null && $to_date == null){
+                        $q->where('calls.created_at', '<=', date("Y-m-d 23:59:59"))->where('calls.created_at', '>=', date("Y-m-d 00:00:00"));
+                    }
+                });
+            },
+        ])
+        ->skip($req['start'])
+        ->take($req['length'])
+        ->orderBy('count', $columnSortOrder)
+        ->get();
+        return $supporters;
+    }
     public function callIndexPost(Request $request)
     {
         $theSupporters_id = null;
@@ -345,7 +390,7 @@ class SupporterController extends Controller
             $columnIndex = $columnIndex_arr[0]['column']; // Column index
             $columnName = $columnName_arr[$columnIndex]['data']; // Column name
             $columnSortOrder = $order_arr[0]['dir']; // asc or desc
-            if ($columnName != 'row' && $columnName != "call_count" && !strpos($columnName, "call_result")) {
+            if ($columnName != 'row' && $columnName != "call_count" && !str_contains($columnName, "call_result")) {
                 $supporters = $supporters_builder->orderBy($columnName, $columnSortOrder)
                     ->select('users.*')
                     ->skip($req['start'])
@@ -392,7 +437,15 @@ class SupporterController extends Controller
                 ->take($req['length'])
                 ->orderBy('count', $columnSortOrder)
                 ->get();
-            } else {
+
+            } else if(str_contains($columnName,"call_result")){
+                foreach($callResults as $item){
+                    if($columnName == "call_result".$item->id){
+                        $supporters = $this->withCountCallResultForUser($req,$supporters_builder,$columnSortOrder,$item->id);
+                    }
+                }
+            }
+            else {
                 $supporters = $supporters_builder->select('users.*')
                     ->skip($req['start'])
                     ->take($req['length'])
@@ -473,7 +526,7 @@ class SupporterController extends Controller
             if ($item->supporterCallResults) {
                 $i = 1;
                 foreach ($item->supporterCallResults as $sitem) {
-                    $lastTds["call_result" . $i] = (isset($sitem['count'])) ? $sitem['count'] : '0';
+                    $lastTds["call_result" . $sitem['id']] = (isset($sitem['count'])) ? $sitem['count'] : '0';
                     $i++;
                 }
             }

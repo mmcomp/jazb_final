@@ -303,15 +303,9 @@
             columns: [
                 { data: 'row'},
                 { data: 'call_count' },
-                { data: 'call_result1' },
-                { data: 'call_result2' },
-                { data: 'call_result3' },
-                { data: 'call_result4'},
-                { data: 'call_result5'},
-                { data: 'call_result6'},
-                { data: 'call_result7'},
-                { data: 'call_result8'},
-                { data: 'call_result9'},
+                @foreach($callResults as $item)
+                   { data: 'call_result' +  '{{ $item->id }}' },
+                @endforeach
             ],
             @else
             columns: [
@@ -320,15 +314,9 @@
                 { data: 'first_name' },
                 { data: 'last_name' },
                 { data: 'call_count' },
-                { data: 'call_result1' },
-                { data: 'call_result2' },
-                { data: 'call_result3' },
-                { data: 'call_result4'},
-                { data: 'call_result5'},
-                { data: 'call_result6'},
-                { data: 'call_result7'},
-                { data: 'call_result8'},
-                { data: 'call_result9'},
+                @foreach($callResults as $item)
+                   { data: 'call_result' +  '{{ $item->id }}' },
+                @endforeach
             ],
             @endif
         });
