@@ -67,11 +67,10 @@ class PurchaseController extends Controller
             $req['length'] = 10;
             $req['draw'] = 1;
         }
-        $purchases = Purchase::where('is_deleted', false)
+        $purchases = Purchase::where('purchases.is_deleted', false)
             ->with('user')
             ->with('student')
             ->with('product');
-        //->orderBy('created_at', 'desc');
         //filter
         if ($request->input('theId') != null) {
             $theId = (int)$request->input('theId');
@@ -81,13 +80,13 @@ class PurchaseController extends Controller
             $place = $request->input("place");
             switch ($place) {
                 case "site_successed":
-                    $purchases = $purchases->where('type', 'site_successed');
+                    $purchases = $purchases->where('purchases.type', 'site_successed');
                     break;
                 case "site_failed":
-                    $purchases = $purchases->where('type', 'site_failed');
+                    $purchases = $purchases->where('purchases.type', 'site_failed');
                     break;
                 case "manual":
-                    $purchases = $purchases->where('type', 'manual');
+                    $purchases = $purchases->where('purchases.type', 'manual');
                     break;
             }
         }
@@ -99,7 +98,7 @@ class PurchaseController extends Controller
                 ->where('banned', false)
                 ->where('archived', false)
                 ->pluck('id');
-            $purchases = $purchases->whereIn('students_id', $student_ids);
+            $purchases = $purchases->whereIn('purchases.students_id', $student_ids);
         }
         if ($request->input('phone') != null) {
             $phone = $request->input('phone');
@@ -108,31 +107,31 @@ class PurchaseController extends Controller
                 ->where('banned', false)
                 ->where('archived', false)
                 ->pluck('id');
-            $purchases = $purchases->whereIn('students_id', $student_ids);
+            $purchases = $purchases->whereIn('purchases.students_id', $student_ids);
         }
         if ($request->input('from_date')) {
             $from_date = $this->jalaliToGregorian($request->input('from_date'));
-            $purchases = $purchases->where('created_at', '>=', $from_date);
+            $purchases = $purchases->where('purchases.created_at', '>=', $from_date);
         }
         if ($request->input('to_date')) {
             $to_date = $this->jalaliToGregorian($request->input('to_date'));
-            $purchases = $purchases->where('created_at', '<=', $to_date);
+            $purchases = $purchases->where('purchases.created_at', '<=', $to_date);
         }
         if($request->input('products_id') != null){
             $products_id = (int)$request->input('products_id');
-            $purchases = $purchases->where('products_id', $products_id);
+            $purchases = $purchases->where('purchases.products_id', $products_id);
         }
         if ($request->input('factor_number') != null) {
             $factor_number = (int)$request->input('factor_number');
-            $purchases = $purchases->where('factor_number', $factor_number);
+            $purchases = $purchases->where('purchases.factor_number', $factor_number);
         }
         if ($request->input('price') != null) {
             $price = (int)$request->input('price');
-            $purchases = $purchases->where('price', $price);
+            $purchases = $purchases->where('purchases.price', $price);
         }
         if ($request->input('description') != null) {
             $description = $request->input('description');
-            $purchases = $purchases->where('description', $description);
+            $purchases = $purchases->where('purchases.description', $description);
         }
         //end filter
         $allPurchases = $purchases->get();
@@ -143,12 +142,20 @@ class PurchaseController extends Controller
         $columnName = $columnName_arr[$columnIndex]['data']; // Column name
         $columnSortOrder = $order_arr[0]['dir']; // asc or desc
 
-        if ($columnName != 'row' && $columnName != "end") {
+        if ($columnName != 'row' && $columnName != "end" && $columnName != "saloon") {
             $purchases = $purchases->orderBy($columnName, $columnSortOrder)
                 ->select('purchases.*')
                 ->skip($req['start'])
                 ->take($req['length'])
                 ->get();
+        } else if($columnName == "saloon"){
+            $purchases = $purchases
+            ->join('students','purchases.students_id','=','students.id')
+            ->orderBy('students.saloon', $columnSortOrder)
+            ->select('purchases.*','students.*')
+            ->skip($req['start'])
+            ->take($req['length'])
+            ->get();
         } else {
             $purchases = $purchases->select('purchases.*')
                 ->skip($req['start'])

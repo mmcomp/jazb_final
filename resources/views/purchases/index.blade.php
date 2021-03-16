@@ -223,7 +223,7 @@
             "info":           "نمایش _START_ تا _END_ از _TOTAL_ داده",
             "infoEmpty":      "نمایش 0 تا 0 از 0 داده",
         },
-        columnDefs: [ { orderable: false, targets: [0,8] } ],
+        columnDefs: [ { orderable: false, targets: [0,10] } ],
         "order": [[1, 'asc']], /// sort columns 1
         processing: true,
         serverSide: true,
