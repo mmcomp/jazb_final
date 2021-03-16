@@ -50,17 +50,26 @@
                             {{ ($item->mainStudent) ? $item->mainStudent->last_name : '-' }}
                            -{{($item->mainStudent) ? $item->mainStudent->phone : '-'}}
                         </td>
-                        <td>{{ ($item->auxilaryStudent) ? $item->auxilaryStudent->first_name : '-' }}
-                            {{ ($item->auxilaryStudent) ? $item->auxilaryStudent->last_name : '-' }}
-                            -{{($item->auxilaryStudent) ? $item->auxilaryStudent->phone : '-'}}
+                        <td>
+                            <a href="{{ $item->auxilaryStudent ? route('student_edit',['call_back' => 'supporter_students','id' => $item->auxilaryStudent->id]) : '#'}}" target="_blank">
+                                {{ ($item->auxilaryStudent) ? $item->auxilaryStudent->first_name : '' }}
+                                {{ ($item->auxilaryStudent) ? $item->auxilaryStudent->last_name : '' }}
+                                -{{($item->auxilaryStudent) ? $item->auxilaryStudent->phone : ''}}
+                            </a>
                         </td>
-                        <td>{{ ($item->secondAuxilaryStudent) ? $item->secondAuxilaryStudent->first_name : '-' }}
-                            {{ ($item->secondAuxilaryStudent) ? $item->secondAuxilaryStudent->last_name : '-' }}
-                            -{{($item->secondAuxilaryStudent) ? $item->secondAuxilaryStudent->phone : '-'}}
+                        <td>
+                            <a href="{{ $item->secondAuxilaryStudent ? route('student_edit',['call_back' => 'supporter_students','id' => $item->secondAuxilaryStudent->id]) : '#'}}" target="_blank">
+                            {{ ($item->secondAuxilaryStudent) ? $item->secondAuxilaryStudent->first_name : '' }}
+                            {{ ($item->secondAuxilaryStudent) ? $item->secondAuxilaryStudent->last_name : '' }}
+                            -{{($item->secondAuxilaryStudent) ? $item->secondAuxilaryStudent->phone : ''}}
+                            </a>
                         </td>
-                        <td>{{ ($item->thirdAuxilaryStudent) ? $item->thirdAuxilaryStudent->first_name : '-' }}
-                            {{ ($item->thirdAuxilaryStudent) ? $item->thirdAuxilaryStudent->last_name : '-' }}
-                            -{{($item->thirdAuxilaryStudent) ? $item->thirdAuxilaryStudent->phone : '-'}}
+                        <td>
+                            <a href="{{ $item->thirdAuxilaryStudent ? route('student_edit',['call_back' => 'supporter_students','id' => $item->thirdAuxilaryStudent->id]): '#'}}" target="_blank">
+                            {{ ($item->thirdAuxilaryStudent) ? $item->thirdAuxilaryStudent->first_name : '' }}
+                            {{ ($item->thirdAuxilaryStudent) ? $item->thirdAuxilaryStudent->last_name : '' }}
+                            -{{($item->thirdAuxilaryStudent) ? $item->thirdAuxilaryStudent->phone : ''}}
+                            </a>
                         </td>
                       </tr>
                       @endforeach

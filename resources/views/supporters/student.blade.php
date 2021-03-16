@@ -990,12 +990,10 @@ null => ""
                         </div>
                         <div class="row">
                             <div class="col">
-                                <a href="${ editRoute.replace('-1', students[index].id) }">
+                                <a href="${ editRoute.replace('-1', students[index].id) }" target="_blank">
                                     ویرایش مشخصات
                                 </a>
                             </div>
-
-
                         </div>
                         <div class="row">
                             <div class="col">
