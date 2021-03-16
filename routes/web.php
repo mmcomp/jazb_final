@@ -89,6 +89,11 @@ Route::group(['middleware' => ['auth', 'message','changeCharactersAllToBePersian
         Route::any('/create', 'NeedTagController@create')->name('need_tag_create');
         Route::any('/edit/{id}', 'NeedTagController@edit')->name('need_tag_edit');
         Route::get('/delete/{id}', 'NeedTagController@delete')->name('need_tag_delete');
+        Route::post('/getProducts','NeedTagController@getProducts')->name('product_ajax_get');
+        Route::post('/getNeedTag1','NeedTagController@getNeedTag1')->name('needtag1_ajax_get');
+        // Route::post('/getNeedTag2','NeedTagController@getProducts')->name('product_ajax_get');
+        // Route::post('/getNeedTag3','NeedTagController@getProducts')->name('product_ajax_get');
+        // Route::post('/getNeedTag4','NeedTagController@getProducts')->name('product_ajax_get');
     });
 
     Route::group(['prefix' => '/collections'], function () {

@@ -132,4 +132,72 @@ class NeedTagController extends Controller
         $request->session()->flash("msg_success", "برچسب با موفقیت حذف شد.");
         return redirect()->route('need_tags');
     }
+    /**
+     * get products using select2 with ajax
+     *
+     *
+     * @return \Illuminate\Http\Response
+     */
+    //---------------------AJAX-----------------------------------
+    public function getProducts(Request $request)
+    {
+
+        $search = trim($request->search);
+        if ($search == '') {
+            $products = Product::orderby('id', 'desc')->select('id', 'name','is_deleted')->where('is_deleted',false)->get();
+        } else {
+            $products = Product::select('id','name','is_deleted')->where(
+                'is_deleted',
+                false
+            )->where(function ($query) use ($search) {
+                $query->where('name','like','%'.$search.'%');
+            })->orderby('id','desc')->get();
+        }
+        $response = array();
+        foreach ($products as $product) {
+            $response[] = array(
+                "id" => $product->id,
+                "text" => $product->name
+            );
+        }
+        $response[] = [
+            "id" => 0,
+            "text" => "-"
+        ];
+        return $response;
+    }
+     /**
+     * get needtag1 using select2 with ajax
+     *
+     *
+     * @return \Illuminate\Http\Response
+     */
+    //---------------------AJAX-----------------------------------
+    public function getNeedTag1(Request $request)
+    {
+
+        $search = trim($request->search);
+        if ($search == '') {
+            $needtag1 = NeedTagParentOne::orderby('id', 'desc')->select('id', 'name','is_deleted')->where('is_deleted',false)->get();
+        } else {
+            $needtag1 = NeedTagParentOne::select('id','name','is_deleted')->where(
+                'is_deleted',
+                false
+            )->where(function ($query) use ($search) {
+                $query->where('name','like','%'.$search.'%');
+            })->orderby('id','desc')->get();
+        }
+        $response = array();
+        foreach ($needtag1 as $item) {
+            $response[] = array(
+                "id" => $item->id,
+                "text" => $item->name
+            );
+        }
+        $response[] = [
+            "id" => 0,
+            "text" => "-"
+        ];
+        return $response;
+    }
 }
