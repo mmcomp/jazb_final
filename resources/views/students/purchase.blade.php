@@ -112,31 +112,42 @@
 <script src="../../plugins/datatables-bs4/js/dataTables.bootstrap4.js"></script>
 <!-- page script -->
 <script>
-    $(function() {
-        $('#example2').DataTable({
-            "paging": true
-            , "lengthChange": false
-            , "searching": false
-            , "ordering": true
-            , "info": true
-            , "autoWidth": false
-            , "language": {
+    $(function () {
+        //   $("#example1").DataTable();
+          $('#example2').DataTable({
+            "paging": true,
+            "lengthChange": false,
+            "searching": false,
+            "ordering": true,
+            "info": true,
+            "autoWidth": false,
+            "language": {
                 "paginate": {
-                    "previous": "قبل"
-                    , "next": "بعد"
-                }
-                , "emptyTable": "داده ای برای نمایش وجود ندارد"
-                , "info": "نمایش _START_ تا _END_ از _TOTAL_ داده"
-                , "infoEmpty": "نمایش 0 تا 0 از 0 داده"
-            , }
-        });
+                    "previous": "قبل",
+                    "next": "بعد"
+                },
+                "emptyTable":     "داده ای برای نمایش وجود ندارد",
+                "info":           "نمایش _START_ تا _END_ از _TOTAL_ داده",
+                "infoEmpty":      "نمایش 0 تا 0 از 0 داده",
+            },
+            "columnDefs": [   ////define column 1 and 3
+            {
+                "searchable": false,
+                "orderable": false,
+                "targets": [0,7]
+            },
+            { "type": "pstring", "targets": [2,4,6] }
 
-        $(".btn-danger").click(function(e) {
-            if (!confirm('آیا مطمئنید؟')) {
+            ],
+            "order": [[1, 'asc']], /// sort columns 2
+          });
+
+          $(".btn-danger").click(function(e){
+              if(!confirm('آیا مطمئنید؟')){
                 e.preventDefault();
-            }
+              }
+          });
         });
-    });
 
 </script>
 @endsection

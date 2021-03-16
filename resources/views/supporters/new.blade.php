@@ -542,10 +542,10 @@
             row.child( test ).show();
         }
     }
-    function _showMorePanel(index){
+    {{-- function _showMorePanel(index){
         $('.morepanel').hide();
         $('#morepanel-' + index).show();
-    }
+    } --}}
     function seenStudent(student_id) {
         $.post('{{ route('supporter_student_seen') }}', {
             student_id

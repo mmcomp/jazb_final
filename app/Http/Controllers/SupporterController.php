@@ -613,7 +613,9 @@ class SupporterController extends Controller
                     ->where('is_deleted', false)->where('banned', false)->pluck('id');
                 $calls->whereIn('students_id', $students);
             }
+            $callsBuilder = $calls->with('student')->with('product.collection')->with('notice');
             $calls = $calls->with('student')->with('product.collection')->with('notice')->get();
+            $count_calls = $calls ? count($calls) : 0;
             foreach ($calls as $index => $call) {
                 if ($call->product) {
                     $product = $call->product;
@@ -650,36 +652,49 @@ class SupporterController extends Controller
                 $req['length'] = 10;
                 $req['draw'] = 1;
             }
+            $columnIndex_arr = $request->get('order');
+            $columnName_arr = $request->get('columns');
+            $order_arr = $request->get('order');
+            $columnIndex = $columnIndex_arr[0]['column']; // Column index
+            $columnName = $columnName_arr[$columnIndex]['data']; // Column name
+            $columnSortOrder = $order_arr[0]['dir']; // asc or desc
+
+            if ($columnName != 'row' && $columnName != "end") {
+                $calls = $callsBuilder->orderBy($columnName, $columnSortOrder)
+                    ->select('calls.*')
+                    ->skip($req['start'])
+                    ->take($req['length'])
+                    ->get();
+            } else {
+                $calls = $callsBuilder->select('calls.*')
+                    ->skip($req['start'])
+                    ->take($req['length'])
+                    ->get();
+            }
             $data = [];
             foreach ($calls as $index => $item) {
 
                 $data[] = [
-                    $index + 1,
-                    $item->id,
-                    ($item->student) ? $item->student->first_name . ' ' . $item->student->last_name : '-',
-                    ($item->product) ? (($item->product->parents != '-') ? $item->product->parents . '->' : '') . $item->product->name : '-',
-                    ($item->notice) ? $item->notice->name : '-',
-                    $persons[$item->replier],
-                    ($item->callresult) ? $item->callresult->title : '-',
-                    ($item->next_call) ? jdate($item->next_call)->format("Y/m/d") : '-',
-                    ($item->next_to_call) ? $persons[$item->next_to_call] : '-',
-                    ($item->created_at) ? jdate($item->created_at)->format("Y/m/d H:i:s") : jdate()->format("Y/m/d H:i:s"),
-                    $item->description,
-                    '<a class="btn btn-danger" onclick ="destroy(event)" href="' . route('user_supporter_delete_call', ["user_id" => $id, "id" => $item->id]) . '">حذف</a>'
+                    "row" => $req['start'] + $index + 1,
+                    "id" => $item->id,
+                    "students_id" => ($item->student) ? $item->student->first_name . ' ' . $item->student->last_name : '-',
+                    "products_id" => ($item->product) ? (($item->product->parents != '-') ? $item->product->parents . '->' : '') . $item->product->name : '-',
+                    "notices_id" => ($item->notice) ? $item->notice->name : '-',
+                    "replier" => $persons[$item->replier],
+                    "call_results_id" => ($item->callresult) ? $item->callresult->title : '-',
+                    "next_call" => ($item->next_call) ? jdate($item->next_call)->format("Y/m/d") : '-',
+                    "next_to_call" => ($item->next_to_call) ? $persons[$item->next_to_call] : '-',
+                    "created_at" => ($item->created_at) ? jdate($item->created_at)->format("Y/m/d H:i:s") : jdate()->format("Y/m/d H:i:s"),
+                    "description" => $item->description,
+                    "end" =>'<a class="btn btn-danger" onclick ="destroy(event)" href="' . route('user_supporter_delete_call', ["user_id" => $id, "id" => $item->id]) . '">حذف</a>'
                 ];
-            }
-
-
-            $outdata = [];
-            for ($i = $req['start']; $i < min($req['length'] + $req['start'], count($data)); $i++) {
-                $outdata[] = $data[$i];
             }
 
             $result = [
                 "draw" => $req['draw'],
-                "data" => $outdata,
-                "recordsTotal" => count($calls),
-                "recordsFiltered" => count($calls)
+                "data" => $data,
+                "recordsTotal" => $count_calls,
+                "recordsFiltered" => $count_calls
             ];
 
             return $result;
@@ -1227,7 +1242,7 @@ class SupporterController extends Controller
 
         if (request()->getMethod() == 'GET') {
             return view('supporters.new', [
-                'students' => $students,
+                'students' => $getStudents,
                 'sources' => $sources,
                 'name' => $name,
                 'sources_id' => $sources_id,
@@ -1806,13 +1821,7 @@ class SupporterController extends Controller
                 ->skip($req['start'])
                 ->take($req['length'])
                 ->get();
-        } else if ($columnName == "wage") {
-            $purchases = null;
-        }
-        else if($columnName == "portion"){
-
-        }
-        else {
+        } else {
             $purchases = $purchases->select('purchases.*')
                 ->skip($req['start'])
                 ->take($req['length'])
