@@ -50,7 +50,7 @@
                     <div class="col">
                         <div class="form-group">
                             <label for="parent_id">والد</label>
-                            <select class="form-control" id="parent_id" name="parent_id" >
+                            <select class="form-control select2" id="parent_id" name="parent_id" >
                                 <option value="0"> - </option>
                                 @foreach ($collections as $item)
                                     @if (isset($collection) && isset($collection->id) && $collection->parent_id == $item->id)
@@ -85,35 +85,8 @@
 
 @section('js')
 <!-- Select2 -->
-<script src="/plugins/select2/js/select2.min.js"></script>
+<script src="/plugins/select2/js/select2.full.min.js"></script>
 <script type="text/javascript">
-    let route = "";
-    function select2_load_remote_data_with_ajax(item) {
-        // CSRF Token
-        var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
-        $(item).select2({
-            ajax: {
-                url: '{{ route("parent_ajax_get") }}'
-                , type: 'post'
-                , dataType: 'json'
-                , delay: 250
-                , data: function(params) {
-                    return {
-                        _token: CSRF_TOKEN
-                        , search: params.term
-                    };
-                }
-                , processResults: function(response) {
-                    return {
-                        results: response
-                    };
-                }
-                , cache: true
-            }
-            ,
-           minimumInputLength: 3
-        });
-    }
-    select2_load_remote_data_with_ajax('#parent_id');
+    $('select.select2').select2();
 </script>
 @endsection

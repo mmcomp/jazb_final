@@ -1527,14 +1527,20 @@ class SupporterController extends Controller
         $thePurchases = $purchases;
         $wage = [];
         $sum = 0;
-        if ($request->input('from_date')) {
-            $from_date = $this->jalaliToGregorian($request->input('from_date'));
-            $purchases = $purchases->where('created_at', '>=', $from_date);
+        if($request->input('from_date') && $request->input('to_date') && $request->input('from_date') == $request->input('to_date')){
+            $purchases = $purchases->where('created_at', '<=', Carbon::now());
+
+        } else {
+            if ($request->input('from_date')) {
+                $from_date = $this->jalaliToGregorian($request->input('from_date'));
+                $purchases = $purchases->where('created_at', '>=', $from_date);
+            }
+            if ($request->input('to_date')) {
+                $to_date = $this->jalaliToGregorian($request->input('to_date'));
+                $purchases = $purchases->where('created_at', '<=', $to_date);
+            }
         }
-        if ($request->input('to_date')) {
-            $to_date = $this->jalaliToGregorian($request->input('to_date'));
-            $purchases = $purchases->where('created_at', '<=', $to_date);
-        }
+
         $allPurchases = $purchases->orderBy('id', 'desc')->get();
         $out = CommissionPurchaseRelation::computeMonthIncome($thePurchases, $allPurchases);
         $sum = $out[0];

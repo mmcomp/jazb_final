@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\DB;
 use App\Utils\Sms;
 use Log;
 use Morilog\Jalali\CalendarUtils;
+use Carbon\Carbon;
 
 use Exception;
 
@@ -112,13 +113,17 @@ class PurchaseController extends Controller
             ->pluck('id');
             $purchases = $purchases->whereIn('students_id',$student_ids);
         }
-        if ($request->input('from_date')) {
-            $from_date = $this->jalaliToGregorian($request->input('from_date'));
-            $purchases = $purchases->where('created_at', '>=', $from_date);
-        }
-        if ($request->input('to_date')) {
-            $to_date = $this->jalaliToGregorian($request->input('to_date'));
-            $purchases = $purchases->where('created_at', '<=', $to_date);
+        if($request->input('from_date') && $request->input('to_date') && $request->input('from_date') == $request->input('to_date')){
+            $purchases = $purchases->where('created_at', '<=', Carbon::now());
+        } else {
+            if ($request->input('from_date')) {
+                $from_date = $this->jalaliToGregorian($request->input('from_date'));
+                $purchases = $purchases->where('created_at', '>=', $from_date);
+            }
+            if ($request->input('to_date')) {
+                $to_date = $this->jalaliToGregorian($request->input('to_date'));
+                $purchases = $purchases->where('created_at', '<=', $to_date);
+            }
         }
         if($request->input('products_id') != null){
             $products_id = (int)$request->input('products_id');

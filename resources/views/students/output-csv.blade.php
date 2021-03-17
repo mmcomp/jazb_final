@@ -1,4 +1,7 @@
 @extends('layouts.index')
+@section('css')
+<link href="/plugins/select2/css/select2.min.css" rel="stylesheet" />
+@endsection
 @section('content')
 <section class="content-header">
     <div class="container-fluid">
@@ -94,7 +97,7 @@
                     <div class="col">
                         <div class="form-group">
                             <label for="supporters_id">پشتیبان</label>
-                            <select  id="supporters_id" name="supporters_id" class="form-control">
+                            <select  id="supporters_id" name="supporters_id" class="form-control select2">
                                 <option value="">همه</option>
                                 @foreach ($supports as $item)
                                     @if(isset($supporters_id) && $supporters_id==$item->id)
@@ -127,4 +130,10 @@
     <!-- /.row -->
   </section>
   <!-- /.content -->
+@endsection
+@section('js')
+<script src="/plugins/select2/js/select2.full.min.js"></script>
+<script>
+    $('select.select2').select2();
+</script>
 @endsection

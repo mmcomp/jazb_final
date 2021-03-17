@@ -22,7 +22,7 @@ class CityController extends Controller
 
     public function create(Request $request)
     {
-        $provinces = Province::orderBy('name')->where("is_deleted", false)->get();
+        $provinces = City::orderBy('name')->where("is_deleted", false)->get();
         $city = new City;
         if($request->getMethod()=='GET'){
             return view('cities.create', [
