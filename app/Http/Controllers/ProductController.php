@@ -268,4 +268,40 @@ class ProductController extends Controller
             "fails" => $fails
         ];
     }
+     /**
+     * get product using select2 with ajax
+     *
+     *
+     * @return \Illuminate\Http\Response
+     */
+    //---------------------AJAX-----------------------------------
+    public function getProduct(Request $request)
+    {
+
+        $search = trim($request->search);
+        if ($search == '') {
+            $collections = Collection::orderby('id', 'desc')->select('id', 'name','is_deleted','parent_id')->where('is_deleted',false)->get();
+        } else {
+            $collections = Collection::select('id','name','is_deleted','parent_id')->where(
+                'is_deleted',
+                false
+            )->where(function ($query) use ($search) {
+                $query->where('name','like','%'.$search.'%');
+            })->orderby('id','desc')->get();
+        }
+        $response = array();
+        foreach($collections as $index => $collection){
+            $collections[$index]->parents = $collection->parents();
+            $collections[$index]->name = ($collections[$index]->parents!='')?$collections[$index]->parents . "->" . $collections[$index]->name : $collections[$index]->name;
+            $response[] = array(
+                "id" => $collection->id,
+                "text" => $collections[$index]->name
+            );
+        }
+        $response[] = [
+            "id" => 0,
+            "text" => "-"
+        ];
+        return $response;
+    }
 }

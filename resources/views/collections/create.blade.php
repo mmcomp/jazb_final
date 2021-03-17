@@ -111,7 +111,7 @@
                 , cache: true
             }
             ,
-           //minimumInputLength: 3
+           minimumInputLength: 3
         });
     }
     select2_load_remote_data_with_ajax('#parent_id');

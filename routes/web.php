@@ -113,6 +113,7 @@ Route::group(['middleware' => ['auth', 'message','changeCharactersAllToBePersian
         Route::any('/create', 'ProductController@create')->name('product_create');
         Route::any('/edit/{id}', 'ProductController@edit')->name('product_edit');
         Route::get('/delete/{id}', 'ProductController@delete')->name('product_delete');
+        Route::post('/getProduct','ProductController@getProduct')->name('product_ajax_get');
     });
 
     Route::group(['prefix' => '/temperatures'], function () {

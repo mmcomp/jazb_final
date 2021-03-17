@@ -26,10 +26,6 @@ class CollectionController extends Controller
     public function create(Request $request)
     {
         $collections = Collection::where('is_deleted', false)->orderBy('name')->get();
-        foreach($collections as $index => $collection){
-            $collections[$index]->parents = $collection->parents();
-            $collections[$index]->name = ($collections[$index]->parents!='')?$collections[$index]->parents . "->" . $collections[$index]->name : $collections[$index]->name;
-        }
         $collection = new Collection;
         if($request->getMethod()=='GET'){
             return view('collections.create', [
@@ -49,10 +45,6 @@ class CollectionController extends Controller
     public function edit(Request $request, $id)
     {
         $collections = Collection::where('is_deleted', false)->where('id', '!=', $id)->orderBy('name')->get();
-        foreach($collections as $index => $collection){
-            $collections[$index]->parents = $collection->parents();
-            $collections[$index]->name = ($collections[$index]->parents!='')?$collections[$index]->parents . "->" . $collections[$index]->name : $collections[$index]->name;
-        }
         $collection = Collection::where('id', $id)->where('is_deleted', false)->first();
         if($collection==null){
             $request->session()->flash("msg_error", "دسته مورد نظر پیدا نشد!");
@@ -113,9 +105,9 @@ class CollectionController extends Controller
 
         $search = trim($request->search);
         if ($search == '') {
-            $collections = Collection::orderby('id', 'desc')->select('id', 'name','is_deleted')->where('is_deleted',false)->get();
+            $collections = Collection::orderby('id', 'desc')->select('id', 'name','is_deleted','parent_id')->where('is_deleted',false)->get();
         } else {
-            $collections = Collection::select('id','name','is_deleted')->where(
+            $collections = Collection::select('id','name','is_deleted','parent_id')->where(
                 'is_deleted',
                 false
             )->where(function ($query) use ($search) {
@@ -123,10 +115,12 @@ class CollectionController extends Controller
             })->orderby('id','desc')->get();
         }
         $response = array();
-        foreach ($collections as $item) {
+        foreach($collections as $index => $collection){
+            $collections[$index]->parents = $collection->parents();
+            $collections[$index]->name = ($collections[$index]->parents!='')?$collections[$index]->parents . "->" . $collections[$index]->name : $collections[$index]->name;
             $response[] = array(
-                "id" => $item->id,
-                "text" => ($item->parents()!='')?$item->parents() . "->" . $item->name : $item->name
+                "id" => $collection->id,
+                "text" => $collections[$index]->name
             );
         }
         $response[] = [
