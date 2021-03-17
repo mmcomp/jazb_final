@@ -796,6 +796,15 @@
                                 <p>لیست تماس</p>
                             </a>
                         </li>
+                        <li class="nav-item">
+                            @if(strpos(\Request::route()->getName(), 'supporter_merge_students')===0)
+                            <a href="{{ route('supporter_merge_students') }}" class="nav-link active">
+                            @else
+                            <a href="{{ route('supporter_merge_students') }}" class="nav-link">
+                            @endif
+                                <p>دانش آموزان همگام شده من</p>
+                            </a>
+                        </li>
                         @endif
                         @if (!Gate::allows('marketers'))
                         <li class="nav-item">

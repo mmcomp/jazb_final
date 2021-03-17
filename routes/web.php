@@ -240,6 +240,7 @@ Route::group(['middleware' => ['auth', 'message','changeCharactersAllToBePersian
         Route::any('/students', 'SupporterController@newStudents')->name('supporter_student_new');
         Route::get('/income','SupporterController@showIncome')->name('supporter_student_income');
         Route::post('/income','SupporterController@showIncomePost')->name('supporter_student_income_post');
+        Route::get('/merge-students','SupporterController@mergeStudents')->name('supporter_merge_students');
         Route::post('/call', 'SupporterController@call')->name('supporter_student_call');
         Route::post('/seen', 'SupporterController@seen')->name('supporter_student_seen');
         Route::any('/calls/{id}', 'SupporterController@calls')->name('supporter_student_allcall');
