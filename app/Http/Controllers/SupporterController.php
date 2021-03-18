@@ -1495,37 +1495,18 @@ class SupporterController extends Controller
         $columnIndex = $columnIndex_arr[0]['column']; // Column index
         $columnName = $columnName_arr[$columnIndex]['data']; // Column name
         $columnSortOrder = $order_arr[0]['dir']; // asc or desc
-
-        if ($columnName != 'row' && $columnName != "end") {
-            $students = $students->orderBy($columnName, $columnSortOrder)
-                ->select('students.*')
-                ->with('user')
-                ->with('studenttags.tag')
-                ->with('studentcollections.collection')
-                ->with('studenttags.tag.parent_four')
-                ->with('studenttemperatures.temperature')
-                ->with('source')
-                ->with('consultant')
-                ->with('supporter')
-                ->skip($req['start'])
-                ->take($req['length'])
-                ->get();
-        } else {
-            $students = $students->select('students.*')
-                ->with('user')
-                ->with('studenttags.tag')
-                ->with('studentcollections.collection')
-                ->with('studenttags.tag.parent_four')
-                ->with('studenttemperatures.temperature')
-                ->with('source')
-                ->with('consultant')
-                ->with('supporter')
-                ->skip($req['start'])
-                ->take($req['length'])
-                ->get();
-        }
-        $data = [];
-        foreach ($students as $index => $item) {
+        $students = $students->select('students.*')
+        ->with('user')
+        ->with('studenttags.tag')
+        ->with('studentcollections.collection')
+        ->with('studenttags.tag.parent_four')
+        ->with('studenttemperatures.temperature')
+        ->with('source')
+        ->with('consultant')
+        ->with('supporter')
+        ->skip($req['start'])
+        ->take($req['length']);
+        foreach ($students->get() as $index => $item) {
             if ($item->supporters_id) {
                 $item->own_purchases = $item->purchases()->where('supporters_id', $item->supporters_id)
                     ->where('is_deleted', false)->where('type', '!=', 'site_failed')->count();
@@ -1538,6 +1519,14 @@ class SupporterController extends Controller
             })->where('type', '!=', 'site_failed')->where('is_deleted', false)->count();
             $item->save();
         }
+        if ($columnName != 'row' && $columnName != "end") {
+            $students = $students->orderBy($columnName, $columnSortOrder)
+                ->select('students.*')
+                ->skip($req['start'])
+                ->take($req['length'])
+                ->get();
+        }
+        $data = [];
         foreach ($students as $index => $item) {
             $data[] = [
                 "row" => $req['start'] + $index + 1,
