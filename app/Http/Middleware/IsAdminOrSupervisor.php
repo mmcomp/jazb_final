@@ -20,5 +20,6 @@ class IsAdminOrSupervisor
         if(Auth::user()->groups_id && (Auth::user()->group->type == 'admin' || Auth::user()->group->type == 'supervisor')){
             return $next($request);
         }
+        return redirect()->back();
     }
 }

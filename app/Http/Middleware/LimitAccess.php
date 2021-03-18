@@ -19,7 +19,7 @@ class LimitAccess
         if(Auth::user()->groups_id && Auth::user()->group->type == 'admin'){
             return $next($request);
         }
-        return redirect()->back()->with('flash_message','شما اجازه دسترسی به این صفحه را ندارید!');
+        return redirect()->back();
 
     }
 }
