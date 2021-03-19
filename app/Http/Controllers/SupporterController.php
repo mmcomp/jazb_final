@@ -1533,7 +1533,7 @@ class SupporterController extends Controller
     }
     public function showIncomePost(Request $request)
     {
-        $purchases = Purchase::where('is_deleted', false)->where('supporters_id', Auth::user()->id);
+        $purchases = Purchase::where('is_deleted', false)->where('price','!=',0)->where('supporters_id', Auth::user()->id);
         $thePurchases = $purchases;
         $wage = [];
         $sum = 0;
