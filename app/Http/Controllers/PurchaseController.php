@@ -118,7 +118,7 @@ class PurchaseController extends Controller
             $purchases = $purchases->whereIn('students_id',$student_ids);
         }
         if($request->input('from_date') && $request->input('to_date') && $request->input('from_date') == $request->input('to_date')){
-            $purchases = $purchases->where('created_at','<=',Carbon::now());
+            $purchases = $purchases->where('created_at', '>=', date("Y-m-d 00:00:00"))->where('created_at','<=',date("Y-m-d 23:59:59"));
         } else {
             if ($request->input('from_date')) {
                 $from_date = $this->jalaliToGregorian($request->input('from_date'));
