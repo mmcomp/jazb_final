@@ -1528,7 +1528,7 @@ class SupporterController extends Controller
         $wage = [];
         $sum = 0;
         if($request->input('from_date') && $request->input('to_date') && $request->input('from_date') == $request->input('to_date')){
-            $purchases = $purchases->where('created_at', '<=', Carbon::now());
+            $purchases = $purchases->where('created_at', '>=', date("Y-m-d 00:00:00"))->where('created_at','<=',date("Y-m-d 23:59:59"));
 
         } else {
             if ($request->input('from_date')) {
