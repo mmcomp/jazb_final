@@ -16,21 +16,13 @@ use Log;
 class ProductController extends Controller
 {
     public function index(Request $request){
-        $products = Product::where('is_deleted', false)->with('collection')->where('name','like','%'.$request->get('name').'%')->get();
-        foreach($products as $index => $product){
-            $products[$index]->parents = "-";
-            if($product->collection) {
-                $parents = $product->collection->parents();
-                $name = ($parents!='')?$parents . "->" . $product->collection->name : $product->collection->name;
-                $products[$index]->parents = $name;
-            }
-        }
-        $count = count($products);
+        $products = Product::where('is_deleted', false)->with('collection')->where('name','like','%'.trim($request->input('name','')).'%');
+        $count = count($products->get());
         $name = null;
         if($request->getMethod() == 'GET'){
             return view('products.index',[
                 'route' => 'products',
-                'products' => $products,
+                'products' => $products->get(),
                 'msg_success' => request()->session()->get('msg_success'),
                 'msg_error' => request()->session()->get('msg_error')
             ]);
@@ -47,21 +39,29 @@ class ProductController extends Controller
             $columnIndex = $columnIndex_arr[0]['column']; // Column index
             $columnName = $columnName_arr[$columnIndex]['data']; // Column name
             $columnSortOrder = $order_arr[0]['dir']; // asc or desc
-            $searchValue = $request->input('name'); // Search value
+            //$searchValue = $request->input('name'); // Search value
             if($columnName != 'row' && $columnName != 'end'){
-                $products = Product::orderBy($columnName,$columnSortOrder)
-                ->where('name','like','%'.$searchValue.'%')
+                $products = $products->orderBy($columnName,$columnSortOrder)
                 ->where('is_deleted',false)
                 ->with('collection')
                 ->select('products.*')
                 ->skip($req['start'])
                 ->take($req['length'])
                 ->get();
-            }else{
-                $products = Product::where('name','like','%'.$searchValue.'%')->where('is_deleted',false)
-                ->with('collection')
-                ->select('products.*')
-                ->get();
+            }
+            // else{
+            //     $products = $products->where('name','like','%'.$searchValue.'%')->where('is_deleted',false)
+            //     ->with('collection')
+            //     ->select('products.*')
+            //     ->get();
+            // }
+            foreach($products as $index => $product){
+                $products[$index]->parents = "-";
+                if($product->collection) {
+                    $parents = $product->collection->parents();
+                    $name = ($parents!='')?$parents . "->" . $product->collection->name : $product->collection->name;
+                    $products[$index]->parents = $name;
+                }
             }
             $data = [];
 

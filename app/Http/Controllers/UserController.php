@@ -40,35 +40,33 @@ class UserController extends Controller
         }
     }
 
-    public function index(Request $request){
-        $users = User::where(DB::raw('CONCAT(first_Name, " ", last_Name)'),'like','%'.$request->input('name').'%')->where('is_deleted', false)->with('group')->get();
-        if($request->getMethod() == 'GET'){
+    public function index(){
+        $users = User::where(DB::raw('CONCAT(first_Name, " ", last_Name)'),'like','%'.trim(request()->input('name','').'%'))->where('is_deleted', false)->with('group');
+        if(request()->getMethod() == 'GET'){
             return view('users.index',[
-                'users' => $users,
+                'users' => $users->get(),
                 'route' => 'user_alls',
                 'msg_success' => request()->session()->get('msg_success'),
                 'msg_error' => request()->session()->get('msg_error')
             ]);
         }else{
-            $req =  $request->all();
+            $req =  request()->all();
             if(!isset($req['start'])){
                 $req['start'] = 0;
                 $req['length'] = 10;
                 $req['draw'] = 1;
             }
-            $columnIndex_arr = $request->get('order');
-            $columnName_arr = $request->get('columns');
-            $order_arr = $request->get('order');
+            $columnIndex_arr = request()->get('order');
+            $columnName_arr = request()->get('columns');
+            $order_arr = request()->get('order');
             $columnIndex = $columnIndex_arr[0]['column']; // Column index
             $columnName = $columnName_arr[$columnIndex]['data']; // Column name
             $columnSortOrder = $order_arr[0]['dir']; // asc or desc
-            $searchValue = $request->input('name'); // Search value
 
 
             // Fetch records
             if($columnName != 'row' && $columnName != 'end'){
-                $records = User::orderBy($columnName,$columnSortOrder)
-                ->where(DB::raw('CONCAT(first_Name, " ", last_Name)'), 'like', '%' .$searchValue . '%')
+                $records = $users->orderBy($columnName,$columnSortOrder)
                 ->where('is_deleted',false)
                 ->select('users.*')
                 ->skip($req['start'])
@@ -76,7 +74,7 @@ class UserController extends Controller
                 ->with('group')
                 ->get();
             }else{
-                $records = User::where(DB::raw('CONCAT(first_Name, " ", last_Name)'), 'like', '%' .$searchValue . '%')
+                $records = $users
                 ->where('is_deleted',false)
                 ->select('users.*')
                 ->skip($req['start'])

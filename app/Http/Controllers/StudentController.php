@@ -805,7 +805,7 @@ class StudentController extends Controller
 
     }
 
-    public function index(Request $request)
+    public function index()
     {
         $students = Student::where('is_deleted', false)->where('banned', false)->where('archived', false)->where('supporters_id', 0);
         $supportGroupId = Group::getSupport();
@@ -928,9 +928,9 @@ class StudentController extends Controller
                 $req['length'] = 10;
                 $req['draw'] = 1;
             }
-            $columnIndex_arr = $request->get('order');
-            $columnName_arr = $request->get('columns');
-            $order_arr = $request->get('order');
+            $columnIndex_arr = request()->get('order');
+            $columnName_arr = request()->get('columns');
+            $order_arr = request()->get('order');
             $columnIndex = $columnIndex_arr[0]['column']; // Column index
             $columnName = $columnName_arr[$columnIndex]['data']; // Column name
             $columnSortOrder = $order_arr[0]['dir']; // asc or desc
