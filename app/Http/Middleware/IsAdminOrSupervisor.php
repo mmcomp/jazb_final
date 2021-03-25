@@ -17,7 +17,7 @@ class IsAdminOrSupervisor
      */
     public function handle($request, Closure $next)
     {
-        if(Auth::user()->groups_id && (Auth::user()->group->type == 'admin' || Auth::user()->group->type == 'supervisor')){
+        if(Auth::user()->group && (Auth::user()->group->type == 'admin' || Auth::user()->group->type == 'supervisor')){
             return $next($request);
         }
         return redirect()->back();

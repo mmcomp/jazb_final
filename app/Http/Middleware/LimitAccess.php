@@ -16,7 +16,7 @@ class LimitAccess
      */
     public function handle($request, Closure $next)
     {
-        if(Auth::user()->groups_id && Auth::user()->group->type == 'admin'){
+        if(Auth::user()->group && Auth::user()->group->type == 'admin'){
             return $next($request);
         }
         return redirect()->back();
