@@ -99,8 +99,13 @@ class UserController extends Controller
             $result = [
                 "draw" => $req['draw'],
                 "data" => $data,
+<<<<<<< HEAD
                 "recordsTotal" => $count,
                 "recordsFiltered" => $count,
+=======
+                "recordsTotal" => count($users),
+                "recordsFiltered" => count($users), // Fix this
+>>>>>>> 9dd3ffe8cfa677a0e397c1a0000af62eba9c2629
             ];
 
             return $result;
