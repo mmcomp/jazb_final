@@ -197,14 +197,15 @@ Route::group(['middleware' => ['auth', 'message','changeCharactersAllToBePersian
 
     Route::group(['prefix' => '/user_supporters'], function () {
         Route::get('/', 'SupporterController@index')->name('user_supporters')->middleware('admin-or-supervisor');
-        Route::get('/calls', 'SupporterController@callIndex')->name('user_supporter_calls')->middleware('admin-or-supervisor');
-        Route::post('/calls','SupporterController@callIndexPost')->name('user_supporter_calls_post')->middleware('admin-or-supervisor');
+        Route::get('/calls-get', 'SupporterController@callIndex')->name('user_supporter_calls')->middleware('admin-or-supervisor');
         Route::any('/supporter_calls', 'SupporterController@supporterCallIndex')->name('user_a_supporter_calls');
         Route::any('/call/{id}', 'SupporterController@acallIndex')->name('user_supporter_acall');
         Route::any('/students/{id}', 'SupporterController@students')->name('supporter_allstudents');
         Route::any('/create', 'SupporterController@create')->name('user_supporter_create');
         Route::post('/change_pass', 'SupporterController@changePass')->name('user_supporter_changepass');
         Route::any('/delete_a_call/{user_id}/{id}','SupporterController@newDeleteCall')->name('user_supporter_delete_call');
+        Route::post('/calls-post','SupporterController@callIndexPost')->name('user_supporter_calls_post');
+
     });
 
     Route::group(['prefix' => '/schools','middleware' => 'limit-access'], function () {
@@ -246,8 +247,8 @@ Route::group(['middleware' => ['auth', 'message','changeCharactersAllToBePersian
         Route::any('/calls/{id}', 'SupporterController@calls')->name('supporter_student_allcall');
         Route::any('/delete_call/{user_id}/{id}', 'SupporterController@deleteCall')->name('supporter_student_deletecall');
         Route::any('/create', 'SupporterController@studentCreate')->name('supporter_student_create');
-        Route::get('/purchases', 'SupporterController@getPurchases')->name('supporter_student_purchases_get')->middleware('limit-access');
-        Route::post('/purchases','SupporterController@postPurchases')->name('supporter_student_purchases_post')->middleware('limit-access');
+        Route::get('/purchases', 'SupporterController@getPurchases')->name('supporter_student_purchases_get');
+        Route::post('/purchases','SupporterController@postPurchases')->name('supporter_student_purchases_post');
         Route::any('/all_missed_calls','SupporterController@allMissedCalls')->name('supporter_all_missed_calls');
         Route::any('/yesterday_missed_calls','SupporterController@yesterdayMissedCalls')->name('supporter_yesterday_missed_calls');
         Route::any('/no_need_calls_students','SupporterController@noNeedStudents')->name('no_need_students');
