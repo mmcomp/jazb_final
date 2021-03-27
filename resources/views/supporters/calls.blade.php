@@ -1,6 +1,7 @@
 @extends('layouts.index')
 @section('css')
 <meta name="csrf-token" content="{{ csrf_token() }}">
+<link href="/plugins/select2/css/select2.min.css" rel="stylesheet" />
 <style>
     .students, .studenttags{
         display: none;
@@ -46,7 +47,7 @@
                 <div class="col-3">
                     <div class="form-group">
                         <label for="products_id">محصول</label>
-                        <select id="products_id" name="products_id" class="form-control" onchange="theChange()" >
+                        <select id="products_id" name="products_id" class="form-control select2" onchange="theChange()" >
                             <option value="">همه</option>
                             @foreach ($products as $item)
                                 @if($products_id && $products_id == $item->id)
@@ -85,7 +86,7 @@
                 <div class="col-3">
                     <div class="form-group">
                         <label for="supporters_id">پشتیبان</label>
-                        <select id="supporters_id" name="supporters_id" class="form-control" onchange="theChange()" >
+                        <select id="supporters_id" name="supporters_id" class="form-control select2" onchange="theChange()" >
                             <option value="">همه</option>
                             @foreach ($supportersForSelectInView as $item)
                                 @if($supporters_id && $supporters_id == $item->id)
@@ -194,8 +195,12 @@
 <!-- DataTables -->
 <script src="../../plugins/datatables/jquery.dataTables.js"></script>
 <script src="../../plugins/datatables-bs4/js/dataTables.bootstrap4.js"></script>
+<script src="/plugins/select2/js/select2.full.min.js"></script>
 <!-- page script -->
 <script>
+    <!-- Select2 -->
+
+    $('select.select2').select2();
     let table = "";
     function theSearch(){
         $('#loading').css('display','inline');
