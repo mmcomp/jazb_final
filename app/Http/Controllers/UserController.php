@@ -99,7 +99,7 @@ class UserController extends Controller
                 "draw" => $req['draw'],
                 "data" => $data,
                 "recordsTotal" => count($users),
-                "recordsFiltered" => count($users),
+                "recordsFiltered" => count($users), // Fix this
             ];
 
             return $result;
