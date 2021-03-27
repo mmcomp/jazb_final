@@ -136,6 +136,8 @@
                 "info": "نمایش _START_ تا _END_ از _TOTAL_ داده",
                 "infoEmpty": "نمایش 0 تا 0 از 0 داده",
             },
+            columnDefs: [ { orderable: false, targets: [0,6,7] } ],
+            "order": [[1, 'asc']], /// sort columns 1
             serverSide: true,
             processing: true,
             ajax: {
@@ -160,6 +162,16 @@
                 }
 
             },
+            columns: [
+                { data: 'row'},
+                { data: 'id' },
+                { data: 'students_id' },
+                { data: 'created_at' },
+                { data: 'products_id' },
+                { data: 'price'},
+                { data: 'wage'},
+                { data: 'portion'}
+            ],
         });
 
 

@@ -167,7 +167,6 @@
         return false;
     }
     $(function () {
-    //   $("#example1").DataTable();
       $('#example2').DataTable({
         "paging": true,
         "lengthChange": false,
@@ -183,7 +182,9 @@
             "emptyTable":     "داده ای برای نمایش وجود ندارد",
             "info":           "نمایش _START_ تا _END_ از _TOTAL_ داده",
             "infoEmpty":      "نمایش 0 تا 0 از 0 داده",
-        }
+        },
+        columnDefs: [ { orderable: false, targets: [0,9] },  { "type": "pstring", "targets": [2,3,5] } ],
+        "order": [[1, 'asc']], /// sort columns 1
       });
 
       $(".btn-danger").click(function(e){

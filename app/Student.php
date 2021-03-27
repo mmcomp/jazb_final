@@ -66,7 +66,6 @@ class Student extends Model
     {
         return $this->hasMany('App\Purchase', 'students_id', 'id')->where('is_deleted', false);
     }
-
     public function studentcollections()
     {
         return $this->hasMany('App\StudentCollection', 'students_id', 'id')->where('is_deleted', false);

@@ -48,7 +48,6 @@
                         <td>{{ $index + 1 }}</td>
                         <td>{{ $item->id }}</td>
                         <td>{{ $item->name }}</td>
-                        <!--<td>{{ ($item->parent)?$item->parent->name:'-' }}</td>-->
                         <td>{{ $item->parents }}</td>
                         <td>
                             <a class="btn btn-primary" href="{{ route('collection_edit', $item->id) }}">
@@ -97,7 +96,17 @@
             "emptyTable":     "داده ای برای نمایش وجود ندارد",
             "info":           "نمایش _START_ تا _END_ از _TOTAL_ داده",
             "infoEmpty":      "نمایش 0 تا 0 از 0 داده",
-        }
+        },
+        "columnDefs": [   ////define column 1 and 3
+        {
+            "searchable": false,
+            "orderable": false,
+            "targets": [0,4]
+        },
+        { "type": "pstring", "targets": [2,3] }
+
+        ],
+        "order":[1,'asc']
       });
 
       $(".btn-danger").click(function(e){

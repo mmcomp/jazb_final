@@ -395,7 +395,6 @@
         need_parent4: ''
     }
     function showMorePanel(index, tr){
-        console.log(index, tr);
         var persons = {
             student:"دانش آموز",
             father:"پدر",
@@ -874,6 +873,8 @@
                 "info": "نمایش _START_ تا _END_ از _TOTAL_ داده",
                 "infoEmpty": "نمایش 0 تا 0 از 0 داده",
             },
+            columnDefs: [ { orderable: false, targets: [0,7] } ],
+            "order": [[1, 'asc']], /// sort columns 1
             serverSide: true,
             processing: true,
             ajax: {
@@ -892,7 +893,6 @@
                     data['from_date'] = $("#from_date").val();
                     data['to_date'] = $("#to_date").val();
                     @endif
-                    console.log(data);
                     return JSON.stringify(data);
                 },
                 "complete": function(response) {
@@ -900,10 +900,7 @@
                     $('#example2 tbody tr').addClass('cursor_pointer');
                     $('#example2 tr').click(function() {
                         var tr = this;
-                        var studentId = parseInt($(tr).find('td')[1].innerText, 10);
-                        var url = '{{ route("student_purchases", ":id") }}';
-                        url = !isNaN(studentId) ? url.replace(':id', studentId):'{{ route("supporter_student_purchases_get")}}';
-                        window.open(url,'_blank');
+                        var studentId = $(tr).find('td')[1] ? parseInt($(tr).find('td')[1].innerText, 10) : 0;
                         if(!isNaN(studentId)){
                             for(var index in students){
                                 if(students[index].id==studentId){
@@ -914,7 +911,17 @@
                     });
                 }
 
-            }
+            },
+            columns: [
+                { data: 'row'},
+                { data: 'id' },
+                { data: 'first_name' },
+                { data: 'last_name' },
+                { data: 'other_purchases' },
+                { data: 'own_purchases'},
+                { data: 'today_purchases'},
+                { data: 'end'}
+            ],
         });
     });
   </script>
