@@ -1,6 +1,7 @@
 @extends('layouts.index')
 
 @section('css')
+<meta name="csrf-token" content="{{ csrf_token() }}">
 <link href="/plugins/select2/css/select2.min.css" rel="stylesheet" />
 @endsection
 
@@ -37,16 +38,6 @@
                         @csrf
                         <div class="row">
                             <div class="col">
-                                <!--
-                        <div class="form-group">
-                            <label for="name">نام</label>
-                            @if (isset($tag) && isset($tag->id))
-                            <input type="text" class="form-control" id="name" name="name" placeholder="نام" value="{{ $tag->name }}" />
-                            @else
-                            <input type="text" class="form-control" id="name" name="name" placeholder="نام"  />
-                            @endif
-                        </div>
-                        -->
                                 <div class="form-group">
                                     <label for="products_id">محصول</label>
                                     <select class="form-control select2" id="products_id" name="products_id">
@@ -142,10 +133,7 @@
 @section('js')
 <!-- Select2 -->
 <script src="/plugins/select2/js/select2.full.min.js"></script>
-<script>
-    $(document).ready(function() {
-        $('select.select2').select2();
-    });
-
+<script type="text/javascript">
+    $('select.select2').select2();
 </script>
 @endsection

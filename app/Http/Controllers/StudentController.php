@@ -1432,7 +1432,7 @@ class StudentController extends Controller
         } else {
             $student = Student::where('is_deleted', false)->where('banned', false)->where('id', $id)->first();
             if ($student) {
-                $purchases = $student->purchases()->where('type', '!=', 'site_failed')->get();
+                $purchases = $student->purchases()->where('type', '!=', 'site_failed')->where('type','!=','manual_failed')->get();
             } else if ($student == null) {
                 $request->session()->flash("msg_error", "دانش آموز پیدا نشد!");
                 return redirect()->route('students');

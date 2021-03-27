@@ -87,6 +87,18 @@
                             <input type="number" class="form-control" id="price" name="price" placeholder="مبلغ"  value="{{ $purchase->price }}" />
                         </div>
                     </div>
+                    @if(!Gate::allows('supervisor') && Gate::allows('parameters') && $purchase->type != "site_successed")
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="type">نوع خرید</label>
+                            <select class="form-control" id="type" name="type" >
+                               @foreach($types as $index => $type)
+                                 <option value="{{ $index }}" {{ $purchase->type == $index ? "selected" : '' }}>{{ $type }}</option>
+                               @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    @endif
                 </div>
                 <div class="row">
                     <div class="col">
