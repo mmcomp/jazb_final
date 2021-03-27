@@ -59,7 +59,7 @@
                         <div class="col">
                             <div class="form-group">
                                 <label for="supporters_id">پشتیبان</label>
-                                <select  id="supporters_id" name="supporters_id" class="form-control" onchange="theChange()">
+                                <select  id="supporters_id" name="supporters_id" class="form-control select2" onchange="theChange()">
                                     <option value="">همه</option>
                                     @foreach ($supports as $item)
                                         @if(isset($supporters_id) && $supporters_id==$item->id)

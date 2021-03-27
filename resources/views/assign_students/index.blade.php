@@ -68,7 +68,7 @@
                         <div class="col">
                             <div class="form-group">
                                 <label for="supporters_id">پشتیبان</label>
-                                <select  id="supporters_id" name="supporters_id" class="form-control" onchange="theChange()">
+                                <select  id="supporters_id" name="supporters_id" class="form-control select2" onchange="theChange()">
                                     <option value="">همه</option>
                                     @foreach ($supports as $item)
                                         @if(isset($supporters_id) && $supporters_id==$item->id)
@@ -114,7 +114,7 @@
                         <div class="col">
                             <div class="form-group">
                                 <label for="cities_id">شهر</label>
-                                <select  id="cities_id" name="cities_id" class="form-control" onchange="theChange()">
+                                <select  id="cities_id" name="cities_id" class="form-control select2" onchange="theChange()">
                                     <option value="">همه</option>
                                     @foreach ($cities as $item)
                                         @if(isset($cities_id) && $cities_id==$item->id)
@@ -206,7 +206,7 @@
                         <div class="col">
                             <div class="form-group">
                                 <label for="destination_supporter">پشتیبان مقصد</label>
-                                <select  id="destination_supporter" name="destination_supporter" class="form-control">
+                                <select  id="destination_supporter" name="destination_supporter" class="form-control select2">
                                     <option value="">همه</option>
                                     @foreach ($supports as $item)
                                         @if(isset($supporters_id) && $supporters_id==$item->id)
