@@ -607,6 +607,7 @@
                                     <p>ثبت خرید های حضوری</p>
                                 </a>
                         </li>
+                        @if(!Gate::allows('supervisor'))
                         <li class="nav-item">
                             @if(strpos(\Request::route()->getName(), 'supporter_student_purchases_get')===0)
                             <a href="{{ route('supporter_student_purchases_get') }}" class="nav-link active">
@@ -616,6 +617,7 @@
                                     <p>گزارش خرید ها</p>
                                 </a>
                         </li>
+                        @endif
                         @endif
 
                         @if(Gate::allows('parameters'))
@@ -794,6 +796,15 @@
                             <a href="{{ route('user_a_supporter_calls') }}" class="nav-link">
                             @endif
                                 <p>لیست تماس</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            @if(strpos(\Request::route()->getName(), 'supporter_merge_students')===0)
+                            <a href="{{ route('supporter_merge_students') }}" class="nav-link active">
+                            @else
+                            <a href="{{ route('supporter_merge_students') }}" class="nav-link">
+                            @endif
+                                <p>دانش آموزان همگام شده من</p>
                             </a>
                         </li>
                         @endif
