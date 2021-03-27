@@ -51,6 +51,7 @@ class UserController extends Controller
             ]);
         }else{
             $req =  request()->all();
+            $count = $users->count();
             if(!isset($req['start'])){
                 $req['start'] = 0;
                 $req['length'] = 10;
@@ -98,8 +99,8 @@ class UserController extends Controller
             $result = [
                 "draw" => $req['draw'],
                 "data" => $data,
-                "recordsTotal" => count($users),
-                "recordsFiltered" => count($users),
+                "recordsTotal" => $count,
+                "recordsFiltered" => $count,
             ];
 
             return $result;

@@ -17,7 +17,6 @@ class ProductController extends Controller
 {
     public function index(Request $request){
         $products = Product::where('is_deleted', false)->with('collection')->where('name','like','%'.trim($request->input('name','')).'%');
-        $count = count($products->get());
         $name = null;
         if($request->getMethod() == 'GET'){
             return view('products.index',[
@@ -27,6 +26,7 @@ class ProductController extends Controller
                 'msg_error' => request()->session()->get('msg_error')
             ]);
         }else {
+            $count = $products->count();
             $req =  $request->all();
             if(!isset($req['start'])){
                 $req['start'] = 0;
@@ -39,7 +39,6 @@ class ProductController extends Controller
             $columnIndex = $columnIndex_arr[0]['column']; // Column index
             $columnName = $columnName_arr[$columnIndex]['data']; // Column name
             $columnSortOrder = $order_arr[0]['dir']; // asc or desc
-            //$searchValue = $request->input('name'); // Search value
             if($columnName != 'row' && $columnName != 'end'){
                 $products = $products->orderBy($columnName,$columnSortOrder)
                 ->where('is_deleted',false)
@@ -49,12 +48,6 @@ class ProductController extends Controller
                 ->take($req['length'])
                 ->get();
             }
-            // else{
-            //     $products = $products->where('name','like','%'.$searchValue.'%')->where('is_deleted',false)
-            //     ->with('collection')
-            //     ->select('products.*')
-            //     ->get();
-            // }
             foreach($products as $index => $product){
                 $products[$index]->parents = "-";
                 if($product->collection) {
