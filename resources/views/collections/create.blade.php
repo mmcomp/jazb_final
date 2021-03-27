@@ -2,6 +2,7 @@
 
 @section('css')
 <link href="/plugins/select2/css/select2.min.css" rel="stylesheet" />
+<meta name="csrf-token" content="{{ csrf_token() }}">
 @endsection
 
 @section('content')
@@ -85,9 +86,7 @@
 @section('js')
 <!-- Select2 -->
 <script src="/plugins/select2/js/select2.full.min.js"></script>
-<script>
-    $(document).ready(function(){
-        $('select.select2').select2();
-    });
+<script type="text/javascript">
+    $('select.select2').select2();
 </script>
 @endsection

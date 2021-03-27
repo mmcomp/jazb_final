@@ -26,11 +26,11 @@ class CollectionController extends Controller
     public function create(Request $request)
     {
         $collections = Collection::where('is_deleted', false)->orderBy('name')->get();
+        $collection = new Collection;
         foreach($collections as $index => $collection){
             $collections[$index]->parents = $collection->parents();
             $collections[$index]->name = ($collections[$index]->parents!='')?$collections[$index]->parents . "->" . $collections[$index]->name : $collections[$index]->name;
         }
-        $collection = new Collection;
         if($request->getMethod()=='GET'){
             return view('collections.create', [
                 "collections"=>$collections,
@@ -49,11 +49,11 @@ class CollectionController extends Controller
     public function edit(Request $request, $id)
     {
         $collections = Collection::where('is_deleted', false)->where('id', '!=', $id)->orderBy('name')->get();
+        $collection = Collection::where('id', $id)->where('is_deleted', false)->first();
         foreach($collections as $index => $collection){
             $collections[$index]->parents = $collection->parents();
             $collections[$index]->name = ($collections[$index]->parents!='')?$collections[$index]->parents . "->" . $collections[$index]->name : $collections[$index]->name;
         }
-        $collection = Collection::where('id', $id)->where('is_deleted', false)->first();
         if($collection==null){
             $request->session()->flash("msg_error", "دسته مورد نظر پیدا نشد!");
             return redirect()->route('collections');
