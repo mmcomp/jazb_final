@@ -37,6 +37,7 @@ use App\Exports\StudentsExport;
 use Illuminate\Support\Facades\Gate;
 use App\MergeStudents as AppMergeStudents;
 use App\Purchase;
+use App\SupporterHistory;
 use Illuminate\Support\Facades\Route;
 use Exception;
 use Log;
@@ -1821,5 +1822,100 @@ class StudentController extends Controller
     public function merge()
     {
         return view('students.merge');
+    }
+    public function supporterHistories()
+    {
+        $supportGroupId = Group::getSupport();
+        if ($supportGroupId){
+            $supportGroupId = $supportGroupId->id;
+        }
+        $supports = User::where('is_deleted', false)->where('groups_id', $supportGroupId)->get();
+        $name = null;
+        $phone = null;
+        $user_name = null;
+        return view('students.supporter-histories')->with([
+            'supports' => $supports,
+            'name' => $name,
+            'phone' => $phone,
+            'user_name' => $user_name
+        ]);
+    }
+    public function supporterHistoriesPost()
+    {
+
+        $supporterHistories = SupporterHistory::select('supporter_histories.*');
+        $student_ids = SupporterHistory::pluck('students_id');
+        if (request()->input('supporters_id') != null) {
+            $supporters_id = (int)request()->input('supporters_id');
+            $supporterHistories = $supporterHistories->where('supporter_histories.supporters_id', $supporters_id);
+        }
+        if (request()->input('name') != null) {
+            $name = request()->input('name');
+            $student = Student::select('id','first_name','last_name',DB::raw("CONCAT(first_name,' ',last_name)"))
+            ->where(DB::raw("CONCAT(first_name,' ',last_name)"),'like','%'. $name. '%')->whereIn('id', $student_ids)->pluck('id');
+            $supporterHistories = $supporterHistories->whereIn('students_id',$student);
+        }
+        if (request()->input('phone') != null) {
+            $phone = request()->input('phone');
+            $student = Student::select('id','phone')->where('phone','like','%'. $phone. '%')->whereIn('id', $student_ids)->pluck('id');
+            $supporterHistories = $supporterHistories->whereIn('students_id',$student);
+        }
+        if (request()->input('user_name') != null) {
+            $user_name = request()->input('user_name');
+            $user = User::select('id','first_name','last_name',DB::raw("CONCAT(first_name,' ',last_name)"))
+            ->where(DB::raw("CONCAT(first_name,' ',last_name)"),'like','%'. $user_name .'%')->pluck('id');
+            $supporterHistories = $supporterHistories->whereIn('users_id',$user);
+        }
+        $count = $supporterHistories->count();
+        $req =  request()->all();
+        if (!isset($req['start'])) {
+            $req['start'] = 0;
+            $req['length'] = 10;
+            $req['draw'] = 1;
+        }
+        $columnIndex_arr = request()->get('order');
+        $columnName_arr = request()->get('columns');
+        $order_arr = request()->get('order');
+        $columnIndex = $columnIndex_arr[0]['column']; // Column index
+        $columnName = $columnName_arr[$columnIndex]['data']; // Column name
+        $columnSortOrder = $order_arr[0]['dir']; // asc or desc
+
+        if($columnName != 'row' && $columnName != 'first_name' && $columnName != 'last_name' && $columnName != 'phone' ){
+            $supporterHistories = $supporterHistories->orderBy("supporter_histories.".$columnName,$columnSortOrder)
+            ->skip($req['start'])
+            ->take($req['length'])
+            ->get();
+        } else if($columnName == "first_name" || $columnName == "last_name" || $columnName == "phone"){
+            $supporterHistories = $supporterHistories->orderBy("supporter_histories.students_id",$columnSortOrder)
+            ->skip($req['start'])
+            ->take($req['length'])
+            ->get();
+
+        } else{
+            $supporterHistories = $supporterHistories->select('students.*')
+            ->skip($req['start'])
+            ->take($req['length'])
+            ->get();
+        }
+        $data = [];
+        foreach ($supporterHistories as $index => $item) {
+            $data[] = [
+                "row" => $req['start'] + $index + 1,
+                "id" => $item->id,
+                "first_name" => ($item->student) ? $item->student->first_name : '-',
+                "last_name" => ($item->student) ? $item->student->last_name : '-',
+                "phone" => ($item->student) ? $item->student->phone : '-',
+                "users_id" => ($item->user && $item->user->user) ? $item->user->user->first_name. ' '. $item->user->user->last_name : '-',
+                "supporters_id" => ($item->supporter && $item->supporter->supporter) ? $item->supporter->supporter->first_name. ' '. $item->supporter->supporter->last_name : ''
+            ];
+        }
+        $result = [
+            "draw" => $req['draw'],
+            "data" => $data,
+            "recordsTotal" => $count,
+            "recordsFiltered" => $count
+        ];
+
+        return $result;
     }
 }

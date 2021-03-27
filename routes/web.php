@@ -126,6 +126,8 @@ Route::group(['middleware' => ['auth', 'message','changeCharactersAllToBePersian
         Route::post('/temperature', 'StudentController@temperature')->name('student_temperature');
         Route::any('/csv', 'StudentController@csv')->name('student_csv')->middleware('admin-or-supervisor');
         Route::any('/output-csv','StudentController@outputCsv')->name('student_output_csv')->middleware('limit-access');
+        Route::get('/supporter-histories','StudentController@supporterHistories')->name('student_supporter_histories')->middleware('limit-access');
+        Route::post('/supporter-histories-post','StudentController@supporterHistoriesPost')->name('student_supporter_histories_post')->middleware('limit-access');
         Route::post('/supporter', 'StudentController@supporter')->name('student_supporter');
         Route::get('/purchases/{id}', 'StudentController@purchases')->name('student_purchases');
         Route::any('/class/{id}', 'StudentController@class')->name('student_class');
