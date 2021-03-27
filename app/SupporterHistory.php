@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class SupporterHistory extends Model
 {
     public function user(){
-        return $this->hasOne('App\User', 'id', 'users_id');
+        return $this->hasOne('App\Student', 'users_id', 'users_id');
     }
     public function student(){
         return $this->hasOne('App\Student', 'id', 'students_id');
