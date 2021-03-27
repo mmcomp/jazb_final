@@ -149,6 +149,7 @@
                     <th>محصول</th>
                     <th>مبلغ</th>
                     <th>توضیحات</th>
+                    <th>سالن</th>
                     <th>تاریخ</th>
                     <th>سالن</th>
                     <th>#</th>
@@ -223,6 +224,8 @@
             "info":           "نمایش _START_ تا _END_ از _TOTAL_ داده",
             "infoEmpty":      "نمایش 0 تا 0 از 0 داده",
         },
+        columnDefs: [ { orderable: false, targets: [0,10] } ],
+        "order": [[1, 'asc']], /// sort columns 1
         processing: true,
         serverSide: true,
         ajax: {
@@ -249,6 +252,19 @@
             }
 
         },
+        columns: [
+            { data: 'row'},
+            { data: 'id' },
+            { data: 'type' },
+            { data: 'students_id' },
+            { data: 'factor_number' },
+            { data: 'products_id'},
+            { data: 'price'},
+            { data: 'description'},
+            { data: 'saloon'},
+            { data: 'created_at'},
+            { data: 'end'}
+        ],
       });
     });
   </script>

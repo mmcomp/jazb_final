@@ -88,8 +88,8 @@
 <script src="../../plugins/datatables-bs4/js/dataTables.bootstrap4.js"></script>
 <!-- page script -->
 <script>
-    $(function () {
-    //   $("#example1").DataTable();
+    let table = "";
+    table = $(function () {
       $('#example2').DataTable({
         "paging": true,
         "lengthChange": false,
@@ -105,7 +105,17 @@
             "emptyTable":     "داده ای برای نمایش وجود ندارد",
             "info":           "نمایش _START_ تا _END_ از _TOTAL_ داده",
             "infoEmpty":      "نمایش 0 تا 0 از 0 داده",
-        }
+        },
+        "columnDefs": [   ////define column 1 and 3
+        {
+            "searchable": false,
+            "orderable": false,
+            "targets": [0,3]
+        },
+        { "type": "pstring", "targets": 2 }
+        ],
+
+        "order": [[1, 'asc']], /// sort columns 2
       });
 
       $(".btn-danger").click(function(e){
@@ -114,5 +124,5 @@
           }
       });
     });
-  </script>
+</script>
 @endsection

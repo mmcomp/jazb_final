@@ -931,6 +931,24 @@
                 "infoEmpty":      "نمایش 0 تا 0 از 0 داده",
                 "proccessing": "در حال بروزرسانی"
             },
+            "columnDefs": [   ////define column 1 and 10
+            {
+                "searchable": false,
+                "orderable": false,
+                "targets": 0
+            },
+            {
+                "searchable": false,
+                "orderable": false,
+                "targets": 10
+            },
+            {
+                "searchable": false,
+                "orderable": false,
+                "targets": 7
+            },
+            ],
+            "order": [[1, 'asc']], /// sort columns 2
             serverSide: true,
             processing: true,
             ajax: {
@@ -940,15 +958,6 @@
                 "contentType": 'application/json; charset=utf-8',
 
                 "data": function (data) {
-                    // console.log(data);
-                    // Grab form values containing user options
-                    // var form = {};
-                    // $.each($("form").serializeArray(), function (i, field) {
-                    //     form[field.name] = field.value || "";
-                    // });
-                    // Add options used by Datatables
-                    // var info = { "start": 0, "length": 10, "draw": 1 };
-                    // $.extend(form, info);
                     data['supporters_id'] = $("#supporters_id").val();
                     data['sources_id'] = $("#sources_id").val();
                     data['cities_id'] = $("#cities_id").val();
@@ -961,31 +970,44 @@
                     return JSON.stringify(data);
                 },
                 "complete": function(response) {
-                   // console.log(response);
                    $('#loading').css('display','none');
-                    if(students && isEmpty(students))
-                        students = JSON.parse(response.responseText).students;
+                    //if(students && isEmpty(students))
+                      //  students = JSON.parse(response.responseText).students;
                     $('#example2 tr').click(function() {
                         var tr = this;
                         var studentId = parseInt($(tr).find('td')[1].innerText, 10);
                         if(!isNaN(studentId)){
                             for(var index in students){
-                                // console.log('check', students[index].id, studentId);
                                 if(students[index].id==studentId){
-                                    // console.log(students[index]);
                                     showMorePanel(index, tr);
-                                    // break;
                                 }
                             }
                         }
-                        console.log(this, $(this).find('td')[1].innerText);
                     });
                 }
 
             },
-
-
+            columns: [
+                { data: null},
+                { data: 'id' },
+                { data: 'first_name' },
+                { data: 'last_name' },
+                { data: 'users_id' },
+                { data: 'sources_id'},
+                { data: 'tags'},
+                { data: 'temps'},
+                { data: 'supporters_id'},
+                { data: 'description'},
+                { data : 'end'}
+            ],
         });
+        table.on('draw.dt', function () {
+            var info = table.page.info();
+            table.column(0, { search: 'applied', order: 'applied', page: 'applied' }).nodes().each(function (cell, i) {
+                cell.innerHTML = i + 1 + info.start;
+            });
+        });
+
 
         $("#input").keyup(e => {
             console.log(e);

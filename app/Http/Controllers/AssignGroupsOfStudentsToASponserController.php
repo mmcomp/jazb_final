@@ -134,17 +134,15 @@ class assignGroupsOfStudentsToASponserController extends Controller
         $firstCollections = Collection::where('is_deleted', false)->where('parent_id', 0)->get();
         $secondCollections = Collection::where('is_deleted', false)->whereIn('parent_id', $firstCollections->pluck('id'))->get();
         $thirdCollections = Collection::where('is_deleted', false)->with('parent')->whereIn('parent_id', $secondCollections->pluck('id'))->get();
-        // $fourthCollections = Collection::where('is_deleted', false)->with('parent')->whereIn('parent_id', $thirdCollections->pluck('id'))->get();
         $hotTemperatures = Temperature::where('is_deleted', false)->where('status', 'hot')->get();
         $coldTemperatures = Temperature::where('is_deleted', false)->where('status', 'cold')->get();
         $cities = City::where('is_deleted', false)->get();
 
 
-
         if (request()->getMethod() == 'GET') {
             return view('assign_students.index', [
                 'route' => 'assign_students_index',
-                'students' => $students,
+                'students' => $students->get(),
                 'supports' => $supports,
                 'sources' => $sources,
                 'products' => $products,
@@ -176,7 +174,7 @@ class assignGroupsOfStudentsToASponserController extends Controller
                 'msg_error' => request()->session()->get('msg_error')
             ]);
         } else {
-            $allStudents = $students->orderBy('id', 'desc')->get();
+            $allStudents = $students->get();
             $destination_supporter = request()->input('destination_supporter');
             $arrOfCheckBoxes = request()->input('arrOfCheckBoxes');
             $req =  request()->all();
@@ -185,7 +183,17 @@ class assignGroupsOfStudentsToASponserController extends Controller
                 $req['length'] = 10;
                 $req['draw'] = 1;
             }
-            $students = $students
+            $columnIndex_arr = request()->get('order');
+            $columnName_arr = request()->get('columns');
+            $order_arr = request()->get('order');
+            $columnIndex = $columnIndex_arr[0]['column']; // Column index
+            $columnName = $columnName_arr[$columnIndex]['data']; // Column name
+            $columnSortOrder = $order_arr[0]['dir']; // asc or desc
+            if($columnName != 'row' && $columnName != 'end' && $columnName != "temps" && $columnName != "tags" && $columnName != "checkbox"){
+                $students = $students->orderBy($columnName,$columnSortOrder)
+                ->select('students.*')
+                ->skip($req['start'])
+                ->take($req['length'])
                 ->with('user')
                 ->with('studenttags.tag.parent_four')
                 ->with('studentcollections.collection.parent')
@@ -193,10 +201,34 @@ class assignGroupsOfStudentsToASponserController extends Controller
                 ->with('source')
                 ->with('consultant')
                 ->with('supporter')
-                ->orderBy('created_at', 'desc')
-                ->offset($req['start'])
-                ->limit($req['length'])
                 ->get();
+            }else if($columnName == "tags"){
+                $students = $students
+                ->withCount('studenttags')
+                ->skip($req['start'])
+                ->take($req['length'])
+                ->with('user')
+                ->with('studenttags.tag.parent_four')
+                ->with('studentcollections.collection.parent')
+                ->with('studenttemperatures.temperature')
+                ->with('source')
+                ->with('consultant')
+                ->with('supporter')
+                ->orderBy('studenttags_count',$columnSortOrder)
+                ->get();
+            }else{
+                $students = $students->select('students.*')
+                ->skip($req['start'])
+                ->take($req['length'])
+                ->with('user')
+                ->with('studenttags.tag.parent_four')
+                ->with('studentcollections.collection.parent')
+                ->with('studenttemperatures.temperature')
+                ->with('source')
+                ->with('consultant')
+                ->with('supporter')
+                ->get();
+            }
             foreach ($students as $index => $student) {
                 $students[$index]->pcreated_at = jdate(strtotime($student->created_at))->format("Y/m/d");
                 $ids[] = $student->id;
@@ -269,18 +301,6 @@ class assignGroupsOfStudentsToASponserController extends Controller
             foreach($names as $name){
                 $arrOfNames[] = $name->first_name.' '.$name->last_name;
             }
-            // if ($sw == 1) {
-            //     request()->session()->flash("msg_success", $message);
-            //     return redirect()->route('assign_students_index');
-            // } else if (!$sw) {
-            //     request()->session()->flash("msg_error", $message);
-            //     return redirect()->route('assign_students_index');
-            // }
-            // if (!isset($req['start'])) {
-            //     $req['start'] = 0;
-            //     $req['length'] = 10;
-            //     $req['draw'] = 1;
-            // }
             $data = [];
             foreach ($students as $index => $item) {
                 $tags = "";
@@ -319,18 +339,17 @@ class assignGroupsOfStudentsToASponserController extends Controller
                 $selectCheckBox = "<div class='form-check'>
                                      <input type='checkbox' class='form-check-input theCheckBoxes' id='ch_$item->id' value='$item->id' onchange='myFunc(this)'>
                                   </div>";
-                //foreach($students as $index => $item){
                 $data[] = [
-                    $selectCheckBox,
-                    $req['start'] + $index + 1,
-                    $item->id,
-                    $item->first_name,
-                    $item->last_name,
-                    $registerer,
-                    ($item->source) ? $item->source->name : '-',
-                    $tags,
-                    $temps,
-                    '<select id="supporters_id_' . $index . '" class="form-control select2">
+                    "checkbox" => $selectCheckBox,
+                    "row" => $index + 1,
+                    "id" => $item->id,
+                    "first_name" => $item->first_name,
+                    "last_name" => $item->last_name,
+                    "users_id" => $registerer,
+                    "sources_id" => ($item->source) ? $item->source->name : '-',
+                    "tags" => $tags,
+                    "temps" => $temps,
+                    "supporters_id"=>'<select id="supporters_id_' . $index . '" class="form-control select2">
                             <option>-</option>
                             ' . $supportersToSelect . '
                             </select>
@@ -339,24 +358,21 @@ class assignGroupsOfStudentsToASponserController extends Controller
                             </a>
                             <br/>
                             <img id="loading-' . $index . '" src="/dist/img/loading.gif" style="height: 20px;display: none;" />',
-                    $item->description,
-                    '<a class="btn btn-warning" href="#" onclick="$(\'#students_index2\').val(' . $index . ');preloadTemperatureModal();$(\'#temperature_modal\').modal(\'show\'); return false;">
+                    "description" => $item->description,
+                    "end" =>'<a class="btn btn-warning" href="#" onclick="$(\'#students_index2\').val(' . $index . ');preloadTemperatureModal();$(\'#temperature_modal\').modal(\'show\'); return false;">
                             داغ/سرد
                         </a>
                         <a class="btn btn-danger" href="' . route('student_class', ['id' => $item->id]) . '" >
                             تخصیص کلاس
                         </a>'
                 ];
-                //}
 
             }
-
             $result = [
                 "draw" => $req['draw'],
                 "data" => $data,
                 "recordsTotal" => count($allStudents),
                 "recordsFiltered" => count($allStudents),
-                "students" => $students,
                 "ids" => $ids,
                 "checkboxes" => $arrOfNames,
                 "sw" => $sw,

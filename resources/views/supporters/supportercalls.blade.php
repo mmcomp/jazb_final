@@ -93,7 +93,6 @@ $persons = [
                   </tr>
                   </thead>
                   <tbody>
-                     
                   </tbody>
                 </table>
               </div>
@@ -153,6 +152,8 @@ $persons = [
             "info":           "نمایش _START_ تا _END_ از _TOTAL_ داده",
             "infoEmpty":      "نمایش 0 تا 0 از 0 داده",
         },
+        columnDefs: [ { orderable: false, targets: [0,11] }],
+        "order": [[1, 'asc']], /// sort columns 1
         serverSide: true,
         processing: true,
         ajax: {
@@ -173,9 +174,21 @@ $persons = [
             },
             "complete": function(response) {
             }
-      }
-
-
+        },
+        columns: [
+            { data: 'row'},
+            { data: 'id' },
+            { data: 'students_id' },
+            { data: 'products_id' },
+            { data: 'notices_id' },
+            { data: 'replier' },
+            { data: 'call_results_id' },
+            { data: 'next_call' },
+            { data: 'next_to_call' },
+            { data: 'created_at' },
+            { data: 'description' },
+            { data: 'end' },
+        ],
     });
 });
 function handle(e){

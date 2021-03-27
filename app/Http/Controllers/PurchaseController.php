@@ -57,7 +57,6 @@ class PurchaseController extends Controller
     }
     public function indexPost(Request $request)
     {
-
         $type = null;
         $btn = '';
         $product_part_1 = null;
@@ -71,52 +70,50 @@ class PurchaseController extends Controller
             $req['length'] = 10;
             $req['draw'] = 1;
         }
-        $purchases = Purchase::where('is_deleted', false)
+        $purchases = Purchase::where('purchases.is_deleted', false)
             ->with('user')
             ->with('student')
-            ->with('product')
-            ->orderBy('created_at', 'desc');
+            ->with('product');
         //filter
-        if($request->input('theId') != null){
+        if ($request->input('theId') != null) {
             $theId = (int)$request->input('theId');
-            $purchases = $purchases->where('id',$theId);
+            $purchases = $purchases->where('id', $theId);
         }
-        if($request->input('place') != null){
+        if ($request->input('place') != null) {
             $place = $request->input("place");
-            switch($place){
+            switch ($place) {
                 case "site_successed":
-                    $purchases = $purchases->where('type','site_successed');
+                    $purchases = $purchases->where('purchases.type', 'site_successed');
                     break;
                 case "site_failed":
-                    $purchases = $purchases->where('type','site_failed');
+                    $purchases = $purchases->where('purchases.type', 'site_failed');
                     break;
                 case "manual":
-                    $purchases = $purchases->where('type','manual');
+                    $purchases = $purchases->where('purchases.type', 'manual');
                     break;
                 case "manual_failed":
                     $purchases = $purchases->where('type','manual_failed');
                     break;
             }
         }
-        if($request->input('name') != null){
+        if ($request->input('name') != null) {
             $name = $request->input('name');
-            $student_ids = Student::select('id','is_deleted','banned','archived',DB::raw("CONCAT(first_name,' ',last_name)"))
-                                ->where(DB::raw("CONCAT(first_name,' ',last_name)"),'like','%'.$name.'%')
-                                ->where('is_deleted',false)
-                                ->where('banned',false)
-                                ->where('archived',false)
-                                ->pluck('id');
-            $purchases = $purchases->whereIn('students_id',$student_ids);
-
+            $student_ids = Student::select('id', 'is_deleted', 'banned', 'archived', DB::raw("CONCAT(first_name,' ',last_name)"))
+                ->where(DB::raw("CONCAT(first_name,' ',last_name)"), 'like', '%' . $name . '%')
+                ->where('is_deleted', false)
+                ->where('banned', false)
+                ->where('archived', false)
+                ->pluck('id');
+            $purchases = $purchases->whereIn('purchases.students_id', $student_ids);
         }
-        if($request->input('phone') != null){
+        if ($request->input('phone') != null) {
             $phone = $request->input('phone');
-            $student_ids = Student::where('phone','like','%'.$phone.'%')
-            ->where('is_deleted',false)
-            ->where('banned',false)
-            ->where('archived',false)
-            ->pluck('id');
-            $purchases = $purchases->whereIn('students_id',$student_ids);
+            $student_ids = Student::where('phone', 'like', '%' . $phone . '%')
+                ->where('is_deleted', false)
+                ->where('banned', false)
+                ->where('archived', false)
+                ->pluck('id');
+            $purchases = $purchases->whereIn('purchases.students_id', $student_ids);
         }
         if($request->input('from_date') && $request->input('to_date') && $request->input('from_date') == $request->input('to_date')){
             $purchases = $purchases->where('created_at', '>=', date("Y-m-d 00:00:00"))->where('created_at','<=',date("Y-m-d 23:59:59"));
@@ -132,27 +129,49 @@ class PurchaseController extends Controller
         }
         if($request->input('products_id') != null){
             $products_id = (int)$request->input('products_id');
-            $purchases = $purchases->where('products_id',$products_id);
+            $purchases = $purchases->where('purchases.products_id', $products_id);
         }
-        if($request->input('factor_number') != null){
+        if ($request->input('factor_number') != null) {
             $factor_number = (int)$request->input('factor_number');
-            $purchases = $purchases->where('factor_number',$factor_number);
+            $purchases = $purchases->where('purchases.factor_number', $factor_number);
         }
-        if($request->input('price') != null){
+        if ($request->input('price') != null) {
             $price = (int)$request->input('price');
-            $purchases = $purchases->where('price',$price);
+            $purchases = $purchases->where('purchases.price', $price);
         }
-        if($request->input('description') != null){
+        if ($request->input('description') != null) {
             $description = $request->input('description');
-            $purchases = $purchases->where('description',$description);
+            $purchases = $purchases->where('purchases.description', $description);
         }
         //end filter
         $allPurchases = $purchases->get();
-        $purchases = $purchases
-            ->offset($req['start'])
-            ->limit($req['length'])
-            ->get();
+        $columnIndex_arr = $request->get('order');
+        $columnName_arr = $request->get('columns');
+        $order_arr = $request->get('order');
+        $columnIndex = $columnIndex_arr[0]['column']; // Column index
+        $columnName = $columnName_arr[$columnIndex]['data']; // Column name
+        $columnSortOrder = $order_arr[0]['dir']; // asc or desc
 
+        if ($columnName != 'row' && $columnName != "end" && $columnName != "saloon") {
+            $purchases = $purchases->orderBy($columnName, $columnSortOrder)
+                ->select('purchases.*')
+                ->skip($req['start'])
+                ->take($req['length'])
+                ->get();
+        } else if($columnName == "saloon"){
+            $purchases = $purchases
+            ->join('students','purchases.students_id','=','students.id')
+            ->orderBy('students.saloon', $columnSortOrder)
+            ->select('purchases.*','students.*')
+            ->skip($req['start'])
+            ->take($req['length'])
+            ->get();
+        } else {
+            $purchases = $purchases->select('purchases.*')
+                ->skip($req['start'])
+                ->take($req['length'])
+                ->get();
+        }
         $data = [];
         if ($purchases) {
             foreach ($purchases as $index => $item) {
@@ -177,17 +196,17 @@ class PurchaseController extends Controller
                 $product_part_5 =  $item->product ? $item->product->name : '-';
 
                 $data[] = [
-                    $req['start'] + $index + 1,
-                    $item->id,
-                    $type,
-                    $item->student ? $item->student->first_name . ' ' . $item->student->last_name . ' [' . $item->student->phone . ']' : '-',
-                    $item->factor_number,
-                    $product_part_1 . $product_part_2 . $product_part_3 . $product_part_4 . $product_part_5,
-                    number_format($item->price),
-                    $item->description,
-                    ($item->created_at) ? jdate($item->created_at)->format("Y/m/d") : '-',
-                    ($item->student && $item->student->saloon != null) ? $item->student->saloon : '-',
-                    $btn
+                    "row" => $req['start'] + $index + 1,
+                    "id" => $item->id,
+                    "type" => $type,
+                    "students_id" => $item->student ? $item->student->first_name . ' ' . $item->student->last_name . ' [' . $item->student->phone . ']' : '-',
+                    "factor_number" => $item->factor_number,
+                    "products_id" => $product_part_1 . $product_part_2 . $product_part_3 . $product_part_4 . $product_part_5,
+                    "price" => number_format($item->price),
+                    "description" => $item->description,
+                    "saloon" => ($item->student && $item->student->saloon != null) ? $item->student->saloon : '-',
+                    "created_at" => ($item->created_at) ? jdate($item->created_at)->format("Y/m/d") : jdate()->format("Y/m/d"),
+                    "end" => $btn
                 ];
             }
         }
@@ -278,7 +297,7 @@ class PurchaseController extends Controller
         }
 
         $student = Student::find($request->input('students_id'));
-        if($purchase->type == "manual"){
+        if ($purchase->type == "manual") {
             $purchase->students_id = $request->input('students_id');
             $purchase->supporters_id = $student->supporters_id;
             $purchase->users_id = Auth::user()->id;
@@ -290,7 +309,7 @@ class PurchaseController extends Controller
                 $purchase->type = $request->input('type');
             }
             $purchase->save();
-        }else if($purchase->type == "site_successed"){
+        } else if ($purchase->type == "site_successed") {
             $purchase->price = $request->input('price');
             $purchase->save();
         }
@@ -477,7 +496,7 @@ class PurchaseController extends Controller
 
             $product = Product::where('woo_id', $purchase['woo_id'])->with('classrooms')->first();
             $student = Student::where('phone', $purchase['phone'])->first();
-            if($product == null || $student == null){
+            if ($product == null || $student == null) {
 
                 $fails[] = $purchase;
                 Log::info("Fail 2 " . $purchase['factor_number'] . " " . $purchase['woo_id']);
@@ -522,7 +541,7 @@ class PurchaseController extends Controller
                 $student->today_purchases = $student->purchases()->where('created_at', '>=', date("Y-m-d 00:00:00"))->where('is_deleted', false)->where('type', '!=', 'site_failed')->where('type','!=','manual_failed')->count();
                 try {
                     $student->save();
-                }catch(Exception $e){
+                } catch (Exception $e) {
                     // dd($e);
                     // $fails[] = $student;
                 }
@@ -538,7 +557,7 @@ class PurchaseController extends Controller
                             $studentClassRoom->users_id = -1;
                             try {
                                 $studentClassRoom->save();
-                            }catch(Exception $e){
+                            } catch (Exception $e) {
                                 // dd('classroom '.$e);
                             }
                         }

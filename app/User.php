@@ -44,4 +44,19 @@ class User extends Authenticatable
     public function students(){
         return $this->hasMany('App\Student', 'supporters_id', 'id')->where('is_deleted', false)->where('banned', false)->where('archived', false);
     }
+    // function calls is used for users that are supporter not others
+    public function calls(){
+        return $this->hasMany('App\Call','users_id','id')->where('is_deleted',false);
+    }
+    public function callresult()
+    {
+        return $this->hasOneThrough(
+            'App\CallResult',
+            'App\Call',
+            'users_id',//Foreign key on calls table
+            'id',//Foreign key on callresults table
+            'id',//Local key on users table
+            'call_results_id'//local key on calls table
+            );
+    }
 }

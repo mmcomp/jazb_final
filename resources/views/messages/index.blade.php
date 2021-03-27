@@ -130,7 +130,16 @@ table tr {
             "emptyTable":     "داده ای برای نمایش وجود ندارد",
             "info":           "نمایش _START_ تا _END_ از _TOTAL_ داده",
             "infoEmpty":      "نمایش 0 تا 0 از 0 داده",
-        }
+        },
+        "columnDefs": [   ////define column 1 and 5
+        {
+            "searchable": false,
+            "orderable": false,
+            "targets": [0,4,5]
+        },
+        { "type": "pstring", "targets": [2,3] }
+        ],
+        "order": [[1, 'asc']], /// sort columns 2
       });
 
       $(".btn-danger").click(function(e){

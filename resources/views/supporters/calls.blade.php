@@ -261,7 +261,7 @@
             "paging": true,
             "lengthChange": false,
             "searching": false,
-            "ordering": true,
+            "ordering": "{{ $isSingle ? false : true }}",
             "info": true,
             "autoWidth": false,
             "language": {
@@ -273,6 +273,14 @@
                 "info":           "نمایش _START_ تا _END_ از _TOTAL_ داده",
                 "infoEmpty":      "نمایش 0 تا 0 از 0 داده",
             },
+            @if($isSingle)
+              columnDefs: [ { orderable: false, targets: [0,1,2,3,4,5,6,7,8,9,10] },],
+            @else
+              columnDefs: [ { orderable: false, targets: 0 }],
+            @endif
+            @if(!$isSingle)
+            "order": [[1, 'asc']], /// sort columns 1
+            @endif
             serverSide: true,
             processing: true,
             ajax: {
@@ -295,7 +303,27 @@
                     $('#loading').css('display','none');
                 }
 
-            }
+            },
+            @if($isSingle)
+            columns: [
+                { data: 'row'},
+                { data: 'call_count' },
+                @foreach($callResults as $item)
+                   { data: 'call_result' +  '{{ $item->id }}' },
+                @endforeach
+            ],
+            @else
+            columns: [
+                { data: 'row'},
+                { data: 'id' },
+                { data: 'first_name' },
+                { data: 'last_name' },
+                { data: 'call_count' },
+                @foreach($callResults as $item)
+                   { data: 'call_result' +  '{{ $item->id }}' },
+                @endforeach
+            ],
+            @endif
         });
 
 
