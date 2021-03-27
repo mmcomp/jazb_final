@@ -280,24 +280,26 @@ class SupporterController extends Controller
         }
         $notices = Notice::where('is_deleted', false)->get();
         $sources = Source::where('is_deleted', false)->get();
-        return view('supporters.calls', [
-            'supportersForSelectInView' => $supportersForSelectInView,
-            'products' => $products,
-            'notices' => $notices,
-            'sources' => $sources,
-            'from_date' => $from_date,
-            'to_date' => $to_date,
-            'products_id' => $products_id,
-            'notices_id' => $notices_id,
-            'supporters_id' => $supporters_id,
-            'replier_id' => $replier_id,
-            'sources_id' => $sources_id,
-            'callResults' => $callResults,
-            "isSingle" => ($theSupporters_id != null),
-            'persons' => $persons,
-            'msg_success' => request()->session()->get('msg_success'),
-            'msg_error' => request()->session()->get('msg_error')
-        ]);
+        if(request()->getMethod() == "GET"){
+            return view('supporters.calls', [
+                'supportersForSelectInView' => $supportersForSelectInView,
+                'products' => $products,
+                'notices' => $notices,
+                'sources' => $sources,
+                'from_date' => $from_date,
+                'to_date' => $to_date,
+                'products_id' => $products_id,
+                'notices_id' => $notices_id,
+                'supporters_id' => $supporters_id,
+                'replier_id' => $replier_id,
+                'sources_id' => $sources_id,
+                'callResults' => $callResults,
+                "isSingle" => ($theSupporters_id != null),
+                'persons' => $persons,
+                'msg_success' => request()->session()->get('msg_success'),
+                'msg_error' => request()->session()->get('msg_error')
+            ]);
+        }
     }
     public function withCountCallResultForUser($req,$supporters_builder,$columnSortOrder,$call_results_id){
         $supporters = $supporters_builder
