@@ -5,7 +5,7 @@ use Exception;
 use Illuminate\Support\Facades\Auth;
 
 trait ChangeSupporterTrait {
-    public function returnStu($id)
+    public function getStudent($id)
     {
         return Student::where('archived', false)->where('banned', false)->where('is_deleted', false)->where('id', $id)->first();
     }

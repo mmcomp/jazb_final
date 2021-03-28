@@ -5,6 +5,7 @@ namespace App\Observers;
 use App\Student;
 use App\SupporterHistory;
 use Exception;
+use Log;
 
 class StudentObserver
 {
@@ -24,7 +25,7 @@ class StudentObserver
             try {
                 $supporterHistory->save();
             } catch (Exception $e) {
-                dd($e);
+                Log::info("Fail in Student Observer" . $e);
             }
         }
 
