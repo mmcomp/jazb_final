@@ -37,6 +37,7 @@ use App\Exports\StudentsExport;
 use Illuminate\Support\Facades\Gate;
 use App\MergeStudents as AppMergeStudents;
 use App\Purchase;
+use App\SupporterHistory;
 use Illuminate\Support\Facades\Route;
 use Exception;
 use Log;
@@ -1554,9 +1555,9 @@ class StudentController extends Controller
         $secondAuxilaryStudent = AppMergeStudents::where('second_auxilary_students_id',$students_id)->where('is_deleted',false)->first();
         $thirdAuxilaryStudent = AppMergeStudents::where('third_auxilary_students_id',$students_id)->where('is_deleted',false)->first();
         if ($mergeStudent != null) {
-            $auxilaryStu = $this->returnStu($mergeStudent->auxilary_students_id);
-            $secondAuxilaryStu = $this->returnStu($mergeStudent->second_auxilary_students_id);
-            $thirdAuxilaryStu = $this->returnStu($mergeStudent->third_auxilary_students_id);
+            $auxilaryStu = $this->getStudent($mergeStudent->auxilary_students_id);
+            $secondAuxilaryStu = $this->getStudent($mergeStudent->second_auxilary_students_id);
+            $thirdAuxilaryStu = $this->getStudent($mergeStudent->third_auxilary_students_id);
             $mergeStudent = Student::where('id', $mergeStudent->main_students_id)->first();
             $this->giveStudentThatItsSupporterChanged($mergeStudent, $supporters_id);
             $this->giveStudentThatItsSupporterChanged($auxilaryStu, $supporters_id);
@@ -1822,4 +1823,5 @@ class StudentController extends Controller
     {
         return view('students.merge');
     }
+   
 }
