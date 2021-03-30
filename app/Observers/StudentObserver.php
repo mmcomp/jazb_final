@@ -17,13 +17,13 @@ class StudentObserver
      */
     public function created(Student $student)
     {
-        if($student->supporters_id){
+        if ($student->supporters_id) {
             $supporterHistory = new SupporterHistory;
             $supporterHistory->users_id = $student->users_id;
             $supporterHistory->supporters_id = $student->supporters_id;
             $supporterHistory->students_id = $student->id;
             try {
-                    $supporterHistory->save();
+                $supporterHistory->save();
             } catch (Exception $e) {
                 Log::info("Fail in Student Observer Created " . $e);
             }
@@ -37,8 +37,8 @@ class StudentObserver
      */
     public function updated(Student $student)
     {
-        if($student->supporters_id){
-            if ($student->isDirty('supporters_id')) {
+        if ($student->isDirty('supporters_id')) {
+            if ($student->supporters_id) {
                 $supporterHistory = new SupporterHistory;
                 $supporterHistory->users_id = $student->users_id;
                 $supporterHistory->supporters_id = $student->supporters_id;
@@ -50,6 +50,5 @@ class StudentObserver
                 }
             }
         }
-
     }
 }
