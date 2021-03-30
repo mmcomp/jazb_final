@@ -2,9 +2,10 @@
 namespace App\Http\Traits;
 use App\Student;
 use Exception;
+use Illuminate\Support\Facades\Auth;
 
 trait ChangeSupporterTrait {
-    public function returnStu($id)
+    public function getStudent($id)
     {
         return Student::where('archived', false)->where('banned', false)->where('is_deleted', false)->where('id', $id)->first();
     }
@@ -12,6 +13,7 @@ trait ChangeSupporterTrait {
     {
         if($student != null){
             $student->supporters_id = $supporters_id;
+            $student->users_id = Auth::user()->id;
             $student->supporter_seen = false;
             $student->supporter_start_date = date("Y-m-d H:i:s");
             $student->other_purchases += $student->own_purchases;
