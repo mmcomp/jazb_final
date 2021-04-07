@@ -49,14 +49,14 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col">
+                    {{-- <div class="col">
                         <div class="form-group">
                             <label for="description">توضیحات</label>
                             <input type="text" class="form-control" id="description" name="description" placeholder="توضیحات" value="{{ $purchase->description }}" />
                         </div>
 
 
-                    </div>
+                    </div> --}}
                 </div>
                 <div class="row">
 
@@ -87,6 +87,15 @@
                             <input type="number" class="form-control" id="price" name="price" placeholder="مبلغ"  value="{{ $purchase->price }}" />
                         </div>
                     </div>
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="description">توضیحات</label>
+                            <input type="text" class="form-control" id="description" name="description" placeholder="توضیحات" value="{{ $purchase->description }}" />
+                        </div>
+
+
+                    </div>
+                    
                     @if(!Gate::allows('supervisor') && Gate::allows('parameters') && $purchase->type != "site_successed")
                     <div class="col">
                         <div class="form-group">

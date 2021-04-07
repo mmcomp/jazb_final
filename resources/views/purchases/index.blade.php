@@ -129,14 +129,6 @@
                             <img id="loading" src="/dist/img/loading.gif" style="height: 20px;display: none;" />
                         </div>
                      </div>
-                     {{--  <div class="row">
-                        <div class="col">
-                            <a class="btn btn-success" onclick="theSearch()" href="#">
-                                جستجو
-                            </a>
-                            <img id="loading" src="/dist/img/loading.gif" style="height: 20px;display: none;" />
-                        </div>
-                     </div>  --}}
                  </form>
                 <table id="example2" class="table table-bordered table-hover mt-2">
                   <thead>
@@ -151,7 +143,6 @@
                     <th>توضیحات</th>
                     <th>سالن</th>
                     <th>تاریخ</th>
-                    <th>سالن</th>
                     <th>#</th>
                   </tr>
                   </thead>
