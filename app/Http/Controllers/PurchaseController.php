@@ -311,6 +311,7 @@ class PurchaseController extends Controller
             $purchase->save();
         } else if ($purchase->type == "site_successed") {
             $purchase->price = $request->input('price');
+            $purchase->description = $request->input('description');
             $purchase->save();
         }
 
