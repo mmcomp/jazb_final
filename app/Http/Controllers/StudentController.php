@@ -1293,12 +1293,9 @@ class StudentController extends Controller
             $csvPath = $request->file('attachment')->getPathname();
             $sources_id = $request->input('sources_id');
             if ($request->file('attachment')->extension() == 'xlsx') {
-                // Log::info("SID:" . json_encode($sources_id));
                 $importer = new StudentsImport;
                 $importer->source_id = $sources_id;
-                // Log::info("S:" . json_encode($importer));
                 $res = $importer->import($csvPath, null, \Maatwebsite\Excel\Excel::XLSX);
-                // Log::info("read fails:" . json_encode($res));
                 $fails = $importer->getFails();
                 return view('students.csv', [
                     'msg_success' => $msg,
@@ -1350,7 +1347,6 @@ class StudentController extends Controller
                         $student->save();
                     } catch (Exception $e) {
                         $fails[] = $line[0];
-                        dump($e->getMessage());
                     }
                 }
             }
