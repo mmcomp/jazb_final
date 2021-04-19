@@ -36,13 +36,13 @@
                 @if ($msg_success!=null && count($fails)>0)
                 <div class="text-center">
                     <h3>
-                        شماره های ثبت نشده
+                       {{ count($fails) }} شماره به علت تکراری بودن ثبت نشده است.
                     </h3>
-                    @foreach ($fails as $item)
+                    {{-- @foreach ($fails as $item)
                     <div>
                         {{ $item }}
                     </div>
-                    @endforeach
+                    @endforeach --}}
                 </div>
                 @endif
                 <form method="POST" enctype="multipart/form-data">
