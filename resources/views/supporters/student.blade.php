@@ -1412,7 +1412,8 @@ null => ""
                     return false;
                     @else
                     $('#successfullCall').css('display', 'block');
-                    $('#successfullCall').text('با موفقیت ثبت شد و پس از بارگزاری مجدد قابل مشاهده خواهد بود.');
+                    $('#successfullCall').text('با موفقیت ثبت شد.');
+                    theSearch();
                     @endif
                 }
             }).fail(function() {
