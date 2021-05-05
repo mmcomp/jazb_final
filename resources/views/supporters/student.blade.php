@@ -107,7 +107,7 @@ null => ""
                             <div class="col">
                                 <div class="form-group">
                                     <label for="name">نام و نام خانوادگی</label>
-                                    <input type="text" class="form-control" id="name" name="name" placeholder="نام و نام خانوادگی" value="{{ isset($name)?$name:'' }}"/>
+                                    <input type="text" class="form-control" id="name" name="name" placeholder="نام و نام خانوادگی" value="{{ isset($name)?$name:'' }}" />
                                 </div>
                             </div>
                             <div class="col">
@@ -284,7 +284,7 @@ null => ""
                             </tr>
                         </thead>
                         <tbody>
-                            
+
                         </tbody>
                     </table>
                 </div>
@@ -503,7 +503,7 @@ null => ""
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">ثبت تماس</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="modal" >
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="modal">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -514,8 +514,7 @@ null => ""
                         <label for="call_results_id">نتیجه</label>
                         <select class="form-control" id="call_results_id" name="call_results_id">
                             @foreach ($callResults as $item)
-                            <option value="{{ $item->id }}" data-nocall="{{ $item->no_call }}" data-noanswer="{{ $item->no_answer }}"
-                                {{ $call_results_id == $item->id ? 'selected' : '' }}>
+                            <option value="{{ $item->id }}" data-nocall="{{ $item->no_call }}" data-noanswer="{{ $item->no_answer }}" {{ $call_results_id == $item->id ? 'selected' : '' }}>
                                 {{ $item->title }}</option>
                             @endforeach
                         </select>
@@ -526,7 +525,7 @@ null => ""
                             <option value="student" {{ $replier == "student" ? 'selected' : '' }}>دانش آموز</option>
                             <option value="father" {{ $replier == "father" ? 'selected' : '' }}>پدر</option>
                             <option value="mother" {{ $replier == "mother" ? 'selected' : '' }}>مادر</option>
-                            <option value="other"{{ $replier == "other" ? 'selected' : '' }}>غیره</option>
+                            <option value="other" {{ $replier == "other" ? 'selected' : '' }}>غیره</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -534,7 +533,7 @@ null => ""
                         <select class="form-control select2" id="products_id" name="products_id[]" style="width: 100% !important;" multiple>
                             <option value=""></option>
                             @foreach ($products as $item)
-                            <option value="{{ $item->id }}"  {{ $products_id == $item->id ? 'selected' : '' }}>
+                            <option value="{{ $item->id }}" {{ $products_id == $item->id ? 'selected' : '' }}>
                                 {{($item->parents!='-')?$item->parents . '->':''}} {{ $item->name }}
                             </option>
                             @endforeach
@@ -753,7 +752,6 @@ null => ""
         var auxilaryMerge = students[index].mergeauxilarystudent;
         var secondAuxilaryMerge = students[index].mergesecondauxilarystudent;
         var thirdAuxilaryMerge = students[index].mergethirdauxilarystudent;
-
         var x = mergeStudents(merge, stu_id);
         var y = mergeStudents(auxilaryMerge, stu_id);
         var z = mergeStudents(secondAuxilaryMerge, stu_id);
@@ -894,6 +892,7 @@ null => ""
             row.child(test).show();
         }
     }
+    
     let theMain = null;
     let theAuxilary = null;
     let theSecondAuxilary = null;
@@ -935,21 +934,22 @@ null => ""
     }
 
 
-    function changeSupporter(studentsIndex,id){
-        if(students[studentsIndex]){
+    function changeSupporter(studentsIndex, id) {
+        if (students[studentsIndex]) {
             var students_id = id;
             var supporters_id = $("#supporters_id_" + studentsIndex).val();
             $("#loading-" + studentsIndex).show();
             $.post('{{ route('student_supporter') }}', {
-                students_id,
-                supporters_id
-            }, function(result){
-                $("#loading-" + studentsIndex).hide();
-                if(result && result.error != null){
-                    alert(result.error);
+                    students_id
+                    , supporters_id
                 }
-                table.ajax.reload();
-            }).fail(function(){
+                , function(result) {
+                    $("#loading-" + studentsIndex).hide();
+                    if (result && result.error != null) {
+                        alert(result.error);
+                    }
+                    table.ajax.reload();
+                }).fail(function() {
                 $("#loading-" + studentsIndex).hide();
                 alert('خطای بروز رسانی');
                 table.ajax.reload();
@@ -957,35 +957,36 @@ null => ""
         }
         return false;
     }
-    function theFilterTags(sw){
-        if(!sw){
-            filterTagsByParent("input.tag-checkbox","span.tag-title","br.tag-br","#tag-title-","#tag-br-");
-        }else{
-            filterTagsByParent("input.filter-tag-checkbox","span.tag1-title","br.tag1-br","#tag1-title-","#tag1-br-");
+
+    function theFilterTags(sw) {
+        if (!sw) {
+            filterTagsByParent("input.tag-checkbox", "span.tag-title", "br.tag-br", "#tag-title-", "#tag-br-");
+        } else {
+            filterTagsByParent("input.filter-tag-checkbox", "span.tag1-title", "br.tag1-br", "#tag1-title-", "#tag1-br-");
         }
     }
 
-    function selectParentOne(dobj,sw) {
+    function selectParentOne(dobj, sw) {
         filterParents.parent1 = ($(dobj).val() != '') ? parseInt($(dobj).val(), 10) : '';
         theFilterTags(sw);
     }
 
-    function selectParentTwo(dobj,sw) {
+    function selectParentTwo(dobj, sw) {
         filterParents.parent2 = ($(dobj).val() != '') ? parseInt($(dobj).val(), 10) : '';
         theFilterTags(sw);
     }
 
-    function selectParentThree(dobj,sw) {
+    function selectParentThree(dobj, sw) {
         filterParents.parent3 = ($(dobj).val() != '') ? parseInt($(dobj).val(), 10) : '';
         theFilterTags(sw);
     }
 
-    function selectParentFour(dobj,sw) {
+    function selectParentFour(dobj, sw) {
         filterParents.parent4 = ($(dobj).val() != '') ? parseInt($(dobj).val(), 10) : '';
         theFilterTags(sw);
     }
 
-    function filterTagsByParent(theCheckbox,title,br,title_id,br_id) {
+    function filterTagsByParent(theCheckbox, title, br, title_id, br_id) {
         $(theCheckbox).show();
         $(title).show();
         $(br).show();
@@ -1349,6 +1350,7 @@ null => ""
             }
         }
     }
+
     function GoBackWithRefresh(event) {
         if ('referrer' in document) {
             window.location = document.referrer;
@@ -1359,9 +1361,10 @@ null => ""
         }
     }
 
-    $('#modal').on('click', function(){
+    $('#modal').on('click', function() {
         $('#successfullCall').css('display', 'none');
     });
+
     function saveCall() {
         const canSaveWithNoAlert = ($("#call_results_id option:selected").data('nocall') /* + $("#call_results_id option:selected").data('noanswer')*/ ) > 0;
         if (!$("#next_call").val() && !canSaveWithNoAlert) {
@@ -1409,7 +1412,7 @@ null => ""
                     return false;
                     @else
                     $('#successfullCall').css('display', 'block');
-                    $('#successfullCall').text('با موفقیت ثبت شد.');
+                    $('#successfullCall').text('با موفقیت ثبت شد و پس از بارگزاری مجدد قابل مشاهده خواهد بود.');
                     @endif
                 }
             }).fail(function() {
@@ -1499,7 +1502,7 @@ null => ""
     }
 
     function selectProduct() {
-        $('#loading').css('display','inline');
+        $('#loading').css('display', 'inline');
         emptySomeData();
         $("#has_the_product").val($("#has_product").val().join(','));
         table.ajax.reload();
@@ -1510,14 +1513,14 @@ null => ""
     }
 
     function selectCallResult() {
-        $('#loading').css('display','inline');
+        $('#loading').css('display', 'inline');
         emptySomeData();
         $("#has_call_result").val($("#has_cal_result").val());
         table.ajax.reload();
     }
 
     function selectMajors() {
-        $('#loading').css('display','inline');
+        $('#loading').css('display', 'inline');
         emptySomeData();
         $('#major').val($('#major').val());
         table.ajax.reload();
@@ -1525,21 +1528,21 @@ null => ""
 
 
     function selectSources() {
-        $('#loading').css('display','inline');
+        $('#loading').css('display', 'inline');
         emptySomeData();
         $('#sources_id').val($('#sources_id').val());
         table.ajax.reload();
     }
 
     function selectEducationLevels() {
-        $('#loading').css('display','inline');
+        $('#loading').css('display', 'inline');
         emptySomeData();
         $('#eduction_level').val($('#education_level').val());
         table.ajax.reload();
     }
 
     function theSearch() {
-        $('#loading').css('display','inline');
+        $('#loading').css('display', 'inline');
         emptySomeData();
         table.ajax.reload();
         return false;
@@ -1550,7 +1553,7 @@ null => ""
         $('input').keypress(function(event) {
             var keycode = (event.keyCode ? event.keyCode : event.which);
             if (keycode == '13') {
-                $('#loading').css('display','inline');
+                $('#loading').css('display', 'inline');
                 emptySomeData();
                 table.ajax.reload();
             }
@@ -1573,40 +1576,42 @@ null => ""
         });
         $('select.select2').select2();
         table = $("#example2").DataTable({
-            "paging": true,
-            "lengthChange": false,
-            "searching": false,
-            "ordering": true,
-            "info": true,
-            "autoWidth": false,
-            "language": {
+            "paging": true
+            , "lengthChange": false
+            , "searching": false
+            , "ordering": true
+            , "info": true
+            , "autoWidth": false
+            , "language": {
                 "paginate": {
-                    "previous": "قبل",
-                    "next": "بعد"
-                },
-                "emptyTable":     "داده ای برای نمایش وجود ندارد",
-                "info":           "نمایش _START_ تا _END_ از _TOTAL_ داده",
-                "infoEmpty":      "نمایش 0 تا 0 از 0 داده",
-                "proccessing": "در حال بروزرسانی"
-            },
-            "columnDefs": [   ////define columns
-                    {
-                        "searchable": false,
-                        "orderable": false,
-                        "targets": 0
-                    },
-                    {
-                        "searchable": false,
-                        "orderable": false,
-                        "targets": 7
-                    },
-                    {
-                        "searchable": false,
-                        "orderable": false,
-                        "targets": 8
-                    },
-            ],
-            "order": [[1, 'asc']] /// sort columns 2
+                    "previous": "قبل"
+                    , "next": "بعد"
+                }
+                , "emptyTable": "داده ای برای نمایش وجود ندارد"
+                , "info": "نمایش _START_ تا _END_ از _TOTAL_ داده"
+                , "infoEmpty": "نمایش 0 تا 0 از 0 داده"
+                , "proccessing": "در حال بروزرسانی"
+            }
+            , "columnDefs": [ ////define columns
+                {
+                    "searchable": false
+                    , "orderable": false
+                    , "targets": 0
+                }
+                , {
+                    "searchable": false
+                    , "orderable": false
+                    , "targets": 7
+                }
+                , {
+                    "searchable": false
+                    , "orderable": false
+                    , "targets": 8
+                }
+            , ]
+            , "order": [
+                    [1, 'asc']
+                ] /// sort columns 2
             , serverSide: true
             , processing: true
             , ajax: {
@@ -1637,54 +1642,76 @@ null => ""
                     return JSON.stringify(data);
                 }
                 , "complete": function(response) {
-                    $('#loading').css('display','none');
+                    $('#loading').css('display', 'none');
                     $('#example2_paginate').removeClass('dataTables_paginate');
+                    students = JSON.parse(response.responseText).students;
                     $('#example2 tr').click(function() {
                         var tr = this;
-                        if(!$(this).hasClass('table_header')){
+                        if (!$(this).hasClass('table_header')) {
+                            var studentId = parseInt($(tr).find('td')[1].innerText, 10);
+                            if (!isNaN(studentId)) {
+                                for (var index in students) {
+                                    if (students[index].id == studentId) {
+                                        showMorePanel(index, tr);
+                                    }
+                                }
+                            }
+                        }
+                    });
+                    @if(isset($students_id) && $students_id != null)
+                    var tr = $('#example2 tr')[1];
+                    if (!$(this).hasClass('table_header')) {
+
                         var studentId = parseInt($(tr).find('td')[1].innerText, 10);
                         if (!isNaN(studentId)) {
                             for (var index in students) {
                                 if (students[index].id == studentId) {
                                     showMorePanel(index, tr);
+                                    $('#call_modal').modal('show');
                                 }
                             }
                         }
-                        }
-                    });
-                    @if(isset($students_id) && $students_id != null)
-                    var tr = $('#example2 tr')[1];
-                    if(!$(this).hasClass('table_header')){
-
-                    var studentId = parseInt($(tr).find('td')[1].innerText, 10);
-                    if (!isNaN(studentId)) {
-                        for (var index in students) {
-                            if (students[index].id == studentId) {
-                                showMorePanel(index, tr);
-                                $('#call_modal').modal('show');
-                            }
-                        }
-                    }
                     }
                     @endif
                 }
 
-            },
-            columns: [
-                { data: null},
-                { data: 'id' },
-                { data: 'first_name' },
-                { data: 'last_name' },
-                { data: 'users_id' },
-                { data: 'sources_id'},
-                { data: 'tags'},
-                { data: 'temps'},
-                { data : 'end'}
-            ],
-        });
-        table.on('draw.dt', function () {
+            }
+            , columns: [{
+                    data: null
+                }
+                , {
+                    data: 'id'
+                }
+                , {
+                    data: 'first_name'
+                }
+                , {
+                    data: 'last_name'
+                }
+                , {
+                    data: 'users_id'
+                }
+                , {
+                    data: 'sources_id'
+                }
+                , {
+                    data: 'tags'
+                }
+                , {
+                    data: 'temps'
+                }
+                , {
+                    data: 'end'
+                }
+            ]
+        , });
+        table.on('draw.dt', function() {
             var info = table.page.info();
-            table.column(0, { search: 'applied', order: 'applied', page: 'applied' }).nodes().each(function (cell, i) {
+            table.column(0, {
+                search: 'applied'
+                , order: 'applied'
+                , page: 'applied'
+            }).nodes().each(function(cell, i) {
                 cell.innerHTML = i + 1 + info.start;
             });
         });
