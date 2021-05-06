@@ -168,10 +168,24 @@
 <script src="../../plugins/datatables-bs4/js/dataTables.bootstrap4.js"></script>
 <!-- page script -->
 <script>
+    if(sessionStorage.getItem('place') != null) {
+        $('#place').val(sessionStorage.getItem('place'));
+    }
+    if(sessionStorage.getItem('from_date') != null ){
+        $('#from_date').val(sessionStorage.getItem('from_date'));
+    }
+    // if($('#from_date').val() != null){
+    //     $('#from_date').val(sessionStorage.getItem('from_date'));
+    // }
     $('select.select2').select2();
     let table = "";
+    let lastPage = 1;
+    let isSearchCall= false;
     function theSearch(){
         $('#loading').css('display','inline');
+        lastPage = table.page();
+        isSearchCall = true;
+        //sessionStorage.setItem("place",);
         table.ajax.reload();
         return false;
     }
@@ -239,7 +253,20 @@
                 return JSON.stringify(data);
             },
             "complete": function(response) {
+                //$('#place').val(JSON.parse(response.responseText).request.place);
+                if(JSON.parse(response.responseText).request){
+                    sessionStorage.setItem('place',JSON.parse(response.responseText).request.place);
+                    // if(JSON.parse(response.responseText).request != null && JSON.parse(response.responseText).request.from_date != null){
+                    sessionStorage.setItem('from_date',JSON.parse(response.responseText).request.from_date);
+                }
+               
+
+                // }
                 $('#loading').css('display','none');
+                if(isSearchCall) {
+                    table.page(lastPage).draw( 'page' );
+                    isSearchCall = false;
+                }
             }
 
         },

@@ -213,6 +213,7 @@ class PurchaseController extends Controller
         $result = [
             "draw" => $req['draw'],
             "data" => $data,
+            "request" => $request->all(),
             "recordsTotal" => count($allPurchases),
             "recordsFiltered" => count($allPurchases),
         ];
