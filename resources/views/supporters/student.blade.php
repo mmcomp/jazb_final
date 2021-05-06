@@ -629,6 +629,8 @@ null => ""
 </script>
 <!-- page script -->
 <script>
+    let lastPage = 1;
+    let isSearchCall= false;
     let students = @JSON($students);
     let parentOnes = @JSON($parentOnes);
     let parentTwos = @JSON($parentTwos);
@@ -1412,8 +1414,8 @@ null => ""
                     return false;
                     @else
                     $('#successfullCall').css('display', 'block');
-                    $('#successfullCall').text('با موفقیت ثبت شد و بعد از بارگزاری مجدد مشاهده خواهد شد.');
-                    //theSearch();
+                    $('#successfullCall').text('با موفقیت ثبت شد.');
+                    theSearch();
                     @endif
                 }
             }).fail(function() {
@@ -1545,6 +1547,8 @@ null => ""
     function theSearch() {
         $('#loading').css('display', 'inline');
         emptySomeData();
+        lastPage = table.page();
+        isSearchCall = true;
         table.ajax.reload();
         return false;
     }
@@ -1640,12 +1644,17 @@ null => ""
                     data['education_level'] = $("#education_level").val();
                     data['major'] = $('#major').val();
                     data['conditions'] = $('#conditions').val();
+                    data['current_page'] = lastPage;
                     return JSON.stringify(data);
                 }
                 , "complete": function(response) {
                     $('#loading').css('display', 'none');
                     $('#example2_paginate').removeClass('dataTables_paginate');
                     students = JSON.parse(response.responseText).students;
+                    if(isSearchCall) {
+                        table.page(lastPage).draw( 'page' );
+                        isSearchCall = false;
+                    }
                     $('#example2 tr').click(function() {
                         var tr = this;
                         if (!$(this).hasClass('table_header')) {
@@ -1716,6 +1725,7 @@ null => ""
                 cell.innerHTML = i + 1 + info.start;
             });
         });
+        const theTable = table;
     });
 
 </script>
