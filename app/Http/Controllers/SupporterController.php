@@ -1151,6 +1151,9 @@ class SupporterController extends Controller
                     ->get();
             }
             $data = [];
+            foreach ($students as $index => $student) {
+                $students[$index]->pcreated_at = jdate(strtotime($student->created_at))->format("Y/m/d");
+            }
             foreach ($students as $index => $item) {
                 $tags = "";
                 if (($item->studenttags && count($item->studenttags) > 0) || ($item->studentcollections && count($item->studentcollections) > 0)) {
@@ -1193,6 +1196,7 @@ class SupporterController extends Controller
             $result = [
                 "draw" => $req['draw'],
                 "data" => $data,
+                "students" => $students,
                 "recordsTotal" => count($getStudents),
                 "recordsFiltered" => count($getStudents)
             ];

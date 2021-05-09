@@ -46,9 +46,11 @@ class PurchaseController extends Controller
         $from_date = null;
         $to_date = null;
         $products = Product::where('is_deleted',false)->get();
+        $students = Student::where('is_deleted', false)->where('banned', false)->get();
         return view('purchases.index', [
             'types' => $types,
             'products' => $products,
+            'students' => $students,
             'from_date' => $from_date,
             'to_date' => $to_date,
             'msg_success' => request()->session()->get('msg_success'),
@@ -175,13 +177,14 @@ class PurchaseController extends Controller
         $data = [];
         if ($purchases) {
             foreach ($purchases as $index => $item) {
+                $id = $item->id;
                 if ($item->type == 'manual') {
                     $type = "حضوری";
-                    $btn =  '<a class="btn btn-primary" href="' . route('purchase_edit', $item->id) . '">ویرایش</a>
-                    <a class="btn btn-danger" href="' . route('purchase_delete', $item->id) . '" onclick="destroy(event)">حذف</a>';
+                    $btn =  '<div class="d-flex justify-content-between"><a class="btn btn-primary btn-sm mr-1" href="#" onclick="openManualModal('.$id.')">ویرایش</a>
+                    <a class="btn btn-danger btn-sm" href="' . route('purchase_delete', $id) . '" onclick="destroy(event)">حذف</a></div>';
                 } else if ($item->type == "site_successed") {
                     $type = "سایت";
-                    $btn =  '<a class="btn btn-primary" href="' . route('purchase_edit', $item->id) . '">ویرایش</a>';
+                   $btn =  "<a class='btn btn-primary' href='#' onclick='openSiteModal(".$id.")'>ویرایش</a>";
                 } else if ($item->type == "site_failed") {
                     $type = "انصرافی";
                     $btn = '';
@@ -197,7 +200,7 @@ class PurchaseController extends Controller
 
                 $data[] = [
                     "row" => $req['start'] + $index + 1,
-                    "id" => $item->id,
+                    "id" => $id,
                     "type" => $type,
                     "students_id" => $item->student ? $item->student->first_name . ' ' . $item->student->last_name . ' [' . $item->student->phone . ']' : '-',
                     "factor_number" => $item->factor_number,
@@ -213,6 +216,7 @@ class PurchaseController extends Controller
         $result = [
             "draw" => $req['draw'],
             "data" => $data,
+            "request" => $request->all(),
             "recordsTotal" => count($allPurchases),
             "recordsFiltered" => count($allPurchases),
         ];
@@ -276,45 +280,71 @@ class PurchaseController extends Controller
         return redirect()->route('purchases');
     }
 
-    public function edit(Request $request, $id)
+    public function openSiteEditModal(Request $request)
     {
-        $types = ["manual" => "حضوری","manual_failed" => "کنسل"];
-        $purchase = Purchase::where('id', $id)->where('is_deleted', false)->first();
-        if ($purchase == null) {
-            $request->session()->flash("msg_error", "پرداخت پیدا نشد!");
-            return redirect()->route('purchases');
-        }
 
+        $types = ["manual" => "حضوری","manual_failed" => "کنسل"];
+        $purchase = Purchase::where('id', $request->input('id'))->where('is_deleted', false)->first();
         $students = Student::where('is_deleted', false)->where('banned', false)->get();
         $products = Product::where('is_deleted', false)->get();
-        if ($request->getMethod() == 'GET') {
-            return view('purchases.edit', [
-                'purchase' => $purchase,
-                'students' => $students,
-                'products' => $products,
-                'types' => $types
-            ]);
-        }
+        $result = [
+            "price" => $purchase->price,
+            "description" => $purchase->description
+        ];
 
+        return $result;
+    }
+    public function applySiteEditModal(Request $request)
+    {
+
+        $purchase = Purchase::where('id', $request->input('id'))->where('is_deleted', false)->first();
+        $purchase->price = $request->input('price');
+        $purchase->description = $request->input('description');
+        $purchase->save();
+        $result = [
+            "data" => null,
+            "error" => null
+        ];
+        return $result;
+    }
+    public function openManualEditModal(Request $request)
+    {
+      
+        $types = ["manual" => "حضوری","manual_failed" => "کنسل"];
+        $purchase = Purchase::where('id', $request->input('id'))->where('is_deleted', false)->first();
+        $students = Student::where('is_deleted', false)->where('banned', false)->get();
+        $products = Product::where('is_deleted', false)->get();
+        $result = [
+            "factor_number" => $purchase->factor_number,
+            "students_id" => $purchase->students_id,
+            "products_id" => $purchase->products_id,
+            "description" => $purchase->description,
+            "price" => $purchase->price,
+            "types" => $types,
+            "type" => $purchase->type
+        ];
+
+        return $result;
+    }
+    public function applyManualEditModal(Request $request)
+    {
+
+        $types = ["manual" => "حضوری","manual_failed" => "کنسل"];
+        $purchase = Purchase::where('id', $request->input('id'))->where('is_deleted', false)->first();
+        $students = Student::where('is_deleted', false)->where('banned', false)->get();
+        $products = Product::where('is_deleted', false)->get();
         $student = Student::find($request->input('students_id'));
-        if ($purchase->type == "manual") {
-            $purchase->students_id = $request->input('students_id');
-            $purchase->supporters_id = $student->supporters_id;
-            $purchase->users_id = Auth::user()->id;
-            $purchase->products_id = $request->input('products_id');
-            $purchase->description = $request->input('description');
-            $purchase->price = $request->input('price');
-            $purchase->factor_number = $request->input('factor_number');
-            if(!Gate::allows('supervisor') && Gate::allows('parameters')){
-                $purchase->type = $request->input('type');
-            }
-            $purchase->save();
-        } else if ($purchase->type == "site_successed") {
-            $purchase->price = $request->input('price');
-            $purchase->description = $request->input('description');
-            $purchase->save();
+        $purchase->students_id = $request->input('students_id');
+        $purchase->supporters_id = $student->supporters_id;
+        $purchase->users_id = Auth::user()->id;
+        $purchase->products_id = $request->input('products_id');
+        $purchase->description = $request->input('description');
+        $purchase->price = $request->input('price');
+        $purchase->factor_number = $request->input('factor_number');
+        if(!Gate::allows('supervisor') && Gate::allows('parameters')){
+            $purchase->type = $request->input('type');
         }
-
+        $purchase->save();
         if ($student) {
             $student->today_purchases = $student->purchases()->where('created_at', '>=', date("Y-m-d 00:00:00"))->where('is_deleted', false)->where('type', '!=', 'site_failed')->where('type','!=','manual_failed')->count();
 
@@ -323,9 +353,11 @@ class PurchaseController extends Controller
             }
             $student->save();
         }
-
-        $request->session()->flash("msg_success", "پرداخت با موفقیت ویرایش شد.");
-        return redirect()->route('purchases');
+        $result = [
+            "data" => null,
+            "error" => null
+        ];
+        return $result;
     }
 
     public function delete(Request $request, $id)
@@ -581,7 +613,72 @@ class PurchaseController extends Controller
             "fails" => $fails
         ];
     }
+    /**
+     * get students using select2 with ajax
+     *
+     *
+     * @return \Illuminate\Http\Response
+     */
+    //---------------------AJAX-----------------------------------
+    public function getStudents(Request $request)
+    {
 
+        $search = trim($request->search);
+        if ($search == '') {
+            $students = Student::orderby('id', 'desc')->select('id', 'first_name', 'last_name', 'phone')->where(
+                'is_deleted',
+                false
+            )->where('banned', false)->get();
+        } else {
+            $students = Student::select('id', 'first_name', 'last_name', 'phone',DB::raw("CONCAT(first_name,' ',last_name)"))->where(
+                'is_deleted',
+                false
+            )->where('banned', false)->where(function ($query) use ($search) {
+                $query->where(DB::raw("CONCAT(first_name,' ',last_name)"),'like','%'.$search.'%')->orWhere('phone','like','%'.$search.'%');
+            })->orderby('id','desc')->get();
+        }
+        $response = array();
+        foreach ($students as $student) {
+            $response[] = array(
+                "id" => $student->id,
+                "text" => $student->first_name . ' ' . $student->last_name . '-' . $student->phone
+            );
+        }
+        $response[] = [
+            "id" => 0,
+            "text" => "-"
+        ];
+        return $response;
+    }
+ /**
+     * get products using select2 with ajax
+     *
+     *
+     * @return \Illuminate\Http\Response
+     */
+    //---------------------AJAX-----------------------------------
+    public function getProducts(Request $request)
+    {
+
+        $search = trim($request->search);
+        if ($search == '') {
+            $products = Product::orderby('id', 'desc')->where('is_deleted',false)->get();
+        } else {
+            $products = Product::where('is_deleted',false)->where('name', 'like', '%'.$search.'%')->orderby('id','desc')->get();
+        }
+        $response = array();
+        foreach ($products as $product) {
+            $response[] = array(
+                "id" => $product->id,
+                "text" => (($product->parents!='') ? $product->parents . '->':'') . $product->name 
+            );
+        }
+        $response[] = [
+            "id" => 0,
+            "text" => "-"
+        ];
+        return $response;
+    }
     //---------------------API------------------------------------
     public function apiAddStudents(Request $request)
     {

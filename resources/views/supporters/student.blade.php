@@ -107,7 +107,7 @@ null => ""
                             <div class="col">
                                 <div class="form-group">
                                     <label for="name">نام و نام خانوادگی</label>
-                                    <input type="text" class="form-control" id="name" name="name" placeholder="نام و نام خانوادگی" value="{{ isset($name)?$name:'' }}"/>
+                                    <input type="text" class="form-control" id="name" name="name" placeholder="نام و نام خانوادگی" value="{{ isset($name)?$name:'' }}" />
                                 </div>
                             </div>
                             <div class="col">
@@ -269,15 +269,6 @@ null => ""
                             </select>
                         </div>
                     </div>
-                    <!--<div class="row">
-                        <div class="col text-center p-1">
-                            <a class="btn btn-warning btn-block" href="#">برچسب ارزیابی</a>
-                        </div>
-                        <div class="col text-center p-1">
-                        </div>
-                        <div class="col text-center p-1">
-                        </div>
-                    </div>-->
                     <table id="example2" class="table table-bordered table-hover">
                         <thead>
                             <tr class="table_header">
@@ -293,73 +284,7 @@ null => ""
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($students as $index => $item)
-                            <!--
-                            <tr id="tr-{{ $index }}">
-                                <td onclick="showMorePanel({{ $index }});">
-                                    {{ $index + 1 }}</td>
-                                <td onclick="showMorePanel({{ $index }});">
-                                    {{ $item->id }}</td>
-                                <td onclick="showMorePanel({{ $index }});">
-                                    {{ $item->first_name }}</td>
-                                <td onclick="showMorePanel({{ $index }});">
-                                    {{ $item->last_name }}</td>
-                                <td onclick="showMorePanel({{ $index }});">
-                                    {{ ($item->user)?$item->user->first_name . ' ' . $item->user->last_name:'-' }}</td>
-                                <td onclick="showMorePanel({{ $index }});">
-                                    {{ ($item->source)?$item->source->name:'-' }}</td>
-                                @if(($item->studenttags && count($item->studenttags)>0) || ($item->studentcollections && count($item->studentcollections)>0))
-                                <td>
-                                    @for($i = 0; $i < count($item->studenttags);$i++)
-                                    <span class="alert alert-info p-1">
-                                        {{ $item->studenttags[$i]->tag->name }}
-                                    </span><br/>
-                                    @endfor
-                                    @for($i = 0; $i < count($item->studentcollections);$i++)
-                                    @if(isset($item->studentcollections[$i]->collection))
-                                    <span class="alert alert-warning p-1">
-                                        {{ ($item->studentcollections[$i]->collection->parent) ? $item->studentcollections[$i]->collection->parent->name . '->' : '' }} {{ $item->studentcollections[$i]->collection->name }}
-                                    </span><br/>
-                                    @endif
-                                    @endfor
-                                </td>
-                                @else
-                                <td onclick="showMorePanel({{ $index }});"></td>
-                                @endif
-                                @if($item->studenttemperatures && count($item->studenttemperatures)>0)
-                                <td onclick="showMorePanel({{ $index }});">
-                                    @foreach ($item->studenttemperatures as $sitem)
-                                    @if($sitem->temperature->status=='hot')
-                                    <span class="alert alert-danger p-1">
-                                        @else
-                                        <span class="alert alert-info p-1">
-                                            @endif
-                                            {{ $sitem->temperature->name }}
-                                        </span>
-                                        @endforeach
-                                </td>
-                                @else
-                                <td onclick="showMorePanel({{ $index }});"></td>
-                                @endif
-                                <td>
-                                    <a class="btn btn-warning" href="#"
-                                        onclick="$('#students_index').val({{ $index }});preloadTagModal();$('#tag_modal').modal('show'); return false;">
-                                        برچسب
-                                    </a>
-                                    <a class="btn btn-warning" href="#"
-                                        onclick="$('#students_index2').val({{ $index }});preloadTemperatureModal();$('#temperature_modal').modal('show'); return false;">
-                                        داغ/سرد
-                                    </a>
-                                    <a class="btn btn-primary" href="{{ route('student_edit', ["call_back"=>'supporter_students', "id"=>$item->id]) }}">
-                                        ویرایش
-                                    </a>
-                                    <a class="btn btn-danger" href="{{ route('student_delete', $item->id) }}">
-                                        حذف
-                                    </a>
-                                </td>
-                            </tr>
-                             -->
-                            @endforeach
+
                         </tbody>
                     </table>
                 </div>
@@ -375,45 +300,6 @@ null => ""
 @endsection
 
 @section('js')
-<!--
-<div class="modal" id="tag_modal" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">برچسب</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <p>
-                    <input type="hidden" id="students_index" />
-                    <h3 class="text-center">
-                        اخلاقی
-                    </h3>
-
-                    @foreach ($moralTags as $index => $item)
-                    <input type="checkbox" class="tag-checkbox" id="tag_{{ $item->id }}" value="{{ $item->id }}" />
-                    {{ $item->name }}
-                    @endforeach
-                    <h3 class="text-center">
-                        نیازسنجی
-                    </h3>
-                    @foreach ($needTags as $index => $item)
-                    <input type="checkbox" class="collection-checkbox" id="collection_{{ $item->id }}"
-                        value="{{ $item->id }}" />
-                    {{ $item->name }}
-                    @endforeach
-                </p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" onclick="saveTags();">اعمال</button>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">انصراف</button>
-            </div>
-        </div>
-    </div>
-</div>
--->
 <div class="modal" id="tag_modal" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -507,37 +393,6 @@ null => ""
                         </span>
                         <br class="needtag-br" id="needtag-br-{{ $item->id }}" />
                         @endforeach
-                        <!--
-                <div>
-                    <select id="collection-one" onchange="selectCollectionOne(this);">
-                        <option value="">همه</option>
-                        @foreach ($firstCollections as $item)
-                        <option value="{{ $item->id }}">{{$item->name}}</option>
-                        @endforeach
-                    </select>
-
-                    <select id="collection-two" onchange="selectCollectionTwo(this);">
-                        <option value="">همه</option>
-                        @foreach ($secondCollections as $item)
-                        <option value="{{ $item->id }}" data-parent_id="{{$item->parent_id}}">{{$item->name}}</option>
-                        @endforeach
-                    </select>
-
-                    <select id="collection-three" onchange="selectCollectionThree(this);">
-                        <option value="">همه</option>
-                        @foreach ($thirdCollections as $item)
-                        <option value="{{ $item->id }}" data-parent_id="{{$item->parent_id}}" data-parent_parent_id="{{$item->parent->parent_id}}">{{$item->name}}</option>
-                        @endforeach
-                    </select>
-                </div>
-                @foreach ($needTags as $index => $item)
-                    <input type="checkbox" class="collection-checkbox" id="collection_{{ $item->id }}" value="{{ $item->id }}" />
-                    <span class="collection-title" id="collection-title-{{ $item->id }}">
-                    {{ $item->name }}
-                    </span>
-                    <br class="collection-br" id="collection-br-{{ $item->id }}"/>
-                @endforeach
-                -->
                     </div>
                 </p>
             </div>
@@ -592,8 +447,6 @@ null => ""
                             @endforeach
                         </select>
                     </div>
-                    {{-- <input type="checkbox" class="filter-tag-checkbox" id="filter-tag_all" value="" onclick="selectFilterAll();" />
-                    همه --}}
                     @foreach ($moralTags as $index => $item)
                     <input type="checkbox" class="filter-tag-checkbox" id="filter-tag_{{ $item->id }}" value="{{ $item->id }}" />
                     <span class="tag1-title" id="tag1-title-{{ $item->id }}">
@@ -650,24 +503,18 @@ null => ""
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">ثبت تماس</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="modal">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
+                <div class="alert alert-success" id="successfullCall" style="display:none"></div>
                 <p>
                     <div class="form-group">
                         <label for="call_results_id">نتیجه</label>
                         <select class="form-control" id="call_results_id" name="call_results_id">
-                            <!--
-                            <option value="no_answer">بدون پاسخ</option>
-                            <option value="unsuccessful">ناموفق</option>
-                            <option value="successful">موفق</option>
-                            <option value="rejected">رد شده</option>
-                            -->
                             @foreach ($callResults as $item)
-                            <option value="{{ $item->id }}" data-nocall="{{ $item->no_call }}" data-noanswer="{{ $item->no_answer }}"
-                                {{ $call_results_id == $item->id ? 'selected' : '' }}>
+                            <option value="{{ $item->id }}" data-nocall="{{ $item->no_call }}" data-noanswer="{{ $item->no_answer }}" {{ $call_results_id == $item->id ? 'selected' : '' }}>
                                 {{ $item->title }}</option>
                             @endforeach
                         </select>
@@ -678,7 +525,7 @@ null => ""
                             <option value="student" {{ $replier == "student" ? 'selected' : '' }}>دانش آموز</option>
                             <option value="father" {{ $replier == "father" ? 'selected' : '' }}>پدر</option>
                             <option value="mother" {{ $replier == "mother" ? 'selected' : '' }}>مادر</option>
-                            <option value="other"{{ $replier == "other" ? 'selected' : '' }}>غیره</option>
+                            <option value="other" {{ $replier == "other" ? 'selected' : '' }}>غیره</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -686,7 +533,7 @@ null => ""
                         <select class="form-control select2" id="products_id" name="products_id[]" style="width: 100% !important;" multiple>
                             <option value=""></option>
                             @foreach ($products as $item)
-                            <option value="{{ $item->id }}"  {{ $products_id == $item->id ? 'selected' : '' }}>
+                            <option value="{{ $item->id }}" {{ $products_id == $item->id ? 'selected' : '' }}>
                                 {{($item->parents!='-')?$item->parents . '->':''}} {{ $item->name }}
                             </option>
                             @endforeach
@@ -758,32 +605,18 @@ null => ""
                     [${item.main_student.phone}]</p>`;
             }
             if (item.auxilary_student && selfId != item.auxilary_student.id) {
-                // second = `<p class="cursor_pointer" id="${item.auxilary_student.id}"
-                // onclick="searchAuxilary(${item.auxilary_student.id})">
-                //     ${item.auxilary_student.first_name}
-                //     ${item.auxilary_student.last_name}
-                //     [${item.auxilary_student.phone}]</p>`;
                 second = `<p id="${item.auxilary_student.id}">
                     ${item.auxilary_student.first_name}
                     ${item.auxilary_student.last_name}
                     [${item.auxilary_student.phone}]</p>`;
             }
             if (item.second_auxilary_student && selfId != item.second_auxilary_student.id) {
-                // third = `<p class="cursor_pointer" id="${item.second_auxilary_student.id}"
-                // onclick="searchSecondAuxilary(${item.second_auxilary_student.id})">
-                // ${item.second_auxilary_student.first_name}
-                // ${item.second_auxilary_student.last_name}
-                // [${item.second_auxilary_student.phone}]</p>`;
                 third = `<p id="${item.second_auxilary_student.id}">
                 ${item.second_auxilary_student.first_name}
                 ${item.second_auxilary_student.last_name}
                 [${item.second_auxilary_student.phone}]</p>`;
             }
             if (item.third_auxilary_student && selfId != item.third_auxilary_student.id) {
-                // forth = `<p class="cursor_pointer" id="${item.third_auxilary_student.id}"
-                // onclick="searchThirdAuxilary(${item.third_auxilary_student.id})">${item.third_auxilary_student.first_name}
-                // ${item.third_auxilary_student.last_name}
-                // [${item.third_auxilary_student.phone}]</p>`;
                 forth = `<p id="${item.third_auxilary_student.id}">${item.third_auxilary_student.first_name}
                 ${item.third_auxilary_student.last_name}
                 [${item.third_auxilary_student.phone}]</p>`;
@@ -796,6 +629,8 @@ null => ""
 </script>
 <!-- page script -->
 <script>
+    let lastPage = 1;
+    let isSearchCall= false;
     let students = @JSON($students);
     let parentOnes = @JSON($parentOnes);
     let parentTwos = @JSON($parentTwos);
@@ -808,7 +643,6 @@ null => ""
     let tags = {};
     let collections = {};
     let calls_id = {{isset($calls_id) ? $calls_id : 'null'}};
-    //let callsText = "";
     var table;
     for (let tg of tmpTags) {
         tags[tg.id] = tg;
@@ -920,7 +754,6 @@ null => ""
         var auxilaryMerge = students[index].mergeauxilarystudent;
         var secondAuxilaryMerge = students[index].mergesecondauxilarystudent;
         var thirdAuxilaryMerge = students[index].mergethirdauxilarystudent;
-
         var x = mergeStudents(merge, stu_id);
         var y = mergeStudents(auxilaryMerge, stu_id);
         var z = mergeStudents(secondAuxilaryMerge, stu_id);
@@ -1054,7 +887,6 @@ null => ""
             </tr>
         </table>`;
 
-        // var tr = $("#tr-" + index)[0];
         var row = table.row(tr);
         if (row.child.isShown()) {
             row.child.hide();
@@ -1062,6 +894,7 @@ null => ""
             row.child(test).show();
         }
     }
+    
     let theMain = null;
     let theAuxilary = null;
     let theSecondAuxilary = null;
@@ -1103,21 +936,22 @@ null => ""
     }
 
 
-    function changeSupporter(studentsIndex,id){
-        if(students[studentsIndex]){
+    function changeSupporter(studentsIndex, id) {
+        if (students[studentsIndex]) {
             var students_id = id;
             var supporters_id = $("#supporters_id_" + studentsIndex).val();
             $("#loading-" + studentsIndex).show();
             $.post('{{ route('student_supporter') }}', {
-                students_id,
-                supporters_id
-            }, function(result){
-                $("#loading-" + studentsIndex).hide();
-                if(result && result.error != null){
-                    alert(result.error);
+                    students_id
+                    , supporters_id
                 }
-                table.ajax.reload();
-            }).fail(function(){
+                , function(result) {
+                    $("#loading-" + studentsIndex).hide();
+                    if (result && result.error != null) {
+                        alert(result.error);
+                    }
+                    table.ajax.reload();
+                }).fail(function() {
                 $("#loading-" + studentsIndex).hide();
                 alert('خطای بروز رسانی');
                 table.ajax.reload();
@@ -1125,35 +959,36 @@ null => ""
         }
         return false;
     }
-    function theFilterTags(sw){
-        if(!sw){
-            filterTagsByParent("input.tag-checkbox","span.tag-title","br.tag-br","#tag-title-","#tag-br-");
-        }else{
-            filterTagsByParent("input.filter-tag-checkbox","span.tag1-title","br.tag1-br","#tag1-title-","#tag1-br-");
+
+    function theFilterTags(sw) {
+        if (!sw) {
+            filterTagsByParent("input.tag-checkbox", "span.tag-title", "br.tag-br", "#tag-title-", "#tag-br-");
+        } else {
+            filterTagsByParent("input.filter-tag-checkbox", "span.tag1-title", "br.tag1-br", "#tag1-title-", "#tag1-br-");
         }
     }
 
-    function selectParentOne(dobj,sw) {
+    function selectParentOne(dobj, sw) {
         filterParents.parent1 = ($(dobj).val() != '') ? parseInt($(dobj).val(), 10) : '';
         theFilterTags(sw);
     }
 
-    function selectParentTwo(dobj,sw) {
+    function selectParentTwo(dobj, sw) {
         filterParents.parent2 = ($(dobj).val() != '') ? parseInt($(dobj).val(), 10) : '';
         theFilterTags(sw);
     }
 
-    function selectParentThree(dobj,sw) {
+    function selectParentThree(dobj, sw) {
         filterParents.parent3 = ($(dobj).val() != '') ? parseInt($(dobj).val(), 10) : '';
         theFilterTags(sw);
     }
 
-    function selectParentFour(dobj,sw) {
+    function selectParentFour(dobj, sw) {
         filterParents.parent4 = ($(dobj).val() != '') ? parseInt($(dobj).val(), 10) : '';
         theFilterTags(sw);
     }
 
-    function filterTagsByParent(theCheckbox,title,br,title_id,br_id) {
+    function filterTagsByParent(theCheckbox, title, br, title_id, br_id) {
         $(theCheckbox).show();
         $(title).show();
         $(br).show();
@@ -1362,7 +1197,6 @@ null => ""
         console.log('parents:', parents);
 
         $("input.collection-checkbox").each(function(id, field) {
-            // console.log('checking', field)
             let collectionId = parseInt($(field).val(), 10);
             let theCollection = collections[collectionId];
             console.log(collectionId, theCollection)
@@ -1482,7 +1316,6 @@ null => ""
                             alert('خطای بروز رسانی');
                         } else {
                             table.ajax.reload();
-                            //window.location.reload();
                         }
                     }).fail(function() {
                     alert('خطای بروز رسانی');
@@ -1519,6 +1352,7 @@ null => ""
             }
         }
     }
+
     function GoBackWithRefresh(event) {
         if ('referrer' in document) {
             window.location = document.referrer;
@@ -1528,6 +1362,10 @@ null => ""
             window.history.back();
         }
     }
+
+    $('#modal').on('click', function() {
+        $('#successfullCall').css('display', 'none');
+    });
 
     function saveCall() {
         const canSaveWithNoAlert = ($("#call_results_id option:selected").data('nocall') /* + $("#call_results_id option:selected").data('noanswer')*/ ) > 0;
@@ -1568,7 +1406,6 @@ null => ""
                 , calls_id
             }
             , function(result) {
-                console.log('Result', result);
                 if (result.error != null) {
                     alert('خطای بروز رسانی');
                 } else {
@@ -1576,7 +1413,9 @@ null => ""
                     GoBackWithRefresh();
                     return false;
                     @else
-                    window.location.reload();
+                    $('#successfullCall').css('display', 'block');
+                    $('#successfullCall').text('با موفقیت ثبت شد.');
+                    theSearch();
                     @endif
                 }
             }).fail(function() {
@@ -1597,7 +1436,6 @@ null => ""
             $("#student-collection-btn").removeClass('btn-success').addClass('btn-warning');
         else
             $("#student-collection-btn").removeClass('btn-warning').addClass('btn-success');
-        // $("#search-frm").submit();
         table.ajax.reload();
         return false;
     }
@@ -1611,7 +1449,6 @@ null => ""
             has_tag = 'false';
         }
         $("#has_tag").val(has_tag);
-        // $("#search-frm").submit();
         table.ajax.reload();
         return false;
     }
@@ -1629,7 +1466,6 @@ null => ""
             $("#student-reminder-btn").removeClass('btn-success').addClass('btn-warning');
         else
             $("#student-reminder-btn").removeClass('btn-warning').addClass('btn-success');
-        // $("#search-frm").submit();
         table.ajax.reload();
         return false;
     }
@@ -1647,7 +1483,6 @@ null => ""
             $("#student-site-btn").removeClass('btn-success').addClass('btn-warning');
         else
             $("#student-site-btn").removeClass('btn-warning').addClass('btn-success');
-        // $("#search-frm").submit();
         table.ajax.reload();
         return false;
     }
@@ -1665,16 +1500,14 @@ null => ""
             $("#order-collection-btn").removeClass('btn-success').addClass('btn-warning');
         else
             $("#order-collection-btn").removeClass('btn-warning').addClass('btn-success');
-        // $("#search-frm").submit();
         table.ajax.reload();
         return false;
     }
 
     function selectProduct() {
-        $('#loading').css('display','inline');
+        $('#loading').css('display', 'inline');
         emptySomeData();
         $("#has_the_product").val($("#has_product").val().join(','));
-        // $("#search-frm").submit();
         table.ajax.reload();
     }
 
@@ -1683,15 +1516,14 @@ null => ""
     }
 
     function selectCallResult() {
-        $('#loading').css('display','inline');
+        $('#loading').css('display', 'inline');
         emptySomeData();
         $("#has_call_result").val($("#has_cal_result").val());
-        // $("#search-frm").submit();
         table.ajax.reload();
     }
 
     function selectMajors() {
-        $('#loading').css('display','inline');
+        $('#loading').css('display', 'inline');
         emptySomeData();
         $('#major').val($('#major').val());
         table.ajax.reload();
@@ -1699,22 +1531,24 @@ null => ""
 
 
     function selectSources() {
-        $('#loading').css('display','inline');
+        $('#loading').css('display', 'inline');
         emptySomeData();
         $('#sources_id').val($('#sources_id').val());
         table.ajax.reload();
     }
 
     function selectEducationLevels() {
-        $('#loading').css('display','inline');
+        $('#loading').css('display', 'inline');
         emptySomeData();
         $('#eduction_level').val($('#education_level').val());
         table.ajax.reload();
     }
 
     function theSearch() {
-        $('#loading').css('display','inline');
+        $('#loading').css('display', 'inline');
         emptySomeData();
+        lastPage = table.page();
+        isSearchCall = true;
         table.ajax.reload();
         return false;
     }
@@ -1724,7 +1558,7 @@ null => ""
         $('input').keypress(function(event) {
             var keycode = (event.keyCode ? event.keyCode : event.which);
             if (keycode == '13') {
-                $('#loading').css('display','inline');
+                $('#loading').css('display', 'inline');
                 emptySomeData();
                 table.ajax.reload();
             }
@@ -1747,40 +1581,42 @@ null => ""
         });
         $('select.select2').select2();
         table = $("#example2").DataTable({
-            "paging": true,
-            "lengthChange": false,
-            "searching": false,
-            "ordering": true,
-            "info": true,
-            "autoWidth": false,
-            "language": {
+            "paging": true
+            , "lengthChange": false
+            , "searching": false
+            , "ordering": true
+            , "info": true
+            , "autoWidth": false
+            , "language": {
                 "paginate": {
-                    "previous": "قبل",
-                    "next": "بعد"
-                },
-                "emptyTable":     "داده ای برای نمایش وجود ندارد",
-                "info":           "نمایش _START_ تا _END_ از _TOTAL_ داده",
-                "infoEmpty":      "نمایش 0 تا 0 از 0 داده",
-                "proccessing": "در حال بروزرسانی"
-            },
-            "columnDefs": [   ////define columns
-                    {
-                        "searchable": false,
-                        "orderable": false,
-                        "targets": 0
-                    },
-                    {
-                        "searchable": false,
-                        "orderable": false,
-                        "targets": 7
-                    },
-                    {
-                        "searchable": false,
-                        "orderable": false,
-                        "targets": 8
-                    },
-            ],
-            "order": [[1, 'asc']] /// sort columns 2
+                    "previous": "قبل"
+                    , "next": "بعد"
+                }
+                , "emptyTable": "داده ای برای نمایش وجود ندارد"
+                , "info": "نمایش _START_ تا _END_ از _TOTAL_ داده"
+                , "infoEmpty": "نمایش 0 تا 0 از 0 داده"
+                , "proccessing": "در حال بروزرسانی"
+            }
+            , "columnDefs": [ ////define columns
+                {
+                    "searchable": false
+                    , "orderable": false
+                    , "targets": 0
+                }
+                , {
+                    "searchable": false
+                    , "orderable": false
+                    , "targets": 7
+                }
+                , {
+                    "searchable": false
+                    , "orderable": false
+                    , "targets": 8
+                }
+            , ]
+            , "order": [
+                    [1, 'asc']
+                ] /// sort columns 2
             , serverSide: true
             , processing: true
             , ajax: {
@@ -1808,62 +1644,88 @@ null => ""
                     data['education_level'] = $("#education_level").val();
                     data['major'] = $('#major').val();
                     data['conditions'] = $('#conditions').val();
+                    data['current_page'] = lastPage;
                     return JSON.stringify(data);
                 }
                 , "complete": function(response) {
-                    $('#loading').css('display','none');
+                    $('#loading').css('display', 'none');
                     $('#example2_paginate').removeClass('dataTables_paginate');
+                    students = JSON.parse(response.responseText).students;
+                    if(isSearchCall) {
+                        table.page(lastPage).draw( 'page' );
+                        isSearchCall = false;
+                    }
                     $('#example2 tr').click(function() {
                         var tr = this;
-                        //var x = this;
-                        if(!$(this).hasClass('table_header')){
-                        var studentId = parseInt($(tr).find('td')[1].innerText, 10);
-                        if (!isNaN(studentId)) {
-
-                            for (var index in students) {
-                                if (students[index].id == studentId) {
-                                    showMorePanel(index, tr);
+                        if (!$(this).hasClass('table_header')) {
+                            var studentId = parseInt($(tr).find('td')[1].innerText, 10);
+                            if (!isNaN(studentId)) {
+                                for (var index in students) {
+                                    if (students[index].id == studentId) {
+                                        showMorePanel(index, tr);
+                                    }
                                 }
                             }
-                        }
                         }
                     });
                     @if(isset($students_id) && $students_id != null)
                     var tr = $('#example2 tr')[1];
-                    if(!$(this).hasClass('table_header')){
+                    if (!$(this).hasClass('table_header')) {
 
-                    var studentId = parseInt($(tr).find('td')[1].innerText, 10);
-                    if (!isNaN(studentId)) {
-                        for (var index in students) {
-                            if (students[index].id == studentId) {
-                                showMorePanel(index, tr);
-                                $('#call_modal').modal('show');
+                        var studentId = parseInt($(tr).find('td')[1].innerText, 10);
+                        if (!isNaN(studentId)) {
+                            for (var index in students) {
+                                if (students[index].id == studentId) {
+                                    showMorePanel(index, tr);
+                                    $('#call_modal').modal('show');
+                                }
                             }
                         }
-                    }
                     }
                     @endif
                 }
 
-            },
-            columns: [
-                { data: null},
-                { data: 'id' },
-                { data: 'first_name' },
-                { data: 'last_name' },
-                { data: 'users_id' },
-                { data: 'sources_id'},
-                { data: 'tags'},
-                { data: 'temps'},
-                { data : 'end'}
-            ],
-        });
-        table.on('draw.dt', function () {
+            }
+            , columns: [{
+                    data: null
+                }
+                , {
+                    data: 'id'
+                }
+                , {
+                    data: 'first_name'
+                }
+                , {
+                    data: 'last_name'
+                }
+                , {
+                    data: 'users_id'
+                }
+                , {
+                    data: 'sources_id'
+                }
+                , {
+                    data: 'tags'
+                }
+                , {
+                    data: 'temps'
+                }
+                , {
+                    data: 'end'
+                }
+            ]
+        , });
+        table.on('draw.dt', function() {
             var info = table.page.info();
-            table.column(0, { search: 'applied', order: 'applied', page: 'applied' }).nodes().each(function (cell, i) {
+            table.column(0, {
+                search: 'applied'
+                , order: 'applied'
+                , page: 'applied'
+            }).nodes().each(function(cell, i) {
                 cell.innerHTML = i + 1 + info.start;
             });
         });
+        const theTable = table;
     });
 
 </script>
