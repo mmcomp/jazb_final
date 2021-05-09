@@ -170,7 +170,7 @@
             <p id="site_loading">
                 <img id="loading" src="/dist/img/loading.gif" style="height: 30px;" />
             </p> 
-            <p id="site_div">
+            <div id="site_div">
                 <div class="row">
                     <div class="col">
                         <div class="form-group">
@@ -188,7 +188,7 @@
                         </div>
                     </div>
                 </div>
-            </p>
+            </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-primary" onclick="applySiteModal();">اعمال</button>
@@ -211,7 +211,7 @@
             <p id="manual_loading">
             <img id="loading" src="/dist/img/loading.gif" style="height: 30px;" />
             </p> 
-            <p id="manual_div" style="display: none">
+            <div id="manual_div" style="display: none">
                 <div class="row">
                     <div class="col">
                         <div class="form-group">
@@ -266,7 +266,7 @@
                         </div>
                     </div>
                 </div>
-            </p>
+            </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-primary" onclick="applyManualModal();">اعمال</button>
@@ -335,6 +335,8 @@
         $('#successfulManualEdit').css('display', 'none');
     });
     function openSiteModal(id){
+        $('#site_div').css('display', 'none');
+        $('#site_loading').css('display', 'block');
         $('#edit_site_modal').modal('show'); 
         var url = "{{route('purchase_open_site_edit_modal')}}";
         $.ajax({
@@ -376,6 +378,8 @@
 		});
     }
     function openManualModal(id){
+        $('#manual_div').css('display', 'none');
+        $('#manual_loading').css('display', 'block');
         $('#edit_manual_modal').modal('show'); 
         appendedOptions = "";
         appendedOptionsProducts = "";
