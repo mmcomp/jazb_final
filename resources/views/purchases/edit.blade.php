@@ -92,8 +92,6 @@
                             <label for="description">توضیحات</label>
                             <input type="text" class="form-control" id="description" name="description" placeholder="توضیحات" value="{{ $purchase->description }}" />
                         </div>
-
-
                     </div>
                     
                     @if(!Gate::allows('supervisor') && Gate::allows('parameters') && $purchase->type != "site_successed")

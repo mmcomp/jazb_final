@@ -13,12 +13,6 @@
               <h1>پرداخت ها</h1>
             </div>
             <div class="col-sm-6">
-              <!--
-              <ol class="breadcrumb float-sm-right">
-                <li class="breadcrumb-item"><a href="#">Home</a></li>
-                <li class="breadcrumb-item active">DataTables</li>
-              </ol>
-              -->
             </div>
           </div>
         </div><!-- /.container-fluid -->
@@ -162,32 +156,295 @@
 @endsection
 
 @section('js')
+<div class="modal" id="edit_site_modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-xl" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">ویرایش</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <div class="alert alert-success" id="successfulSiteEdit" style="display:none"></div>
+            <p id="site_loading">
+                <img id="loading" src="/dist/img/loading.gif" style="height: 30px;" />
+            </p> 
+            <p id="site_div">
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="price">مبلغ</label>
+                            <input type="number" class="form-control" id="price_site_edit" name="price_site_edit" placeholder="مبلغ" />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="price_site_description">توضیحات</label>
+                            <textarea rows="4" class="form-control" id="price_site_description" name="price_site_description" placeholder="توضیحات">
+                            </textarea>
+                        </div>
+                    </div>
+                </div>
+            </p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" onclick="applySiteModal();">اعمال</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal" id="cancel1">انصراف</button>
+        </div>
+      </div>
+    </div>
+</div>
+<div class="modal" id="edit_manual_modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-xl" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">ویرایش</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <div class="alert alert-success" id="successfulManualEdit" style="display:none"></div>
+            <p id="manual_loading">
+            <img id="loading" src="/dist/img/loading.gif" style="height: 30px;" />
+            </p> 
+            <p id="manual_div" style="display: none">
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="edit_students_id">دانش آموز</label>
+                            <select required class="form-control" id="edit_students_id" name="edit_students_id" style="width: 100%">
+                                <option value="" disabled selected>جستجو</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="edit_products_id">محصول</label>
+                            <select class="form-control" id="edit_products_id" name="edit_products_id" style="width: 100%">
+                            </select>
+                        </div>
+
+
+                    </div>
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="edit_factor_number">شماره سند</label>
+                            <input type="text" class="form-control" id="edit_factor_number" name="edit_factor_number" placeholder="شماره سند" />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="edit_manual_price">مبلغ</label>
+                            <input type="number" class="form-control" id="edit_manual_price" name="edit_manual_price" placeholder="مبلغ" />
+                        </div>
+                    </div>
+                    @if(!Gate::allows('supervisor') && Gate::allows('parameters'))
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="manual_type">نوع خرید</label>
+                            <select class="form-control" id="manual_type" name="manual_type" >
+                            </select>
+                        </div>
+                    </div>
+                    @endif
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="manual_description">توضیحات</label>
+                            <textarea rows="4" class="form-control" id="manual_description" name="manual_description" placeholder="توضیحات">
+                            </textarea>
+                        </div>
+                    </div>
+                </div>
+            </p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" onclick="applyManualModal();">اعمال</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal" id="cancel2">انصراف</button>
+        </div>
+      </div>
+    </div>
+</div>
 <!-- DataTables -->
-<script src="/plugins/select2/js/select2.full.min.js"></script>
+<script src="/plugins/select2/js/select2.min.js"></script>
 <script src="../../plugins/datatables/jquery.dataTables.js"></script>
 <script src="../../plugins/datatables-bs4/js/dataTables.bootstrap4.js"></script>
 <!-- page script -->
 <script>
-    if(sessionStorage.getItem('place') != null) {
-        $('#place').val(sessionStorage.getItem('place'));
+    let products = @JSON($products);
+    let students = @JSON($students); 
+    let appendedOptions = "";
+    let appendedOptionsProducts = "";
+    let appendedOptionsPurchaseType = "";
+    function select2_load_remote_data_with_ajax(item, route) {
+        // CSRF Token
+        var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+        $(item).select2({
+            ajax: {
+                url: route
+                ,type: 'post'
+                ,dataType: 'json'
+                ,delay: 250
+                ,data: function(params) {
+                    return {
+                        _token: CSRF_TOKEN
+                        ,search: params.term
+                    };
+                }
+                ,processResults: function(response) {
+                    return {
+                        results: response
+                    };
+                }
+                ,cache: true
+            },
+            minimumInputLength: 3
+        });
     }
-    if(sessionStorage.getItem('from_date') != null ){
-        $('#from_date').val(sessionStorage.getItem('from_date'));
-    }
-    // if($('#from_date').val() != null){
-    //     $('#from_date').val(sessionStorage.getItem('from_date'));
-    // }
-    $('select.select2').select2();
+    select2_load_remote_data_with_ajax('#edit_students_id',"{{ route('purchase_get_students') }}");
+    select2_load_remote_data_with_ajax('#edit_products_id',"{{ route('purchase_get_products') }}");
     let table = "";
     let lastPage = 1;
     let isSearchCall= false;
+    let theId = 0;
+    function openManualModal(){
+        $('#edit_manual_modal').modal('show'); 
+        return false;
+    }
     function theSearch(){
         $('#loading').css('display','inline');
         lastPage = table.page();
         isSearchCall = true;
-        //sessionStorage.setItem("place",);
         table.ajax.reload();
         return false;
+    }
+    $('#edit_site_modal').on('click', function() {
+        $('#successfulSiteEdit').css('display', 'none');
+    });
+    $('#edit_manual_modal').on('click', function(){
+        $('#successfulManualEdit').css('display', 'none');
+    });
+    function openSiteModal(id){
+        $('#edit_site_modal').modal('show'); 
+        var url = "{{route('purchase_open_site_edit_modal')}}";
+        $.ajax({
+            data:{
+                "id":id
+            },
+			url: url,
+            type:"POST",
+			success: function (result) {
+                $('#site_div').css('display', 'block');
+                $('#site_loading').css('display', 'none');
+                theId = id;
+                $('#price_site_edit').val(result.price);
+                $('#price_site_description').val(result.description);	
+			},
+			error: function () {
+               console.log('error');
+            }
+		});
+    }
+    function applySiteModal(){
+        var url = "{{route('purchase_apply_site_edit_modal')}}";
+        $.ajax({
+            data:{
+                "id":theId,
+                "price":$('#price_site_edit').val(),
+                "description":$('#price_site_description').val()
+            },
+			url: url,
+            type:"POST",
+			success: function (result) {
+                $('#successfulSiteEdit').css('display', 'block');
+                $('#successfulSiteEdit').text('با موفقیت به روز شد');
+                theSearch();                	
+			},
+			error: function () {
+               console.log('error');
+            }
+		});
+    }
+    function openManualModal(id){
+        $('#edit_manual_modal').modal('show'); 
+        appendedOptions = "";
+        appendedOptionsProducts = "";
+        var url = "{{route('purchase_open_manual_edit_modal')}}";
+        $.ajax({
+            data:{
+                "id":id
+            },
+			url: url,
+            type:"POST",
+			success: function (result) {
+                $('#manual_div').css('display', 'block');
+                $('#manual_loading').css('display', 'none');
+                theId = id;
+                $('#edit_factor_number').val(result.factor_number);
+                let students_id = result.students_id;
+                let products_id = result.products_id;
+                let description = result.description;
+                let types = result.types;
+                let type = result.type;
+                let price = result.price;
+                $('#manual_description').val(description);
+                $('#edit_manual_price').val(price);
+                $('#edit_students_id').val(students_id);
+                $.each(students, function(key,val) {     
+                   if(val.id == students_id){
+                      appendedOptions += "<option value='"+ val.id +"'>" + val.first_name + ' ' + val.last_name + '[' + val.phone + ']'+ "</option>";        
+                   }         
+                });
+                $.each(products, function(key,val) {  
+                    if(val.id == products_id) {
+                        appendedOptionsProducts += "<option value='"+ val.id +"'>"  + val.name + "</option>";        
+                    }  
+                });
+                $.each(types, function(key,val) {    
+                    appendedOptionsPurchaseType += "<option value='"+ key +"'"+  (type === key ? 'selected' : '')   +">" + val + "</option>";        
+                });
+                $('#edit_students_id').empty().append(appendedOptions);
+                $('#edit_products_id').empty().append(appendedOptionsProducts);
+                $('#manual_type').empty().append(appendedOptionsPurchaseType);
+            },
+			error: function () {
+               console.log('error');
+            }
+		});
+    }
+    function applyManualModal(){
+        var url = "{{route('purchase_apply_manual_edit_modal')}}";
+        $.ajax({
+            data:{
+                "id":theId,
+                "price":$('#edit_manual_price').val(),
+                "description":$('#manual_description').val(),
+                "products_id":$('#edit_products_id').val(),
+                "factor_number":$('#edit_factor_number').val(),
+                "type":$('#manual_type').val(),
+                "students_id":$("#edit_students_id").val()
+            },
+			url: url,
+            type:"POST",
+			success: function (result) {
+                $('#successfulManualEdit').css('display', 'block');
+                $('#successfulManualEdit').text('با موفقیت به روز شد');
+                theSearch();                	
+			},
+			error: function () {
+               console.log('error');
+            }
+		});
     }
     function destroy(e){
         if(!confirm('آیا مطمئنید؟')){
@@ -253,15 +510,6 @@
                 return JSON.stringify(data);
             },
             "complete": function(response) {
-                //$('#place').val(JSON.parse(response.responseText).request.place);
-                if(JSON.parse(response.responseText).request){
-                    sessionStorage.setItem('place',JSON.parse(response.responseText).request.place);
-                    // if(JSON.parse(response.responseText).request != null && JSON.parse(response.responseText).request.from_date != null){
-                    sessionStorage.setItem('from_date',JSON.parse(response.responseText).request.from_date);
-                }
-               
-
-                // }
                 $('#loading').css('display','none');
                 if(isSearchCall) {
                     table.page(lastPage).draw( 'page' );

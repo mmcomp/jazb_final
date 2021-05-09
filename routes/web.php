@@ -190,7 +190,12 @@ Route::group(['middleware' => ['auth', 'message','changeCharactersAllToBePersian
         Route::get('/', 'PurchaseController@index')->name('purchases');
         Route::post('/','PurchaseController@indexPost')->name('purchases_post');
         Route::any('/create', 'PurchaseController@create')->name('purchase_create');
-        Route::any('/edit/{id}', 'PurchaseController@edit')->name('purchase_edit');
+        Route::post('/open_site_edit_modal', 'PurchaseController@openSiteEditModal')->name('purchase_open_site_edit_modal');
+        Route::post('/apply_site_edit_modal', 'PurchaseController@applySiteEditModal')->name('purchase_apply_site_edit_modal');
+        Route::post('/open_manual_edit_modal', 'PurchaseController@openManualEditModal')->name('purchase_open_manual_edit_modal');
+        Route::post('/apply_manual_edit_modal', 'PurchaseController@applyManualEditModal')->name('purchase_apply_manual_edit_modal');
+        Route::post('/get_students','PurchaseController@getStudents')->name('purchase_get_students');
+        Route::post('/get_products','PurchaseController@getProducts')->name('purchase_get_products');
         Route::get('/delete/{id}', 'PurchaseController@delete')->name('purchase_delete');
         Route::any('/test','PurchaseController@test')->name('purchase_test');
     });
