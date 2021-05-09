@@ -536,9 +536,12 @@ class PurchaseController extends Controller
                 continue;
             }
 
+            $isInsert = false;
             $purchaseObject = Purchase::where("factor_number", $purchase['factor_number'])->where("products_id", $product->id)->first();
-            if (!$purchaseObject)
+            if (!$purchaseObject) {
                 $purchaseObject = new Purchase;
+                $isInsert = true;
+            }
 
             foreach ($purchase as $key => $value) {
                 if ($key != 'woo_id' && $key != 'phone')
@@ -550,6 +553,7 @@ class PurchaseController extends Controller
             $purchaseObject->price = isset($purchase['price']) ? $purchase['price'] : 0;
             $purchaseObject->users_id = 0;
             $purchaseSaved = false;
+            $supporter = User::find($student->supporters_id);
             try {
                 $purchaseObject->save();
                 $ids[] = [
@@ -557,6 +561,12 @@ class PurchaseController extends Controller
                     "woo_id" => $product->woo_id
                 ];
                 $purchaseSaved = true;
+
+                if ($supporter->mobile && $isInsert) {
+                    $msg = "کاربر گرامی {$supporter->first_name} {$supporter->last_name}\n";
+                    $msg .= "محصول {$product->name} توسط  {$student->first_name} {$student->last_name} به مبلغ {$purchase->price} خریداری شد.\nعارف";
+                    Sms::send($supporter->mobile, $msg);
+                }
             } catch (Exception $e) {
                 $fails[] = $purchase;
                 Log::info("Fail 3" . $purchase['factor_number']);
