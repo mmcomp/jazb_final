@@ -97,6 +97,7 @@
                     <th>تلفن</th>
                     <th>کاربر ثبت کننده</th>
                     <th>پشتیبان</th>
+                    <th>تاریخ ایجاد</th>
                   </tr>
                   </thead>
                   <tbody>
@@ -202,7 +203,8 @@
                 { data: 'last_name' },
                 { data: 'phone' },
                 { data: 'users_id'},
-                { data: 'supporters_id'}
+                { data: 'supporters_id'},
+                { data: 'created_at'}
             ],
 
         });
