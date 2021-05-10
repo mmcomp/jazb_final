@@ -3,6 +3,7 @@
 @section('css')
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <link href="/plugins/select2/css/select2.min.css" rel="stylesheet" />
+<link href="/css/dataTableStyleForPurchasesPage.css" rel="stylesheet">
 @endsection
 @section('content')
     <!-- Content Header (Page header) -->
@@ -278,7 +279,7 @@
 <!-- DataTables -->
 <script src="/plugins/select2/js/select2.min.js"></script>
 <script src="../../plugins/datatables/jquery.dataTables.js"></script>
-<script src="../../plugins/datatables-bs4/js/dataTables.bootstrap4.js"></script>
+<script src="../../plugins/datatables/pagination/listboxWithButtons.js"></script>
 <!-- page script -->
 <script>
     let products = @JSON($products);
@@ -480,6 +481,7 @@
         "searching": false,
         "ordering": true,
         "info": true,
+        "pagingType": "listboxWithButtons",
         "autoWidth": false,
         "language": {
             "paginate": {
