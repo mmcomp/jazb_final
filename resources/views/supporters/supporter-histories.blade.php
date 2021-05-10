@@ -175,7 +175,7 @@
                 "proccessing": "در حال بروزرسانی"
             },
             columnDefs: [ { orderable: false, targets: 0 } ],
-            "order": [[1, 'asc']], /// sort columns 1
+            "order": [[2, 'asc']], /// sort columns 2 default sort by students_id
             serverSide: true,
             processing: true,
             ajax: {
