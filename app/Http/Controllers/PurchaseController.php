@@ -184,7 +184,7 @@ class PurchaseController extends Controller
                     <a class="btn btn-danger btn-sm" href="' . route('purchase_delete', $id) . '" onclick="destroy(event)">حذف</a></div>';
                 } else if ($item->type == "site_successed") {
                     $type = "سایت";
-                   $btn =  "<a class='btn btn-primary' href='#' onclick='openSiteModal(".$id.")'>ویرایش</a>";
+                   $btn =  "<a class='btn btn-primary btn-sm' href='#' onclick='openSiteModal(".$id.")'>ویرایش</a>";
                 } else if ($item->type == "site_failed") {
                     $type = "انصرافی";
                     $btn = '';
