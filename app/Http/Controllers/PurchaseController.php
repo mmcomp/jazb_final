@@ -285,7 +285,7 @@ class PurchaseController extends Controller
 
         $types = ["manual" => "حضوری","manual_failed" => "کنسل"];
         $purchase = Purchase::where('id', $request->input('id'))->where('is_deleted', false)->first();
-        $students = Student::where('is_deleted', false)->where('banned', false)->get();
+        $students = Student::where('is_deleted', false)->where('banned', false)->where('archived', false)->get();
         $products = Product::where('is_deleted', false)->get();
         $result = [
             "price" => $purchase->price,
@@ -312,7 +312,7 @@ class PurchaseController extends Controller
       
         $types = ["manual" => "حضوری","manual_failed" => "کنسل"];
         $purchase = Purchase::where('id', $request->input('id'))->where('is_deleted', false)->first();
-        $students = Student::where('is_deleted', false)->where('banned', false)->get();
+        $students = Student::where('is_deleted', false)->where('banned', false)->where('archived', false)->get();
         $products = Product::where('is_deleted', false)->get();
         $result = [
             "factor_number" => $purchase->factor_number,
@@ -331,7 +331,7 @@ class PurchaseController extends Controller
 
         $types = ["manual" => "حضوری","manual_failed" => "کنسل"];
         $purchase = Purchase::where('id', $request->input('id'))->where('is_deleted', false)->first();
-        $students = Student::where('is_deleted', false)->where('banned', false)->get();
+        $students = Student::where('is_deleted', false)->where('banned', false)->where('archived', false)->get();
         $products = Product::where('is_deleted', false)->get();
         $student = Student::find($request->input('students_id'));
         $purchase->students_id = $request->input('students_id');
@@ -628,12 +628,12 @@ class PurchaseController extends Controller
             $students = Student::orderby('id', 'desc')->select('id', 'first_name', 'last_name', 'phone')->where(
                 'is_deleted',
                 false
-            )->where('banned', false)->get();
+            )->where('banned', false)->where('archived', false)->get();
         } else {
             $students = Student::select('id', 'first_name', 'last_name', 'phone',DB::raw("CONCAT(first_name,' ',last_name)"))->where(
                 'is_deleted',
                 false
-            )->where('banned', false)->where(function ($query) use ($search) {
+            )->where('banned', false)->where('archived', false)->where(function ($query) use ($search) {
                 $query->where(DB::raw("CONCAT(first_name,' ',last_name)"),'like','%'.$search.'%')->orWhere('phone','like','%'.$search.'%');
             })->orderby('id','desc')->get();
         }
