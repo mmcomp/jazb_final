@@ -184,7 +184,7 @@ class PurchaseController extends Controller
                     <a class="btn btn-danger btn-sm" href="' . route('purchase_delete', $id) . '" onclick="destroy(event)">حذف</a></div>';
                 } else if ($item->type == "site_successed") {
                     $type = "سایت";
-                   $btn =  "<a class='btn btn-primary' href='#' onclick='openSiteModal(".$id.")'>ویرایش</a>";
+                   $btn =  "<a class='btn btn-primary btn-sm' href='#' onclick='openSiteModal(".$id.")'>ویرایش</a>";
                 } else if ($item->type == "site_failed") {
                     $type = "انصرافی";
                     $btn = '';
@@ -283,10 +283,7 @@ class PurchaseController extends Controller
     public function openSiteEditModal(Request $request)
     {
 
-        $types = ["manual" => "حضوری","manual_failed" => "کنسل"];
         $purchase = Purchase::where('id', $request->input('id'))->where('is_deleted', false)->first();
-        $students = Student::where('is_deleted', false)->where('banned', false)->where('archived', false)->get();
-        $products = Product::where('is_deleted', false)->get();
         $result = [
             "price" => $purchase->price,
             "description" => $purchase->description
@@ -312,8 +309,6 @@ class PurchaseController extends Controller
       
         $types = ["manual" => "حضوری","manual_failed" => "کنسل"];
         $purchase = Purchase::where('id', $request->input('id'))->where('is_deleted', false)->first();
-        $students = Student::where('is_deleted', false)->where('banned', false)->where('archived', false)->get();
-        $products = Product::where('is_deleted', false)->get();
         $result = [
             "factor_number" => $purchase->factor_number,
             "students_id" => $purchase->students_id,
@@ -329,10 +324,7 @@ class PurchaseController extends Controller
     public function applyManualEditModal(Request $request)
     {
 
-        $types = ["manual" => "حضوری","manual_failed" => "کنسل"];
         $purchase = Purchase::where('id', $request->input('id'))->where('is_deleted', false)->first();
-        $students = Student::where('is_deleted', false)->where('banned', false)->where('archived', false)->get();
-        $products = Product::where('is_deleted', false)->get();
         $student = Student::find($request->input('students_id'));
         $purchase->students_id = $request->input('students_id');
         $purchase->supporters_id = $student->supporters_id;
