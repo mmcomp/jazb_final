@@ -97,6 +97,7 @@
                     <th>تلفن</th>
                     <th>کاربر ثبت کننده</th>
                     <th>پشتیبان</th>
+                    <th>تاریخ ایجاد</th>
                   </tr>
                   </thead>
                   <tbody>
@@ -174,7 +175,7 @@
                 "proccessing": "در حال بروزرسانی"
             },
             columnDefs: [ { orderable: false, targets: 0 } ],
-            "order": [[1, 'asc']], /// sort columns 1
+            "order": [[2, 'asc']], /// sort columns 2 default sort by students_id
             serverSide: true,
             processing: true,
             ajax: {
@@ -202,7 +203,8 @@
                 { data: 'last_name' },
                 { data: 'phone' },
                 { data: 'users_id'},
-                { data: 'supporters_id'}
+                { data: 'supporters_id'},
+                { data: 'created_at'}
             ],
 
         });

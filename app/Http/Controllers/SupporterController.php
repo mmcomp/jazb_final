@@ -1967,7 +1967,8 @@ class SupporterController extends Controller
                 "last_name" => ($item->student) ? $item->student->last_name : '-',
                 "phone" => ($item->student) ? $item->student->phone : '-',
                 "users_id" => ($item->user) ? $item->user->first_name. ' '. $item->user->last_name : '-',
-                "supporters_id" => ($item->supporter ) ? $item->supporter->first_name. ' '. $item->supporter->last_name : ''
+                "supporters_id" => ($item->supporter ) ? $item->supporter->first_name. ' '. $item->supporter->last_name : '',
+                "created_at" => $item->created_at ? jdate($item->created_at)->format("Y/m/d") : jdate()->format("Y/m/d")
             ];
         }
         $result = [
