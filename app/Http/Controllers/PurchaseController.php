@@ -284,24 +284,45 @@ class PurchaseController extends Controller
     {
 
         $purchase = Purchase::where('id', $request->input('id'))->where('is_deleted', false)->first();
-        $result = [
-            "price" => $purchase->price,
-            "description" => $purchase->description
-        ];
-
+        if($purchase != null){
+            $result = [
+                "data" => [
+                    "price" => $purchase->price,
+                    "description" => $purchase->description,
+                ],
+                "error" => null
+            ];
+        } else {
+            $result = [
+                "data" => [
+                    "price" => 0,
+                    "description" => null,
+                ],
+                "error" => "شناسه این خرید پیدا نشد!"
+            ];
+        }
+       
         return $result;
     }
     public function applySiteEditModal(Request $request)
     {
 
         $purchase = Purchase::where('id', $request->input('id'))->where('is_deleted', false)->first();
-        $purchase->price = $request->input('price');
-        $purchase->description = $request->input('description');
-        $purchase->save();
-        $result = [
-            "data" => null,
-            "error" => null
-        ];
+        if($purchase != null){
+            $purchase->price = $request->input('price');
+            $purchase->description = $request->input('description');
+            $purchase->save();
+            $result = [
+                "data" => null,
+                "error" => null
+            ];
+        } else {
+            $result = [
+                "data" => null,
+                "error" => "شناسه این خرید پیدا نشد!"
+            ];  
+        }
+       
         return $result;
     }
     public function openManualEditModal(Request $request)
@@ -309,46 +330,70 @@ class PurchaseController extends Controller
       
         $types = ["manual" => "حضوری","manual_failed" => "کنسل"];
         $purchase = Purchase::where('id', $request->input('id'))->where('is_deleted', false)->first();
-        $result = [
-            "factor_number" => $purchase->factor_number,
-            "students_id" => $purchase->students_id,
-            "products_id" => $purchase->products_id,
-            "description" => $purchase->description,
-            "price" => $purchase->price,
-            "types" => $types,
-            "type" => $purchase->type
-        ];
-
+        if($purchase != null){
+            $result = [
+                "data" => [
+                    "factor_number" => $purchase->factor_number,
+                    "students_id" => $purchase->students_id,
+                    "products_id" => $purchase->products_id,
+                    "description" => $purchase->description,
+                    "price" => $purchase->price,
+                    "types" => $types,
+                    "type" => $purchase->type,
+                ],
+                "error" => null
+            ];
+        } else {
+            $result = [
+                "data" => [
+                    "factor_number" => null,
+                    "students_id" => null,
+                    "products_id" => null,
+                    "description" => null,
+                    "price" => null,
+                    "types" => null,
+                    "type" => null,
+                ],
+                "error" => "شناسه این خرید پیدا نشد!"
+            ];
+        }
         return $result;
     }
     public function applyManualEditModal(Request $request)
     {
 
         $purchase = Purchase::where('id', $request->input('id'))->where('is_deleted', false)->first();
-        $student = Student::find($request->input('students_id'));
-        $purchase->students_id = $request->input('students_id');
-        $purchase->supporters_id = $student->supporters_id;
-        $purchase->users_id = Auth::user()->id;
-        $purchase->products_id = $request->input('products_id');
-        $purchase->description = $request->input('description');
-        $purchase->price = $request->input('price');
-        $purchase->factor_number = $request->input('factor_number');
-        if(!Gate::allows('supervisor') && Gate::allows('parameters')){
-            $purchase->type = $request->input('type');
-        }
-        $purchase->save();
-        if ($student) {
-            $student->today_purchases = $student->purchases()->where('created_at', '>=', date("Y-m-d 00:00:00"))->where('is_deleted', false)->where('type', '!=', 'site_failed')->where('type','!=','manual_failed')->count();
-
-            if ($purchase->created_at < date("Y-m-d 00:00:00")) {
-                $student->today_purchases = $student->today_purchases > 0 ? $student->today_purchases - 1 : $student->today_purchases;
+        if($purchase != null){
+            $student = Student::find($request->input('students_id'));
+            $purchase->students_id = $request->input('students_id');
+            $purchase->supporters_id = $student->supporters_id;
+            $purchase->users_id = Auth::user()->id;
+            $purchase->products_id = $request->input('products_id');
+            $purchase->description = $request->input('description');
+            $purchase->price = $request->input('price');
+            $purchase->factor_number = $request->input('factor_number');
+            if(!Gate::allows('supervisor') && Gate::allows('parameters')){
+                $purchase->type = $request->input('type');
             }
-            $student->save();
+            $purchase->save();
+            if ($student) {
+                $student->today_purchases = $student->purchases()->where('created_at', '>=', date("Y-m-d 00:00:00"))->where('is_deleted', false)->where('type', '!=', 'site_failed')->where('type','!=','manual_failed')->count();
+    
+                if ($purchase->created_at < date("Y-m-d 00:00:00")) {
+                    $student->today_purchases = $student->today_purchases > 0 ? $student->today_purchases - 1 : $student->today_purchases;
+                }
+                $student->save();
+            }
+            $result = [
+                "data" => null,
+                "error" => null
+            ];
+        } else {
+            $result = [
+                "data" => null,
+                "error" => "شناسه این خرید پیدا نشد!"
+            ];
         }
-        $result = [
-            "data" => null,
-            "error" => null
-        ];
         return $result;
     }
 
