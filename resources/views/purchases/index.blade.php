@@ -168,6 +168,7 @@
         </div>
         <div class="modal-body">
             <div class="alert alert-success" id="successfulSiteEdit" style="display:none"></div>
+            <div class="alert alert-danger" id="failedSiteEdit" style="display:none"></div>
             <p id="site_loading">
                 <img id="loading" src="/dist/img/loading.gif" style="height: 30px;" />
             </p> 
@@ -192,7 +193,7 @@
             </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-primary" onclick="applySiteModal();">اعمال</button>
+          <button type="button" class="btn btn-primary" id="applySite" onclick="applySiteModal();">اعمال</button>
           <button type="button" class="btn btn-secondary" data-dismiss="modal" id="cancel1">انصراف</button>
         </div>
       </div>
@@ -209,6 +210,7 @@
         </div>
         <div class="modal-body">
             <div class="alert alert-success" id="successfulManualEdit" style="display:none"></div>
+            <div class="alert alert-danger" id="failedManualEdit" style="display:none"></div>
             <p id="manual_loading">
             <img id="loading" src="/dist/img/loading.gif" style="height: 30px;" />
             </p> 
@@ -270,7 +272,7 @@
             </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-primary" onclick="applyManualModal();">اعمال</button>
+          <button type="button" class="btn btn-primary" id="applyManual" onclick="applyManualModal();">اعمال</button>
           <button type="button" class="btn btn-secondary" data-dismiss="modal" id="cancel2">انصراف</button>
         </div>
       </div>
@@ -287,9 +289,9 @@
     let appendedOptions = "";
     let appendedOptionsProducts = "";
     let appendedOptionsPurchaseType = "";
+    var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
     function select2_load_remote_data_with_ajax(item, route) {
         // CSRF Token
-        var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
         $(item).select2({
             ajax: {
                 url: route
@@ -318,6 +320,22 @@
     let lastPage = 1;
     let isSearchCall= false;
     let theId = 0;
+    function checkErrorOpen(error, errorMessageId, div, loading, apply){
+        if(error) {
+            $(errorMessageId).css('display', 'block');
+            $(errorMessageId).text(error);
+            $(div).css('display', 'none');
+            $(loading).css('display', 'none');
+            $(apply).css('display', 'none');
+        }
+    }
+    function checkErrorApply(error, errorMessageId){
+        if(error){
+            $(errorMessageId).css('display', 'block');
+            $(errorMessageId).text(error);
+            return false;
+        }   
+    }
     function openManualModal(){
         $('#edit_manual_modal').modal('show'); 
         return false;
@@ -331,9 +349,11 @@
     }
     $('#edit_site_modal').on('click', function() {
         $('#successfulSiteEdit').css('display', 'none');
+        $('#failedSiteEdit').css('display', 'none');
     });
     $('#edit_manual_modal').on('click', function(){
         $('#successfulManualEdit').css('display', 'none');
+        $('#failedManualEdit').css('display', 'none');
     });
     function openSiteModal(id){
         $('#site_div').css('display', 'none');
@@ -342,16 +362,21 @@
         var url = "{{route('purchase_open_site_edit_modal')}}";
         $.ajax({
             data:{
-                "id":id
+                "id":id,
+                _token: CSRF_TOKEN
             },
 			url: url,
             type:"POST",
 			success: function (result) {
-                $('#site_div').css('display', 'block');
-                $('#site_loading').css('display', 'none');
-                theId = id;
-                $('#price_site_edit').val(result.price);
-                $('#price_site_description').val(result.description);	
+                if(result.error) {
+                    checkErrorOpen(result.error,'#failedSiteEdit','#site_div', '#site_loading','#applySite');
+                } else {
+                    $('#site_div').css('display', 'block');
+                    $('#site_loading').css('display', 'none');
+                    theId = id;
+                    $('#price_site_edit').val(result.data.price);
+                    $('#price_site_description').val(result.data.description);
+                }	
 			},
 			error: function () {
                console.log('error');
@@ -364,14 +389,19 @@
             data:{
                 "id":theId,
                 "price":$('#price_site_edit').val(),
-                "description":$('#price_site_description').val()
+                "description":$('#price_site_description').val(),
+                _token: CSRF_TOKEN
             },
 			url: url,
             type:"POST",
 			success: function (result) {
-                $('#successfulSiteEdit').css('display', 'block');
-                $('#successfulSiteEdit').text('با موفقیت به روز شد');
-                theSearch();                	
+                if(result.error){
+                    checkErrorOpen(result.error,'#failedSiteEdit');
+                } else {
+                    $('#successfulSiteEdit').css('display', 'block');
+                    $('#successfulSiteEdit').text('با موفقیت به روز شد');
+                    theSearch();  
+                }             	
 			},
 			error: function () {
                console.log('error');
@@ -387,40 +417,45 @@
         var url = "{{route('purchase_open_manual_edit_modal')}}";
         $.ajax({
             data:{
-                "id":id
+                "id":id,
+                _token: CSRF_TOKEN
             },
 			url: url,
             type:"POST",
 			success: function (result) {
-                $('#manual_div').css('display', 'block');
-                $('#manual_loading').css('display', 'none');
-                theId = id;
-                $('#edit_factor_number').val(result.factor_number);
-                let students_id = result.students_id;
-                let products_id = result.products_id;
-                let description = result.description;
-                let types = result.types;
-                let type = result.type;
-                let price = result.price;
-                $('#manual_description').val(description);
-                $('#edit_manual_price').val(price);
-                $('#edit_students_id').val(students_id);
-                $.each(students, function(key,val) {     
-                   if(val.id == students_id){
-                      appendedOptions += "<option value='"+ val.id +"'>" + val.first_name + ' ' + val.last_name + '[' + val.phone + ']'+ "</option>";        
-                   }         
-                });
-                $.each(products, function(key,val) {  
-                    if(val.id == products_id) {
-                        appendedOptionsProducts += "<option value='"+ val.id +"'>"  + val.name + "</option>";        
-                    }  
-                });
-                $.each(types, function(key,val) {    
-                    appendedOptionsPurchaseType += "<option value='"+ key +"'"+  (type === key ? 'selected' : '')   +">" + val + "</option>";        
-                });
-                $('#edit_students_id').empty().append(appendedOptions);
-                $('#edit_products_id').empty().append(appendedOptionsProducts);
-                $('#manual_type').empty().append(appendedOptionsPurchaseType);
+                if(result.error) {
+                    checkErrorOpen(result.error,'#failedManualEdit','#manual_div', '#manual_loading','#applyManual');
+                } else {
+                    $('#manual_div').css('display', 'block');
+                    $('#manual_loading').css('display', 'none');
+                    theId = id;
+                    $('#edit_factor_number').val(result.data.factor_number);
+                    let students_id = result.data.students_id;
+                    let products_id = result.data.products_id;
+                    let description = result.data.description;
+                    let types = result.data.types;
+                    let type = result.data.type;
+                    let price = result.data.price;
+                    $('#manual_description').val(description);
+                    $('#edit_manual_price').val(price);
+                    $('#edit_students_id').val(students_id);
+                    $.each(students, function(key,val) {     
+                       if(val.id == students_id){
+                         appendedOptions += "<option value='"+ val.id +"'>" + val.first_name + ' ' + val.last_name + '[' + val.phone + ']'+ "</option>";        
+                       }         
+                    });
+                    $.each(products, function(key,val) {  
+                       if(val.id == products_id) {
+                         appendedOptionsProducts += "<option value='"+ val.id +"'>"  + val.name + "</option>";        
+                       }  
+                    });
+                    $.each(types, function(key,val) {    
+                       appendedOptionsPurchaseType += "<option value='"+ key +"'"+  (type === key ? 'selected' : '')   +">" + val + "</option>";        
+                     });
+                     $('#edit_students_id').empty().append(appendedOptions);
+                     $('#edit_products_id').empty().append(appendedOptionsProducts);
+                     $('#manual_type').empty().append(appendedOptionsPurchaseType);
+                }    
             },
 			error: function () {
                console.log('error');
@@ -437,14 +472,19 @@
                 "products_id":$('#edit_products_id').val(),
                 "factor_number":$('#edit_factor_number').val(),
                 "type":$('#manual_type').val(),
-                "students_id":$("#edit_students_id").val()
+                "students_id":$("#edit_students_id").val(),
+                _token: CSRF_TOKEN
             },
 			url: url,
             type:"POST",
 			success: function (result) {
-                $('#successfulManualEdit').css('display', 'block');
-                $('#successfulManualEdit').text('با موفقیت به روز شد');
-                theSearch();                	
+                if(result.error) {
+                    checkErrorOpen(result.error,'#failedManualEdit');
+                } else {
+                    $('#successfulManualEdit').css('display', 'block');
+                    $('#successfulManualEdit').text('با موفقیت به روز شد');
+                    theSearch(); 
+                }                  	
 			},
 			error: function () {
                console.log('error');
