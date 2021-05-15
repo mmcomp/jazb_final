@@ -1564,6 +1564,7 @@ class SupporterController extends Controller
                 "other_purchases" => $item->other_purchases,
                 "own_purchases" => $item->own_purchases,
                 "today_purchases" => $item->today_purchases,
+                "supporters_id" => ($item->supporter) ? $item->supporter->first_name.' '. $item->supporter->last_name : '-',
                 "end" => "<a href='".route('student_purchases',['id' => $item->id])."'>مشاهده کلیه خریدها</a>"
             ];
         }

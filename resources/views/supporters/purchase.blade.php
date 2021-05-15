@@ -170,6 +170,7 @@
                     <th>قبل از تخصیص</th>
                     <th>بعد از تخصیص</th>
                     <th>امروز</th>
+                    <th>پشتیبان</th>
                     <th>#</th>
                   </tr>
                   </thead>
@@ -920,6 +921,7 @@
                 { data: 'other_purchases' },
                 { data: 'own_purchases'},
                 { data: 'today_purchases'},
+                { data: 'supporters_id'},
                 { data: 'end'}
             ],
         });
