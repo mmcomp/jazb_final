@@ -1181,6 +1181,9 @@ class SupporterController extends Controller
                         $temps .= $sitem->temperature->name . '</span>';
                     }
                 }
+                foreach($item->calls as $call){
+                   $call->next_call =  jdate(strtotime($call->next_call))->format('Y/m/d');
+                }
                 $data[] = [
                     "row" => $index + 1,
                     "id" => $item->id,
