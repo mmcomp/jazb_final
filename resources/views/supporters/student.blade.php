@@ -1621,7 +1621,7 @@ null => ""
             , processing: true
             , ajax: {
                 "type": "POST"
-                , "url": "{{ route('supporter_students') . ((isset($students_id) && $students_id!=null)?'?students_id=' . $students_id . '&calls_id=' . $calls_id:'') }}"
+                , "url": "{{ route('supporter_allstudents', ['id' => $user->id]) . ((isset($students_id) && $students_id!=null)?'?students_id=' . $students_id . '&calls_id=' . $calls_id:'') }}"
                 , "dataType": "json"
                 , "contentType": 'application/json; charset=utf-8',
 
