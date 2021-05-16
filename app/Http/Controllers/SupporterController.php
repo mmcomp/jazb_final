@@ -830,7 +830,6 @@ class SupporterController extends Controller
         $notices_id = null;
         $call_results_id = null;
         $next_to_call = null;
-        // dd(count($students->get()));
         if (request()->input('students_id') != null) {
             $students_id = (int)request()->input('students_id');
             $calls_id = (int)request()->input('calls_id');
@@ -1020,11 +1019,8 @@ class SupporterController extends Controller
             ->with('mergethirdauxilarystudent.secondAuxilaryStudent')
             ->with('mergethirdauxilarystudent.thirdAuxilaryStudent');
         //->orderBy('created_at', 'desc');
-
-
         $theStudents = $students;
         $getStudents = $students->get();
-        //dd($getStudents);
 
         if (request()->input('order_collection') != null) {
             $order_collection = request()->input('order_collection');
@@ -1063,9 +1059,7 @@ class SupporterController extends Controller
         foreach ($getStudents as $index => $student) {
             $getStudents[$index]->pcreated_at = jdate(strtotime($student->created_at))->format("Y/m/d");
         }
-        // dd($callResults);
         if (request()->getMethod() == 'GET') {
-            // dd($has_the_product);
             return view('supporters.student', [
                 'user' => $user,
                 'students' => $getStudents,
