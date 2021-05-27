@@ -907,8 +907,17 @@ class SupporterController extends Controller
             } else {
                 if (request()->input('has_the_product') != null && request()->input('has_the_product') != '') {
                     $has_the_product = request()->input('has_the_product');
-                    $purchases = Purchase::where('is_deleted', false)->where('type', '!=', 'site_failed')->where('type', '!=', 'manual_failed')->whereIn('products_id', explode(',', $has_the_product))->pluck('students_id');
-                    $students = $students->whereIn('students.id', $purchases);
+                    $arr_of_products = explode(',', $has_the_product);
+                    $purchases = Purchase::where('is_deleted', false)->where('type', '!=', 'site_failed')->where('type', '!=', 'manual_failed')->get();
+                    $products = [];
+                    $valid_student_ids = [];
+                    foreach ($purchases as $purchase) {
+                        $products[$purchase->students_id][] = $purchase->products_id;
+                        if($this->isSubset($products[$purchase->students_id], $arr_of_products, count($products[$purchase->students_id]), count($arr_of_products))){
+                            $valid_student_ids[] = $purchase->students_id;
+                        }
+                    }
+                    $students = $students->whereIn('students.id', $valid_student_ids);
                 }
             }
             if (request()->input('has_the_tags') != null && request()->input('has_the_tags') != '') {
