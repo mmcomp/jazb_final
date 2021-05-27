@@ -1415,6 +1415,12 @@ null => ""
                     @else
                     $('#successfullCall').css('display', 'block');
                     $('#successfullCall').text('با موفقیت ثبت شد.');
+                    $('#call_results_id').val(null);
+                    $('#replier').val(null);
+                    $('#next_to_call').val(null);
+                    $('#description').val(null);
+                    $("#products_id").val([]).trigger('change');
+                    $("#notices_id").val("").trigger('change');
                     theSearch();
                     @endif
                 }
