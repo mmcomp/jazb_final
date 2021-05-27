@@ -852,13 +852,7 @@ class SupporterController extends Controller
 
             if (request()->input('name') != null) {
                 $name = trim(request()->input('name'));
-                $students = $students->where(function ($query) use ($name) {
-                    $tmpNames = explode(' ', $name);
-                    foreach ($tmpNames as $tmpName) {
-                        $tmpName = trim($tmpName);
-                        $query->orWhere('first_name', 'like', '%' . $tmpName . '%')->orWhere('last_name', 'like', '%' . $tmpName . '%');
-                    }
-                });
+                $students = $students->where(DB::raw("CONCAT(first_name,' ',last_name)"),'like','%'.$name.'%');
             }
             if (request()->input('sources_id') != null) {
                 $sources_id = (int)request()->input('sources_id');
@@ -1176,7 +1170,7 @@ class SupporterController extends Controller
                     }
                 }
                 foreach($item->calls as $call){
-                   $call->next_call =  jdate(strtotime($call->next_call))->format('Y/m/d');
+                   $call->next_call =  $call->next_call ? jdate(strtotime($call->next_call))->format('Y/m/d') : '-';
                 }
                 $data[] = [
                     "row" => $index + 1,
