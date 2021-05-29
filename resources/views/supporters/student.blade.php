@@ -718,7 +718,7 @@ null => ""
                     .replace('#students_id#', call.students_id)
                     .replace('#description#', (call.description) ? call.description : '-');
                 @else
-                if (call.next_call) {
+                if (call.next_call != "-") {
                     calls += tmpCallWithRecall.replace('#index#', callIndex)
                         .replace(/#id#/g, call.id)
                         .replace('#product#', (call.product) ? call.product.name : '-')
