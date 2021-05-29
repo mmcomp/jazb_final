@@ -894,16 +894,20 @@ class SupporterController extends Controller
                 $students = $students->whereIn('students.id', $purchases);
             }
             if (request()->input('has_call_result') != null && request()->input('has_call_result') != '') {
-                //dd('1');
                 $has_call_result = request()->input('has_call_result');
-                $calls = Call::where('call_results_id', $has_call_result)->where('is_deleted', false);
-                if ($has_the_product != '') {
-                    $calls = $calls->whereIn('products_id', explode(',', $has_the_product));
+                $arr_of_calls = explode(',', $has_call_result);
+                $calls = Call::where('is_deleted', false)->get();
+                $callsArray = [];
+                $valid_student_ids = [];
+                
+                foreach ($calls as $call) {
+                    $callsArray[$call->students_id][] = $call->call_results_id;
+                    if ($this->isSubset($callsArray[$call->students_id], $arr_of_calls, count($callsArray[$call->students_id]), count($arr_of_calls))) {
+                        $valid_student_ids[] = $call->students_id;
+                    }
                 }
-                $calls = $calls->pluck('students_id');
-                $students = $students->where(function ($query) use ($calls) {
-                    $query->whereIn('students.id', $calls);
-                });
+                $valid_student_ids = array_unique($valid_student_ids);
+                $students = $students->whereIn('students.id', $valid_student_ids);
             } else {
                 if (request()->input('has_the_product') != null && request()->input('has_the_product') != '') {
                     $has_the_product = request()->input('has_the_product');
@@ -913,7 +917,7 @@ class SupporterController extends Controller
                     $valid_student_ids = [];
                     foreach ($purchases as $purchase) {
                         $products[$purchase->students_id][] = $purchase->products_id;
-                        if($this->isSubset($products[$purchase->students_id], $arr_of_products, count($products[$purchase->students_id]), count($arr_of_products))){
+                        if ($this->isSubset($products[$purchase->students_id], $arr_of_products, count($products[$purchase->students_id]), count($arr_of_products))) {
                             $valid_student_ids[] = $purchase->students_id;
                         }
                     }
@@ -928,7 +932,7 @@ class SupporterController extends Controller
                 $valid_student_ids = [];
                 foreach ($student_tags as $student_tag) {
                     $tags[$student_tag->students_id][] = $student_tag->tags_id;
-                    if($this->isSubset($tags[$student_tag->students_id], $arr_of_tags, count($tags[$student_tag->students_id]), count($arr_of_tags))){
+                    if ($this->isSubset($tags[$student_tag->students_id], $arr_of_tags, count($tags[$student_tag->students_id]), count($arr_of_tags))) {
                         $valid_student_ids[] = $student_tag->students_id;
                     }
                 }
