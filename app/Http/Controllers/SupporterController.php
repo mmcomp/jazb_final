@@ -1706,7 +1706,7 @@ class SupporterController extends Controller
         } else {
             foreach ($request->input('products_id') as $products_id) {
                 $call = new Call;
-                $call->ttle = 'تماس';
+                $call->title = 'تماس';
                 $call->students_id = $students_id;
                 $call->users_id = Auth::user()->id;
                 $call->description = $request->input('description');
