@@ -1406,8 +1406,9 @@ null => ""
                 , calls_id
             }
             , function(result) {
+                console.log(result.error);
                 if (result.error != null) {
-                    alert('خطای بروز رسانی');
+                    alert(result.error);
                 } else {
                     @if(isset($students_id) && $students_id != null)
                     GoBackWithRefresh();

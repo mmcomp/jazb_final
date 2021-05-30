@@ -1697,7 +1697,11 @@ class SupporterController extends Controller
                 $call->save();
                 $ids[] = $call->id;
             } catch (Exception $e) {
-                dump($e);
+                Log::info("error in SupporterController/call when products_id = null ". json_encode($e));
+                return [
+                    "error" => json_encode($e),
+                    "data" => $ids
+                ];
             }
         } else {
             foreach ($request->input('products_id') as $products_id) {
@@ -1717,7 +1721,11 @@ class SupporterController extends Controller
                     $call->save();
                     $ids[] = $call->id;
                 } catch (Exception $e) {
-                    dump($e);
+                    Log::info("error in SupporterController/call when products_id != null ". json_encode($e));
+                    return [
+                        "error" => json_encode($e),
+                        "data" => $ids
+                    ];
                 }
             }
         }
