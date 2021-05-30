@@ -176,7 +176,7 @@ null => ""
                                 @endif
                                 @endforeach
                             </select>
-                            <select id="has_cal_result" class="form-control select2" onchange="return selectCallResult();">
+                            <select id="has_cal_result" class="form-control select2" multiple onchange="return selectCallResult();">
                                 @if(isset($has_call_result) && $has_call_result>0)
                                 <option value="" disabled>نتیجه تماس</option>
                                 @else
@@ -1406,8 +1406,9 @@ null => ""
                 , calls_id
             }
             , function(result) {
+                console.log(result.error);
                 if (result.error != null) {
-                    alert('خطای بروز رسانی');
+                    alert(result.error);
                 } else {
                     @if(isset($students_id) && $students_id != null)
                     GoBackWithRefresh();
