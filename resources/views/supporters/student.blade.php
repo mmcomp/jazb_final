@@ -176,7 +176,7 @@ null => ""
                                 @endif
                                 @endforeach
                             </select>
-                            <select id="has_cal_result" class="form-control select2" onchange="return selectCallResult();">
+                            <select id="has_cal_result" class="form-control select2" multiple onchange="return selectCallResult();">
                                 @if(isset($has_call_result) && $has_call_result>0)
                                 <option value="" disabled>نتیجه تماس</option>
                                 @else
