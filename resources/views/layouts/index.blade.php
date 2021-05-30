@@ -621,7 +621,7 @@
                                     <p>ثبت خرید های حضوری</p>
                                 </a>
                         </li>
-                        @if(!Gate::allows('supervisor'))
+                        @if(Gate::allows('parameters'))
                         <li class="nav-item">
                             @if(strpos(\Request::route()->getName(), 'supporter_student_purchases_get')===0)
                             <a href="{{ route('supporter_student_purchases_get') }}" class="nav-link active">
