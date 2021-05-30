@@ -1406,7 +1406,6 @@ null => ""
                 , calls_id
             }
             , function(result) {
-                console.log(result.error);
                 if (result.error != null) {
                     alert(result.error);
                 } else {
@@ -1418,7 +1417,7 @@ null => ""
                     $('#successfullCall').text('با موفقیت ثبت شد.');
                     $('#call_results_id').val(null);
                     $('#replier').val(null);
-                    $('#next_to_call').val(null);
+                    $('#next_to_call').val("student");
                     $('#description').val(null);
                     $("#products_id").val([]).trigger('change');
                     $("#notices_id").val("").trigger('change');
