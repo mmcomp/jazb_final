@@ -17,7 +17,6 @@ $persons = [
     }
 </style>
 @endsection
-
 @section('content')
     <!-- Content Header (Page header) -->
     <section class="content-header">
@@ -27,8 +26,7 @@ $persons = [
             </div>
             <div class="col-sm-6">
               <h1 id="today_header">
-                {{-- یادآورها@if($today)ی امروز به بعد@endif --}}
-                 یادآورهای امروز به بعد
+                {{ Request::path() == "reminders/all" ? "یادآورها" : "یادآورهای امروز به بعد"}}
               </h1>
             </div>
           </div>
@@ -96,6 +94,12 @@ $persons = [
     var date = "{{ $date }}";
     var currentRoute = '{{Route::current()->getName()}}';
 
+    function modifyState($url) {
+       let stateObj = { id: "100" };
+       window.history.replaceState(stateObj,
+       "Page 3", $url);
+    }
+
     function showStudents(index){
         $("#students-" + index).toggle();
 
@@ -110,15 +114,15 @@ $persons = [
         $('#today_header').text('یادآورهای امروز به بعد');
         $('#today').val('true');
         date = "today";
+        modifyState("/reminders/today");
         table.ajax.reload();
-        //window.location.replace('{{ route("reminders_post",["date" => "today"])}}');
     }
     function allFunc(){
         $('#today_header').text('یادآورها');
         $('#today').val('false');
         date = "all";
+        modifyState("/reminders/all");
         table.ajax.reload();
-        //window.location.replace('{{ route("reminders_post",["date" => "all"])}}');
     }
 
     function destroy(e){
