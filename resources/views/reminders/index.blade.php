@@ -27,7 +27,7 @@ $persons = [
             </div>
             <div class="col-sm-6">
               <h1 id="today_header">
-                یادآورها@if($today)ی امروز@endif
+                یادآورها@if($today)ی امروز به بعد@endif
               </h1>
             </div>
           </div>
@@ -46,7 +46,7 @@ $persons = [
                     {{--  @if($date == null)  --}}
                     <input type="hidden" id="today" name="today" value="{{ $today ? 'true' : 'false'}}" />
                     <button onclick="todayFunc()" class="btn btn-success">
-                      امروز
+                      امروز به بعد
                     </button>
                     <button onclick="allFunc()" class="btn btn-warning">
                       همه
@@ -109,7 +109,7 @@ $persons = [
         return false;
     }
     function todayFunc(){
-        $('#today_header').text('یادآورهای امروز');
+        $('#today_header').text('یادآورهای امروز به بعد');
         $('#today').val('true');
         table.ajax.reload();
     }

@@ -15,12 +15,11 @@ class ReminderController extends Controller
 
     public function index($date="null"){
         $recalls = Call::where('calls_id', '!=', null)->pluck('calls_id');
-        //dd($student_ids);
         $calls = Call::where('next_call', '!=', null)->where('users_id', Auth::user()->id)->whereNotIn('id', $recalls)->where('is_deleted',false);
         $today = false;
         if($date == "today"){
             $today = true;
-            $calls = $calls->where('next_call', '>=', date("Y-m-d 00:00:00"))->where('next_call', '<=', date("Y-m-d 23:59:59"));
+            $calls = $calls->where('next_call', '>=', date("Y-m-d 00:00:00"));
         }
         $calls = $calls->with('student')->with('product')->orderBy('next_call', 'desc')->get();
         if(request()->getMethod() == "GET"){
@@ -55,7 +54,7 @@ class ReminderController extends Controller
         }
         if(request()->input('today') && request()->input('today')=='true') {
             $sw == "today";
-            $theCalls = $calls->where('next_call', '>=', date("Y-m-d 00:00:00"))->where('next_call', '<=', date("Y-m-d 23:59:59"));
+            $theCalls = $calls->where('next_call', '>=', date("Y-m-d 00:00:00"));
             $allCalls = $theCalls->count();
         }
 
