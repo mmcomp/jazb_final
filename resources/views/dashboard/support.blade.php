@@ -189,7 +189,7 @@
                   <tr>
                       <td><a href="{{ $todayCount ? route('reminders_get',['date' => 'today']) : '#' }}">{{ $todayCount }}</a></td>
                     @foreach($arrOfReminders as $item)
-                      <td><a href="{{ $item ? route('reminders_get') : '#'}}">{{ $item }}</a></td>
+                      <td><a href="{{ $item ? route('reminders_get',['date' => 'all']) : '#'}}">{{ $item }}</a></td>
                     @endforeach
                   </tr>
                 </tbody>

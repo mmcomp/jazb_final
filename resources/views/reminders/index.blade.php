@@ -17,7 +17,6 @@ $persons = [
     }
 </style>
 @endsection
-
 @section('content')
     <!-- Content Header (Page header) -->
     <section class="content-header">
@@ -27,7 +26,7 @@ $persons = [
             </div>
             <div class="col-sm-6">
               <h1 id="today_header">
-                یادآورها@if($today)ی امروز@endif
+                {{ Request::path() == "reminders/all" ? "یادآورها" : "یادآورهای امروز به بعد"}}
               </h1>
             </div>
           </div>
@@ -41,19 +40,14 @@ $persons = [
             <div class="card">
               <div class="card-header">
                 <h3 class="card-title">
-                  {{--  <form id="frm-today" method="post" action="{{route('reminders_post')}}">  --}}
-                     {{--  @csrf  --}}
-                    {{--  @if($date == null)  --}}
                     <input type="hidden" id="today" name="today" value="{{ $today ? 'true' : 'false'}}" />
+                    <input type="hidden" id="date" name="date" value="null" />
                     <button onclick="todayFunc()" class="btn btn-success">
-                      امروز
+                      امروز به بعد
                     </button>
                     <button onclick="allFunc()" class="btn btn-warning">
                       همه
                     </button>
-                    {{--  @endif  --}}
-
-                  {{--  </form>  --}}
                 </h3>
               </div>
               <!-- /.card-header -->
@@ -94,9 +88,17 @@ $persons = [
 <script src="../../plugins/datatables-bs4/js/dataTables.bootstrap4.js"></script>
 <!-- page script -->
 <script>
+    
+    var date = null;
     var table;
     var date = "{{ $date }}";
     var currentRoute = '{{Route::current()->getName()}}';
+
+    function modifyState($url) {
+       let stateObj = { id: "100" };
+       window.history.replaceState(stateObj,
+       "Page 3", $url);
+    }
 
     function showStudents(index){
         $("#students-" + index).toggle();
@@ -109,14 +111,18 @@ $persons = [
         return false;
     }
     function todayFunc(){
-        $('#today_header').text('یادآورهای امروز');
+        $('#today_header').text('یادآورهای امروز به بعد');
         $('#today').val('true');
+        date = "today";
+        modifyState("/reminders/today");
         table.ajax.reload();
     }
     function allFunc(){
         $('#today_header').text('یادآورها');
         $('#today').val('false');
-        window.location.replace('{{ route("reminders_post",["date" => null])}}')
+        date = "all";
+        modifyState("/reminders/all");
+        table.ajax.reload();
     }
 
     function destroy(e){
@@ -170,7 +176,7 @@ $persons = [
 
                 "data": function (data) {
                     data['today'] = date == "today" ? "true" : $('#today').val();
-                    console.log(data['today']);
+                    data['date'] = date;
                     return JSON.stringify(data);
                 },
                 "complete": function(response) {
