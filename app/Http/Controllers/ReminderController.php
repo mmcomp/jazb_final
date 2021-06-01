@@ -15,12 +15,11 @@ class ReminderController extends Controller
 
     public function index($date="null"){
         $recalls = Call::where('calls_id', '!=', null)->pluck('calls_id');
-        //dd($student_ids);
         $calls = Call::where('next_call', '!=', null)->where('users_id', Auth::user()->id)->whereNotIn('id', $recalls)->where('is_deleted',false);
         $today = false;
         if($date == "today"){
             $today = true;
-            $calls = $calls->where('next_call', '>=', date("Y-m-d 00:00:00"))->where('next_call', '<=', date("Y-m-d 23:59:59"));
+            $calls = $calls->where('next_call', '>=', date("Y-m-d 00:00:00"));
         }
         $calls = $calls->with('student')->with('product')->orderBy('next_call', 'desc')->get();
         if(request()->getMethod() == "GET"){
@@ -34,9 +33,10 @@ class ReminderController extends Controller
         }
     }
     public function indexPost($date=null){
+
         $student_ids = Student::where('is_deleted', false)->where('banned', false)->where('archived', false)->where('supporters_id', Auth::user()->id)->pluck('id');
         $recalls = Call::where('calls_id', '!=', null)->pluck('calls_id');
-        $calls = Call::where('next_call', '!=', null)->where('users_id', Auth::user()->id)->whereNotIn('id', $recalls)->where('is_deleted',false);
+        $calls = Call::where('next_call', '!=', null)->where('next_call', '>=', date("Y-m-d 00:00:00"))->where('users_id', Auth::user()->id)->whereNotIn('id', $recalls)->where('is_deleted',false);
         $theCalls = $calls->whereIn('students_id',$student_ids)->with('student')->with('product');
         $allCalls = $theCalls->count();
         $sw = null;
@@ -52,13 +52,11 @@ class ReminderController extends Controller
             $req['start'] = 0;
             $req['length'] = 10;
             $req['draw'] = 1;
-        }
-        if(request()->input('today') && request()->input('today')=='true') {
-            $sw == "today";
-            $theCalls = $calls->where('next_call', '>=', date("Y-m-d 00:00:00"))->where('next_call', '<=', date("Y-m-d 23:59:59"));
+        }       
+        if(request()->input('date') == "all") {
+            $theCalls = Call::where('next_call', '!=', null)->where('users_id', Auth::user()->id)->whereNotIn('id', $recalls)->where('is_deleted',false);
             $allCalls = $theCalls->count();
         }
-
         $columnIndex_arr = $req['order'];
         $columnName_arr = $req['columns'];
         $order_arr = $req['order'];
