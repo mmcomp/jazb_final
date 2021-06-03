@@ -1027,6 +1027,7 @@ class SupporterController extends Controller
         }
 
         $students = $students
+            ->where('supporters_id', $id)
             ->whereNotIn('id', $arr_of_auxilaries)
             ->with('user')
             ->with('studentcollections.collection')
