@@ -871,7 +871,7 @@ class SupporterController extends Controller
 
             if (request()->input('name') != null) {
                 $name = trim(request()->input('name'));
-                $students = $students->where(DB::raw("CONCAT(first_name,' ',last_name)"), 'like', '%' . $name . '%');
+                $students = $students->where(DB::raw("CONCAT(first_name,' ',last_name)"), 'like', '%' . $name . '%')->orwhere("last_name", 'like', '%' . $name . '%');
             }
             if (request()->input('sources_id') != null) {
                 $sources_id = (int)request()->input('sources_id');
