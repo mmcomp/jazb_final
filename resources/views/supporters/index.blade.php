@@ -52,6 +52,7 @@
                     <th>محل کار</th>
                     <th>فروش</th>
                     <th>برچسب ها</th>
+                    <th>نام کاربری</th>
                     <th>رمز عبور</th>
                     <th>پیام</th>
                   </tr>
@@ -103,6 +104,7 @@
                         @else
                         <td></td>
                         @endif
+                        <td>{{ $item->email }}</td>
                         <td>
                             {{ $item->pass }}
                             <a href="#" onclick="return changePass({{ $item->id }});">
