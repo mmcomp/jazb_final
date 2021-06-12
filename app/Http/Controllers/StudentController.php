@@ -165,12 +165,8 @@ class StudentController extends Controller
             }
             if (request()->input('name') != null) {
                 $name = trim(request()->input('name'));
-                $students = $students->where(function ($query) use ($name) {
-                    $tmpNames = explode(' ', $name);
-                    foreach ($tmpNames as $tmpName) {
-                        $tmpName = trim($tmpName);
-                        $query->orWhere('first_name', 'like', '%' . $tmpName . '%')->orWhere('last_name', 'like', '%' . $tmpName . '%');
-                    }
+                $students = $students->where(function($query) use($name) {
+                    $query->orWhere(DB::raw("CONCAT(first_name,' ',last_name)"), 'like', '%' . $name . '%')->orWhere("last_name", 'like', '%'. $name. '%');
                 });
             }
             if (request()->input('sources_id') != null) {
@@ -418,8 +414,8 @@ class StudentController extends Controller
             }
             if (request()->input('name') != null) {
                 $name = trim(request()->input('name'));
-                $students = $students->where(function ($query) use ($name) {
-                    $query->where('first_name', 'like', '%' . $name . '%')->orWhere('last_name', 'like', '%' . $name . '%');
+                $students = $students->where(function($query) use($name) {
+                    $query->orWhere(DB::raw("CONCAT(first_name,' ',last_name)"), 'like', '%' . $name . '%')->orWhere("last_name", 'like', '%'. $name. '%');
                 });
             }
             if (request()->input('sources_id') != null) {
@@ -615,6 +611,7 @@ class StudentController extends Controller
 
     public function banned(Request $request)
     {
+
         $students = Student::where('is_deleted', false)->where('banned', true);
         $supportGroupId = Group::getSupport();
         if ($supportGroupId)
@@ -633,8 +630,8 @@ class StudentController extends Controller
             }
             if (request()->input('name') != null) {
                 $name = trim(request()->input('name'));
-                $students = $students->where(function ($query) use ($name) {
-                    $query->where('first_name', 'like', '%' . $name . '%')->orWhere('last_name', 'like', '%' . $name . '%');
+                $students = $students->where(function($query) use($name) {
+                    $query->orWhere(DB::raw("CONCAT(first_name,' ',last_name)"), 'like', '%' . $name . '%')->orWhere("last_name", 'like', '%'. $name. '%');
                 });
             }
             if (request()->input('sources_id') != null) {
@@ -808,6 +805,7 @@ class StudentController extends Controller
 
     public function index()
     {
+
         $students = Student::where('is_deleted', false)->where('banned', false)->where('archived', false)->where('supporters_id', 0);
         $supportGroupId = Group::getSupport();
         if ($supportGroupId)
@@ -826,12 +824,8 @@ class StudentController extends Controller
             }
             if (request()->input('name') != null) {
                 $name = trim(request()->input('name'));
-                $students = $students->where(function ($query) use ($name) {
-                    $tmpNames = explode(' ', $name);
-                    foreach ($tmpNames as $tmpName) {
-                        $tmpName = trim($tmpName);
-                        $query->orWhere('first_name', 'like', '%' . $tmpName . '%')->orWhere('last_name', 'like', '%' . $tmpName . '%');
-                    }
+                $students = $students->where(function($query) use($name) {
+                    $query->orWhere(DB::raw("CONCAT(first_name,' ',last_name)"), 'like', '%' . $name . '%')->orWhere("last_name", 'like', '%'. $name. '%');
                 });
             }
             if (request()->input('sources_id') != null) {

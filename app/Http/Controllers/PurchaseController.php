@@ -100,8 +100,9 @@ class PurchaseController extends Controller
         }
         if ($request->input('name') != null) {
             $name = $request->input('name');
-            $student_ids = Student::select('id', 'is_deleted', 'banned', 'archived', DB::raw("CONCAT(first_name,' ',last_name)"))
-                ->where(DB::raw("CONCAT(first_name,' ',last_name)"), 'like', '%' . $name . '%')
+            $student_ids = Student::where(function($query) use($name) {
+                  $query->orWhere(DB::raw("CONCAT(first_name,' ',last_name)"), 'like', '%' . $name . '%')->orWhere("last_name", 'like', '%'. $name. '%');
+                })
                 ->where('is_deleted', false)
                 ->where('banned', false)
                 ->where('archived', false)

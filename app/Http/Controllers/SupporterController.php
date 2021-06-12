@@ -1248,8 +1248,8 @@ class SupporterController extends Controller
         if (request()->getMethod() == 'POST') {
             if (request()->input('name') != null) {
                 $name = trim(request()->input('name'));
-                $students = $students->where(function ($query) use ($name) {
-                    $query->where('first_name', 'like', '%' . $name . '%')->orWhere('last_name', 'like', '%' . $name . '%');
+                $students = $students->where(function($query) use($name) {
+                    $query->orWhere(DB::raw("CONCAT(first_name,' ',last_name)"), 'like', '%' . $name . '%')->orWhere("last_name", 'like', '%'. $name. '%');
                 });
             }
             if (request()->input('sources_id') != null) {
@@ -1506,8 +1506,8 @@ class SupporterController extends Controller
         $to_date = null;
         if ($request->input('name') != null) {
             $name = trim(request()->input('name'));
-            $students = $students->where(function ($query) use ($name) {
-                $query->where(DB::raw("CONCAT(first_name,' ',last_name)"), 'like', '%' . $name . '%');
+            $students = $students->where(function($query) use($name) {
+                $query->orWhere(DB::raw("CONCAT(first_name,' ',last_name)"), 'like', '%' . $name . '%')->orWhere("last_name", 'like', '%'. $name. '%');
             });
         }
         if ($request->input('sources_id') != null) {
@@ -1953,8 +1953,9 @@ class SupporterController extends Controller
         }
         if (request()->input('name') != null) {
             $name = request()->input('name');
-            $student = Student::select('id', 'first_name', 'last_name', DB::raw("CONCAT(first_name,' ',last_name)"))
-                ->where(DB::raw("CONCAT(first_name,' ',last_name)"), 'like', '%' . $name . '%')->whereIn('id', $student_ids)->pluck('id');
+            $student = Student::where(function($query) use($name) {
+                $query->orWhere(DB::raw("CONCAT(first_name,' ',last_name)"), 'like', '%' . $name . '%')->orWhere("last_name", 'like', '%'. $name. '%');
+            })->whereIn('id', $student_ids)->pluck('id');
             $supporterHistories = $supporterHistories->whereIn('students_id', $student);
         }
         if (request()->input('phone') != null) {

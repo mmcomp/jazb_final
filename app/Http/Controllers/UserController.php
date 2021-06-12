@@ -41,7 +41,12 @@ class UserController extends Controller
     }
 
     public function index(){
-        $users = User::where(DB::raw('CONCAT(first_Name, " ", last_Name)'),'like','%'.trim(request()->input('name','').'%'))->where('is_deleted', false)->with('group');
+        
+        $name = trim(request()->input('name',''));
+        $users = User::where(function($query) use($name) {
+            $query->orWhere(DB::raw("CONCAT(first_name,' ',last_name)"), 'like', '%' . $name . '%')->orWhere("last_name", 'like', '%'. $name. '%');
+        })->where('is_deleted', false)->with('group');
+
         if(request()->getMethod() == 'GET'){
             return view('users.index',[
                 'users' => $users->get(),
