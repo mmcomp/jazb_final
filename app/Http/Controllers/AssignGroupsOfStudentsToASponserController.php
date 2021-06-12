@@ -72,13 +72,7 @@ class assignGroupsOfStudentsToASponserController extends Controller
             }
             if (request()->input('name') != null) {
                 $name = trim(request()->input('name'));
-                $students = $students->where(function ($query) use ($name) {
-                    $tmpNames = explode(' ', $name);
-                    foreach ($tmpNames as $tmpName) {
-                        $tmpName = trim($tmpName);
-                        $query->orWhere('first_name', 'like', '%' . $tmpName . '%')->orWhere('last_name', 'like', '%' . $tmpName . '%');
-                    }
-                });
+                $students = $students->where(DB::raw("CONCAT(first_name,' ',last_name)"), 'like', '%' . $name . '%')->orwhere("last_name", 'like', '%' . $name . '%');
             }
             if(request()->input('products_id') != null){
                 $products_id = (int)request()->input('products_id');
@@ -139,6 +133,7 @@ class assignGroupsOfStudentsToASponserController extends Controller
         $cities = City::where('is_deleted', false)->get();
 
 
+        //dd($students->get());
         if (request()->getMethod() == 'GET') {
             return view('assign_students.index', [
                 'route' => 'assign_students_index',
