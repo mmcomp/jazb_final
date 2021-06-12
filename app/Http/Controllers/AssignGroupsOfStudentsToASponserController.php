@@ -72,7 +72,9 @@ class assignGroupsOfStudentsToASponserController extends Controller
             }
             if (request()->input('name') != null) {
                 $name = trim(request()->input('name'));
-                $students = $students->where(DB::raw("CONCAT(first_name,' ',last_name)"), 'like', '%' . $name . '%')->orwhere("last_name", 'like', '%' . $name . '%');
+                $students = $students->where(DB::raw("CONCAT(first_name,' ',last_name)"), 'like', '%' . $name . '%')->where(function($query) use($name) {
+                    $query->orWhere('last_name', 'like', '%' . $name . '%');
+                })->get();
             }
             if(request()->input('products_id') != null){
                 $products_id = (int)request()->input('products_id');
