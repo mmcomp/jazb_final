@@ -37,6 +37,7 @@ use App\Utils\CommissionPurchaseRelation;
 use App\Http\Traits\AllTypeCallsTrait;
 use App\MergeStudents as AppMergeStudents;
 use App\SaleSuggestion;
+use App\Utils\SearchStudent;
 use Exception;
 use Log;
 use Carbon\Carbon;
@@ -805,6 +806,7 @@ class SupporterController extends Controller
     public function student($id = null)
     {
 
+        $searchStudent = new SearchStudent;
         $user = null;
         $sw = null;
         $count = 0;
@@ -871,7 +873,7 @@ class SupporterController extends Controller
 
             if (request()->input('name') != null) {
                 $name = trim(request()->input('name'));
-                $students = $students->where(DB::raw("CONCAT(first_name,' ',last_name)"), 'like', '%' . $name . '%')->orwhere("last_name", 'like', '%' . $name . '%');
+                $students = $searchStudent->search($students, $name);
             }
             if (request()->input('sources_id') != null) {
                 $sources_id = (int)request()->input('sources_id');
@@ -1240,6 +1242,8 @@ class SupporterController extends Controller
 
     public function newStudents()
     {
+
+        $searchStudent = new SearchStudent;
         $students = Student::where('is_deleted', false)->where('banned', false)->where('archived', false)->where('supporter_seen', false)->where('supporters_id', Auth::user()->id);
         $sources = Source::where('is_deleted', false)->get();
         $name = null;
@@ -1248,9 +1252,7 @@ class SupporterController extends Controller
         if (request()->getMethod() == 'POST') {
             if (request()->input('name') != null) {
                 $name = trim(request()->input('name'));
-                $students = $students->where(function($query) use($name) {
-                    $query->orWhere(DB::raw("CONCAT(first_name,' ',last_name)"), 'like', '%' . $name . '%')->orWhere("last_name", 'like', '%'. $name. '%');
-                });
+                $students = $searchStudent->search($students, $name);
             }
             if (request()->input('sources_id') != null) {
                 $sources_id = (int)request()->input('sources_id');
@@ -1485,8 +1487,10 @@ class SupporterController extends Controller
     }
     public function postPurchases(Request $request)
     {
+
         $supports = [];
         $students = [];
+        $searchStudent = new SearchStudent;
         if (Gate::allows('purchases')) {
             $students = Student::where('is_deleted', false)->where('banned', false)->where('archived', false);
             $supportGroupId = Group::getSupport();
@@ -1506,9 +1510,7 @@ class SupporterController extends Controller
         $to_date = null;
         if ($request->input('name') != null) {
             $name = trim(request()->input('name'));
-            $students = $students->where(function($query) use($name) {
-                $query->orWhere(DB::raw("CONCAT(first_name,' ',last_name)"), 'like', '%' . $name . '%')->orWhere("last_name", 'like', '%'. $name. '%');
-            });
+            $students = $searchStudent->search($students, $name);
         }
         if ($request->input('sources_id') != null) {
             $sources_id = (int)request()->input('sources_id');
@@ -1952,10 +1954,8 @@ class SupporterController extends Controller
             $supporterHistories = $supporterHistories->where('supporter_histories.supporters_id', $supporters_id);
         }
         if (request()->input('name') != null) {
-            $name = request()->input('name');
-            $student = Student::where(function($query) use($name) {
-                $query->orWhere(DB::raw("CONCAT(first_name,' ',last_name)"), 'like', '%' . $name . '%')->orWhere("last_name", 'like', '%'. $name. '%');
-            })->whereIn('id', $student_ids)->pluck('id');
+            $name = trim(request()->input('name'));
+            $student = Student::where(DB::raw("CONCAT(IFNULL(first_name, ''), IFNULL(CONCAT(' ', last_name), ''))"), 'like', '%' . $name . '%')->whereIn('id', $student_ids)->pluck('id');
             $supporterHistories = $supporterHistories->whereIn('students_id', $student);
         }
         if (request()->input('phone') != null) {

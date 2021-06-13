@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Hash;
 
 use App\User;
 use App\Group;
+use App\Utils\SearchStudent;
 use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
@@ -42,10 +43,10 @@ class UserController extends Controller
 
     public function index(){
         
+        $searchStudent = new SearchStudent;
         $name = trim(request()->input('name',''));
-        $users = User::where(function($query) use($name) {
-            $query->orWhere(DB::raw("CONCAT(first_name,' ',last_name)"), 'like', '%' . $name . '%')->orWhere("last_name", 'like', '%'. $name. '%');
-        })->where('is_deleted', false)->with('group');
+        $users = User::where('is_deleted', false)->with('group');
+        $users = $searchStudent->search($users, $name);
 
         if(request()->getMethod() == 'GET'){
             return view('users.index',[

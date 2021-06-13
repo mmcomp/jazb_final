@@ -33,6 +33,7 @@ use App\StudentCollection;
 use App\ClassRoom;
 use App\City;
 use App\Http\Traits\ChangeSupporterTrait;
+use App\Utils\SearchStudent;
 use App\Exports\StudentsExport;
 use Illuminate\Support\Facades\Gate;
 use App\MergeStudents as AppMergeStudents;
@@ -143,6 +144,8 @@ class StudentController extends Controller
 
     public function indexAll(Request $request)
     {
+
+        $searchStudent = new SearchStudent;
         $students = Student::where('students.is_deleted', false)->where('students.banned', false)->where('students.archived', false);
         $supportGroupId = Group::getSupport();
         if ($supportGroupId)
@@ -165,9 +168,7 @@ class StudentController extends Controller
             }
             if (request()->input('name') != null) {
                 $name = trim(request()->input('name'));
-                $students = $students->where(function($query) use($name) {
-                    $query->orWhere(DB::raw("CONCAT(first_name,' ',last_name)"), 'like', '%' . $name . '%')->orWhere("last_name", 'like', '%'. $name. '%');
-                });
+                $students = $searchStudent->search($students, $name);
             }
             if (request()->input('sources_id') != null) {
                 $sources_id = (int)request()->input('sources_id');
@@ -395,8 +396,9 @@ class StudentController extends Controller
 
     public function archived(Request $request)
     {
-        $students = Student::where('is_deleted', false)->where('archived', true);
 
+        $searchStudent = new SearchStudent;
+        $students = Student::where('is_deleted', false)->where('archived', true);
         $supportGroupId = Group::getSupport();
         if ($supportGroupId)
             $supportGroupId = $supportGroupId->id;
@@ -407,16 +409,13 @@ class StudentController extends Controller
         $sources_id = null;
         $phone = null;
         if (request()->getMethod() == 'POST') {
-            // dump(request()->all());
             if (request()->input('supporters_id') != null) {
                 $supporters_id = (int)request()->input('supporters_id');
                 $students = $students->where('supporters_id', $supporters_id);
             }
             if (request()->input('name') != null) {
                 $name = trim(request()->input('name'));
-                $students = $students->where(function($query) use($name) {
-                    $query->orWhere(DB::raw("CONCAT(first_name,' ',last_name)"), 'like', '%' . $name . '%')->orWhere("last_name", 'like', '%'. $name. '%');
-                });
+                $students = $searchStudent->search($students, $name);
             }
             if (request()->input('sources_id') != null) {
                 $sources_id = (int)request()->input('sources_id');
@@ -612,6 +611,7 @@ class StudentController extends Controller
     public function banned(Request $request)
     {
 
+        $searchStudent = new SearchStudent;
         $students = Student::where('is_deleted', false)->where('banned', true);
         $supportGroupId = Group::getSupport();
         if ($supportGroupId)
@@ -630,9 +630,7 @@ class StudentController extends Controller
             }
             if (request()->input('name') != null) {
                 $name = trim(request()->input('name'));
-                $students = $students->where(function($query) use($name) {
-                    $query->orWhere(DB::raw("CONCAT(first_name,' ',last_name)"), 'like', '%' . $name . '%')->orWhere("last_name", 'like', '%'. $name. '%');
-                });
+                $students = $searchStudent->search($students, $name);
             }
             if (request()->input('sources_id') != null) {
                 $sources_id = (int)request()->input('sources_id');
@@ -806,6 +804,7 @@ class StudentController extends Controller
     public function index()
     {
 
+        $searchStudent = new SearchStudent;
         $students = Student::where('is_deleted', false)->where('banned', false)->where('archived', false)->where('supporters_id', 0);
         $supportGroupId = Group::getSupport();
         if ($supportGroupId)
@@ -824,9 +823,7 @@ class StudentController extends Controller
             }
             if (request()->input('name') != null) {
                 $name = trim(request()->input('name'));
-                $students = $students->where(function($query) use($name) {
-                    $query->orWhere(DB::raw("CONCAT(first_name,' ',last_name)"), 'like', '%' . $name . '%')->orWhere("last_name", 'like', '%'. $name. '%');
-                });
+                $students = $searchStudent->search($students, $name);
             }
             if (request()->input('sources_id') != null) {
                 $sources_id = (int)request()->input('sources_id');
