@@ -124,7 +124,6 @@ $persons = [
         modifyState("/reminders/all");
         table.ajax.reload();
     }
-
     function destroy(e){
         if(!confirm('آیا مطمئنید؟')){
           e.preventDefault();
@@ -153,6 +152,7 @@ $persons = [
             "info":           "نمایش _START_ تا _END_ از _TOTAL_ داده",
             "infoEmpty":      "نمایش 0 تا 0 از 0 داده",
         },
+        "stateSave": true,
         "columnDefs": [   ////define columns
                     {
                         "searchable": false,
