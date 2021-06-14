@@ -36,6 +36,122 @@ class MergeStudentsController extends Controller
             'msg_error' => request()->session()->get('msg_error')
         ]);
     }
+     /**
+     * Search name and phone in index of mergeStudents
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function indexPost(Request $request)
+    {
+ 
+        //$name = $request->input('name');
+        //$phone = $request->input('phone');
+        // if ($request->input('name') != null) {
+        //     $name = trim($request->input('name'));
+        //     $student_ids = Student::where('is_deleted', false)
+        //     ->where('banned', false)
+        //     ->where('archived', false)
+        //     ->where(DB::raw("CONCAT(IFNULL(first_name, ''), IFNULL(CONCAT(' ', last_name), ''))"), 'like', '%' . $name . '%')
+        //     ->pluck('id');
+        //     $purchases = $purchases->whereIn('purchases.students_id', $student_ids);
+        // }
+        $mergedStudents = AppMergeStudents::where('is_deleted', false);
+        if ($request->input('phone') != null) {
+            $phone = $request->input('phone');
+            // $student_ids = Student::where('phone', 'like', '%' . $phone . '%')
+            //     ->where('is_deleted', false)
+            //     ->where('banned', false)
+            //     ->where('archived', false)
+            //     ->pluck('id');
+            DB::enableQueryLog();
+            $mergedStudents = $mergedStudents->with(['mainStudent' => function ($query) {
+                $query->where('phone','like','721');
+            }])->get()->toArray();
+            dd(DB::getQueryLog());
+            //dd($mergedStudents);
+        }
+        //end filter
+        $req = $request->all();
+        $allMergedStudents = $mergedStudents->get();
+        $columnIndex_arr = $request->get('order');
+        $columnName_arr = $request->get('columns');
+        $order_arr = $request->get('order');
+        $columnIndex = $columnIndex_arr[0]['column']; // Column index
+        $columnName = $columnName_arr[$columnIndex]['data']; // Column name
+        $columnSortOrder = $order_arr[0]['dir']; // asc or desc
+
+        if ($columnName != 'row' && $columnName != "end") {
+            $mergedStudents = $mergedStudents->orderBy($columnName, $columnSortOrder)
+                //->select('purchases.*')
+                ->skip($req['start'])
+                ->take($req['length'])
+                ->get();
+        } else if($columnName == "main_students_id"){
+            $mergedStudents = $mergedStudents
+            ->orderBy('main_students_id', $columnSortOrder)
+            ->skip($req['start'])
+            ->take($req['length'])
+            ->get();
+        } else if($columnName == "auxilary_students_id") {
+            $mergedStudents = $mergedStudents
+            ->orderBy('auxilary_students_id', $columnSortOrder)
+            ->skip($req['start'])
+            ->take($req['length'])
+            ->get();
+        } else if($columnName == "second_auxilary_students_id") {
+            $mergedStudents = $mergedStudents
+            ->orderBy('second_auxilary_students_id', $columnSortOrder)
+            ->skip($req['start'])
+            ->take($req['length'])
+            ->get();
+        } else if($columnName == "third_auxilary_students_id") {
+            $mergedStudents = $mergedStudents
+            ->orderBy('third_auxilary_students_id', $columnSortOrder)
+            ->skip($req['start'])
+            ->take($req['length'])
+            ->get();
+        }
+        $data = [];
+        if ($mergedStudents) {
+            foreach ($mergedStudents as $index => $item) {
+                
+                $btn = '<a class="btn btn-primary" href="'. route('merge_students_edit', $item->id) .'"> ویرایش</a>
+                        <a class="btn btn-danger" href="'. route('merge_students_delete', $item->id).'"> حذف </a>';
+                $main_part_1 =  ($item->mainStudent) ? $item->mainStudent->first_name : '-' ;
+                $main_part_2 = ($item->mainStudent) ? $item->mainStudent->last_name : '-';
+                $main_part_3 = ($item->mainStudent) ? $item->mainStudent->phone : '-'; 
+                $auxilary_part_1 = ($item->auxilaryStudent) ? $item->auxilaryStudent->first_name : '-';
+                $auxilary_part_2 = ($item->auxilaryStudent) ? $item->auxilaryStudent->last_name : '-';
+                $auxilary_part_3 = ($item->auxilaryStudent) ? $item->auxilaryStudent->phone : '-';    
+                $second_auxilary_part_1 = ($item->secondAuxilaryStudent) ? $item->secondAuxilaryStudent->first_name : '-';
+                $second_auxilary_part_2 = ($item->secondAuxilaryStudent) ? $item->secondAuxilaryStudent->last_name : '-';
+                $second_auxilary_part_3 = ($item->secondAuxilaryStudent) ? $item->secondAuxilaryStudent->phone : '-';  
+                $third_auxilary_part_1 = ($item->thirdAuxilaryStudent) ? $item->thirdAuxilaryStudent->first_name : '-';
+                $third_auxilary_part_2 = ($item->thirdAuxilaryStudent) ? $item->thirdAuxilaryStudent->last_name : '-';
+                $third_auxilary_part_3 = ($item->thirdAuxilaryStudent) ? $item->thirdAuxilaryStudent->phone : '-';  
+
+                $data[] = [
+                    "row" => $req['start'] + $index + 1,
+                    "id" => $item->id,
+                    "main_students_id" => $main_part_1." ".$main_part_2."-".$main_part_3,
+                    "auxilary_students_id" => $auxilary_part_1." ".$auxilary_part_2."-".$auxilary_part_3,
+                    "second_auxilary_students_id" => $second_auxilary_part_1." ".$second_auxilary_part_2."-".$second_auxilary_part_3,
+                    "third_auxilary_students_id" => $third_auxilary_part_1." ".$third_auxilary_part_2."-".$third_auxilary_part_3,
+                    "end" => $btn
+                ];
+            }
+        }
+        $result = [
+            "draw" => $req['draw'],
+            "data" => $data,
+            "request" => $request->all(),
+            "recordsTotal" => count($allMergedStudents),
+            "recordsFiltered" => count($allMergedStudents),
+        ];
+
+        return $result;
+
+    }
 
     /**
      * handle error

@@ -1,4 +1,7 @@
 @extends('layouts.index')
+@section('css')
+  <meta name="csrf-token" content="{{ csrf_token() }}">
+@endsection
 
 @section('content')
     <!-- Content Header (Page header) -->
@@ -32,6 +35,36 @@
               </div>
               <!-- /.card-header -->
               <div class="card-body">
+                <h3 class="text-center">
+                  فیلتر
+               </h3>
+               <form method="post">
+                   @csrf
+                   <div class="row">
+                       <div class="col">
+                           <div class="form-group">
+                               <label for="name">نام و نام خانوادگی</label>
+                               <input type="text" class="form-control" id="name" name="name" placeholder="نام و نام خانوادگی" value=""/>
+                           </div>
+                       </div>
+                       <div class="col">
+                           <div class="form-group">
+                               <label for="phone">تلفن</label>
+                               <input type="number" class="form-control" id="phone" name="phone" placeholder="تلفن"  value=""/>
+                           </div>
+                       </div>
+                       <div class="col" style="padding-top: 32px;">
+                           <button class="btn btn-success" onclick="theSearch(this)" id="theBtn">
+                            جستجو
+                            </button>
+                            <img id="loading" src="/dist/img/loading.gif" style="height: 20px;display: none;" />
+                        </div> 
+                   </div>
+                   {{-- <div class="row">
+                      
+
+                   </div>         --}}
+               </form>
                 <table id="example" class="table table-bordered table-hover">
                   <thead>
                   <tr>
@@ -44,7 +77,7 @@
                   </tr>
                   </thead>
                   <tbody>
-                      @foreach ($mergedStudents as $index => $item)
+                      {{-- @foreach ($mergedStudents as $index => $item)
                       <tr>
                         <td>{{ $index + 1 }}</td>
                         <td>{{ ($item->mainStudent) ? $item->mainStudent->first_name : '-' }}
@@ -72,19 +105,8 @@
                             </a>
                         </td>
                       </tr>
-                      @endforeach
+                      @endforeach --}}
                   </tbody>
-                  <!--
-                  <tfoot>
-                  <tr>
-                    <th>Rendering engine</th>
-                    <th>Browser</th>
-                    <th>Platform(s)</th>
-                    <th>Engine version</th>
-                    <th>CSS grade</th>
-                  </tr>
-                  </tfoot>
-                  -->
                 </table>
               </div>
               <!-- /.card-body -->
@@ -104,8 +126,20 @@
 <script src="../../plugins/datatables-bs4/js/dataTables.bootstrap4.js"></script>
 <!-- page script -->
 <script>
+    let table = "";
+    function theSearch(myself){
+        $(myself).prop('disabled',true);
+        $('#loading').css('display','inline');
+        table.ajax.reload();
+        return false;
+    }
     $(function () {
-      $('#example').DataTable({
+      $.ajaxSetup({
+          headers: {
+              'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+          }
+      });
+      table = $('#example').DataTable({
         "paging": true,
         "lengthChange": false,
         "searching": false,
@@ -127,10 +161,36 @@
             "orderable": false,
             "targets": [0,5]
         },
-        { "type": "pstring", "targets": [2,3,4] }
+        //{ "type": "pstring", "targets": [2,3,4] }
         ],
 
         "order": [[1, 'asc']], /// sort columns 2
+        serverSide: true,
+            processing: true,
+            ajax: {
+                "type": "POST",
+                "url": "{{ route('merge_students_index_post') }}",
+                "dataType": "json",
+                "contentType": 'application/json; charset=utf-8',
+
+                "data": function (data) {
+                    data['name'] = $("#name").val();
+                    data['phone'] = $('#phone').val();
+                    return JSON.stringify(data);
+                },
+                "complete": function(response) {
+                    $('#loading').css('display','none');
+                    $('#theBtn').prop('disabled',false);
+                }
+            },
+            columns: [
+                { data: 'row'},
+                { data: 'main_students_id' },
+                { data: 'auxilary_students_id' },
+                { data: 'second_auxilary_students_id' },
+                { data: 'third_auxilary_students_id' },
+                { data : 'end'}
+            ],
       });
 
       $(".btn-danger").click(function(e){
