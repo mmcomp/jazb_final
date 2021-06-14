@@ -22,6 +22,7 @@ use App\NeedTagParentFour;
 use App\Product;
 use App\Purchase;
 use App\Temperature;
+use App\Utils\SearchStudent;
 use Illuminate\Support\Facades\DB;
 use App\MergeStudents as AppMergeStudents;
 use Illuminate\Http\Request;
@@ -48,6 +49,8 @@ class assignGroupsOfStudentsToASponserController extends Controller
      */
     public function index()
     {
+
+        $searchStudent = new SearchStudent;
         $ids = [];
         $sw = -1;
         $students = Student::where('is_deleted', false)->where('banned', false)->where('archived', false);
@@ -72,7 +75,7 @@ class assignGroupsOfStudentsToASponserController extends Controller
             }
             if (request()->input('name') != null) {
                 $name = trim(request()->input('name'));
-                $students = $students->where(DB::raw("CONCAT(first_name,' ',last_name)"), 'like', '%' . $name . '%')->orwhere("last_name", 'like', '%' . $name . '%');
+                $students = $searchStudent->search($students, $name);
             }
             if(request()->input('products_id') != null){
                 $products_id = (int)request()->input('products_id');
