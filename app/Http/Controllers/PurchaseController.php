@@ -99,13 +99,12 @@ class PurchaseController extends Controller
             }
         }
         if ($request->input('name') != null) {
-            $name = $request->input('name');
-            $student_ids = Student::select('id', 'is_deleted', 'banned', 'archived', DB::raw("CONCAT(first_name,' ',last_name)"))
-                ->where(DB::raw("CONCAT(first_name,' ',last_name)"), 'like', '%' . $name . '%')
-                ->where('is_deleted', false)
-                ->where('banned', false)
-                ->where('archived', false)
-                ->pluck('id');
+            $name = trim($request->input('name'));
+            $student_ids = Student::where('is_deleted', false)
+            ->where('banned', false)
+            ->where('archived', false)
+            ->where(DB::raw("CONCAT(IFNULL(first_name, ''), IFNULL(CONCAT(' ', last_name), ''))"), 'like', '%' . $name . '%')
+            ->pluck('id');
             $purchases = $purchases->whereIn('purchases.students_id', $student_ids);
         }
         if ($request->input('phone') != null) {
