@@ -152,6 +152,40 @@
           <!-- /.col -->
         </div>
         <!-- /.row -->
+        <div class="card card-danger" id="error" style="width: 400px;position: fixed;left: 10px;bottom: 10px;display:none">
+            <div class="card-header">
+                <h3 class="card-title">خطا</h3>
+
+                <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="remove"><i
+                            class="fas fa-times"></i>
+                    </button>
+                </div>
+                <!-- /.card-tools -->
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body" id="error_card">
+                
+            </div>
+            <!-- /.card-body -->
+        </div>
+        <div class="card card-success" id="success" style="width: 400px;position: fixed;left: 10px;bottom: 10px;display:none">
+            <div class="card-header">
+                <h3 class="card-title">موفقیت</h3>
+
+                <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="remove"><i
+                            class="fas fa-times"></i>
+                    </button>
+                </div>
+                <!-- /.card-tools -->
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body" id="success_card">
+               
+            </div>
+            <!-- /.card-body -->
+        </div>
       </section>
       <!-- /.content -->
 @endsection
@@ -494,7 +528,34 @@
     function destroy(e){
         if(!confirm('آیا مطمئنید؟')){
             e.preventDefault();
-          }
+        } 
+    }
+    function IfConfirmDestroy(id){
+        if(confirm('آیا مطمئنید؟')){
+
+           var url = "{{route('purchase_delete')}}";
+           $.ajax({
+               data:{
+                  "id":id,
+                  _token: CSRF_TOKEN
+               },
+               url: url,
+               type:"POST",
+               success: function (result) {
+                 if(result.error) {
+                    $('#error').css('display', 'block');
+                    $('#error_card').text(result.error);
+                 } else {
+                    $('#success').css('display', 'block');
+                    $('#success_card').text('با موفقیت حذف شد');
+                    theSearch(); 
+                 }
+               },
+               error: function () {
+                  console.log('error');
+               }
+            });
+        }
     }
     function theChange(){
         $('#loading').css('display','inline');
