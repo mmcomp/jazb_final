@@ -77,35 +77,6 @@
                   </tr>
                   </thead>
                   <tbody>
-                      {{-- @foreach ($mergedStudents as $index => $item)
-                      <tr>
-                        <td>{{ $index + 1 }}</td>
-                        <td>{{ ($item->mainStudent) ? $item->mainStudent->first_name : '-' }}
-                            {{ ($item->mainStudent) ? $item->mainStudent->last_name : '-' }}
-                           -{{($item->mainStudent) ? $item->mainStudent->phone : '-'}}
-                        </td>
-                        <td>{{ ($item->auxilaryStudent) ? $item->auxilaryStudent->first_name : '-' }}
-                            {{ ($item->auxilaryStudent) ? $item->auxilaryStudent->last_name : '-' }}
-                            -{{($item->auxilaryStudent) ? $item->auxilaryStudent->phone : '-'}}
-                        </td>
-                        <td>{{ ($item->secondAuxilaryStudent) ? $item->secondAuxilaryStudent->first_name : '-' }}
-                            {{ ($item->secondAuxilaryStudent) ? $item->secondAuxilaryStudent->last_name : '-' }}
-                            -{{($item->secondAuxilaryStudent) ? $item->secondAuxilaryStudent->phone : '-'}}
-                        </td>
-                        <td>{{ ($item->thirdAuxilaryStudent) ? $item->thirdAuxilaryStudent->first_name : '-' }}
-                            {{ ($item->thirdAuxilaryStudent) ? $item->thirdAuxilaryStudent->last_name : '-' }}
-                            -{{($item->thirdAuxilaryStudent) ? $item->thirdAuxilaryStudent->phone : '-'}}
-                        </td>
-                        <td>
-                            <a class="btn btn-primary" href="{{ route('merge_students_edit', $item->id) }}">
-                                ویرایش
-                            </a>
-                            <a class="btn btn-danger" href="{{ route('merge_students_delete', $item->id) }}">
-                                حذف
-                            </a>
-                        </td>
-                      </tr>
-                      @endforeach --}}
                   </tbody>
                 </table>
               </div>

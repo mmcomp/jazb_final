@@ -37,6 +37,24 @@ class MergeStudentsController extends Controller
         ]);
     }
     /**
+     * Sort columns of merged students page
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function sortByColumnName($columnName, $field, $mergedStudents, $columnSortOrder, $req)
+    {
+
+        if ($columnName == $field) {
+            $mergedStudents = $mergedStudents
+                ->orderBy('main_students_id', $columnSortOrder)
+                ->skip($req['start'])
+                ->take($req['length'])
+                ->get();
+            return $mergedStudents;    
+        }
+        return false;
+    }
+    /**
      * Search name and phone in index of mergeStudents
      *
      * @return \Illuminate\Http\Response
@@ -47,13 +65,13 @@ class MergeStudentsController extends Controller
         $mergedStudents = AppMergeStudents::where('is_deleted', false);
         if ($request->input('name') != null) {
             $name = trim($request->input('name'));
-            $student = Student::where('is_deleted', false)->where('archived', false)->where('banned', false)->where(DB::raw("CONCAT(IFNULL(first_name, ''), IFNULL(CONCAT(' ', last_name), ''))"), 'like', '%' . $name . '%')->first();
-            if($student){
-                $mergedStudents = $mergedStudents->where(function ($query) use ($student) {
-                    $query->orWhere('main_students_id', $student->id)
-                        ->orWhere('auxilary_students_id', $student->id)
-                        ->orWhere('second_auxilary_students_id', $student->id)
-                        ->orWhere('third_auxilary_students_id', $student->id);
+            $student_ids = Student::where('is_deleted', false)->where('archived', false)->where('banned', false)->where(DB::raw("CONCAT(IFNULL(first_name, ''), IFNULL(CONCAT(' ', last_name), ''))"), 'like', '%' . $name . '%')->pluck('id');
+            if(count($student_ids)){
+                $mergedStudents = $mergedStudents->where(function ($query) use ($student_ids) {
+                    $query->orWhereIn('main_students_id', $student_ids)
+                        ->orWhereIn('auxilary_students_id', $student_ids)
+                        ->orWhereIn('second_auxilary_students_id', $student_ids)
+                        ->orWhere('third_auxilary_students_id', $student_ids);
                 });
             } else {
                 $mergedStudents = null;
@@ -62,13 +80,13 @@ class MergeStudentsController extends Controller
         }
         if ($request->input('phone') != null) {
             $phone = $request->input('phone');
-            $student = Student::where('is_deleted', false)->where('archived', false)->where('banned', false)->where('phone', 'like', '%' . $phone . '%')->first();
-            if($student){
-                $mergedStudents = $mergedStudents->where(function ($query) use ($student) {
-                    $query->orWhere('main_students_id', $student->id)
-                        ->orWhere('auxilary_students_id', $student->id)
-                        ->orWhere('second_auxilary_students_id', $student->id)
-                        ->orWhere('third_auxilary_students_id', $student->id);
+            $student_ids = Student::where('is_deleted', false)->where('archived', false)->where('banned', false)->where('phone', 'like', '%' . $phone . '%')->pluck('id');
+            if(count($student_ids)){
+                $mergedStudents = $mergedStudents->where(function ($query) use ($student_ids) {
+                    $query->orWhereIn('main_students_id', $student_ids)
+                        ->orWhereIn('auxilary_students_id', $student_ids)
+                        ->orWhereIn('second_auxilary_students_id', $student_ids)
+                        ->orWhereIn('third_auxilary_students_id', $student_ids);
                 });
             } else {
                 $mergedStudents = null;
@@ -93,55 +111,24 @@ class MergeStudentsController extends Controller
                     ->skip($req['start'])
                     ->take($req['length'])
                     ->get();
-            } else if ($columnName == "main_students_id") {
+            } else {
                 $mergedStudents = $mergedStudents
-                    ->orderBy('main_students_id', $columnSortOrder)
+                    ->orderBy($columnName, $columnSortOrder)
                     ->skip($req['start'])
                     ->take($req['length'])
                     ->get();
-            } else if ($columnName == "auxilary_students_id") {
-                $mergedStudents = $mergedStudents
-                    ->orderBy('auxilary_students_id', $columnSortOrder)
-                    ->skip($req['start'])
-                    ->take($req['length'])
-                    ->get();
-            } else if ($columnName == "second_auxilary_students_id") {
-                $mergedStudents = $mergedStudents
-                    ->orderBy('second_auxilary_students_id', $columnSortOrder)
-                    ->skip($req['start'])
-                    ->take($req['length'])
-                    ->get();
-            } else if ($columnName == "third_auxilary_students_id") {
-                $mergedStudents = $mergedStudents
-                    ->orderBy('third_auxilary_students_id', $columnSortOrder)
-                    ->skip($req['start'])
-                    ->take($req['length'])
-                    ->get();
-            }
+            } 
             foreach ($mergedStudents as $index => $item) {
 
                 $btn = '<a class="btn btn-primary" href="' . route('merge_students_edit', $item->id) . '"> ویرایش</a>
                         <a class="btn btn-danger" href="' . route('merge_students_delete', $item->id) . '"> حذف </a>';
-                $main_part_1 =  ($item->mainStudent) ? $item->mainStudent->first_name : '-';
-                $main_part_2 = ($item->mainStudent) ? $item->mainStudent->last_name : '-';
-                $main_part_3 = ($item->mainStudent) ? $item->mainStudent->phone : '-';
-                $auxilary_part_1 = ($item->auxilaryStudent) ? $item->auxilaryStudent->first_name : '-';
-                $auxilary_part_2 = ($item->auxilaryStudent) ? $item->auxilaryStudent->last_name : '-';
-                $auxilary_part_3 = ($item->auxilaryStudent) ? $item->auxilaryStudent->phone : '-';
-                $second_auxilary_part_1 = ($item->secondAuxilaryStudent) ? $item->secondAuxilaryStudent->first_name : '-';
-                $second_auxilary_part_2 = ($item->secondAuxilaryStudent) ? $item->secondAuxilaryStudent->last_name : '-';
-                $second_auxilary_part_3 = ($item->secondAuxilaryStudent) ? $item->secondAuxilaryStudent->phone : '-';
-                $third_auxilary_part_1 = ($item->thirdAuxilaryStudent) ? $item->thirdAuxilaryStudent->first_name : '-';
-                $third_auxilary_part_2 = ($item->thirdAuxilaryStudent) ? $item->thirdAuxilaryStudent->last_name : '-';
-                $third_auxilary_part_3 = ($item->thirdAuxilaryStudent) ? $item->thirdAuxilaryStudent->phone : '-';
-
                 $data[] = [
                     "row" => $req['start'] + $index + 1,
                     "id" => $item->id,
-                    "main_students_id" => $main_part_1 . " " . $main_part_2 . "-" . $main_part_3,
-                    "auxilary_students_id" => $auxilary_part_1 . " " . $auxilary_part_2 . "-" . $auxilary_part_3,
-                    "second_auxilary_students_id" => $second_auxilary_part_1 . " " . $second_auxilary_part_2 . "-" . $second_auxilary_part_3,
-                    "third_auxilary_students_id" => $third_auxilary_part_1 . " " . $third_auxilary_part_2 . "-" . $third_auxilary_part_3,
+                    "main_students_id" => (($item->mainStudent) ? $item->mainStudent->first_name : '-'). " ". (($item->mainStudent) ? $item->mainStudent->last_name : '-'). "-".(($item->mainStudent) ? $item->mainStudent->phone : '-'),
+                    "auxilary_students_id" => (($item->auxilaryStudent) ? $item->auxilaryStudent->first_name : '-'). " ". (($item->auxilaryStudent) ? $item->auxilaryStudent->last_name : '-'). "-".(($item->auxilaryStudent) ? $item->auxilaryStudent->phone : '-'),
+                    "second_auxilary_students_id" =>(($item->secondAuxilaryStudent) ? $item->secondAuxilaryStudent->first_name : '-'). " ". (($item->secondAuxilaryStudent) ? $item->secondAuxilaryStudent->last_name : '-'). "-".(($item->secondAuxilaryStudent) ? $item->secondAuxilaryStudent->phone : '-') ,
+                    "third_auxilary_students_id" => (($item->thirdAuxilaryStudent) ? $item->thirdAuxilaryStudent->first_name : '-'). " ". (($item->thirdAuxilaryStudent) ? $item->thirdAuxilaryStudent->last_name : '-'). "-".(($item->thirdAuxilaryStudent) ? $item->thirdAuxilaryStudent->phone : '-'),
                     "end" => $btn
                 ];
             }
