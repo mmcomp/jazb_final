@@ -37,24 +37,6 @@ class MergeStudentsController extends Controller
         ]);
     }
     /**
-     * Sort columns of merged students page
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function sortByColumnName($columnName, $field, $mergedStudents, $columnSortOrder, $req)
-    {
-
-        if ($columnName == $field) {
-            $mergedStudents = $mergedStudents
-                ->orderBy('main_students_id', $columnSortOrder)
-                ->skip($req['start'])
-                ->take($req['length'])
-                ->get();
-            return $mergedStudents;    
-        }
-        return false;
-    }
-    /**
      * Search name and phone in index of mergeStudents
      *
      * @return \Illuminate\Http\Response
