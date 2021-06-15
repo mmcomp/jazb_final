@@ -243,6 +243,10 @@ null => ""
                             </select>
                         </div>
                     </div>
+                    <div class="row bg-gradient-warning" style="display:none" id="moral_box">
+                        برچسب های اخلاقی انتخاب شده
+                        <ul id="ul_moral_tags"></ul>
+                    </div>
                     <div class="row">
                         <div class="col text-center p-1">
                             <select id="education_level" class="form-control select2" onchange="return selectEducationLevels();">
@@ -269,6 +273,7 @@ null => ""
                             </select>
                         </div>
                     </div>
+                    
                     <table id="example2" class="table table-bordered table-hover">
                         <thead>
                             <tr class="table_header">
@@ -448,7 +453,7 @@ null => ""
                         </select>
                     </div>
                     @foreach ($moralTags as $index => $item)
-                    <input type="checkbox" class="filter-tag-checkbox" id="filter-tag_{{ $item->id }}" value="{{ $item->id }}" />
+                    <input type="checkbox" class="filter-tag-checkbox" id="filter-tag_{{ $item->id }}" value="{{ $item->id }}" onclick="IfMoralTagChecked(this)" />
                     <span class="tag1-title" id="tag1-title-{{ $item->id }}">
                         {{ $item->name }}
                     </span>
@@ -641,6 +646,7 @@ null => ""
     let egucation_levels = @JSON($egucation_levels);
     let majors = @JSON($majors);
     let tags = {};
+    let checkedArray = [];
     let collections = {};
     let calls_id = {{isset($calls_id) ? $calls_id : 'null'}};
     var table;
@@ -661,6 +667,22 @@ null => ""
         , need_parent4: ''
     }
     let students_id = {{isset($students_id) ? $students_id : 'null'}};
+    function IfMoralTagChecked(self){
+       var str = $(self).next().text();
+       if(self.checked){
+           checkedArray.push(str.trim())
+       } else {
+            const index = checkedArray.indexOf(str.trim());
+            if (index > -1) {
+              checkedArray.splice(index, 1);
+            }
+       }
+       checkedArray.length ? $('#moral_box').css('display', 'block') : $('#moral_box').css('display', 'none');
+       $('#ul_moral_tags').empty();
+       for(var i = 0; i < checkedArray.length; i++) {
+          $('#ul_moral_tags').append('<li>'+ checkedArray[i]+'</li>');
+       }
+    }
 
     function showMorePanel(index, tr) {
         var persons = {
@@ -1215,7 +1237,6 @@ null => ""
     function preloadFilterTagModal() {
         $("input.filter-tag-checkbox").prop('checked', false);
         var selecteds = $("#has_the_tag").val();
-        console.log(selecteds);
         for (var i of selecteds) {
             if (i == '') {
                 $("input.filter-tag-checkbox").prop('checked', true);
@@ -1226,14 +1247,11 @@ null => ""
 
     function saveFilterTags() {
         emptySomeData();
-        console.log('SAVE')
         $(`#has_the_tag option`).prop('selected', false);
         $("input.filter-tag-checkbox:checked").each(function(id, field) {
-            console.log(`#has_the_tag option[value='${$(field).val()}']`);
             $(`#has_the_tag option[value='${$(field).val()}']`).prop('selected', true);
         });
         $('#tag_modal_filter').modal('hide');
-        console.log($("#has_the_tag").val());
         $("#has_the_tags").val($("#has_the_tag").val().join(','));
         table.ajax.reload();
     }
