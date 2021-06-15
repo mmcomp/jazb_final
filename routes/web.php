@@ -197,7 +197,7 @@ Route::group(['middleware' => ['auth', 'message','changeCharactersAllToBePersian
         Route::post('/apply_manual_edit_modal', 'PurchaseController@applyManualEditModal')->name('purchase_apply_manual_edit_modal');
         Route::post('/get_students','PurchaseController@getStudents')->name('purchase_get_students');
         Route::post('/get_products','PurchaseController@getProducts')->name('purchase_get_products');
-        Route::get('/delete/{id}', 'PurchaseController@delete')->name('purchase_delete');
+        Route::post('/delete', 'PurchaseController@delete')->name('purchase_delete');
         Route::any('/test','PurchaseController@test')->name('purchase_test');
     });
 
