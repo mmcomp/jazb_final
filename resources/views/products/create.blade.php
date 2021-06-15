@@ -70,6 +70,13 @@
                                 @endforeach
                             </select>
                         </div>
+                        <div class="form-group">
+                          <label for="private">خصوصی</label>
+                          <select class="form-control" id="private" name="private">
+                            <option value="1" {{ (isset($product) && isset($product->id) && $product->is_private) ? 'selected' : '' }}>بله</option>
+                            <option value="0" {{ (isset($product) && isset($product->id) && !$product->is_private) ? 'selected' : '' }}>خیر</option>
+                          </select>
+                        </div>
                     </div>
                 </div>
                 <div class="row">

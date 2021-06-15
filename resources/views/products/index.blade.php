@@ -61,6 +61,7 @@
                     <th>کد</th>
                     <th>نام</th>
                     <th>دسته</th>
+                    <th>خصوصی یا عمومی</th>
                     <th>قیمت</th>
                     <th>#</th>
                   </tr>
@@ -157,6 +158,7 @@
             { data: 'id' },
             { data: 'name' },
             { data: 'collections_id' },
+            { data: 'is_private' },
             { data: 'price' },
             { data: 'end'}
 
