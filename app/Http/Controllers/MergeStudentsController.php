@@ -36,6 +36,95 @@ class MergeStudentsController extends Controller
             'msg_error' => request()->session()->get('msg_error')
         ]);
     }
+    /**
+     * Search name and phone in index of mergeStudents
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function indexPost(Request $request)
+    {
+
+        $mergedStudents = AppMergeStudents::where('is_deleted', false);
+        if ($request->input('name') != null) {
+            $name = trim($request->input('name'));
+            $student_ids = Student::where('is_deleted', false)->where('archived', false)->where('banned', false)->where(DB::raw("CONCAT(IFNULL(first_name, ''), IFNULL(CONCAT(' ', last_name), ''))"), 'like', '%' . $name . '%')->pluck('id');
+            if(count($student_ids)){
+                $mergedStudents = $mergedStudents->where(function ($query) use ($student_ids) {
+                    $query->orWhereIn('main_students_id', $student_ids)
+                        ->orWhereIn('auxilary_students_id', $student_ids)
+                        ->orWhereIn('second_auxilary_students_id', $student_ids)
+                        ->orWhere('third_auxilary_students_id', $student_ids);
+                });
+            } else {
+                $mergedStudents = null;
+            }
+
+        }
+        if ($request->input('phone') != null) {
+            $phone = $request->input('phone');
+            $student_ids = Student::where('is_deleted', false)->where('archived', false)->where('banned', false)->where('phone', 'like', '%' . $phone . '%')->pluck('id');
+            if(count($student_ids)){
+                $mergedStudents = $mergedStudents->where(function ($query) use ($student_ids) {
+                    $query->orWhereIn('main_students_id', $student_ids)
+                        ->orWhereIn('auxilary_students_id', $student_ids)
+                        ->orWhereIn('second_auxilary_students_id', $student_ids)
+                        ->orWhereIn('third_auxilary_students_id', $student_ids);
+                });
+            } else {
+                $mergedStudents = null;
+            }
+
+        }
+        //end filter
+        $req = $request->all();
+        $countAllMergedStudents = $mergedStudents != null ? count($mergedStudents->get()) : 0;
+        $columnIndex_arr = $request->get('order');
+        $columnName_arr = $request->get('columns');
+        $order_arr = $request->get('order');
+        $columnIndex = $columnIndex_arr[0]['column']; // Column index
+        $columnName = $columnName_arr[$columnIndex]['data']; // Column name
+        $columnSortOrder = $order_arr[0]['dir']; // asc or desc
+
+
+        $data = [];
+        if ($mergedStudents) {
+            if ($columnName != 'row' && $columnName != "end") {
+                $mergedStudents = $mergedStudents->orderBy($columnName, $columnSortOrder)
+                    ->skip($req['start'])
+                    ->take($req['length'])
+                    ->get();
+            } else {
+                $mergedStudents = $mergedStudents
+                    ->orderBy($columnName, $columnSortOrder)
+                    ->skip($req['start'])
+                    ->take($req['length'])
+                    ->get();
+            } 
+            foreach ($mergedStudents as $index => $item) {
+
+                $btn = '<a class="btn btn-primary" href="' . route('merge_students_edit', $item->id) . '"> ویرایش</a>
+                        <a class="btn btn-danger" href="' . route('merge_students_delete', $item->id) . '"> حذف </a>';
+                $data[] = [
+                    "row" => $req['start'] + $index + 1,
+                    "id" => $item->id,
+                    "main_students_id" => (($item->mainStudent) ? $item->mainStudent->first_name : '-'). " ". (($item->mainStudent) ? $item->mainStudent->last_name : '-'). "-".(($item->mainStudent) ? $item->mainStudent->phone : '-'),
+                    "auxilary_students_id" => (($item->auxilaryStudent) ? $item->auxilaryStudent->first_name : '-'). " ". (($item->auxilaryStudent) ? $item->auxilaryStudent->last_name : '-'). "-".(($item->auxilaryStudent) ? $item->auxilaryStudent->phone : '-'),
+                    "second_auxilary_students_id" =>(($item->secondAuxilaryStudent) ? $item->secondAuxilaryStudent->first_name : '-'). " ". (($item->secondAuxilaryStudent) ? $item->secondAuxilaryStudent->last_name : '-'). "-".(($item->secondAuxilaryStudent) ? $item->secondAuxilaryStudent->phone : '-') ,
+                    "third_auxilary_students_id" => (($item->thirdAuxilaryStudent) ? $item->thirdAuxilaryStudent->first_name : '-'). " ". (($item->thirdAuxilaryStudent) ? $item->thirdAuxilaryStudent->last_name : '-'). "-".(($item->thirdAuxilaryStudent) ? $item->thirdAuxilaryStudent->phone : '-'),
+                    "end" => $btn
+                ];
+            }
+        }
+        $result = [
+            "draw" => $req['draw'],
+            "data" => $data,
+            "request" => $request->all(),
+            "recordsTotal" => $countAllMergedStudents,
+            "recordsFiltered" => $countAllMergedStudents
+        ];
+
+        return $result;
+    }
 
     /**
      * handle error
@@ -79,15 +168,15 @@ class MergeStudentsController extends Controller
         if ($item != null) {
             if ($item->supporters_id != $main->supporters_id) {
                 $stu = Student::where('is_deleted', false)->where('id', $id)->first();
-                if(isset($stu)){
-                $stu->supporters_id = $main->supporters_id;
-                try {
-                    $stu->save();
-                } catch (Exception $error) {
-                    $request->session()->flash("msg_error", $err);
-                    return redirect()->route('merge_students_index');
+                if (isset($stu)) {
+                    $stu->supporters_id = $main->supporters_id;
+                    try {
+                        $stu->save();
+                    } catch (Exception $error) {
+                        $request->session()->flash("msg_error", $err);
+                        return redirect()->route('merge_students_index');
+                    }
                 }
-            }
             }
         }
     }
@@ -102,26 +191,27 @@ class MergeStudentsController extends Controller
         $arr2 = array_filter($arr1);
         return $arr2;
     }
-    public function makeBannedAndArchivedToBefalse($allRequests){
-        $mainStudent = Student::where('id',$allRequests[0])->first();
-        $auxilaryStudent = Student::where('id',$allRequests[1])->first();
-        $secondAuxilaryStudent = Student::where('id',$allRequests[2])->first();
-        $thirdAuxilaryStudent = Student::where('id',$allRequests[3])->first();
-        if($mainStudent->archived)$mainStudent->archived = 0;
-        if($mainStudent->banned)$mainStudent->banned = 0;
-        if($auxilaryStudent){
-            if($auxilaryStudent->archived)$auxilaryStudent->archived = 0;
-            if($auxilaryStudent->banned)$auxilaryStudent->banned = 0;
+    public function makeBannedAndArchivedToBefalse($allRequests)
+    {
+        $mainStudent = Student::where('id', $allRequests[0])->first();
+        $auxilaryStudent = Student::where('id', $allRequests[1])->first();
+        $secondAuxilaryStudent = Student::where('id', $allRequests[2])->first();
+        $thirdAuxilaryStudent = Student::where('id', $allRequests[3])->first();
+        if ($mainStudent->archived) $mainStudent->archived = 0;
+        if ($mainStudent->banned) $mainStudent->banned = 0;
+        if ($auxilaryStudent) {
+            if ($auxilaryStudent->archived) $auxilaryStudent->archived = 0;
+            if ($auxilaryStudent->banned) $auxilaryStudent->banned = 0;
             $auxilaryStudent->save();
         }
-        if($secondAuxilaryStudent){
-            if($secondAuxilaryStudent->archived)$secondAuxilaryStudent->archived = 0;
-            if($secondAuxilaryStudent->banned)$secondAuxilaryStudent->banned = 0;
+        if ($secondAuxilaryStudent) {
+            if ($secondAuxilaryStudent->archived) $secondAuxilaryStudent->archived = 0;
+            if ($secondAuxilaryStudent->banned) $secondAuxilaryStudent->banned = 0;
             $secondAuxilaryStudent->save();
         }
-        if($thirdAuxilaryStudent){
-            if($thirdAuxilaryStudent->archived)$thirdAuxilaryStudent->archived = 0;
-            if($thirdAuxilaryStudent->banned)$thirdAuxilaryStudent->banned = 0;
+        if ($thirdAuxilaryStudent) {
+            if ($thirdAuxilaryStudent->archived) $thirdAuxilaryStudent->archived = 0;
+            if ($thirdAuxilaryStudent->banned) $thirdAuxilaryStudent->banned = 0;
             $thirdAuxilaryStudent->save();
         }
         $mainStudent->save();
@@ -266,12 +356,12 @@ class MergeStudentsController extends Controller
                 false
             )->get();
         } else {
-            $students = Student::select('id', 'first_name', 'last_name', 'phone',DB::raw("CONCAT(first_name,' ',last_name)"))->where(
+            $students = Student::select('id', 'first_name', 'last_name', 'phone', DB::raw("CONCAT(first_name,' ',last_name)"))->where(
                 'is_deleted',
                 false
             )->where(function ($query) use ($search) {
-                $query->where(DB::raw("CONCAT(first_name,' ',last_name)"),'like','%'.$search.'%')->orWhere('phone','like','%'.$search.'%');
-            })->orderby('id','desc')->get();
+                $query->where(DB::raw("CONCAT(first_name,' ',last_name)"), 'like', '%' . $search . '%')->orWhere('phone', 'like', '%' . $search . '%');
+            })->orderby('id', 'desc')->get();
         }
         $response = array();
         foreach ($students as $student) {

@@ -180,7 +180,7 @@ class PurchaseController extends Controller
                 if ($item->type == 'manual') {
                     $type = "حضوری";
                     $btn =  '<div class="d-flex justify-content-between"><a class="btn btn-primary btn-sm mr-1" href="#" onclick="openManualModal('.$id.')">ویرایش</a>
-                    <a class="btn btn-danger btn-sm" href="' . route('purchase_delete', $id) . '" onclick="destroy(event)">حذف</a></div>';
+                    <a class="btn btn-danger btn-sm text-white" onclick="IfConfirmDestroy('. $id .')">حذف</a></div>';
                 } else if ($item->type == "site_successed") {
                     $type = "سایت";
                    $btn =  "<a class='btn btn-primary btn-sm' href='#' onclick='openSiteModal(".$id.")'>ویرایش</a>";
@@ -396,13 +396,17 @@ class PurchaseController extends Controller
         return $result;
     }
 
-    public function delete(Request $request, $id)
+    public function delete(Request $request)
     {
+
+        $id = $request->input('id');
         $purchase = Purchase::where('id', $id)->where('is_deleted', false)->first();
         $student = Student::where('id', $purchase->students_id)->first();
         if ($purchase == null) {
-            $request->session()->flash("msg_error", "پرداخت پیدا نشد!");
-            return redirect()->route('purchases');
+            $result = [
+                "data" => null,
+                "error" => "شناسه این خرید پیدا نشد!"
+            ];
         }
         if ($student) {
             $student->today_purchases = $student->purchases()->where('created_at', '>=', date("Y-m-d 00:00:00"))->where('is_deleted', false)->where('type', '!=', 'site_failed')->where('type','!=','manual_failed')->count();
@@ -432,9 +436,13 @@ class PurchaseController extends Controller
 
         $purchase->is_deleted = true;
         $purchase->save();
-
-        $request->session()->flash("msg_success", "پرداخت با موفقیت حذف شد.");
-        return redirect()->route('purchases');
+        $result = [
+            "data" => null,
+            "error" => null
+        ];
+        return $result;
+        // $request->session()->flash("msg_success", "پرداخت با موفقیت حذف شد.");
+        // return redirect()->route('purchases');
     }
 
     //---------------------API------------------------------------

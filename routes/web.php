@@ -133,7 +133,8 @@ Route::group(['middleware' => ['auth', 'message','changeCharactersAllToBePersian
         Route::post('/class/{student_id}/add', 'StudentController@classAdd')->name('student_class_add');
     });
     Route::group(['prefix' => '/merge_students','middleware' => 'admin-or-supervisor'], function(){
-        Route::any('/','MergeStudentsController@index')->name('merge_students_index');
+        Route::get('/','MergeStudentsController@index')->name('merge_students_index');
+        Route::post('/','MergeStudentsController@indexPost')->name('merge_students_index_post');
         Route::any('/create','MergeStudentsController@create')->name('merge_students_create');
         Route::any('/edit/{id}','MergeStudentsController@edit')->name('merge_students_edit');
         Route::get('/delete/{id}','MergeStudentsController@delete')->name('merge_students_delete');
@@ -196,7 +197,7 @@ Route::group(['middleware' => ['auth', 'message','changeCharactersAllToBePersian
         Route::post('/apply_manual_edit_modal', 'PurchaseController@applyManualEditModal')->name('purchase_apply_manual_edit_modal');
         Route::post('/get_students','PurchaseController@getStudents')->name('purchase_get_students');
         Route::post('/get_products','PurchaseController@getProducts')->name('purchase_get_products');
-        Route::get('/delete/{id}', 'PurchaseController@delete')->name('purchase_delete');
+        Route::post('/delete', 'PurchaseController@delete')->name('purchase_delete');
         Route::any('/test','PurchaseController@test')->name('purchase_test');
     });
 
