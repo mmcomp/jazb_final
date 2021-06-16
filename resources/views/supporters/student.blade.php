@@ -28,6 +28,7 @@ null => ""
 
 @section('css')
 <link href="/plugins/select2/css/select2.min.css" rel="stylesheet" />
+<link href="/dist/css/select2-style.css" rel="stylesheet" />
 
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <style>
