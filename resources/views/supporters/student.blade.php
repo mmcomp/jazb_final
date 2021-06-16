@@ -28,6 +28,7 @@ null => ""
 
 @section('css')
 <link href="/plugins/select2/css/select2.min.css" rel="stylesheet" />
+
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <style>
     .morepanel {
@@ -46,7 +47,6 @@ null => ""
 <!-- Date Picker -->
 <link href="/plugins/persiancalender/jquery.md.bootstrap.datetimepicker.style.css" rel="stylesheet" />
 @endsection
-
 @section('content')
 <!-- Content Header (Page header) -->
 <section class="content-header">
@@ -59,12 +59,6 @@ null => ""
                 @endif
             </div>
             <div class="col-sm-6">
-                <!--
-              <ol class="breadcrumb float-sm-right">
-                <li class="breadcrumb-item"><a href="#">Home</a></li>
-                <li class="breadcrumb-item active">DataTables</li>
-              </ol>
-              -->
             </div>
         </div>
     </div><!-- /.container-fluid -->
@@ -127,7 +121,123 @@ null => ""
                                     </select>
                                 </div>
                             </div>
-                            <div class="col" style="padding-top: 32px;">
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                               
+                                <div class="form-group">
+                                    <select id="has_product" class="form-control select2" multiple onchange="return selectProduct();">
+                                        @if(isset($has_the_product[0]))
+                                        <option value="" disabled >محصول</option>
+                                        @else
+                                        <option selected value="" disabled>محصول</option>
+                                        @endif
+                                        <option value="">همه</option>
+                                        @foreach($products as $product)
+                                        @if(isset($has_the_product[0]) && in_array($product->id,$has_the_product))
+                                        <option  value="{{ $product->id }}">{{($product->parents!='-')?$product->parents . '->':''}} {{ $product->name }}</option>
+                                        @else
+                                        <option value="{{ $product->id }}">{{($product->parents!='-')?$product->parents . '->':''}} {{ $product->name }}</option>
+                                        @endif
+                                        @endforeach
+                                    </select>
+                                </div>
+                               
+                               
+                            </div>
+                            <div class="col">
+                                <div class="form-group">
+                                    <select id="has_cal_result" class="form-control select2" multiple onchange="return selectCallResult();">
+                                        @if(isset($has_call_result) && $has_call_result>0)
+                                        <option value="" disabled>نتیجه تماس</option>
+                                        @else
+                                        <option selected value="" disabled>نتیجه تماس</option>
+                                        @endif
+                                        <option value="">همه</option>
+                                        @foreach($callResults as $callResult)
+                                        @if(isset($has_call_result) && $has_call_result==$callResult->id)
+                                        <option value="{{ $callResult->id }}" selected>{{ $callResult->title }}</option>
+                                        @else
+                                        <option value="{{ $callResult->id }}">{{ $callResult->title }}</option>
+                                        @endif
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                
+                                <div class="form-group">
+                                    <select id="has_the_tag" class="form-control select2" multiple onchange="return selectTag()">
+                                        @if(isset($has_the_tags[0]))
+                                        <option value="" disabled>برچسب اخلاقی</option>
+                                        @else
+                                        <option selected value="" disabled>برچسب اخلاقی</option>
+                                        @endif
+                                        <option value="">همه</option>
+                                        @foreach($moralTags as $tag)
+                                        @if(isset($has_the_tags[0]) && in_array($tag->id,$has_the_tags))
+                                        <option value="{{ $tag->id }}" selected>{{ $tag->name }}</option>
+                                        @else
+                                        <option value="{{ $tag->id }}">{{ $tag->name }}</option>
+                                        @endif
+                                        @endforeach
+                                    </select>
+                                </div>
+                               
+                               
+                            </div>
+                            
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group">
+                                    <select id="has_the_tag1" class="form-control select2" multiple onchange="return selectTag()">
+                                        @if(isset($has_the_tags[0]))
+                                        <option value="" disabled>برچسب نیازسنجی</option>
+                                        @else
+                                        <option selected value="" disabled>برچسب نیازسنجی</option>
+                                        @endif
+                                        <option value="">همه</option>
+                                        @foreach($needTags as $tag)
+                                        @if(isset($has_the_tags[0]) && in_array($tag->id,$has_the_tags))
+                                        <option value="{{ $tag->id }}" selected>{{ $tag->name }}</option>
+                                        @else
+                                        <option value="{{ $tag->id }}">{{ $tag->name }}</option>
+                                        @endif
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col text-center p-1">
+                                <select id="education_level" class="form-control select2" onchange="return selectEducationLevels();">
+                                    <option selected value="" disabled>مقطع</option>
+                                    <option value="">همه</option>
+                                    @for($i = 6;$i < 15;$i++) @if(isset($egucation_levels[$i])) <option value="{{ $i }}">
+                                        {{ $egucation_levels[$i] }}</option>
+                                        @else
+                                        <option value="{{ $i }}">{{ $i }}</option>
+                                        @endif
+                                        @endfor
+                                </select>
+                        </div>
+                        <div class="col text-center p-1">
+                                <select id="major" class="form-control select2" onchange="return selectMajors();">
+                                    <option selected value="" disabled>رشته</option>
+                                    <option value="">همه</option>
+                                    @foreach($majors as $item => $value)
+                                    //@if(isset($item))
+                                    <option value="{{ $item }}">{{ $value }}</option>
+                                    //@else
+                                    //<option value="{{ $item }}">{{ $item }}</option>
+                                    //@endif
+                                    @endforeach
+                                </select>
+                        </div>
+                            <div class="col">
                                 <a class="btn btn-success" onclick="theSearch()" href="#">
                                     جستجو
                                 </a>
@@ -155,52 +265,12 @@ null => ""
                             @endif
                         </div>
                         <div class="col text-center p-1">
-                            <!--<a class="btn btn-warning btn-block" href="#">محصول</a>-->
-                            <!--
-                            <label>
-                                محصول:
-                            </label>
-                            -->
-                            <select id="has_product" class="form-control select2" multiple onchange="return selectProduct();">
-                                @if(isset($has_the_product[0]))
-                                <option value="" disabled>محصول</option>
-                                @else
-                                <option selected value="" disabled>محصول</option>
-                                @endif
-                                <option value="">همه</option>
-                                @foreach($products as $product)
-                                @if(isset($has_the_product[0]) && in_array($product->id,$has_the_product))
-                                <option value="{{ $product->id }}">{{($product->parents!='-')?$product->parents . '->':''}} {{ $product->name }}</option>
-                                @else
-                                <option value="{{ $product->id }}">{{($product->parents!='-')?$product->parents . '->':''}} {{ $product->name }}</option>
-                                @endif
-                                @endforeach
-                            </select>
-                            <select id="has_cal_result" class="form-control select2" multiple onchange="return selectCallResult();">
-                                @if(isset($has_call_result) && $has_call_result>0)
-                                <option value="" disabled>نتیجه تماس</option>
-                                @else
-                                <option selected value="" disabled>نتیجه تماس</option>
-                                @endif
-                                <option value="">همه</option>
-                                @foreach($callResults as $callResult)
-                                @if(isset($has_call_result) && $has_call_result==$callResult->id)
-                                <option value="{{ $callResult->id }}" selected>{{ $callResult->title }}</option>
-                                @else
-                                <option value="{{ $callResult->id }}">{{ $callResult->title }}</option>
-                                @endif
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col text-center p-1">
                             @if(isset($has_site) && $has_site=='true')
                             <a id="student-site-btn" class="btn btn-success btn-block" href="#" onclick="return StudentSite();">سایت</a>
                             @else
                             <a id="student-site-btn" class="btn btn-warning btn-block" href="#" onclick="return StudentSite();">سایت</a>
                             @endif
                         </div>
-                    </div>
-                    <div class="row">
                         <div class="col text-center p-1">
                             @if(isset($order_collection) && $order_collection=='true')
                             <a id="order-collection-btn" class="btn btn-success btn-block" href="#" onclick="return OrderCollection();">تعداد پیشنهاد فروش</a>
@@ -214,59 +284,6 @@ null => ""
                             @else
                             <a id="student-reminder-btn" class="btn btn-warning btn-block" href="#" onclick="return StudentReminder();">یادآور</a>
                             @endif
-                        </div>
-                        <div class="col text-center p-1">
-                            @if(isset($has_tag) && $has_tag=='true')
-                            <!-- <a class="btn btn-success btn-block" href="#" onclick="return StudentTag();">برچسب اخلاقی دارد؟</a> -->
-                            @else
-                            <!-- <a class="btn btn-warning btn-block" href="#" onclick="return StudentTag();">برچسب اخلاقی دارد؟</a> -->
-                            @endif
-                            <a class="btn btn-warning btn-block" href="#" onclick="preloadFilterTagModal();$('#tag_modal_filter').modal('show');return false;">
-                                برچسب اخلاقی
-                            </a>
-
-                            <select id="has_the_tag" class="form-control select22" style="display: none;" multiple>
-                                <!--onchange="return selectTag();">-->
-                                @if(isset($has_the_tags[0]))
-                                <option value="" disabled>برچسب اخلاقی</option>
-                                @else
-                                <option selected value="" disabled>برچسب اخلاقی</option>
-                                @endif
-                                <option value="">همه</option>
-                                @foreach($moralTags as $tag)
-                                @if(isset($has_the_tags[0]) && in_array($tag->id,$has_the_tags))
-                                <option value="{{ $tag->id }}" selected>{{ $tag->name }}</option>
-                                @else
-                                <option value="{{ $tag->id }}">{{ $tag->name }}</option>
-                                @endif
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col text-center p-1">
-                            <select id="education_level" class="form-control select2" onchange="return selectEducationLevels();">
-                                <option selected value="" disabled>مقطع</option>
-                                <option value="">همه</option>
-                                @for($i = 6;$i < 15;$i++) @if(isset($egucation_levels[$i])) <option value="{{ $i }}">{{ $egucation_levels[$i] }}</option>
-                                    @else
-                                    <option value="{{ $i }}">{{ $i }}</option>
-                                    @endif
-                                    @endfor
-                            </select>
-                        </div>
-                        <div class="col text-center p-1">
-                            <select id="major" class="form-control select2" onchange="return selectMajors();">
-                                <option selected value="" disabled>رشته</option>
-                                <option value="">همه</option>
-                                @foreach($majors as $item => $value)
-                                //@if(isset($item))
-                                <option value="{{ $item }}">{{ $value }}</option>
-                                //@else
-                                //<option value="{{ $item }}">{{ $item }}</option>
-                                //@endif
-                                @endforeach
-                            </select>
                         </div>
                     </div>
                     <table id="example2" class="table table-bordered table-hover">
