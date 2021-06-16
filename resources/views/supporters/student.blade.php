@@ -194,7 +194,7 @@ null => ""
                         <div class="row">
                             <div class="col">
                                 <div class="form-group">
-                                    <select id="has_the_tag1" class="form-control select2" multiple onchange="return selectTag()">
+                                    <select id="has_need_tag" class="form-control select2" multiple onchange="return selectNeedTag()">
                                         @if(isset($has_the_tags[0]))
                                         <option value="" disabled>برچسب نیازسنجی</option>
                                         @else
@@ -253,6 +253,7 @@ null => ""
                         <input type="hidden" id="order_collection" name="order_collection" value="{{ isset($order_collection)?$order_collection:'false' }}" />
                         <input type="hidden" id="has_reminder" name="has_reminder" value="{{ isset($has_reminder)?$has_reminder:'false' }}" />
                         <input type="hidden" id="has_tag" name="has_tag" value="{{ isset($has_tag)?$has_tag:'false' }}" />
+                        <input type="hidden" id="has_need_tags" name="has_need_tags" value="{{ isset($has_the_tags[0])?implode(',', $has_the_tags):'' }}" />
                     </form>
                     <h3 class="text-center">
                         مرتب سازی
@@ -1535,8 +1536,14 @@ null => ""
 
     function selectTag() {
         $("#has_the_tags").val($("#has_the_tag").val().join(','));
+        table.ajax.reload();
+        //console.log($('#has_the_tags').val());
     }
-
+    function selectNeedTag() {
+        $("#has_need_tags").val($("#has_need_tag").val().join(','));
+        table.ajax.reload();
+        console.log($('#has_need_tags').val());
+    }
     function selectCallResult() {
         $('#loading').css('display', 'inline');
         emptySomeData();
@@ -1658,6 +1665,7 @@ null => ""
                     data['has_collection'] = $("#has_collection").val();
                     data['has_the_product'] = $("#has_the_product").val();
                     data['has_the_tags'] = $("#has_the_tags").val();
+                    data['has_need_tags'] = $('#has_need_tags').val();
                     data['has_call_result'] = $("#has_call_result").val();
                     data['has_site'] = $("#has_site").val();
                     data['order_collection'] = $("#order_collection").val();

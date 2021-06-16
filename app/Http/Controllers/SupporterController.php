@@ -869,8 +869,7 @@ class SupporterController extends Controller
         $this->findStudent(request()->input('third_auxilary_id'), $students);
 
         if (request()->getMethod() == 'POST') {
-
-
+            
             if (request()->input('name') != null) {
                 $name = trim(request()->input('name'));
                 $students = $searchStudent->search($students, $name);
@@ -928,6 +927,20 @@ class SupporterController extends Controller
             }
             if (request()->input('has_the_tags') != null && request()->input('has_the_tags') != '') {
                 $has_the_tags = request()->input('has_the_tags');
+                $arr_of_tags = explode(',', $has_the_tags);
+                $student_tags = StudentTag::where('is_deleted', false)->get();
+                $tags = [];
+                $valid_student_ids = [];
+                foreach ($student_tags as $student_tag) {
+                    $tags[$student_tag->students_id][] = $student_tag->tags_id;
+                    if ($this->isSubset($tags[$student_tag->students_id], $arr_of_tags, count($tags[$student_tag->students_id]), count($arr_of_tags))) {
+                        $valid_student_ids[] = $student_tag->students_id;
+                    }
+                }
+                $students = $students->whereIn('students.id', $valid_student_ids);
+            }
+            if (request()->input('has_need_tags') != null && request()->input('has_need_tags') != '') {
+                $has_the_tags = request()->input('has_need_tags');
                 $arr_of_tags = explode(',', $has_the_tags);
                 $student_tags = StudentTag::where('is_deleted', false)->get();
                 $tags = [];
