@@ -363,7 +363,6 @@
         </div>
         <div class="modal-body">
             <p>
-                <input type="hidden" id="students_index2" />
                 <h3 class="text-center">
                     داغ
                 </h3>
@@ -394,8 +393,10 @@
 <script src="../../plugins/datatables-bs4/js/dataTables.bootstrap4.js"></script>
 <!-- page script -->
 <script>
+    var index = 0;
+    let lastPage = 1;
+    let isSearchCall= false;
     let students = @JSON($students);
-    //console.log(students);
     let parentOnes = @JSON($parentOnes);
     let parentTwos = @JSON($parentTwos);
     let parentThrees = @JSON($parentThrees);
@@ -405,6 +406,7 @@
     let egucation_levels = @JSON($egucation_levels);
     let majors = @JSON($majors);
     let tags = {};
+    let stu_id = 0;
     let collections = {};
     let sw = 0;
     var table;
@@ -539,7 +541,6 @@
                 if(result && result.error!=null){
                     alert(result.error);
                 }
-                table.ajax.reload();
             }).fail(function(){
                 $("#loading-" + studentsIndex).hide();
                 console.log(result);
@@ -768,10 +769,8 @@
         console.log('parents:', parents);
 
         $("input.collection-checkbox").each(function (id, field){
-            // console.log('checking', field)
             let collectionId = parseInt($(field).val(), 10);
             let theCollection = collections[collectionId];
-            //console.log(collectionId, theCollection)
             if(theCollection){
                 console.log(parents.indexOf(theCollection.id), parents.indexOf(theCollection.parent_id));
                 if(parents.indexOf(theCollection.id)<0 && parents.indexOf(theCollection.parent_id)<0){
@@ -794,6 +793,7 @@
         $("input.tag-checkbox").prop('checked', false);
         $("input.collection-checkbox").prop('checked', false);
         var studentsIndex = parseInt($("#students_index").val(), 10);
+        console.log(studentsIndex,students[studentsIndex]);
         if(!isNaN(studentsIndex)){
             if(students[studentsIndex]){
                 console.log(students[studentsIndex].studenttags);
@@ -809,15 +809,27 @@
             }
         }
     }
-    function preloadTemperatureModal(){
-        $("input.tag-checkbox").prop('checked', false);
-        var studentsIndex = parseInt($("#students_index2").val(), 10);
-        
-        if(!isNaN(studentsIndex)){
-            if(students[studentsIndex]){
-                console.log(students[studentsIndex].studenttemperatures);
-                for(studenttag of students[studentsIndex].studenttemperatures){
-                    $("#temperature_" + studenttag.temperatures_id).prop("checked", true);
+    function onClickTemperature(id){
+        stu_id = id;
+        preloadTemperatureModal(id);
+        $('#temperature_modal').modal('show'); 
+        return false;
+    }
+    function findIndexOfTemperatures(id){
+        for(var i = 0; i < students.length; i++){
+          if(students[i].id == id) {
+              index = i;
+          }
+        }
+        return index;
+    }
+    function preloadTemperatureModal(id){
+        $("input.temperature-checkbox").prop('checked', false);
+        index = findIndexOfTemperatures(id);
+        if(!isNaN(index)){
+            if(students[index]){
+                for(studenttemperature of students[index].studenttemperatures){
+                    $("#temperature_" + studenttemperature.temperatures_id).prop("checked", true);
                 }
             }
         }
@@ -858,19 +870,21 @@
         $("input.temperature-checkbox:checked").each(function (id , field){
             selectedTemperatures.push(parseInt(field.value, 10));
         });
-        var studentsIndex = parseInt($("#students_index2").val(), 10);
-        if(!isNaN(studentsIndex)){
-            if(students[studentsIndex]){
+        index = findIndexOfTemperatures(stu_id);
+        if(!isNaN(index)){
+            if(students[index]){
                 $.post('{{ route('student_temperature') }}', {
-                    students_id: students[studentsIndex].id,
+                    students_id: stu_id,
                     selectedTemperatures
                 }, function(result){
-                    console.log('Result', result);
                     if(result.error!=null){
                         alert('خطای بروز رسانی');
                     }else{
-                        console.log(studentsIndex);
-                        //window.location.reload();
+                       //preloadTemperatureModal(stu_id);
+                    //    lastPage = table.page();
+                    //    isSearchCall = true;
+                    //    table.ajax.reload();
+                       window.location.reload();
                     }
                 }).fail(function(){
                     alert('خطای بروز رسانی');
@@ -889,8 +903,11 @@
     }
     function theSearch(){
         $('#loading').css('display','inline');
+        // lastPage = table.page();
+        // isSearchCall = true;
         table.ajax.reload();
         return false;
+        //window.location.reload();
     }
     function theChange(){
         $('#loading').css('display','inline');
@@ -976,6 +993,11 @@
                 "complete": function(response) {
                     $('#example2_paginate').removeClass('dataTables_paginate');
                     $('#loading').css('display','none');
+                    if(isSearchCall) {
+                       console.log(lastPage);
+                       table.page(lastPage).draw( 'page' );
+                       isSearchCall = false;
+                    }
                     $('#example2 tr').click(function() {
                         var x = this;
                         if($(this).hasClass('odd') || $(this).hasClass('even')){
