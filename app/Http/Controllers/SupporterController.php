@@ -271,7 +271,7 @@ class SupporterController extends Controller
         $notices_id = null;
         $replier_id = null;
         $sources_id = null;
-        $products = Product::where('is_deleted', false)->with('collection')->orderBy('name')->get();
+        $products = Product::where('is_deleted', false)->where('is_private', false)->with('collection')->orderBy('name')->get();
         foreach ($products as $index => $product) {
             $products[$index]->parents = "-";
             if ($product->collection) {
@@ -825,7 +825,7 @@ class SupporterController extends Controller
         }
         $students = Student::where('students.is_deleted', false)->where('students.banned', false)->where('students.archived', false)->where('supporters_id', $id);
         $sources = Source::where('is_deleted', false)->get();
-        $products = Product::where('is_deleted', false)->with('collection')->orderBy('name')->get();
+        $products = Product::where('is_deleted', false)->where('is_private', false)->with('collection')->orderBy('name')->get();
         foreach ($products as $index => $product) {
             $products[$index]->parents = "-";
         }
@@ -869,8 +869,7 @@ class SupporterController extends Controller
         $this->findStudent(request()->input('third_auxilary_id'), $students);
 
         if (request()->getMethod() == 'POST') {
-
-
+            
             if (request()->input('name') != null) {
                 $name = trim(request()->input('name'));
                 $students = $searchStudent->search($students, $name);
@@ -928,6 +927,20 @@ class SupporterController extends Controller
             }
             if (request()->input('has_the_tags') != null && request()->input('has_the_tags') != '') {
                 $has_the_tags = request()->input('has_the_tags');
+                $arr_of_tags = explode(',', $has_the_tags);
+                $student_tags = StudentTag::where('is_deleted', false)->get();
+                $tags = [];
+                $valid_student_ids = [];
+                foreach ($student_tags as $student_tag) {
+                    $tags[$student_tag->students_id][] = $student_tag->tags_id;
+                    if ($this->isSubset($tags[$student_tag->students_id], $arr_of_tags, count($tags[$student_tag->students_id]), count($arr_of_tags))) {
+                        $valid_student_ids[] = $student_tag->students_id;
+                    }
+                }
+                $students = $students->whereIn('students.id', $valid_student_ids);
+            }
+            if (request()->input('has_need_tags') != null && request()->input('has_need_tags') != '') {
+                $has_the_tags = request()->input('has_need_tags');
                 $arr_of_tags = explode(',', $has_the_tags);
                 $student_tags = StudentTag::where('is_deleted', false)->get();
                 $tags = [];
@@ -1457,7 +1470,7 @@ class SupporterController extends Controller
         $needTagParentTwos = NeedTagParentTwo::where('is_deleted', false)->has('tags')->get();
         $needTagParentThrees = NeedTagParentThree::where('is_deleted', false)->has('tags')->get();
         $needTagParentFours = NeedTagParentFour::where('is_deleted', false)->has('tags')->get();
-        $products = Product::where('is_deleted', false)->get();
+        $products = Product::where('is_deleted', false)->where('is_private', false)->get();
         return view('supporters.purchase', [
             'students' => $students,
             'sources' => $sources,

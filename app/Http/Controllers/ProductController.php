@@ -69,6 +69,7 @@ class ProductController extends Controller
                     "id" => $item->id,
                     "name" => $item->name,
                     "collections_id" => $item->parents,
+                    "is_private" => $item->is_private ? 'خصوصی' : 'عمومی',
                     "price" => number_format($item->price),
                     "end" => '<a class="btn btn-primary" href="'.route('product_edit',$item->id).'"> ویرایش</a>
                      <a class="btn btn-danger" onclick="destroy(event)" href="'.route('product_delete',$item->id).'">حذف</a>'
@@ -88,6 +89,7 @@ class ProductController extends Controller
 
     public function create(Request $request)
     {
+
         $collections = Collection::where('is_deleted', false)->orderBy('name')->get();
         foreach($collections as $index => $collection){
             $collections[$index]->parents = $collection->parents();
@@ -109,6 +111,7 @@ class ProductController extends Controller
         $product->name = $request->input('name', '');
         $product->collections_id = $productCollection->id;
         $product->price = (int)$request->input('price', 0);
+        $product->is_private = $request->input('private');
         $product->save();
 
         $request->session()->flash("msg_success", "محصول با موفقیت افزوده شد.");
@@ -138,6 +141,7 @@ class ProductController extends Controller
         $product->name = $request->input('name', '');
         $product->collections_id = (int)$request->input('collections_id', 0);
         $product->price = (int)$request->input('price', 0);
+        $product->is_private = $request->input('private');
         $product->save();
 
         $request->session()->flash("msg_success", "محصول با موفقیت ویرایش شد.");

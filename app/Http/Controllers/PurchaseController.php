@@ -45,7 +45,7 @@ class PurchaseController extends Controller
         $types = ["site_successed" => "سایت","site_failed" => "انصرافی","manual" => "حضوری","manual_failed" => "کنسل"];
         $from_date = null;
         $to_date = null;
-        $products = Product::where('is_deleted',false)->get();
+        $products = Product::where('is_deleted',false)->where('is_private', false)->get();
         $students = Student::where('is_deleted', false)->where('banned', false)->get();
         return view('purchases.index', [
             'types' => $types,
