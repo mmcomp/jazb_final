@@ -812,6 +812,7 @@
     function preloadTemperatureModal(){
         $("input.tag-checkbox").prop('checked', false);
         var studentsIndex = parseInt($("#students_index2").val(), 10);
+        
         if(!isNaN(studentsIndex)){
             if(students[studentsIndex]){
                 console.log(students[studentsIndex].studenttemperatures);
@@ -860,7 +861,6 @@
         var studentsIndex = parseInt($("#students_index2").val(), 10);
         if(!isNaN(studentsIndex)){
             if(students[studentsIndex]){
-                console.log('selected temperatures', selectedTemperatures);
                 $.post('{{ route('student_temperature') }}', {
                     students_id: students[studentsIndex].id,
                     selectedTemperatures
@@ -869,7 +869,8 @@
                     if(result.error!=null){
                         alert('خطای بروز رسانی');
                     }else{
-                        window.location.reload();
+                        console.log(studentsIndex);
+                        //window.location.reload();
                     }
                 }).fail(function(){
                     alert('خطای بروز رسانی');
@@ -934,6 +935,7 @@
                 "infoEmpty":      "نمایش 0 تا 0 از 0 داده",
                 "proccessing": "در حال بروزرسانی"
             },
+            "stateSave":true,
             "columnDefs": [   ////define column 1 and 10
                     {
                         "searchable": false,
