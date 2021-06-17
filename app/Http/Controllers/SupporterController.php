@@ -271,7 +271,7 @@ class SupporterController extends Controller
         $notices_id = null;
         $replier_id = null;
         $sources_id = null;
-        $products = Product::where('is_deleted', false)->with('collection')->orderBy('name')->get();
+        $products = Product::where('is_deleted', false)->where('is_private', false)->with('collection')->orderBy('name')->get();
         foreach ($products as $index => $product) {
             $products[$index]->parents = "-";
             if ($product->collection) {
@@ -825,7 +825,7 @@ class SupporterController extends Controller
         }
         $students = Student::where('students.is_deleted', false)->where('students.banned', false)->where('students.archived', false)->where('supporters_id', $id);
         $sources = Source::where('is_deleted', false)->get();
-        $products = Product::where('is_deleted', false)->with('collection')->orderBy('name')->get();
+        $products = Product::where('is_deleted', false)->where('is_private', false)->with('collection')->orderBy('name')->get();
         foreach ($products as $index => $product) {
             $products[$index]->parents = "-";
         }
@@ -1457,7 +1457,7 @@ class SupporterController extends Controller
         $needTagParentTwos = NeedTagParentTwo::where('is_deleted', false)->has('tags')->get();
         $needTagParentThrees = NeedTagParentThree::where('is_deleted', false)->has('tags')->get();
         $needTagParentFours = NeedTagParentFour::where('is_deleted', false)->has('tags')->get();
-        $products = Product::where('is_deleted', false)->get();
+        $products = Product::where('is_deleted', false)->where('is_private', false)->get();
         return view('supporters.purchase', [
             'students' => $students,
             'sources' => $sources,
