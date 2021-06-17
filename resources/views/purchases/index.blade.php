@@ -318,6 +318,7 @@
 <script src="../../plugins/datatables/pagination/listboxWithButtons.js"></script>
 <!-- page script -->
 <script>
+    $('.select2').select2();
     let products = @JSON($products);
     let students = @JSON($students); 
     let appendedOptions = "";
