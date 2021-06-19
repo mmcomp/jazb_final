@@ -46,6 +46,16 @@
                                  <input type="text" class="form-control" id="name" name="name" placeholder="نام" value="{{ isset($name) ? $name : '' }}" />
                              </div>
                          </div>
+                         <div class="col">
+                           <div class="form-group">
+                             <label for="isPrivate">خصوصی یا عمومی</label>
+                             <select  id="isPrivate" name="isPrivate" class="form-control select2" onchange="theChange()">
+                               <option value="all">همه</option> 
+                               <option value="0">عمومی</option>
+                               <option value="1">خصوصی</option>
+                          </select>
+                           </div>
+                         </div>
                          <div class="col" style="padding-top: 32px;">
                             <a class="btn btn-success" onclick="theSearch()" href="#">
                                 جستجو
@@ -89,6 +99,11 @@
 <script>
     var table;
 
+    function theChange(){
+        $('#loading').css('display','inline');
+        table.ajax.reload();
+        return false;
+    }
     function theSearch(){
         $('#loading').css('display','inline');
         table.ajax.reload();
@@ -133,6 +148,11 @@
                         "orderable": false,
                         "targets": 5
                     },
+                    {
+                        "searchable": false,
+                        "orderable": false,
+                        "targets": 6
+                    },
         ],
         "order": [[1, 'asc']], /// sort columns 2
         serverSide: true,
@@ -145,6 +165,7 @@
 
             "data": function (data) {
                 data['name'] = $("#name").val();
+                data['isPrivate'] = $('#isPrivate').val();
                 return JSON.stringify(data);
             },
             "complete": function(response) {
