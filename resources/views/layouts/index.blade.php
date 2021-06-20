@@ -621,6 +621,15 @@
                                     <p>ثبت خرید های حضوری</p>
                                 </a>
                         </li>
+                        <li class="nav-item">
+                          @if(strpos(\Request::route()->getName(), 'pur_assign_excel_get')===0)
+                          <a href="{{ route('pur_assign_excel_get') }}" class="nav-link active">
+                              @else
+                              <a href="{{ route('pur_assign_excel_get') }}" class="nav-link">
+                                  @endif
+                                  <p>تخصیص اکسل به خرید محصول</p>
+                              </a>
+                        </li>
                         @if(Gate::allows('parameters'))
                         <li class="nav-item">
                             @if(strpos(\Request::route()->getName(), 'supporter_student_purchases_get')===0)

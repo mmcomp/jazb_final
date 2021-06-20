@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\PhonesImport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Product;
@@ -14,6 +15,7 @@ use App\Utils\Sms;
 use Log;
 use Morilog\Jalali\CalendarUtils;
 use Illuminate\Support\Facades\Gate;
+use Maatwebsite\Excel\Facades\Excel;
 
 use Carbon\Carbon;
 
@@ -776,5 +778,62 @@ class PurchaseController extends Controller
             $purchase->price = 0;
             $purchase->save();
         }
+    }
+    public function assignExcelForPurchaseGet()
+    {
+
+        $products = Product::where('is_deleted', false)->get();
+        return view('purchases.excel')->with([
+            'products' => $products,
+        ]);
+    }
+    public function assignExcelForPurchasePost(Request $request)
+    {
+
+        $msg = 'بروز رسانی با موفقیت انجام شد';
+        $csvPath = $request->file('attachment')->getPathname();
+        $product_ids = array_filter($request->input('products'));
+        $phoneNumbersData = [];
+        if ($request->file('attachment')->extension() == 'xlsx') {
+            $data = Excel::toArray(new PhonesImport, $request->file("attachment"));
+            $phoneNumbersData= [];
+            foreach ($data[0] as $value) {
+               $phoneNumbersData[] = $value[0];
+            }
+            unset($phoneNumbersData[0], $phoneNumbersData[1]);
+            foreach($phoneNumbersData as &$item) {
+                $item = "0". $item;
+            }
+            unset($item);
+            $phoneNumbersData = array_values(array_filter($phoneNumbersData));
+        }
+        $csvArr = explode("\n", file_get_contents($csvPath));
+        unset($csvArr[0]);
+        $csvArr = array_values(array_filter($csvArr));
+        foreach($csvArr as &$item) {
+            $item = "0". $item;
+        }
+        unset($item);
+        $student_ids =  Student::whereIn('phone', $request->file('attachment')->extension() == 'xlsx' ? $phoneNumbersData : $csvArr)->pluck('id');
+        $dataToInsert = [];
+        foreach($student_ids as $student_id) {
+           foreach($product_ids as $product_id) {
+            $dataToInsert[] = [
+                "products_id" => $product_id, 
+                "users_id" => Auth::user()->id,
+                "price" => 0,
+                "type" => "manual",
+                "students_id" => $student_id,
+                "supporters_id" => 89,
+                "created_at" => Carbon::now()->format('Y-m-d H:i'),
+                "updated_at" => Carbon::now()->format('Y-m-d H:i'),
+                "purchase_time" => Carbon::now()->format('Y-m-d H:i')
+             ];
+           }
+          
+        }
+        Purchase::insert($dataToInsert);
+        return redirect()->back()->with('success', 'با موفقیت ثبت شد.');
+       
     }
 }
