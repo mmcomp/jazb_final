@@ -15,9 +15,21 @@ use Log;
 
 class ProductController extends Controller
 {
-    public function index(Request $request){
-        $products = Product::where('is_deleted', false)->with('collection')->where('name','like','%'.trim($request->input('name','')).'%');
+    public function index(Request $request)
+    {
+        
+        $products = Product::where('is_deleted', false)->with('collection');
         $name = null;
+        if ($request->getMethod() == 'POST') {
+            if($request->input('name') != null){
+                $products = $products->where('name','like','%'.trim($request->input('name','')).'%');
+            }
+            if($request->input('isPrivate')!= null) {
+                if($request->input('isPrivate') != "all") {
+                    $products = $products->where('is_private', $request->input('isPrivate'));
+                }
+            }
+        }
         if($request->getMethod() == 'GET'){
             return view('products.index',[
                 'route' => 'products',
