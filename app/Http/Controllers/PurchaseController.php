@@ -790,6 +790,7 @@ class PurchaseController extends Controller
     public function assignExcelForPurchasePost(Request $request)
     {
 
+        $products = Product::where('is_deleted', false)->get();
         $msg = 'بروز رسانی با موفقیت انجام شد';
         $csvPath = $request->file('attachment')->getPathname();
         $product_ids = array_filter($request->input('products'));
@@ -833,7 +834,11 @@ class PurchaseController extends Controller
           
         }
         Purchase::insert($dataToInsert);
-        return redirect()->back()->with('success', 'با موفقیت ثبت شد.');
+        return view('purchases.excel', [
+            'msg_success' => $msg,
+            'products' => $products
+            
+        ]);
        
     }
 }

@@ -44,13 +44,13 @@
                         {{ $item }}
                     </div>
                     @endforeach --}}
-                    @if (\Session::has('success'))
+                    {{-- @if (\Session::has('success'))
                     <div class="alert alert-success">
                         <ul>
                             <li>{!! \Session::get('success') !!}</li>
                         </ul>
                     </div>
-                @endif
+                @endif --}}
                 </div>
                 {{-- @endif --}}
                 <form method="POST" enctype="multipart/form-data" action="{{ route('pur_assign_excel_post')}}">
@@ -102,8 +102,4 @@
 <!-- Select2 -->
 <script src="/plugins/select2/js/select2.full.min.js"></script>
 <script src="/dist/js/purchase-excel.js"></script>
-<script>
-    let url = '{{ route("pur_assign_excel_post")}}';
-    let CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
-</script>
 @endsection
