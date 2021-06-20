@@ -270,6 +270,7 @@ class StudentController extends Controller
                 $req['length'] = 10;
                 $req['draw'] = 1;
             }
+            $x = 0;
             $columnIndex_arr = $request->get('order');
             $columnName_arr = $request->get('columns');
             $order_arr = $request->get('order');
@@ -277,6 +278,9 @@ class StudentController extends Controller
             $columnName = $columnName_arr[$columnIndex]['data']; // Column name
             $columnSortOrder = $order_arr[0]['dir']; // asc or desc
 
+            foreach($allStudents as $index => $item){
+                $allStudents[$index]->foo = $index; 
+            }
             if($columnName != 'row' && $columnName != 'end' && $columnName != "temps" && $columnName != "tags"){
                 $students = $students->orderBy($columnName,$columnSortOrder)
                 ->select('students.*')
@@ -373,12 +377,12 @@ class StudentController extends Controller
                         <br/>
                         <img id="loading-' . $index . '" src="/dist/img/loading.gif" style="height: 20px;display: none;" />',
                     "description" => $item->description,
-                    "end" => '<a class="btn btn-warning" href="#" onclick="$(\'#students_index2\').val(' . $index . ');preloadTemperatureModal();$(\'#temperature_modal\').modal(\'show\'); return false;">
+                    "end" => '<div class="d-flex justify-content-between"><a class="btn btn-warning btn-sm" href="#" onclick="onClickTemperature('. $item->id.')">
                         داغ/سرد
                     </a>
-                    <a class="btn btn-danger" href="' . route('student_class', ['id' => $item->id]) . '" >
+                    <a class="btn btn-danger btn-sm mr-1" href="' . route('student_class', ['id' => $item->id]) . '" >
                         تخصیص کلاس
-                    </a>'
+                    </a></div>'
                 ];
             }
 
@@ -457,7 +461,7 @@ class StudentController extends Controller
         if (request()->getMethod() == 'GET') {
             return view('students.archived', [
                 'route' => 'student_archived',
-                'students' => $students->get(),
+                'students' => $theStudents,
                 'supports' => $supports,
                 'sources' => $sources,
                 'supporters_id' => $supporters_id,
@@ -673,7 +677,7 @@ class StudentController extends Controller
 
         if(request()->getMethod() == "GET"){
             return view('students.banned', [
-                'students' => $students->get(),
+                'students' => $theStudents,
                 'supports' => $supports,
                 'sources' => $sources,
                 'supporters_id' => $supporters_id,
@@ -886,7 +890,7 @@ class StudentController extends Controller
 
         if (request()->getMethod() == 'GET') {
             return view('students.student-input-and-division', [
-                'students' => $students->get(),
+                'students' => $theStudents,
                 'supports' => $supports,
                 'sources' => $sources,
                 'supporters_id' => $supporters_id,
@@ -1020,9 +1024,9 @@ class StudentController extends Controller
                         <br/>
                         <img id="loading-' . $index . '" src="/dist/img/loading.gif" style="height: 20px;display: none;" />',
                     "description" => $item->description,
-                    "end" => '<a class="btn btn-warning" href="#" onclick="$(\'#students_index2\').val(' . $index . ');preloadTemperatureModal();$(\'#temperature_modal\').modal(\'show\'); return false;">
+                    "end" => '<div class="d-flex justify-content-between"><a class="btn btn-warning btn-sm" href="#" onclick="onClickTemperature('. $item->id.')">
                         داغ/سرد
-                    </a>'
+                    </a></div>'
                 ];
             }
             $result = [
@@ -1785,7 +1789,7 @@ class StudentController extends Controller
                     <br/>
                     <img id="loading-' . $index . '" src="/dist/img/loading.gif" style="height: 20px;display: none;" />',
                 $item->description,
-                '<a class="btn btn-warning" href="#" onclick="$(\'#students_index2\').val(' . $index . ');preloadTemperatureModal();$(\'#temperature_modal\').modal(\'show\'); return false;">
+                '<a class="btn btn-warning btn-sm" href="#" onclick="onClickTemperature('. $item->id.')">
                     داغ/سرد
                 </a>'
             ];
