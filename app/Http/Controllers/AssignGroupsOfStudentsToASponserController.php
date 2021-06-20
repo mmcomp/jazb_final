@@ -135,12 +135,22 @@ class assignGroupsOfStudentsToASponserController extends Controller
         $coldTemperatures = Temperature::where('is_deleted', false)->where('status', 'cold')->get();
         $cities = City::where('is_deleted', false)->get();
 
-
-        //dd($students->get());
+        $theStudents = $students
+        ->with('user')
+        ->with('studenttags.tag.parent_four')
+        ->with('studentcollections.collection.parent')
+        ->with('studenttemperatures.temperature')
+        ->with('source')
+        ->with('consultant')
+        ->with('supporter')
+        ->get();
+        foreach ($theStudents as $index => $student) {
+            $theStudents[$index]->pcreated_at = jdate(strtotime($student->created_at))->format("Y/m/d");
+        }
         if (request()->getMethod() == 'GET') {
             return view('assign_students.index', [
                 'route' => 'assign_students_index',
-                'students' => $students->get(),
+                'students' => $theStudents,
                 'supports' => $supports,
                 'sources' => $sources,
                 'products' => $products,
@@ -357,12 +367,12 @@ class assignGroupsOfStudentsToASponserController extends Controller
                             <br/>
                             <img id="loading-' . $index . '" src="/dist/img/loading.gif" style="height: 20px;display: none;" />',
                     "description" => $item->description,
-                    "end" =>'<a class="btn btn-warning" href="#" onclick="$(\'#students_index2\').val(' . $index . ');preloadTemperatureModal();$(\'#temperature_modal\').modal(\'show\'); return false;">
-                            داغ/سرد
-                        </a>
-                        <a class="btn btn-danger" href="' . route('student_class', ['id' => $item->id]) . '" >
-                            تخصیص کلاس
-                        </a>'
+                    "end" =>'<div class="d-flex justify-content-between"><a class="btn btn-warning btn-sm" href="#" onclick="onClickTemperature('. $item->id.')">
+                    داغ/سرد
+                 </a>
+                 <a class="btn btn-danger btn-sm mr-1" href="' . route('student_class', ['id' => $item->id]) . '" >
+                    تخصیص کلاس
+                </a></div>'
                 ];
 
             }

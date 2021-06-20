@@ -405,6 +405,8 @@
     let majors = @JSON($majors);
     let tags = {};
     let collections = {};
+    let stu_id = 0;
+    let index = 0;
     var table;
     for(let tg of tmpTags){
         tags[tg.id] = tg;
@@ -536,7 +538,6 @@
                 if(result && result.error!=null){
                     alert(result.error);
                 }
-                table.ajax.reload();
             }).fail(function(){
                 $("#loading-" + studentsIndex).hide();
                 console.log(result);
@@ -806,14 +807,27 @@
             }
         }
     }
-    function preloadTemperatureModal(){
-        $("input.tag-checkbox").prop('checked', false);
-        var studentsIndex = parseInt($("#students_index2").val(), 10);
-        if(!isNaN(studentsIndex)){
-            if(students[studentsIndex]){
-                console.log(students[studentsIndex].studenttemperatures);
-                for(studenttag of students[studentsIndex].studenttemperatures){
-                    $("#temperature_" + studenttag.temperatures_id).prop("checked", true);
+    function onClickTemperature(id){
+        stu_id = id;
+        preloadTemperatureModal(id);
+        $('#temperature_modal').modal('show'); 
+        return false;
+    }
+    function findIndexOfTemperatures(id){
+        for(var i = 0; i < students.length; i++){
+          if(students[i].id == id) {
+              index = i;
+          }
+        }
+        return index;
+    }
+    function preloadTemperatureModal(id){
+        $("input.temperature-checkbox").prop('checked', false);
+        index = findIndexOfTemperatures(id);
+        if(!isNaN(index)){
+            if(students[index]){
+                for(studenttemperature of students[index].studenttemperatures){
+                    $("#temperature_" + studenttemperature.temperatures_id).prop("checked", true);
                 }
             }
         }
@@ -854,12 +868,12 @@
         $("input.temperature-checkbox:checked").each(function (id , field){
             selectedTemperatures.push(parseInt(field.value, 10));
         });
-        var studentsIndex = parseInt($("#students_index2").val(), 10);
-        if(!isNaN(studentsIndex)){
-            if(students[studentsIndex]){
+        index = findIndexOfTemperatures(stu_id);
+        if(!isNaN(index)){
+            if(students[index]){
                 console.log('selected temperatures', selectedTemperatures);
                 $.post('{{ route('student_temperature') }}', {
-                    students_id: students[studentsIndex].id,
+                    students_id: stu_id,
                     selectedTemperatures
                 }, function(result){
                     console.log('Result', result);
@@ -921,6 +935,7 @@
             "ordering": true,
             "info": true,
             "autoWidth": false,
+            "stateSave": true,
             "language": {
                 "paginate": {
                     "previous": "قبل",
