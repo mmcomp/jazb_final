@@ -115,6 +115,10 @@ Route::group(['middleware' => ['auth', 'message','changeCharactersAllToBePersian
     Route::group(['prefix' => '/students'], function () {
         Route::any('/', 'StudentController@index')->name('students');
         Route::any('/all', 'StudentController@indexAll')->name('student_all')->middleware('admin-or-supervisor');
+        Route::any('/level-1', 'StudentController@levelOne')->name('student_level_1')->middleware('admin-or-supervisor');
+        Route::any('/level-2', 'StudentController@levelTwo')->name('student_level_2')->middleware('admin-or-supervisor');
+        Route::any('/level-3', 'StudentController@levelThree')->name('student_level_3')->middleware('admin-or-supervisor');
+        Route::any('/level-4', 'StudentController@levelFour')->name('student_level_4')->middleware('admin-or-supervisor');
         Route::get('/merged','StudentController@merge')->name('student_merged');
         Route::any('/banned', 'StudentController@banned')->name('student_banned')->middleware('admin-or-supervisor');
         Route::any('/archived', 'StudentController@archived')->name('student_archived')->middleware('admin-or-supervisor');
