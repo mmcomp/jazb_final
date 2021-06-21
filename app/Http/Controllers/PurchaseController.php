@@ -794,6 +794,13 @@ class PurchaseController extends Controller
         $msg = 'بروز رسانی با موفقیت انجام شد';
         $csvPath = $request->file('attachment')->getPathname();
         $product_ids = array_filter($request->input('products'));
+        if (count($product_ids) === 0) {
+            return view('purchases.excel', [
+                'msg_error' => "حداقل یک محصول انتخاب کنید",
+                'products' => $products
+                
+            ]);
+        }
         $phoneNumbersData = [];
         if ($request->file('attachment')->extension() == 'xlsx') {
             $data = Excel::toArray(new PhonesImport, $request->file("attachment"));
@@ -802,8 +809,11 @@ class PurchaseController extends Controller
                $phoneNumbersData[] = $value[0];
             }
             unset($phoneNumbersData[0], $phoneNumbersData[1]);
-            foreach($phoneNumbersData as &$item) {
-                $item = "0". $item;
+            // foreach($phoneNumbersData as &$item) {
+            //     $item = "0". $item;
+            // }
+            for ($i = 0; $i < count($phoneNumbersData); $i++) {
+                $phoneNumbersData[$i] = '0' . $phoneNumbersData[$i];
             }
             unset($item);
             $phoneNumbersData = array_values(array_filter($phoneNumbersData));
@@ -811,8 +821,8 @@ class PurchaseController extends Controller
         $csvArr = explode("\n", file_get_contents($csvPath));
         unset($csvArr[0]);
         $csvArr = array_values(array_filter($csvArr));
-        foreach($csvArr as &$item) {
-            $item = "0". $item;
+        for ($i = 0; $i < count($csvArr); $i++) {
+            $csvArr[$i] = '0' . $csvArr[$i];
         }
         unset($item);
         $student_ids =  Student::whereIn('phone', $request->file('attachment')->extension() == 'xlsx' ? $phoneNumbersData : $csvArr)->pluck('id');
@@ -823,7 +833,7 @@ class PurchaseController extends Controller
                 "products_id" => $product_id, 
                 "users_id" => Auth::user()->id,
                 "price" => 0,
-                "type" => "manual",
+                "type" => "excel_import",
                 "students_id" => $student_id,
                 "supporters_id" => 89,
                 "created_at" => Carbon::now()->format('Y-m-d H:i'),
