@@ -321,6 +321,24 @@
                             </select>
                         </div>
                         @endif
+                        @if(!Gate::allows('supervisor') && Gate::allows('parameters'))
+                        <div class="form-group">
+                            <label for="level">سطح</label>
+                            <select  id="level" name="level" class="form-control">
+                                <option value="0"></option>
+                                @for($i = 1; $i <=4; $i++)
+                                @if (isset($student) && isset($student->id) && $student->level == $i)
+                                <option value="{{ $i }}" selected>
+                                @else
+                                <option value="{{ $i }}" >
+                                @endif
+                                {{ $i }}
+                                </option>
+
+                                @endfor
+                            </select>
+                        </div>
+                        @endif
                         <div class="form-group">
                             <label for="outside_consultants">مشاور بیرونی</label>
                             @if (isset($student) && isset($student->outside_consultants))
