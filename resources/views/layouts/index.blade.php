@@ -536,6 +536,46 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                          @if(strpos(\Request::route()->getName(), 'student_level_1')===0)
+                          <a href="{{ route('student_level_1') }}" class="nav-link active">
+                          @else
+                          <a href="{{ route('student_level_1') }}" class="nav-link">
+                          @endif
+                              <!-- <i class="far fa-circle nav-icon"></i> -->
+                              <p>دانش آموزان سطح یک</p>
+                          </a>
+                      </li>
+                      <li class="nav-item">
+                        @if(strpos(\Request::route()->getName(), 'student_level_2')===0)
+                        <a href="{{ route('student_level_2') }}" class="nav-link active">
+                        @else
+                        <a href="{{ route('student_level_2') }}" class="nav-link">
+                        @endif
+                            <!-- <i class="far fa-circle nav-icon"></i> -->
+                            <p>دانش آموزان سطح دو</p>
+                        </a>
+                       </li>
+                       <li class="nav-item">
+                        @if(strpos(\Request::route()->getName(), 'student_level_3')===0)
+                        <a href="{{ route('student_level_3') }}" class="nav-link active">
+                        @else
+                        <a href="{{ route('student_level_3') }}" class="nav-link">
+                        @endif
+                            <!-- <i class="far fa-circle nav-icon"></i> -->
+                            <p>دانش آموزان سطح سه</p>
+                        </a>
+                       </li>
+                       <li class="nav-item">
+                        @if(strpos(\Request::route()->getName(), 'student_level_4')===0)
+                        <a href="{{ route('student_level_4') }}" class="nav-link active">
+                        @else
+                        <a href="{{ route('student_level_4') }}" class="nav-link">
+                        @endif
+                            <!-- <i class="far fa-circle nav-icon"></i> -->
+                            <p>دانش آموزان سطح چهار</p>
+                        </a>
+                       </li>
+                        <li class="nav-item">
                             @if(strpos(\Request::route()->getName(), 'merge_students_index')===0)
                             <a href="{{ route('merge_students_index') }}" class="nav-link active">
                             @else

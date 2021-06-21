@@ -72,7 +72,8 @@ class StudentController extends Controller
         }
         return $gregorian;
     }
-    public function class(Request $request, $id) {
+    public function class(Request $request, $id)
+    {
 
         $student = Student::where('is_deleted', false)->where('banned', false)->where('archived', false)->where('id', $id)->with('studentclasses.class')->first();
         if ($student == null) {
@@ -141,12 +142,14 @@ class StudentController extends Controller
         $request->session()->flash("msg_success", "کلاس دانش آموز مورد نظر افزوده شد!");
         return redirect()->route('student_class', ["id" => $student_id]);
     }
-
-    public function indexAll(Request $request)
+    public function showStudents(Request $request, $level, $view, $route)
     {
 
         $searchStudent = new SearchStudent;
         $students = Student::where('students.is_deleted', false)->where('students.banned', false)->where('students.archived', false);
+        if ($level != "all") {
+            $students = $students->where('level', $level);
+        }
         $supportGroupId = Group::getSupport();
         if ($supportGroupId)
             $supportGroupId = $supportGroupId->id;
@@ -155,6 +158,7 @@ class StudentController extends Controller
         $supporters_id = null;
         $name = null;
         $sources_id = null;
+        $theLevel = 0;
         $phone = null;
         $cities_id = null;
         $egucation_level = null;
@@ -169,6 +173,10 @@ class StudentController extends Controller
             if (request()->input('name') != null) {
                 $name = trim(request()->input('name'));
                 $students = $searchStudent->search($students, $name);
+            }
+            if (request()->input('level') != null) {
+                $theLevel = request()->input('level');
+                $students = $students->where('level', $theLevel);
             }
             if (request()->input('sources_id') != null) {
                 $sources_id = (int)request()->input('sources_id');
@@ -217,21 +225,21 @@ class StudentController extends Controller
         $coldTemperatures = Temperature::where('is_deleted', false)->where('status', 'cold')->get();
         $cities = City::where('is_deleted', false)->get();
         $theStudents = $students
-        ->with('user')
-        ->with('studenttags.tag.parent_four')
-        ->with('studentcollections.collection.parent')
-        ->with('studenttemperatures.temperature')
-        ->with('source')
-        ->with('consultant')
-        ->with('supporter')
-        ->get();
+            ->with('user')
+            ->with('studenttags.tag.parent_four')
+            ->with('studentcollections.collection.parent')
+            ->with('studenttemperatures.temperature')
+            ->with('source')
+            ->with('consultant')
+            ->with('supporter')
+            ->get();
         foreach ($theStudents as $index => $student) {
             $theStudents[$index]->pcreated_at = jdate(strtotime($student->created_at))->format("Y/m/d");
         }
 
         if (request()->getMethod() == 'GET') {
-            return view('students.index', [
-                //'route' => 'student_all',
+            return view($view, [
+                'route' => $route,
                 'students' => $theStudents,
                 'supports' => $supports,
                 'sources' => $sources,
@@ -278,49 +286,49 @@ class StudentController extends Controller
             $columnName = $columnName_arr[$columnIndex]['data']; // Column name
             $columnSortOrder = $order_arr[0]['dir']; // asc or desc
 
-            foreach($allStudents as $index => $item){
-                $allStudents[$index]->foo = $index; 
+            foreach ($allStudents as $index => $item) {
+                $allStudents[$index]->foo = $index;
             }
-            if($columnName != 'row' && $columnName != 'end' && $columnName != "temps" && $columnName != "tags"){
-                $students = $students->orderBy($columnName,$columnSortOrder)
-                ->select('students.*')
-                ->skip($req['start'])
-                ->take($req['length'])
-                ->with('user')
-                ->with('studenttags.tag.parent_four')
-                ->with('studentcollections.collection.parent')
-                ->with('studenttemperatures.temperature')
-                ->with('source')
-                ->with('consultant')
-                ->with('supporter')
-                ->get();
-            }else if($columnName == "tags"){
+            if ($columnName != 'row' && $columnName != 'end' && $columnName != "temps" && $columnName != "tags") {
+                $students = $students->orderBy($columnName, $columnSortOrder)
+                    ->select('students.*')
+                    ->skip($req['start'])
+                    ->take($req['length'])
+                    ->with('user')
+                    ->with('studenttags.tag.parent_four')
+                    ->with('studentcollections.collection.parent')
+                    ->with('studenttemperatures.temperature')
+                    ->with('source')
+                    ->with('consultant')
+                    ->with('supporter')
+                    ->get();
+            } else if ($columnName == "tags") {
                 $sw = "tags";
                 $students = $students
-                ->withCount('studenttags')
-                ->skip($req['start'])
-                ->take($req['length'])
-                ->with('user')
-                ->with('studenttags.tag.parent_four')
-                ->with('studentcollections.collection.parent')
-                ->with('studenttemperatures.temperature')
-                ->with('source')
-                ->with('consultant')
-                ->with('supporter')
-                ->orderBy('studenttags_count',$columnSortOrder)
-                ->get();
-            }else{
+                    ->withCount('studenttags')
+                    ->skip($req['start'])
+                    ->take($req['length'])
+                    ->with('user')
+                    ->with('studenttags.tag.parent_four')
+                    ->with('studentcollections.collection.parent')
+                    ->with('studenttemperatures.temperature')
+                    ->with('source')
+                    ->with('consultant')
+                    ->with('supporter')
+                    ->orderBy('studenttags_count', $columnSortOrder)
+                    ->get();
+            } else {
                 $students = $students->select('students.*')
-                ->skip($req['start'])
-                ->take($req['length'])
-                ->with('user')
-                ->with('studenttags.tag.parent_four')
-                ->with('studentcollections.collection.parent')
-                ->with('studenttemperatures.temperature')
-                ->with('source')
-                ->with('consultant')
-                ->with('supporter')
-                ->get();
+                    ->skip($req['start'])
+                    ->take($req['length'])
+                    ->with('user')
+                    ->with('studenttags.tag.parent_four')
+                    ->with('studentcollections.collection.parent')
+                    ->with('studenttemperatures.temperature')
+                    ->with('source')
+                    ->with('consultant')
+                    ->with('supporter')
+                    ->get();
             }
 
             $data = [];
@@ -358,32 +366,62 @@ class StudentController extends Controller
                         $supportersToSelect .= ' selected';
                     $supportersToSelect .= '>' . $sitem->first_name . ' ' . $sitem->last_name . '</option>';
                 }
-                $data[] = [
-                    "row" => $index + 1,
-                    "id" => $item->id,
-                    "first_name" => $item->first_name,
-                    "last_name" => $item->last_name,
-                    "users_id" => $registerer,
-                    "sources_id" => ($item->source) ? $item->source->name : '-',
-                    "tags" => $tags,
-                    "temps" => $temps,
-                    "supporters_id" => '<select id="supporters_id_' . $index . '" class="form-control select2">
-                        <option>-</option>
-                        ' . $supportersToSelect . '
-                        </select>
-                        <a class="btn btn-success btn-sm" href="#" onclick="return changeSupporter(' . $index . "," . $item->id . ');">
-                            ذخیره
+                if ($route == "student_all") {
+                    $data[] = [
+                        "row" => $index + 1,
+                        "id" => $item->id,
+                        "first_name" => $item->first_name,
+                        "last_name" => $item->last_name,
+                        "users_id" => $registerer,
+                        "sources_id" => ($item->source) ? $item->source->name : '-',
+                        "tags" => $tags,
+                        "temps" => $temps,
+                        "supporters_id" => '<select id="supporters_id_' . $index . '" class="form-control select2">
+                            <option>-</option>
+                            ' . $supportersToSelect . '
+                            </select>
+                            <a class="btn btn-success btn-sm" href="#" onclick="return changeSupporter(' . $index . "," . $item->id . ');">
+                                ذخیره
+                            </a>
+                            <br/>
+                            <img id="loading-' . $index . '" src="/dist/img/loading.gif" style="height: 20px;display: none;" />',
+                        "level" => $item->level,
+                        "description" => $item->description,
+                        "end" => '<div class="d-flex justify-content-between"><a class="btn btn-warning btn-sm" href="#" onclick="onClickTemperature(' . $item->id . ')">
+                            داغ/سرد
                         </a>
-                        <br/>
-                        <img id="loading-' . $index . '" src="/dist/img/loading.gif" style="height: 20px;display: none;" />',
-                    "description" => $item->description,
-                    "end" => '<div class="d-flex justify-content-between"><a class="btn btn-warning btn-sm" href="#" onclick="onClickTemperature('. $item->id.')">
-                        داغ/سرد
-                    </a>
-                    <a class="btn btn-danger btn-sm mr-1" href="' . route('student_class', ['id' => $item->id]) . '" >
-                        تخصیص کلاس
-                    </a></div>'
-                ];
+                        <a class="btn btn-danger btn-sm mr-1" href="' . route('student_class', ['id' => $item->id]) . '" >
+                            تخصیص کلاس
+                        </a></div>'
+                    ];
+                } else {
+                    $data[] = [
+                        "row" => $index + 1,
+                        "id" => $item->id,
+                        "first_name" => $item->first_name,
+                        "last_name" => $item->last_name,
+                        "users_id" => $registerer,
+                        "sources_id" => ($item->source) ? $item->source->name : '-',
+                        "tags" => $tags,
+                        "temps" => $temps,
+                        "supporters_id" => '<select id="supporters_id_' . $index . '" class="form-control select2">
+                            <option>-</option>
+                            ' . $supportersToSelect . '
+                            </select>
+                            <a class="btn btn-success btn-sm" href="#" onclick="return changeSupporter(' . $index . "," . $item->id . ');">
+                                ذخیره
+                            </a>
+                            <br/>
+                            <img id="loading-' . $index . '" src="/dist/img/loading.gif" style="height: 20px;display: none;" />',
+                        "description" => $item->description,
+                        "end" => '<div class="d-flex justify-content-between"><a class="btn btn-warning btn-sm" href="#" onclick="onClickTemperature(' . $item->id . ')">
+                            داغ/سرد
+                        </a>
+                        <a class="btn btn-danger btn-sm mr-1" href="' . route('student_class', ['id' => $item->id]) . '" >
+                            تخصیص کلاس
+                        </a></div>'
+                    ];
+                }
             }
 
 
@@ -398,6 +436,31 @@ class StudentController extends Controller
         }
     }
 
+    public function indexAll(Request $request)
+    {
+
+        return $this->showStudents($request, "all", "students.index", "student_all");
+    }
+    public function levelOne(Request $request)
+    {
+
+        return $this->showStudents($request, 1, "students.level1", "student_level_1");
+    }
+    public function levelTwo(Request $request)
+    {
+
+        return $this->showStudents($request, 2, "students.level2", "student_level_2");
+    }
+    public function levelThree(Request $request)
+    {
+
+        return $this->showStudents($request, 3, "students.level3", "student_level_3");
+    }
+    public function levelFour(Request $request)
+    {
+
+        return $this->showStudents($request, 4, "students.level4", "student_level_4");
+    }
     public function archived(Request $request)
     {
 
@@ -509,45 +572,45 @@ class StudentController extends Controller
             $columnName = $columnName_arr[$columnIndex]['data']; // Column name
             $columnSortOrder = $order_arr[0]['dir']; // asc or desc
 
-            if($columnName != 'row' && $columnName != "temps" && $columnName != "tags"){
-                $students = $students->orderBy($columnName,$columnSortOrder)
-                ->select('students.*')
-                ->skip($req['start'])
-                ->take($req['length'])
-                ->with('user')
-                ->with('studenttags.tag.parent_four')
-                ->with('studentcollections.collection.parent')
-                ->with('studenttemperatures.temperature')
-                ->with('source')
-                ->with('consultant')
-                ->with('supporter')
-                ->get();
-            }else if($columnName == "tags"){
+            if ($columnName != 'row' && $columnName != "temps" && $columnName != "tags") {
+                $students = $students->orderBy($columnName, $columnSortOrder)
+                    ->select('students.*')
+                    ->skip($req['start'])
+                    ->take($req['length'])
+                    ->with('user')
+                    ->with('studenttags.tag.parent_four')
+                    ->with('studentcollections.collection.parent')
+                    ->with('studenttemperatures.temperature')
+                    ->with('source')
+                    ->with('consultant')
+                    ->with('supporter')
+                    ->get();
+            } else if ($columnName == "tags") {
                 $students = $students
-                ->withCount('studenttags')
-                ->skip($req['start'])
-                ->take($req['length'])
-                ->with('user')
-                ->with('studenttags.tag.parent_four')
-                ->with('studentcollections.collection.parent')
-                ->with('studenttemperatures.temperature')
-                ->with('source')
-                ->with('consultant')
-                ->with('supporter')
-                ->orderBy('studenttags_count',$columnSortOrder)
-                ->get();
-            }else{
+                    ->withCount('studenttags')
+                    ->skip($req['start'])
+                    ->take($req['length'])
+                    ->with('user')
+                    ->with('studenttags.tag.parent_four')
+                    ->with('studentcollections.collection.parent')
+                    ->with('studenttemperatures.temperature')
+                    ->with('source')
+                    ->with('consultant')
+                    ->with('supporter')
+                    ->orderBy('studenttags_count', $columnSortOrder)
+                    ->get();
+            } else {
                 $students = $students->select('students.*')
-                ->skip($req['start'])
-                ->take($req['length'])
-                ->with('user')
-                ->with('studenttags.tag.parent_four')
-                ->with('studentcollections.collection.parent')
-                ->with('studenttemperatures.temperature')
-                ->with('source')
-                ->with('consultant')
-                ->with('supporter')
-                ->get();
+                    ->skip($req['start'])
+                    ->take($req['length'])
+                    ->with('user')
+                    ->with('studenttags.tag.parent_four')
+                    ->with('studentcollections.collection.parent')
+                    ->with('studenttemperatures.temperature')
+                    ->with('source')
+                    ->with('consultant')
+                    ->with('supporter')
+                    ->get();
             }
             $data = [];
             foreach ($students as $index => $item) {
@@ -675,7 +738,7 @@ class StudentController extends Controller
             $theStudents[$index]->pcreated_at = jdate(strtotime($student->created_at))->format("Y/m/d");
         }
 
-        if(request()->getMethod() == "GET"){
+        if (request()->getMethod() == "GET") {
             return view('students.banned', [
                 'students' => $theStudents,
                 'supports' => $supports,
@@ -698,7 +761,7 @@ class StudentController extends Controller
                 'msg_success' => request()->session()->get('msg_success'),
                 'msg_error' => request()->session()->get('msg_error')
             ]);
-        }else{
+        } else {
             $count = $allStudents ? count($allStudents) : 0;
             $req =  request()->all();
             if (!isset($req['start'])) {
@@ -713,45 +776,45 @@ class StudentController extends Controller
             $columnName = $columnName_arr[$columnIndex]['data']; // Column name
             $columnSortOrder = $order_arr[0]['dir']; // asc or desc
 
-            if($columnName != 'row' && $columnName != "temps" && $columnName != "tags"){
-                $students = $students->orderBy($columnName,$columnSortOrder)
-                ->select('students.*')
-                ->skip($req['start'])
-                ->take($req['length'])
-                ->with('user')
-                ->with('studenttags.tag.parent_four')
-                ->with('studentcollections.collection.parent')
-                ->with('studenttemperatures.temperature')
-                ->with('source')
-                ->with('consultant')
-                ->with('supporter')
-                ->get();
-            }else if($columnName == "tags"){
+            if ($columnName != 'row' && $columnName != "temps" && $columnName != "tags") {
+                $students = $students->orderBy($columnName, $columnSortOrder)
+                    ->select('students.*')
+                    ->skip($req['start'])
+                    ->take($req['length'])
+                    ->with('user')
+                    ->with('studenttags.tag.parent_four')
+                    ->with('studentcollections.collection.parent')
+                    ->with('studenttemperatures.temperature')
+                    ->with('source')
+                    ->with('consultant')
+                    ->with('supporter')
+                    ->get();
+            } else if ($columnName == "tags") {
                 $students = $students
-                ->withCount('studenttags')
-                ->skip($req['start'])
-                ->take($req['length'])
-                ->with('user')
-                ->with('studenttags.tag.parent_four')
-                ->with('studentcollections.collection.parent')
-                ->with('studenttemperatures.temperature')
-                ->with('source')
-                ->with('consultant')
-                ->with('supporter')
-                ->orderBy('studenttags_count',$columnSortOrder)
-                ->get();
-            }else{
+                    ->withCount('studenttags')
+                    ->skip($req['start'])
+                    ->take($req['length'])
+                    ->with('user')
+                    ->with('studenttags.tag.parent_four')
+                    ->with('studentcollections.collection.parent')
+                    ->with('studenttemperatures.temperature')
+                    ->with('source')
+                    ->with('consultant')
+                    ->with('supporter')
+                    ->orderBy('studenttags_count', $columnSortOrder)
+                    ->get();
+            } else {
                 $students = $students->select('students.*')
-                ->skip($req['start'])
-                ->take($req['length'])
-                ->with('user')
-                ->with('studenttags.tag.parent_four')
-                ->with('studentcollections.collection.parent')
-                ->with('studenttemperatures.temperature')
-                ->with('source')
-                ->with('consultant')
-                ->with('supporter')
-                ->get();
+                    ->skip($req['start'])
+                    ->take($req['length'])
+                    ->with('user')
+                    ->with('studenttags.tag.parent_four')
+                    ->with('studentcollections.collection.parent')
+                    ->with('studenttemperatures.temperature')
+                    ->with('source')
+                    ->with('consultant')
+                    ->with('supporter')
+                    ->get();
             }
             $data = [];
             foreach ($students as $index => $item) {
@@ -801,8 +864,6 @@ class StudentController extends Controller
 
             return $result;
         }
-
-
     }
 
     public function index()
@@ -876,14 +937,14 @@ class StudentController extends Controller
         $coldTemperatures = Temperature::where('is_deleted', false)->where('status', 'cold')->get();
         $cities = City::where('is_deleted', false)->get();
         $theStudents = $students
-        ->with('user')
-        ->with('studenttags.tag.parent_four')
-        ->with('studentcollections.collection.parent')
-        ->with('studenttemperatures.temperature')
-        ->with('source')
-        ->with('consultant')
-        ->with('supporter')
-        ->get();
+            ->with('user')
+            ->with('studenttags.tag.parent_four')
+            ->with('studentcollections.collection.parent')
+            ->with('studenttemperatures.temperature')
+            ->with('source')
+            ->with('consultant')
+            ->with('supporter')
+            ->get();
         foreach ($theStudents as $index => $student) {
             $theStudents[$index]->pcreated_at = jdate(strtotime($student->created_at))->format("Y/m/d");
         }
@@ -931,45 +992,45 @@ class StudentController extends Controller
             $columnName = $columnName_arr[$columnIndex]['data']; // Column name
             $columnSortOrder = $order_arr[0]['dir']; // asc or desc
 
-            if($columnName != 'row' && $columnName != 'end' && $columnName != "temps" && $columnName != "tags"){
-                $students = $students->orderBy($columnName,$columnSortOrder)
-                ->select('students.*')
-                ->skip($req['start'])
-                ->take($req['length'])
-                ->with('user')
-                ->with('studenttags.tag.parent_four')
-                ->with('studentcollections.collection.parent')
-                ->with('studenttemperatures.temperature')
-                ->with('source')
-                ->with('consultant')
-                ->with('supporter')
-                ->get();
-            }else if($columnName == "tags"){
+            if ($columnName != 'row' && $columnName != 'end' && $columnName != "temps" && $columnName != "tags") {
+                $students = $students->orderBy($columnName, $columnSortOrder)
+                    ->select('students.*')
+                    ->skip($req['start'])
+                    ->take($req['length'])
+                    ->with('user')
+                    ->with('studenttags.tag.parent_four')
+                    ->with('studentcollections.collection.parent')
+                    ->with('studenttemperatures.temperature')
+                    ->with('source')
+                    ->with('consultant')
+                    ->with('supporter')
+                    ->get();
+            } else if ($columnName == "tags") {
                 $students = $students
-                ->withCount('studenttags')
-                ->skip($req['start'])
-                ->take($req['length'])
-                ->with('user')
-                ->with('studenttags.tag.parent_four')
-                ->with('studentcollections.collection.parent')
-                ->with('studenttemperatures.temperature')
-                ->with('source')
-                ->with('consultant')
-                ->with('supporter')
-                ->orderBy('studenttags_count',$columnSortOrder)
-                ->get();
-            }else{
+                    ->withCount('studenttags')
+                    ->skip($req['start'])
+                    ->take($req['length'])
+                    ->with('user')
+                    ->with('studenttags.tag.parent_four')
+                    ->with('studentcollections.collection.parent')
+                    ->with('studenttemperatures.temperature')
+                    ->with('source')
+                    ->with('consultant')
+                    ->with('supporter')
+                    ->orderBy('studenttags_count', $columnSortOrder)
+                    ->get();
+            } else {
                 $students = $students->select('students.*')
-                ->skip($req['start'])
-                ->take($req['length'])
-                ->with('user')
-                ->with('studenttags.tag.parent_four')
-                ->with('studentcollections.collection.parent')
-                ->with('studenttemperatures.temperature')
-                ->with('source')
-                ->with('consultant')
-                ->with('supporter')
-                ->get();
+                    ->skip($req['start'])
+                    ->take($req['length'])
+                    ->with('user')
+                    ->with('studenttags.tag.parent_four')
+                    ->with('studentcollections.collection.parent')
+                    ->with('studenttemperatures.temperature')
+                    ->with('source')
+                    ->with('consultant')
+                    ->with('supporter')
+                    ->get();
             }
             $data = [];
             foreach ($students as $index => $item) {
@@ -1014,7 +1075,7 @@ class StudentController extends Controller
                     "sources_id" => ($item->source) ? $item->source->name : '-',
                     "tags" => $tags,
                     "temps" => $temps,
-                    "supporters_id"=> '<select id="supporters_id_' . $index . '" class="form-control select2">
+                    "supporters_id" => '<select id="supporters_id_' . $index . '" class="form-control select2">
                         <option>-</option>
                         ' . $supportersToSelect . '
                         </select>
@@ -1024,7 +1085,7 @@ class StudentController extends Controller
                         <br/>
                         <img id="loading-' . $index . '" src="/dist/img/loading.gif" style="height: 20px;display: none;" />',
                     "description" => $item->description,
-                    "end" => '<div class="d-flex justify-content-between"><a class="btn btn-warning btn-sm" href="#" onclick="onClickTemperature('. $item->id.')">
+                    "end" => '<div class="d-flex justify-content-between"><a class="btn btn-warning btn-sm" href="#" onclick="onClickTemperature(' . $item->id . ')">
                         داغ/سرد
                     </a></div>'
                 ];
@@ -1103,6 +1164,8 @@ class StudentController extends Controller
 
     public function edit(Request $request, $call_back, $id)
     {
+
+        $i = 1;
         $student = Student::where('is_deleted', false)->where('id', $id)->first();
         if ($student == null) {
             $request->session()->flash("msg_error", "دانش آموز مورد نظر پیدا نشد!");
@@ -1125,6 +1188,7 @@ class StudentController extends Controller
                 "sources" => $sources,
                 "cities" => $cities,
                 "student" => $student,
+                'i' => $i,
                 'msg_success' => request()->session()->get('msg_success'),
                 'msg_error' => request()->session()->get('msg_error')
             ]);
@@ -1151,16 +1215,18 @@ class StudentController extends Controller
         if ($student->supporters_id != $request->input('supporters_id') && $student->supporter_seen) {
             $student->supporter_seen = false;
         }
-        //if(Auth::user()->group->name == 'Admin'){
-        if(Gate::allows('parameters')){
-          $student->supporters_id = $request->input('supporters_id');
+        if (Gate::allows('parameters')) {
+            $student->supporters_id = $request->input('supporters_id');
+        }
+        if (!Gate::allows('supervisor') && Gate::allows('parameters')) {
+            $student->level = $request->input('level');
         }
         $student->banned = ($request->input('banned') != null) ? true : false;
         $student->archived = ($request->input('archived') != null) ? true : false;
         $student->outside_consultants = $request->input('outside_consultants');
         $student->description = $request->input('description');
         try {
-            if($student->banned || $student->archived){
+            if ($student->banned || $student->archived) {
                 $student->supporters_id = 0;
             }
             $student->save();
@@ -1200,15 +1266,16 @@ class StudentController extends Controller
         }
         return $educationLevel;
     }
-    public function outputCsv(Request $request){
+    public function outputCsv(Request $request)
+    {
         $from_date = null;
         $to_date = null;
         $majors = [
-            "mathematics"=>"ریاضی",
-            "experimental"=>"تجربی",
-            "humanities"=>"انسانی",
-            "art"=>"هنر",
-            "other"=>"دیگر"
+            "mathematics" => "ریاضی",
+            "experimental" => "تجربی",
+            "humanities" => "انسانی",
+            "art" => "هنر",
+            "other" => "دیگر"
         ];
         $education_levels = [
             "6" => "6",
@@ -1223,17 +1290,16 @@ class StudentController extends Controller
             null => ""
         ];
         $supportGroupId = Group::getSupport();
-        if($supportGroupId)
+        if ($supportGroupId)
             $supportGroupId = $supportGroupId->id;
         $supports = User::where('is_deleted', false)->where('groups_id', $supportGroupId)->get();
         if ($request->getMethod() == 'POST') {
-            $studentsExport = new StudentsExport($request->input('students_select'),(int)$request->input('supporters_id'),$request->input('major'),$request->input('egucation_level'),$request->input('from_date'),$request->input('to_date'));
-            if(!count($studentsExport->collection())){
+            $studentsExport = new StudentsExport($request->input('students_select'), (int)$request->input('supporters_id'), $request->input('major'), $request->input('egucation_level'), $request->input('from_date'), $request->input('to_date'));
+            if (!count($studentsExport->collection())) {
                 $request->session()->flash("msg_error", "دانش آموزی با این شرایط پیدا نشد!");
                 return redirect()->back();
             }
             return Excel::download($studentsExport, 'students.xlsx');
-
         }
         return view('students.output-csv')->with([
             'from_date' => $from_date,
@@ -1416,15 +1482,15 @@ class StudentController extends Controller
         $student = null;
         if ($appMergeStudent) {
             $purchases = Purchase::where('is_deleted', false)->whereIn('students_id', [
-                    $appMergeStudent->main_students_id,
-                    $appMergeStudent->auxilary_students_id,
-                    $appMergeStudent->second_auxilary_students_id,
-                    $appMergeStudent->third_auxilary_students_id
-                ])->get();
+                $appMergeStudent->main_students_id,
+                $appMergeStudent->auxilary_students_id,
+                $appMergeStudent->second_auxilary_students_id,
+                $appMergeStudent->third_auxilary_students_id
+            ])->get();
         } else {
             $student = Student::where('is_deleted', false)->where('banned', false)->where('id', $id)->first();
             if ($student) {
-                $purchases = $student->purchases()->where('type', '!=', 'site_failed')->where('type','!=','manual_failed')->get();
+                $purchases = $student->purchases()->where('type', '!=', 'site_failed')->where('type', '!=', 'manual_failed')->get();
             } else if ($student == null) {
                 $request->session()->flash("msg_error", "دانش آموز پیدا نشد!");
                 return redirect()->route('students');
@@ -1541,10 +1607,10 @@ class StudentController extends Controller
     {
         $students_id = $request->input('students_id');
         $supporters_id = $request->input('supporters_id');
-        $mergeStudent = AppMergeStudents::where('main_students_id', $students_id)->where('is_deleted',false)->first();
-        $auxilaryStudent = AppMergeStudents::where('auxilary_students_id',$students_id)->where('is_deleted',false)->first();
-        $secondAuxilaryStudent = AppMergeStudents::where('second_auxilary_students_id',$students_id)->where('is_deleted',false)->first();
-        $thirdAuxilaryStudent = AppMergeStudents::where('third_auxilary_students_id',$students_id)->where('is_deleted',false)->first();
+        $mergeStudent = AppMergeStudents::where('main_students_id', $students_id)->where('is_deleted', false)->first();
+        $auxilaryStudent = AppMergeStudents::where('auxilary_students_id', $students_id)->where('is_deleted', false)->first();
+        $secondAuxilaryStudent = AppMergeStudents::where('second_auxilary_students_id', $students_id)->where('is_deleted', false)->first();
+        $thirdAuxilaryStudent = AppMergeStudents::where('third_auxilary_students_id', $students_id)->where('is_deleted', false)->first();
         if ($mergeStudent != null) {
             $auxilaryStu = $this->getStudent($mergeStudent->auxilary_students_id);
             $secondAuxilaryStu = $this->getStudent($mergeStudent->second_auxilary_students_id);
@@ -1558,7 +1624,7 @@ class StudentController extends Controller
                 "error" => null,
                 "data" => null
             ];
-        }else if($mergeStudent == null && ($auxilaryStudent != null || $secondAuxilaryStudent != null || $thirdAuxilaryStudent != null)){
+        } else if ($mergeStudent == null && ($auxilaryStudent != null || $secondAuxilaryStudent != null || $thirdAuxilaryStudent != null)) {
             return [
                 "error" => "ابتدا باید پشتیبان فرد اصلی را تغییر دهید!",
                 "data" => null
@@ -1576,7 +1642,6 @@ class StudentController extends Controller
             "error" => null,
             "data" => null
         ];
-
     }
 
     //---------------------API------------------------------------
@@ -1789,7 +1854,7 @@ class StudentController extends Controller
                     <br/>
                     <img id="loading-' . $index . '" src="/dist/img/loading.gif" style="height: 20px;display: none;" />',
                 $item->description,
-                '<a class="btn btn-warning btn-sm" href="#" onclick="onClickTemperature('. $item->id.')">
+                '<a class="btn btn-warning btn-sm" href="#" onclick="onClickTemperature(' . $item->id . ')">
                     داغ/سرد
                 </a>'
             ];
@@ -1814,5 +1879,4 @@ class StudentController extends Controller
     {
         return view('students.merge');
     }
-   
 }
