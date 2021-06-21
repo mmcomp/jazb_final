@@ -44,10 +44,10 @@ class PurchaseController extends Controller
     }
     public function index()
     {
-        $types = ["site_successed" => "سایت","site_failed" => "انصرافی","manual" => "حضوری","manual_failed" => "کنسل"];
+        $types = ["site_successed" => "سایت", "site_failed" => "انصرافی", "manual" => "حضوری", "manual_failed" => "کنسل"];
         $from_date = null;
         $to_date = null;
-        $products = Product::where('is_deleted',false)->where('is_private', false)->get();
+        $products = Product::where('is_deleted', false)->where('is_private', false)->get();
         $students = Student::where('is_deleted', false)->where('banned', false)->get();
         return view('purchases.index', [
             'types' => $types,
@@ -96,17 +96,17 @@ class PurchaseController extends Controller
                     $purchases = $purchases->where('purchases.type', 'manual');
                     break;
                 case "manual_failed":
-                    $purchases = $purchases->where('type','manual_failed');
+                    $purchases = $purchases->where('type', 'manual_failed');
                     break;
             }
         }
         if ($request->input('name') != null) {
             $name = trim($request->input('name'));
             $student_ids = Student::where('is_deleted', false)
-            ->where('banned', false)
-            ->where('archived', false)
-            ->where(DB::raw("CONCAT(IFNULL(first_name, ''), IFNULL(CONCAT(' ', last_name), ''))"), 'like', '%' . $name . '%')
-            ->pluck('id');
+                ->where('banned', false)
+                ->where('archived', false)
+                ->where(DB::raw("CONCAT(IFNULL(first_name, ''), IFNULL(CONCAT(' ', last_name), ''))"), 'like', '%' . $name . '%')
+                ->pluck('id');
             $purchases = $purchases->whereIn('purchases.students_id', $student_ids);
         }
         if ($request->input('phone') != null) {
@@ -118,8 +118,8 @@ class PurchaseController extends Controller
                 ->pluck('id');
             $purchases = $purchases->whereIn('purchases.students_id', $student_ids);
         }
-        if($request->input('from_date') && $request->input('to_date') && $request->input('from_date') == $request->input('to_date')){
-            $purchases = $purchases->where('created_at', '>=', date("Y-m-d 00:00:00"))->where('created_at','<=',date("Y-m-d 23:59:59"));
+        if ($request->input('from_date') && $request->input('to_date') && $request->input('from_date') == $request->input('to_date')) {
+            $purchases = $purchases->where('created_at', '>=', date("Y-m-d 00:00:00"))->where('created_at', '<=', date("Y-m-d 23:59:59"));
         } else {
             if ($request->input('from_date')) {
                 $from_date = $this->jalaliToGregorian($request->input('from_date'));
@@ -130,7 +130,7 @@ class PurchaseController extends Controller
                 $purchases = $purchases->where('created_at', '<=', $to_date);
             }
         }
-        if($request->input('products_id') != null){
+        if ($request->input('products_id') != null) {
             $products_id = (int)$request->input('products_id');
             $purchases = $purchases->where('purchases.products_id', $products_id);
         }
@@ -161,14 +161,14 @@ class PurchaseController extends Controller
                 ->skip($req['start'])
                 ->take($req['length'])
                 ->get();
-        } else if($columnName == "saloon"){
+        } else if ($columnName == "saloon") {
             $purchases = $purchases
-            ->join('students','purchases.students_id','=','students.id')
-            ->orderBy('students.saloon', $columnSortOrder)
-            ->select('purchases.*','students.*')
-            ->skip($req['start'])
-            ->take($req['length'])
-            ->get();
+                ->join('students', 'purchases.students_id', '=', 'students.id')
+                ->orderBy('students.saloon', $columnSortOrder)
+                ->select('purchases.*', 'students.*')
+                ->skip($req['start'])
+                ->take($req['length'])
+                ->get();
         } else {
             $purchases = $purchases->select('purchases.*')
                 ->skip($req['start'])
@@ -181,15 +181,15 @@ class PurchaseController extends Controller
                 $id = $item->id;
                 if ($item->type == 'manual') {
                     $type = "حضوری";
-                    $btn =  '<div class="d-flex justify-content-between"><a class="btn btn-primary btn-sm mr-1" href="#" onclick="openManualModal('.$id.')">ویرایش</a>
-                    <a class="btn btn-danger btn-sm text-white" onclick="IfConfirmDestroy('. $id .')">حذف</a></div>';
+                    $btn =  '<div class="d-flex justify-content-between"><a class="btn btn-primary btn-sm mr-1" href="#" onclick="openManualModal(' . $id . ')">ویرایش</a>
+                    <a class="btn btn-danger btn-sm text-white" onclick="IfConfirmDestroy(' . $id . ')">حذف</a></div>';
                 } else if ($item->type == "site_successed") {
                     $type = "سایت";
-                   $btn =  "<a class='btn btn-primary btn-sm' href='#' onclick='openSiteModal(".$id.")'>ویرایش</a>";
+                    $btn =  "<a class='btn btn-primary btn-sm' href='#' onclick='openSiteModal(" . $id . ")'>ویرایش</a>";
                 } else if ($item->type == "site_failed") {
                     $type = "انصرافی";
                     $btn = '';
-                }  else if ($item->type == "manual_failed") {
+                } else if ($item->type == "manual_failed") {
                     $type = "کنسل";
                     $btn = '';
                 }
@@ -262,12 +262,12 @@ class PurchaseController extends Controller
         if ($student) {
             if ($student->supporters_id) {
                 $student->own_purchases = $student->purchases()->where('supporters_id', $student->supporters_id)
-                    ->where('is_deleted', false)->where('type', '!=', 'site_failed')->where('type','!=','manual_failed')->count();
+                    ->where('is_deleted', false)->where('type', '!=', 'site_failed')->where('type', '!=', 'manual_failed')->count();
             }
             $student->other_purchases = $student->purchases()->where(function ($query) use ($student) {
                 if ($student->supporters_id) $query->where('supporters_id', '!=', $student->supporters_id)->orWhere('supporters_id', 0);
-            })->where('is_deleted', false)->where('type', '!=', 'site_failed')->where('type','!=','manual_failed')->count();
-            $student->today_purchases = $student->purchases()->where('created_at', '>=', date("Y-m-d 00:00:00"))->where('is_deleted', false)->where('type', '!=', 'site_failed')->where('type','!=','manual_failed')->count();
+            })->where('is_deleted', false)->where('type', '!=', 'site_failed')->where('type', '!=', 'manual_failed')->count();
+            $student->today_purchases = $student->purchases()->where('created_at', '>=', date("Y-m-d 00:00:00"))->where('is_deleted', false)->where('type', '!=', 'site_failed')->where('type', '!=', 'manual_failed')->count();
             $student->save();
         }
         $request->session()->flash("msg_success", "پرداخت با موفقیت افزوده شد.");
@@ -285,7 +285,7 @@ class PurchaseController extends Controller
     {
 
         $purchase = Purchase::where('id', $request->input('id'))->where('is_deleted', false)->first();
-        if($purchase != null){
+        if ($purchase != null) {
             $result = [
                 "data" => [
                     "price" => $purchase->price,
@@ -302,14 +302,14 @@ class PurchaseController extends Controller
                 "error" => "شناسه این خرید پیدا نشد!"
             ];
         }
-       
+
         return $result;
     }
     public function applySiteEditModal(Request $request)
     {
 
         $purchase = Purchase::where('id', $request->input('id'))->where('is_deleted', false)->first();
-        if($purchase != null){
+        if ($purchase != null) {
             $purchase->price = $request->input('price');
             $purchase->description = $request->input('description');
             $purchase->save();
@@ -321,17 +321,17 @@ class PurchaseController extends Controller
             $result = [
                 "data" => null,
                 "error" => "شناسه این خرید پیدا نشد!"
-            ];  
+            ];
         }
-       
+
         return $result;
     }
     public function openManualEditModal(Request $request)
     {
-      
-        $types = ["manual" => "حضوری","manual_failed" => "کنسل"];
+
+        $types = ["manual" => "حضوری", "manual_failed" => "کنسل"];
         $purchase = Purchase::where('id', $request->input('id'))->where('is_deleted', false)->first();
-        if($purchase != null){
+        if ($purchase != null) {
             $result = [
                 "data" => [
                     "factor_number" => $purchase->factor_number,
@@ -364,7 +364,7 @@ class PurchaseController extends Controller
     {
 
         $purchase = Purchase::where('id', $request->input('id'))->where('is_deleted', false)->first();
-        if($purchase != null){
+        if ($purchase != null) {
             $student = Student::find($request->input('students_id'));
             $purchase->students_id = $request->input('students_id');
             $purchase->supporters_id = $student->supporters_id;
@@ -373,13 +373,13 @@ class PurchaseController extends Controller
             $purchase->description = $request->input('description');
             $purchase->price = $request->input('price');
             $purchase->factor_number = $request->input('factor_number');
-            if(!Gate::allows('supervisor') && Gate::allows('parameters')){
+            if (!Gate::allows('supervisor') && Gate::allows('parameters')) {
                 $purchase->type = $request->input('type');
             }
             $purchase->save();
             if ($student) {
-                $student->today_purchases = $student->purchases()->where('created_at', '>=', date("Y-m-d 00:00:00"))->where('is_deleted', false)->where('type', '!=', 'site_failed')->where('type','!=','manual_failed')->count();
-    
+                $student->today_purchases = $student->purchases()->where('created_at', '>=', date("Y-m-d 00:00:00"))->where('is_deleted', false)->where('type', '!=', 'site_failed')->where('type', '!=', 'manual_failed')->count();
+
                 if ($purchase->created_at < date("Y-m-d 00:00:00")) {
                     $student->today_purchases = $student->today_purchases > 0 ? $student->today_purchases - 1 : $student->today_purchases;
                 }
@@ -411,7 +411,7 @@ class PurchaseController extends Controller
             ];
         }
         if ($student) {
-            $student->today_purchases = $student->purchases()->where('created_at', '>=', date("Y-m-d 00:00:00"))->where('is_deleted', false)->where('type', '!=', 'site_failed')->where('type','!=','manual_failed')->count();
+            $student->today_purchases = $student->purchases()->where('created_at', '>=', date("Y-m-d 00:00:00"))->where('is_deleted', false)->where('type', '!=', 'site_failed')->where('type', '!=', 'manual_failed')->count();
 
             if ($student->supporters_id) {
                 if ($student->own_purchases > 0) {
@@ -461,7 +461,7 @@ class PurchaseController extends Controller
             $purchaseObject = Purchase::where("factor_number", $purchase['factor_number'])->where('is_deleted', false)->where('type', '!=', 'manual')->first();
             $student = Student::where('id', $purchaseObject->students_id)->first();
             if ($student) {
-                $student->today_purchases = $student->purchases()->where('created_at', '>=', date("Y-m-d 00:00:00"))->where('is_deleted', false)->where('type', '!=', 'site_failed')->where('type','!=','manual_failed')->count();
+                $student->today_purchases = $student->purchases()->where('created_at', '>=', date("Y-m-d 00:00:00"))->where('is_deleted', false)->where('type', '!=', 'site_failed')->where('type', '!=', 'manual_failed')->count();
 
                 if ($student->supporters_id) {
                     if ($student->own_purchases > 0) {
@@ -527,7 +527,7 @@ class PurchaseController extends Controller
             }
             $student = Student::where('id', $purchaseObject->students_id)->first();
             if ($student) {
-                $student->today_purchases = $student->purchases()->where('created_at', '>=', date("Y-m-d 00:00:00"))->where('is_deleted', false)->where('type', '!=', 'site_failed')->where('type','!=','manual_failed')->count();
+                $student->today_purchases = $student->purchases()->where('created_at', '>=', date("Y-m-d 00:00:00"))->where('is_deleted', false)->where('type', '!=', 'site_failed')->where('type', '!=', 'manual_failed')->count();
 
                 if ($student->supporters_id) {
                     $student->own_purchases += 1;
@@ -620,14 +620,14 @@ class PurchaseController extends Controller
             if ($student) {
                 if ($student->supporters_id) {
                     $student->own_purchases = $student->purchases()->where('supporters_id', $student->supporters_id)
-                        ->where('is_deleted', false)->where('type', '!=', 'site_failed')->where('type','!=','manual_failed')->count();
+                        ->where('is_deleted', false)->where('type', '!=', 'site_failed')->where('type', '!=', 'manual_failed')->count();
                 }
                 $student->other_purchases = $student->purchases()->where(function ($query) use ($student) {
                     if ($student->supporters_id) $query->where('supporters_id', '!=', $student->supporters_id)->orWhere('supporters_id', 0);;
                 })
-                    ->where('is_deleted', false)->where('type', '!=', 'site_failed')->where('type','!=','manual_failed')
+                    ->where('is_deleted', false)->where('type', '!=', 'site_failed')->where('type', '!=', 'manual_failed')
                     ->count();
-                $student->today_purchases = $student->purchases()->where('created_at', '>=', date("Y-m-d 00:00:00"))->where('is_deleted', false)->where('type', '!=', 'site_failed')->where('type','!=','manual_failed')->count();
+                $student->today_purchases = $student->purchases()->where('created_at', '>=', date("Y-m-d 00:00:00"))->where('is_deleted', false)->where('type', '!=', 'site_failed')->where('type', '!=', 'manual_failed')->count();
                 try {
                     $student->save();
                 } catch (Exception $e) {
@@ -676,12 +676,12 @@ class PurchaseController extends Controller
                 false
             )->where('banned', false)->where('archived', false)->get();
         } else {
-            $students = Student::select('id', 'first_name', 'last_name', 'phone',DB::raw("CONCAT(first_name,' ',last_name)"))->where(
+            $students = Student::select('id', 'first_name', 'last_name', 'phone', DB::raw("CONCAT(first_name,' ',last_name)"))->where(
                 'is_deleted',
                 false
             )->where('banned', false)->where('archived', false)->where(function ($query) use ($search) {
-                $query->where(DB::raw("CONCAT(first_name,' ',last_name)"),'like','%'.$search.'%')->orWhere('phone','like','%'.$search.'%');
-            })->orderby('id','desc')->get();
+                $query->where(DB::raw("CONCAT(first_name,' ',last_name)"), 'like', '%' . $search . '%')->orWhere('phone', 'like', '%' . $search . '%');
+            })->orderby('id', 'desc')->get();
         }
         $response = array();
         foreach ($students as $student) {
@@ -696,7 +696,7 @@ class PurchaseController extends Controller
         ];
         return $response;
     }
- /**
+    /**
      * get products using select2 with ajax
      *
      *
@@ -708,15 +708,15 @@ class PurchaseController extends Controller
 
         $search = trim($request->search);
         if ($search == '') {
-            $products = Product::orderby('id', 'desc')->where('is_deleted',false)->get();
+            $products = Product::orderby('id', 'desc')->where('is_deleted', false)->get();
         } else {
-            $products = Product::where('is_deleted',false)->where('name', 'like', '%'.$search.'%')->orderby('id','desc')->get();
+            $products = Product::where('is_deleted', false)->where('name', 'like', '%' . $search . '%')->orderby('id', 'desc')->get();
         }
         $response = array();
         foreach ($products as $product) {
             $response[] = array(
                 "id" => $product->id,
-                "text" => (($product->parents!='') ? $product->parents . '->':'') . $product->name 
+                "text" => (($product->parents != '') ? $product->parents . '->' : '') . $product->name
             );
         }
         $response[] = [
@@ -798,24 +798,23 @@ class PurchaseController extends Controller
             return view('purchases.excel', [
                 'msg_error' => "حداقل یک محصول انتخاب کنید",
                 'products' => $products
-                
+
             ]);
         }
         $phoneNumbersData = [];
         if ($request->file('attachment')->extension() == 'xlsx') {
             $data = Excel::toArray(new PhonesImport, $request->file("attachment"));
-            $phoneNumbersData= [];
+            $phoneNumbersData = [];
             foreach ($data[0] as $value) {
-               $phoneNumbersData[] = $value[0];
+                $phoneNumbersData[] = $value[0];
             }
             unset($phoneNumbersData[0], $phoneNumbersData[1]);
             // foreach($phoneNumbersData as &$item) {
             //     $item = "0". $item;
             // }
-            for ($i = 0; $i < count($phoneNumbersData); $i++) {
+            for ($i = 2; $i < count($phoneNumbersData); $i++) {
                 $phoneNumbersData[$i] = '0' . $phoneNumbersData[$i];
             }
-            unset($item);
             $phoneNumbersData = array_values(array_filter($phoneNumbersData));
         }
         $csvArr = explode("\n", file_get_contents($csvPath));
@@ -827,28 +826,29 @@ class PurchaseController extends Controller
         unset($item);
         $student_ids =  Student::whereIn('phone', $request->file('attachment')->extension() == 'xlsx' ? $phoneNumbersData : $csvArr)->pluck('id');
         $dataToInsert = [];
-        foreach($student_ids as $student_id) {
-           foreach($product_ids as $product_id) {
-            $dataToInsert[] = [
-                "products_id" => $product_id, 
-                "users_id" => Auth::user()->id,
-                "price" => 0,
-                "type" => "excel_import",
-                "students_id" => $student_id,
-                "supporters_id" => 89,
-                "created_at" => Carbon::now()->format('Y-m-d H:i'),
-                "updated_at" => Carbon::now()->format('Y-m-d H:i'),
-                "purchase_time" => Carbon::now()->format('Y-m-d H:i')
-             ];
-           }
-          
+        foreach ($student_ids as $student_id) {
+            foreach ($product_ids as $product_id) {
+                $purchase_found = Purchase::where('is_deleted', false)->whereIn('students_id', $student_ids)->where('products_id', $product_id)->first();
+                if (!$purchase_found) {
+                    $dataToInsert[] = [
+                        "products_id" => $product_id,
+                        "users_id" => Auth::user()->id,
+                        "price" => 0,
+                        "type" => "excel_import",
+                        "students_id" => $student_id,
+                        "supporters_id" => 89,
+                        "created_at" => Carbon::now()->format('Y-m-d H:i'),
+                        "updated_at" => Carbon::now()->format('Y-m-d H:i'),
+                        "purchase_time" => Carbon::now()->format('Y-m-d H:i')
+                    ];
+                }
+            }
         }
         Purchase::insert($dataToInsert);
         return view('purchases.excel', [
             'msg_success' => $msg,
             'products' => $products
-            
+
         ]);
-       
     }
 }
