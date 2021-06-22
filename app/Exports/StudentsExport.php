@@ -243,6 +243,10 @@ class StudentsExport implements FromCollection,WithHeadings,WithColumnWidths,Wit
                 $students = $students->where('banned', true);
             }
         }
+        if($this->students_select == "all") {
+            $this->from_date = null;
+            $this->to_date = null;
+        }
         if ($this->supporters_id != null) {
             $supporters_id = (int)$this->supporters_id;
             $students = $students->where('supporters_id', $supporters_id);
