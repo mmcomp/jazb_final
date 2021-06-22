@@ -828,7 +828,7 @@ class PurchaseController extends Controller
         $dataToInsert = [];
         foreach ($student_ids as $student_id) {
             foreach ($product_ids as $product_id) {
-                $purchase_found = Purchase::where('is_deleted', false)->whereIn('students_id', $student_ids)->where('products_id', $product_id)->first();
+                $purchase_found = Purchase::where('is_deleted', false)->where('students_id', $student_id)->where('products_id', $product_id)->first();
                 if (!$purchase_found) {
                     $dataToInsert[] = [
                         "products_id" => $product_id,
