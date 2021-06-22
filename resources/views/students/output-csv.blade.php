@@ -38,6 +38,7 @@
                         <div class="form-group">
                             <label for="students_select"> دانش آموزان</label>
                             <select  id="students_select" name="students_select" class="form-control">
+                                <option value="all">همه</option>
                                 <option value="students">لیست  دانش آموزان</option>
                                 <option value="archive_students">دانش آموزان لیست آرشیو</option>
                                 <option value="black_students">دانش آموزان لیست سیاه</option>
