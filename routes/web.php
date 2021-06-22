@@ -203,6 +203,8 @@ Route::group(['middleware' => ['auth', 'message','changeCharactersAllToBePersian
         Route::post('/get_products','PurchaseController@getProducts')->name('purchase_get_products');
         Route::post('/delete', 'PurchaseController@delete')->name('purchase_delete');
         Route::any('/test','PurchaseController@test')->name('purchase_test');
+        Route::get('/assign-excel-for-purchases','PurchaseController@assignExcelForPurchaseGet')->name('pur_assign_excel_get');
+        Route::post('/assign-excel-for-purchases','PurchaseController@assignExcelForPurchasePost')->name('pur_assign_excel_post');
     });
 
     Route::group(['prefix' => '/user_supporters'], function () {
