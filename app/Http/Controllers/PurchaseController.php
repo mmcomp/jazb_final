@@ -23,6 +23,13 @@ use Exception;
 
 class PurchaseController extends Controller
 {
+
+    public function perToEn($inp)
+    {
+        $inp = str_replace(["۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹", "۰"], ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"], $inp);
+        $inp = str_replace(["١", "٢", "٣", "٤", "٥", "٦", "٧", "٨", "٩", "٠"], ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"], $inp);
+        return $inp;
+    }
     public static function jalaliToGregorian($pdate)
     {
         $pdate = explode('/', SupporterController::persianToEnglishDigits($pdate));
@@ -808,12 +815,13 @@ class PurchaseController extends Controller
             foreach ($data[0] as $value) {
                 $phoneNumbersData[] = $value[0];
             }
-            unset($phoneNumbersData[0], $phoneNumbersData[1]);
+            unset($phoneNumbersData[0]);
             // foreach($phoneNumbersData as &$item) {
             //     $item = "0". $item;
             // }
-            for ($i = 2; $i < count($phoneNumbersData); $i++) {
-                $phoneNumbersData[$i] = '0' . $phoneNumbersData[$i];
+            for ($i = 1; $i <= count($phoneNumbersData); $i++) {
+                $phoneNumbersData[$i] = $this->perToEn($phoneNumbersData[$i]);
+                $phoneNumbersData[$i] = substr($phoneNumbersData[$i], 0, 1) != '0' ? '0' . $phoneNumbersData[$i] : $phoneNumbersData[$i];
             }
             $phoneNumbersData = array_values(array_filter($phoneNumbersData));
         }
@@ -821,7 +829,8 @@ class PurchaseController extends Controller
         unset($csvArr[0]);
         $csvArr = array_values(array_filter($csvArr));
         for ($i = 0; $i < count($csvArr); $i++) {
-            $csvArr[$i] = '0' . $csvArr[$i];
+            $csvArr[$i] = $this->perToEn($csvArr[$i]);
+            $csvArr[$i] = substr($csvArr[$i], 0, 1) != 0 ? '0' . str_replace(['"',"'"], "", $csvArr[$i]) : str_replace(['"',"'"], "", $csvArr[$i]);
         }
         unset($item);
         $student_ids =  Student::whereIn('phone', $request->file('attachment')->extension() == 'xlsx' ? $phoneNumbersData : $csvArr)->pluck('id');
