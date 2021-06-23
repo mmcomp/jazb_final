@@ -73,7 +73,6 @@
                         <div class="form-group">
                             <label for="attachment">فایل CSV <a target="_blank" href="/phones.csv">مثال</a></label>
                             <label for="attachment"> یا فایل xlsx <a target="_blank" href="/phones.xlsx">مثال</a></label>
-                            <label for="attachment" class="text-sm text-danger">شماره تلفن ها باید حتما انگلیسی و بدون صفر اول وارد شوند.</label>
                             <input type="file" class="form-control" id="attachment" name="attachment" required />
                         </div>
                     </div>
