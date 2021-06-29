@@ -27,8 +27,8 @@ class CollectionController extends Controller
     {
         $collections = Collection::where('is_deleted', false)->orderBy('name')->get();
         $collection = new Collection;
-        foreach($collections as $index => $collection){
-            $collections[$index]->parents = $collection->parents();
+        foreach($collections as $index => $acollection){
+            $collections[$index]->parents = $acollection->parents();
             $collections[$index]->name = ($collections[$index]->parents!='')?$collections[$index]->parents . "->" . $collections[$index]->name : $collections[$index]->name;
         }
         if($request->getMethod()=='GET'){
@@ -37,7 +37,6 @@ class CollectionController extends Controller
                 "collection"=>$collection
             ]);
         }
-
         $collection->name = $request->input('name', '');
         $collection->parent_id = (int)$request->input('parent_id', 0);
         $collection->save();
