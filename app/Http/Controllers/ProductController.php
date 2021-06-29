@@ -115,13 +115,13 @@ class ProductController extends Controller
             ]);
         }
 
-        $productCollection = new Collection;
-        $productCollection->name = $request->input('name', '');
-        $productCollection->parent_id = (int)$request->input('collections_id', 0);
-        $productCollection->save();
+        // $productCollection = new Collection;
+        // $productCollection->name = $request->input('name', '');
+        // $productCollection->parent_id = (int)$request->input('collections_id', 0);
+        // $productCollection->save();
 
         $product->name = $request->input('name', '');
-        $product->collections_id = $productCollection->id;
+        $product->collections_id = (int)$request->input('collections_id', 0); //$productCollection->id;
         $product->price = (int)$request->input('price', 0);
         $product->is_private = $request->input('private');
         $product->save();
