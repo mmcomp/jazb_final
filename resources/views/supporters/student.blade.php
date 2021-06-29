@@ -25,7 +25,6 @@ null => ""
 ];
 @endphp
 @extends('layouts.index')
-
 @section('css')
 <link href="/plugins/select2/css/select2.min.css" rel="stylesheet" />
 <link href="/dist/css/select2-style.css" rel="stylesheet" />
@@ -72,6 +71,7 @@ null => ""
             <div class="card">
                 <div class="card-header">
                     <h3 class="card-title">
+                        <a class="btn btn-primary" href="{{ route('supporter_students') }}">همه</a>
                     </h3>
                 </div>
                 <!-- /.card-header -->
@@ -213,6 +213,9 @@ null => ""
                             </div>
                         </div>
                         <div class="row">
+                            {{-- <div class="col text-center p-1">
+                                <button class="btn btn-primary">همه</button>
+                            </div> --}}
                             <div class="col text-center p-1">
                                 <select id="education_level" class="form-control select2" onchange="return selectEducationLevels();">
                                     <option selected value="" disabled>مقطع</option>
