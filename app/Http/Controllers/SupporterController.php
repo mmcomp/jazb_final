@@ -1230,7 +1230,7 @@ class SupporterController extends Controller
                 foreach ($item->calls as $call) {
                     $call->next_call =  $call->next_call ? jdate(strtotime($call->next_call))->format('Y/m/d') : '-';
                 }
-                if ($route == "supporter_students") {
+                if ($route == "supporters_student") {
                     $data[] = [
                         "row" => $index + 1,
                         "id" => $item->id,
