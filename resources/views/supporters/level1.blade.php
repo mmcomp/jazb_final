@@ -71,7 +71,6 @@ null => ""
             <div class="card">
                 <div class="card-header">
                     <h3 class="card-title">
-                        <a class="btn btn-primary" href="{{ route('supporter_students') }}">همه</a>
                     </h3>
                 </div>
                 <!-- /.card-header -->
@@ -302,7 +301,9 @@ null => ""
                                 <th>منبع ورودی شماره</th>
                                 <th>برچسب</th>
                                 <th>داغ/سرد</th>
+                                @if($route == "supporter_students")
                                 <th>سطح</th>
+                                @endif
                                 <th>#</th>
                             </tr>
                         </thead>
@@ -684,7 +685,9 @@ null => ""
         , need_parent4: ''
     }
     let students_id = {{isset($students_id) ? $students_id : 'null'}};
-
+    let theEditRoute = `{{ route('student_edit', ['call_back'=>'supporter_students', 'id'=>-1]) }}`;
+    let thePurchaseRoute = `{{ route('student_purchases', -1) }}`;
+    let theSupporterStudentAllCallRoute = `{{ route('supporter_student_allcall', -1) }}`;
     function showMorePanel(index, tr) {
         var persons = {
             student: "دانش آموز"
@@ -692,9 +695,9 @@ null => ""
             , mother: "مادر"
             , other: "غیره"
         };
-        var editRoute = `{{ route('student_edit', ['call_back'=>'supporter_students', 'id'=>-1]) }}`;
-        var purchaseRoute = `{{ route('student_purchases', -1) }}`;
-        var supporterStudentAllCallRoute = `{{ route('supporter_student_allcall', -1) }}`;
+        var editRoute = theEditRoute;
+        var purchaseRoute = thePurchaseRoute;
+        var supporterStudentAllCallRoute = theSupporterStudentAllCallRoute;
         var tmpCallWithRecall = `
             <tr>
                 <td>#index#</td>
@@ -1644,7 +1647,7 @@ null => ""
                 , {
                     "searchable": false
                     , "orderable": false
-                    , "targets": 9
+                    , "targets": 8
                 }
             , ]
             , "order": [
@@ -1654,7 +1657,7 @@ null => ""
             , processing: true
             , ajax: {
                 "type": "POST"
-                , "url": "{{ route('supporter_allstudents', ['id' => $user ? $user->id : Auth::user()->id, 'level' => null]) . ((isset($students_id) && $students_id!=null)?'?students_id=' . $students_id . '&calls_id=' . $calls_id:'') }}"
+                , "url": "{{ route('student_level_1', ['id' => $user ? $user->id : Auth::user()->id, 'level' => null]) . ((isset($students_id) && $students_id!=null)?'?students_id=' . $students_id . '&calls_id=' . $calls_id:'') }}"
                 , "dataType": "json"
                 , "contentType": 'application/json; charset=utf-8',
 
@@ -1744,11 +1747,7 @@ null => ""
                 , {
                     data: 'temps'
                 }
-                ,{
-                    data: 'level'
-                }
-                ,  
-                {
+                , {
                     data: 'end'
                 }
             ]

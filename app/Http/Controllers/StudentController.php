@@ -441,26 +441,6 @@ class StudentController extends Controller
 
         return $this->showStudents($request, "all", "students.index", "student_all");
     }
-    public function levelOne(Request $request)
-    {
-
-        return $this->showStudents($request, 1, "students.level1", "student_level_1");
-    }
-    public function levelTwo(Request $request)
-    {
-
-        return $this->showStudents($request, 2, "students.level2", "student_level_2");
-    }
-    public function levelThree(Request $request)
-    {
-
-        return $this->showStudents($request, 3, "students.level3", "student_level_3");
-    }
-    public function levelFour(Request $request)
-    {
-
-        return $this->showStudents($request, 4, "students.level4", "student_level_4");
-    }
     public function archived(Request $request)
     {
 

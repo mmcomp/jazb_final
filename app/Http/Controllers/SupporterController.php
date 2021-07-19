@@ -803,7 +803,7 @@ class SupporterController extends Controller
         return 1;
     }
 
-    public function student($id = null)
+    public function showStudents($id = null, $level, $view, $route)
     {
 
         $searchStudent = new SearchStudent;
@@ -823,7 +823,7 @@ class SupporterController extends Controller
         } else {
             $user = User::find($id);
         }
-        $students = Student::where('students.is_deleted', false)->where('students.banned', false)->where('students.archived', false)->where('supporters_id', $id);
+        $students = $level == "all" ? Student::where('students.is_deleted', false)->where('students.banned', false)->where('students.archived', false)->where('supporters_id', $id) : Student::where('students.is_deleted', false)->where('students.level', $level)->where('students.banned', false)->where('students.archived', false)->where('supporters_id', $id);
         $sources = Source::where('is_deleted', false)->get();
         $products = Product::where('is_deleted', false)->where('is_private', false)->with('collection')->orderBy('name')->get();
         foreach ($products as $index => $product) {
@@ -869,7 +869,7 @@ class SupporterController extends Controller
         $this->findStudent(request()->input('third_auxilary_id'), $students);
 
         if (request()->getMethod() == 'POST') {
-            
+
             if (request()->input('name') != null) {
                 $name = trim(request()->input('name'));
                 $students = $searchStudent->search($students, $name);
@@ -900,7 +900,7 @@ class SupporterController extends Controller
                 $calls = Call::where('is_deleted', false)->get();
                 $callsArray = [];
                 $valid_student_ids = [];
-                
+
                 foreach ($calls as $call) {
                     $callsArray[$call->students_id][] = $call->call_results_id;
                     if ($this->isSubset($callsArray[$call->students_id], $arr_of_calls, count($callsArray[$call->students_id]), count($arr_of_calls))) {
@@ -1111,7 +1111,8 @@ class SupporterController extends Controller
             $getStudents[$index]->pcreated_at = jdate(strtotime($student->created_at))->format("Y/m/d");
         }
         if (request()->getMethod() == 'GET') {
-            return view('supporters.student', [
+            return view($view, [
+                'route' => $route,
                 'user' => $user,
                 'students' => $getStudents,
                 'sources' => $sources,
@@ -1229,17 +1230,32 @@ class SupporterController extends Controller
                 foreach ($item->calls as $call) {
                     $call->next_call =  $call->next_call ? jdate(strtotime($call->next_call))->format('Y/m/d') : '-';
                 }
-                $data[] = [
-                    "row" => $index + 1,
-                    "id" => $item->id,
-                    "first_name" => $item->first_name,
-                    "last_name" => $item->last_name,
-                    "users_id" => $registerer,
-                    "sources_id" => ($item->source) ? $item->source->name : '-',
-                    "tags" => $tags,
-                    "temps" => $temps,
-                    "end" => ""
-                ];
+                if ($route == "supporters_student") {
+                    $data[] = [
+                        "row" => $index + 1,
+                        "id" => $item->id,
+                        "first_name" => $item->first_name,
+                        "last_name" => $item->last_name,
+                        "users_id" => $registerer,
+                        "sources_id" => ($item->source) ? $item->source->name : '-',
+                        "tags" => $tags,
+                        "temps" => $temps,
+                        "level" => $item->level,
+                        "end" => ""
+                    ];
+                } else {
+                    $data[] = [
+                        "row" => $index + 1,
+                        "id" => $item->id,
+                        "first_name" => $item->first_name,
+                        "last_name" => $item->last_name,
+                        "users_id" => $registerer,
+                        "sources_id" => ($item->source) ? $item->source->name : '-',
+                        "tags" => $tags,
+                        "temps" => $temps,
+                        "end" => ""
+                    ];
+                }
             }
             $result = [
                 "draw" => $req['draw'],
@@ -1251,6 +1267,26 @@ class SupporterController extends Controller
 
             return $result;
         }
+    }
+    public function student($id = null)
+    {
+        return $this->showStudents($id, 'all', "supporters.student", "supporters_student");
+    }
+    public function levelOneStudents($id = null)
+    {
+        return $this->showStudents($id, '1', "supporters.level1", "student_level_1");
+    }
+    public function levelTwoStudents($id = null)
+    {
+        return $this->showStudents($id, '2', "supporters.level2", "student_level_2");
+    }
+    public function levelThreeStudents($id = null)
+    {
+        return $this->showStudents($id, '3', "supporters.level3", "student_level_3");
+    }
+    public function levelFourStudents($id = null)
+    {
+        return $this->showStudents($id, '4', "supporters.level4", "student_level_4");
     }
 
     public function newStudents()
@@ -1754,7 +1790,7 @@ class SupporterController extends Controller
                 $call->save();
                 $ids[] = $call->id;
             } catch (Exception $e) {
-                Log::info("error in SupporterController/call when products_id = null ". json_encode($e));
+                Log::info("error in SupporterController/call when products_id = null " . json_encode($e));
                 return [
                     "error" => json_encode($e),
                     "data" => $ids
@@ -1778,7 +1814,7 @@ class SupporterController extends Controller
                     $call->save();
                     $ids[] = $call->id;
                 } catch (Exception $e) {
-                    Log::info("error in SupporterController/call when products_id != null ". json_encode($e));
+                    Log::info("error in SupporterController/call when products_id != null " . json_encode($e));
                     return [
                         "error" => json_encode($e),
                         "data" => $ids
