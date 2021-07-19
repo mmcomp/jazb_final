@@ -302,6 +302,7 @@ null => ""
                                 <th>منبع ورودی شماره</th>
                                 <th>برچسب</th>
                                 <th>داغ/سرد</th>
+                                <th>سطح</th>
                                 <th>#</th>
                             </tr>
                         </thead>
@@ -1643,7 +1644,7 @@ null => ""
                 , {
                     "searchable": false
                     , "orderable": false
-                    , "targets": 8
+                    , "targets": 9
                 }
             , ]
             , "order": [
@@ -1743,7 +1744,11 @@ null => ""
                 , {
                     data: 'temps'
                 }
-                , {
+                ,{
+                    data: 'level'
+                }
+                ,  
+                {
                     data: 'end'
                 }
             ]

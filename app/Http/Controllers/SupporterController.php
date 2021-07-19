@@ -1230,17 +1230,32 @@ class SupporterController extends Controller
                 foreach ($item->calls as $call) {
                     $call->next_call =  $call->next_call ? jdate(strtotime($call->next_call))->format('Y/m/d') : '-';
                 }
-                $data[] = [
-                    "row" => $index + 1,
-                    "id" => $item->id,
-                    "first_name" => $item->first_name,
-                    "last_name" => $item->last_name,
-                    "users_id" => $registerer,
-                    "sources_id" => ($item->source) ? $item->source->name : '-',
-                    "tags" => $tags,
-                    "temps" => $temps,
-                    "end" => ""
-                ];
+                if ($route == "supporter_students") {
+                    $data[] = [
+                        "row" => $index + 1,
+                        "id" => $item->id,
+                        "first_name" => $item->first_name,
+                        "last_name" => $item->last_name,
+                        "users_id" => $registerer,
+                        "sources_id" => ($item->source) ? $item->source->name : '-',
+                        "tags" => $tags,
+                        "temps" => $temps,
+                        "level" => $item->level,
+                        "end" => ""
+                    ];
+                } else {
+                    $data[] = [
+                        "row" => $index + 1,
+                        "id" => $item->id,
+                        "first_name" => $item->first_name,
+                        "last_name" => $item->last_name,
+                        "users_id" => $registerer,
+                        "sources_id" => ($item->source) ? $item->source->name : '-',
+                        "tags" => $tags,
+                        "temps" => $temps,
+                        "end" => ""
+                    ];
+                }
             }
             $result = [
                 "draw" => $req['draw'],
@@ -1259,19 +1274,19 @@ class SupporterController extends Controller
     }
     public function levelOneStudents($id = null)
     {
-        return $this->showStudents($id, '1', "supporters.level1", "supporters_student");
+        return $this->showStudents($id, '1', "supporters.level1", "student_level_1");
     }
     public function levelTwoStudents($id = null)
     {
-        return $this->showStudents($id, '2', "supporters.level2", "supporters_student");
+        return $this->showStudents($id, '2', "supporters.level2", "student_level_2");
     }
     public function levelThreeStudents($id = null)
     {
-        return $this->showStudents($id, '3', "supporters.level3", "supporters_student");
+        return $this->showStudents($id, '3', "supporters.level3", "student_level_3");
     }
     public function levelFourStudents($id = null)
     {
-        return $this->showStudents($id, '4', "supporters.level4", "supporters_student");
+        return $this->showStudents($id, '4', "supporters.level4", "student_level_4");
     }
 
     public function newStudents()
