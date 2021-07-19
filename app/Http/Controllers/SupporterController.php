@@ -802,6 +802,18 @@ class SupporterController extends Controller
     in arr1[] */
         return 1;
     }
+    public function changeLevelAjax(Request $request)
+    {
+        $students_id = $request->input('students_id');
+        $level = $request->level;
+        $student = Student::where('id', $students_id)->first();
+        $student->level = $level;
+        $student->save();
+        return [
+            "error" => null,
+            "data" => null
+        ];
+    }
 
     public function showStudents($id = null, $level, $view, $route)
     {
@@ -1230,6 +1242,14 @@ class SupporterController extends Controller
                 foreach ($item->calls as $call) {
                     $call->next_call =  $call->next_call ? jdate(strtotime($call->next_call))->format('Y/m/d') : '-';
                 }
+                $levelsToSelect = "";
+                $levels = [1,2,3,4];
+                foreach ($levels as $l) {
+                    $levelsToSelect .= '<option value="' . $l . '"';
+                    if ($l == $item->level)
+                        $levelsToSelect .= ' selected';
+                    $levelsToSelect .= '>' . $l . '</option>';
+                }
                 if ($route == "supporters_student") {
                     $data[] = [
                         "row" => $index + 1,
@@ -1240,13 +1260,10 @@ class SupporterController extends Controller
                         "sources_id" => ($item->source) ? $item->source->name : '-',
                         "tags" => $tags,
                         "temps" => $temps,
-                        "level" => '<select id="supporters_id_' . $index . '" class="form-control select2">
-                        <option>1</option>
-                        <option>2</option>
-                        <option>3</option>
-                        <option>4</option>
-                        </select>
-                        <a class="btn btn-success btn-sm" href="#" onclick="return changeSupporter(' . $index . "," . $item->id . ');">
+                        "level" => '<select id="level_' . $index . '" class="form-control select2">'.
+                           $levelsToSelect
+                        .'</select>
+                        <a class="btn btn-success btn-sm" href="#" onclick="return changeLevel(' . $index . "," . $item->id . ');">
                             ذخیره
                         </a>
                         <br/>
