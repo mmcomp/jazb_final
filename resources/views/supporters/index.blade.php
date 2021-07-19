@@ -70,7 +70,7 @@
                         <td>{{ $item->last_name }}</td>
                         @if($item->students && count($item->students)>0)
                         <td>
-                            <a target="_blank" href="{{ route('supporter_allstudents', $item->id) }}">{{ count($item->students) }}</a>
+                            <a target="_blank" href="{{ route('supporter_allstudents', ['id' => $item->id, 'level' => "all"]) }}">{{ count($item->students) }}</a>
                             @php $purchaseCount = 0; @endphp
                             @foreach ($item->students as $sitem)
                                 @php

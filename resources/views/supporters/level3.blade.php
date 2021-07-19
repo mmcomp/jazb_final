@@ -71,7 +71,6 @@ null => ""
             <div class="card">
                 <div class="card-header">
                     <h3 class="card-title">
-                        <a class="btn btn-primary" href="{{ route('supporter_students') }}">همه</a>
                     </h3>
                 </div>
                 <!-- /.card-header -->
@@ -302,7 +301,6 @@ null => ""
                                 <th>منبع ورودی شماره</th>
                                 <th>برچسب</th>
                                 <th>داغ/سرد</th>
-                                <th>سطح</th>
                                 <th>#</th>
                             </tr>
                         </thead>
@@ -1644,7 +1642,7 @@ null => ""
                 , {
                     "searchable": false
                     , "orderable": false
-                    , "targets": 9
+                    , "targets": 8
                 }
             , ]
             , "order": [
@@ -1654,7 +1652,7 @@ null => ""
             , processing: true
             , ajax: {
                 "type": "POST"
-                , "url": "{{ route('supporter_allstudents', ['id' => $user ? $user->id : Auth::user()->id, 'level' => null]) . ((isset($students_id) && $students_id!=null)?'?students_id=' . $students_id . '&calls_id=' . $calls_id:'') }}"
+                , "url": "{{ route('student_level_3', ['id' => $user ? $user->id : Auth::user()->id, 'level' => null]) . ((isset($students_id) && $students_id!=null)?'?students_id=' . $students_id . '&calls_id=' . $calls_id:'') }}"
                 , "dataType": "json"
                 , "contentType": 'application/json; charset=utf-8',
 
@@ -1744,11 +1742,7 @@ null => ""
                 , {
                     data: 'temps'
                 }
-                ,{
-                    data: 'level'
-                }
-                ,  
-                {
+                , {
                     data: 'end'
                 }
             ]
