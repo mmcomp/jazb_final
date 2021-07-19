@@ -67,7 +67,7 @@ if(theRoute == "student_all"){
             targets: 7
         }
     ]
-} 
+}
 var table
 for (let tg of tmpTags) {
     tags[tg.id] = tg
@@ -241,6 +241,29 @@ function showMorePanel (index, tr) {
         row.child(test).show()
     }
 }
+    function changeLevel (studentsIndex, id) {
+    if (students[studentsIndex]) {
+        var students_id = id;
+        $('#loading-' + studentsIndex).show();
+        $.post(levelRoute,
+            {
+                "students_id":students_id,
+                "level":$('#level_'+ studentsIndex).val()
+            },
+            function (result) {
+                $('#loading-' + studentsIndex).hide()
+                if (result && result.error != null) {
+                    alert(result.error)
+                }
+            }
+        ).fail(function () {
+            $('#loading-' + studentsIndex).hide()
+            alert('خطای بروز رسانی')
+            table.ajax.reload()
+        })
+    }
+    return false
+    }
 function changeSupporter (studentsIndex, id) {
     if (students[studentsIndex]) {
         var students_id = id

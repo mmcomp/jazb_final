@@ -218,7 +218,7 @@
                     <th>داغ/سرد</th>
                     <th>پشتیبان</th>
                     @if($route == "student_all")
-                    <th>سطح</th>
+                    <th>سطح دانش آموز</th>
                     @endif
                     <th>توضیحات</th>
                     <th>#</th>
@@ -431,6 +431,7 @@
     let route_student_temperature = "{{ route('student_temperature') }}";
     let route_edit = "{{ route('student_edit', ['call_back'=>'student_all', 'id'=>-1]) }}";
     let route_purchase = "{{ route('student_purchases', -1) }}";
+    let levelRoute = "{{ route('change_level_ajax')}}";
 </script>
 <script type="text/javascript" src="/dist/js/allStudents.js"></script>
 @endsection
