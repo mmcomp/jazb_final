@@ -765,7 +765,7 @@ class SupporterController extends Controller
         return redirect()->route('user_supporters');
     }
 
-    public function students($id, $level = null)
+    public function students($id, $level=null)
     {
         if($level == null) {
             return $this->student($id, $level);
@@ -1255,10 +1255,10 @@ class SupporterController extends Controller
             return $result;
         }
     }
-    public function student($id = null, $level=null)
+    public function student($id = null)
     {
 
-       return $this->showStudents($id, $level, "supporters.student", "supporters_student");
+       return $this->showStudents($id, '1', "supporters.student", "supporters_student");
     }
 
     public function newStudents()
