@@ -535,7 +535,7 @@
                                 <p>فهرست دانش آموزان</p>
                             </a>
                         </li>
-                        <li class="nav-item">
+                        {{-- <li class="nav-item">
                           @if(strpos(\Request::route()->getName(), 'student_level_1')===0)
                           <a href="{{ route('student_level_1') }}" class="nav-link active">
                           @else
@@ -574,7 +574,7 @@
                             <!-- <i class="far fa-circle nav-icon"></i> -->
                             <p>دانش آموزان سطح چهار</p>
                         </a>
-                       </li>
+                       </li> --}}
                         <li class="nav-item">
                             @if(strpos(\Request::route()->getName(), 'merge_students_index')===0)
                             <a href="{{ route('merge_students_index') }}" class="nav-link active">

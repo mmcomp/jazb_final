@@ -115,10 +115,6 @@ Route::group(['middleware' => ['auth', 'message','changeCharactersAllToBePersian
     Route::group(['prefix' => '/students'], function () {
         Route::any('/', 'StudentController@index')->name('students');
         Route::any('/all', 'StudentController@indexAll')->name('student_all')->middleware('admin-or-supervisor');
-        Route::any('/level-1', 'StudentController@levelOne')->name('student_level_1')->middleware('admin-or-supervisor');
-        Route::any('/level-2', 'StudentController@levelTwo')->name('student_level_2')->middleware('admin-or-supervisor');
-        Route::any('/level-3', 'StudentController@levelThree')->name('student_level_3')->middleware('admin-or-supervisor');
-        Route::any('/level-4', 'StudentController@levelFour')->name('student_level_4')->middleware('admin-or-supervisor');
         Route::get('/merged','StudentController@merge')->name('student_merged');
         Route::any('/banned', 'StudentController@banned')->name('student_banned')->middleware('admin-or-supervisor');
         Route::any('/archived', 'StudentController@archived')->name('student_archived')->middleware('admin-or-supervisor');
@@ -212,7 +208,7 @@ Route::group(['middleware' => ['auth', 'message','changeCharactersAllToBePersian
         Route::get('/calls-get', 'SupporterController@callIndex')->name('user_supporter_calls')->middleware('admin-or-supervisor');
         Route::any('/supporter_calls', 'SupporterController@supporterCallIndex')->name('user_a_supporter_calls');
         Route::any('/call/{id}', 'SupporterController@acallIndex')->name('user_supporter_acall');
-        Route::any('/students/{id}', 'SupporterController@students')->name('supporter_allstudents');
+        Route::any('/students/{id}/{level?}', 'SupporterController@students')->name('supporter_allstudents');
         Route::any('/create', 'SupporterController@create')->name('user_supporter_create');
         Route::post('/change_pass', 'SupporterController@changePass')->name('user_supporter_changepass');
         Route::any('/delete_a_call/{user_id}/{id}','SupporterController@newDeleteCall')->name('user_supporter_delete_call');
@@ -251,6 +247,10 @@ Route::group(['middleware' => ['auth', 'message','changeCharactersAllToBePersian
 
     Route::group(['prefix' => '/supporter_students'], function () {
         Route::any('/', 'SupporterController@student')->name('supporter_students');
+        // Route::any('/{level?}', 'SupporterController@student')->name('student_level1');
+        // Route::any('/{level?}', 'SupporterController@student')->name('student_level2');
+        // Route::any('/{level?}', 'SupporterController@student')->name('student_level3');
+        // Route::any('/{level?}', 'SupporterController@student')->name('student_level4');
         Route::any('/students', 'SupporterController@newStudents')->name('supporter_student_new');
         Route::get('/income','SupporterController@showIncome')->name('supporter_student_income');
         Route::post('/income','SupporterController@showIncomePost')->name('supporter_student_income_post');

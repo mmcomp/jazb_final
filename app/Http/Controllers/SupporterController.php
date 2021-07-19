@@ -765,9 +765,11 @@ class SupporterController extends Controller
         return redirect()->route('user_supporters');
     }
 
-    public function students($id)
+    public function students($id, $level = null)
     {
-        return $this->student($id);
+        if($level == null) {
+            return $this->student($id, $level);
+        }
     }
     public function findStudent($request, $students)
     {
@@ -803,7 +805,7 @@ class SupporterController extends Controller
         return 1;
     }
 
-    public function student($id = null)
+    public function showStudents($id=null, $level, $view, $route)
     {
 
         $searchStudent = new SearchStudent;
@@ -823,7 +825,7 @@ class SupporterController extends Controller
         } else {
             $user = User::find($id);
         }
-        $students = Student::where('students.is_deleted', false)->where('students.banned', false)->where('students.archived', false)->where('supporters_id', $id);
+        $students = $level == "all" ? Student::where('students.is_deleted', false)->where('students.banned', false)->where('students.archived', false)->where('supporters_id', $id) : Student::where('students.is_deleted', false)->where('students.level', $level)->where('students.banned', false)->where('students.archived', false)->where('supporters_id', $id);
         $sources = Source::where('is_deleted', false)->get();
         $products = Product::where('is_deleted', false)->where('is_private', false)->with('collection')->orderBy('name')->get();
         foreach ($products as $index => $product) {
@@ -1111,7 +1113,8 @@ class SupporterController extends Controller
             $getStudents[$index]->pcreated_at = jdate(strtotime($student->created_at))->format("Y/m/d");
         }
         if (request()->getMethod() == 'GET') {
-            return view('supporters.student', [
+            return view($view, [
+                'route' => $route,
                 'user' => $user,
                 'students' => $getStudents,
                 'sources' => $sources,
@@ -1251,6 +1254,11 @@ class SupporterController extends Controller
 
             return $result;
         }
+    }
+    public function student($id = null, $level=null)
+    {
+
+       return $this->showStudents($id, $level, "supporters.student", "supporters_student");
     }
 
     public function newStudents()
