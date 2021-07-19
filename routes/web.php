@@ -246,11 +246,11 @@ Route::group(['middleware' => ['auth', 'message','changeCharactersAllToBePersian
     });
 
     Route::group(['prefix' => '/supporter_students'], function () {
-        Route::any('/{level?}', 'SupporterController@student')->name('supporter_students');
-        //Route::any('/x', 'SupporterController@student')->name('student_level_1');
-        // Route::any('/', 'SupporterController@student')->name('student_level_2');
-        // Route::any('/', 'SupporterController@student')->name('student_level_3');
-        // Route::any('/', 'SupporterController@student')->name('student_level_4');
+        Route::any('/', 'SupporterController@student')->name('supporter_students');
+        Route::any('/l1', 'SupporterController@levelOneStudents')->name('student_level_1');
+        Route::any('/l2', 'SupporterController@levelTwoStudents')->name('student_level_2');
+        Route::any('/l3', 'SupporterController@levelThreeStudents')->name('student_level_3');
+        Route::any('/l4', 'SupporterController@levelFourStudents')->name('student_level_4');
         Route::any('/students', 'SupporterController@newStudents')->name('supporter_student_new');
         Route::get('/income','SupporterController@showIncome')->name('supporter_student_income');
         Route::post('/income','SupporterController@showIncomePost')->name('supporter_student_income_post');

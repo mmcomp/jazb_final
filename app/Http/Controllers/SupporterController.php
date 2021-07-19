@@ -765,11 +765,9 @@ class SupporterController extends Controller
         return redirect()->route('user_supporters');
     }
 
-    public function students($id, $level=null)
+    public function students($id)
     {
-        if($level == null) {
-            return $this->student($id, $level);
-        }
+        return $this->student($id);
     }
     public function findStudent($request, $students)
     {
@@ -805,7 +803,7 @@ class SupporterController extends Controller
         return 1;
     }
 
-    public function showStudents($id=null, $level, $view, $route)
+    public function showStudents($id = null, $level, $view, $route)
     {
 
         $searchStudent = new SearchStudent;
@@ -871,7 +869,7 @@ class SupporterController extends Controller
         $this->findStudent(request()->input('third_auxilary_id'), $students);
 
         if (request()->getMethod() == 'POST') {
-            
+
             if (request()->input('name') != null) {
                 $name = trim(request()->input('name'));
                 $students = $searchStudent->search($students, $name);
@@ -902,7 +900,7 @@ class SupporterController extends Controller
                 $calls = Call::where('is_deleted', false)->get();
                 $callsArray = [];
                 $valid_student_ids = [];
-                
+
                 foreach ($calls as $call) {
                     $callsArray[$call->students_id][] = $call->call_results_id;
                     if ($this->isSubset($callsArray[$call->students_id], $arr_of_calls, count($callsArray[$call->students_id]), count($arr_of_calls))) {
@@ -1257,8 +1255,23 @@ class SupporterController extends Controller
     }
     public function student($id = null)
     {
-
-       return $this->showStudents($id, '1', "supporters.student", "supporters_student");
+        return $this->showStudents($id, 'all', "supporters.student", "supporters_student");
+    }
+    public function levelOneStudents($id = null)
+    {
+        return $this->showStudents($id, '1', "supporters.level1", "supporters_student");
+    }
+    public function levelTwoStudents($id = null)
+    {
+        return $this->showStudents($id, '2', "supporters.level2", "supporters_student");
+    }
+    public function levelThreeStudents($id = null)
+    {
+        return $this->showStudents($id, '3', "supporters.level3", "supporters_student");
+    }
+    public function levelFourStudents($id = null)
+    {
+        return $this->showStudents($id, '4', "supporters.level4", "supporters_student");
     }
 
     public function newStudents()
@@ -1762,7 +1775,7 @@ class SupporterController extends Controller
                 $call->save();
                 $ids[] = $call->id;
             } catch (Exception $e) {
-                Log::info("error in SupporterController/call when products_id = null ". json_encode($e));
+                Log::info("error in SupporterController/call when products_id = null " . json_encode($e));
                 return [
                     "error" => json_encode($e),
                     "data" => $ids
@@ -1786,7 +1799,7 @@ class SupporterController extends Controller
                     $call->save();
                     $ids[] = $call->id;
                 } catch (Exception $e) {
-                    Log::info("error in SupporterController/call when products_id != null ". json_encode($e));
+                    Log::info("error in SupporterController/call when products_id != null " . json_encode($e));
                     return [
                         "error" => json_encode($e),
                         "data" => $ids

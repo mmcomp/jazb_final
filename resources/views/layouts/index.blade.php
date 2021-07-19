@@ -775,7 +775,7 @@
                                     <p>فهرست دانش آموزان/ تماس</p>
                                 </a>
                         </li>
-                        {{-- <li class="nav-item">
+                        <li class="nav-item">
                           @if(strpos(\Request::route()->getName(), 'student_level_1')===0)
                           <a href="{{ route('student_level_1') }}" class="nav-link active">
                           @else
@@ -814,7 +814,7 @@
                             <!-- <i class="far fa-circle nav-icon"></i> -->
                             <p>دانش آموزان سطح چهار</p>
                         </a>
-                       </li> --}}
+                       </li>
                         <li class="nav-item">
                             @if(strpos(\Request::route()->getName(), 'supporter_student_new')===0)
                             <a href="{{ route('supporter_student_new') }}" class="nav-link active">
