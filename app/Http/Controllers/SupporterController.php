@@ -1240,7 +1240,17 @@ class SupporterController extends Controller
                         "sources_id" => ($item->source) ? $item->source->name : '-',
                         "tags" => $tags,
                         "temps" => $temps,
-                        "level" => $item->level,
+                        "level" => '<select id="supporters_id_' . $index . '" class="form-control select2">
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                        </select>
+                        <a class="btn btn-success btn-sm" href="#" onclick="return changeSupporter(' . $index . "," . $item->id . ');">
+                            ذخیره
+                        </a>
+                        <br/>
+                        <img id="loading-' . $index . '" src="/dist/img/loading.gif" style="height: 20px;display: none;" />',
                         "end" => ""
                     ];
                 } else {
