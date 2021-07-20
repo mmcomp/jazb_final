@@ -366,6 +366,14 @@ class StudentController extends Controller
                         $supportersToSelect .= ' selected';
                     $supportersToSelect .= '>' . $sitem->first_name . ' ' . $sitem->last_name . '</option>';
                 }
+                $levelsToSelect = "";
+                $levels = [1,2,3,4];
+                foreach ($levels as $l) {
+                    $levelsToSelect .= '<option value="' . $l . '"';
+                    if ($l == $item->level)
+                        $levelsToSelect .= ' selected';
+                    $levelsToSelect .= '>' . $l . '</option>';
+                }
                 if ($route == "student_all") {
                     $data[] = [
                         "row" => $index + 1,
@@ -385,7 +393,14 @@ class StudentController extends Controller
                             </a>
                             <br/>
                             <img id="loading-' . $index . '" src="/dist/img/loading.gif" style="height: 20px;display: none;" />',
-                        "level" => $item->level,
+                            "level" => '<select id="level_' . $index . '" class="form-control select2">'.
+                            $levelsToSelect
+                         .'</select>
+                         <a class="btn btn-success btn-sm" href="#" onclick="return changeLevel(' . $index . "," . $item->id . ');">
+                             ذخیره
+                         </a>
+                         <br/>
+                         <img id="loading-' . $index . '" src="/dist/img/loading.gif" style="height: 20px;display: none;" />',
                         "description" => $item->description,
                         "end" => '<div class="d-flex justify-content-between"><a class="btn btn-warning btn-sm" href="#" onclick="onClickTemperature(' . $item->id . ')">
                             داغ/سرد
