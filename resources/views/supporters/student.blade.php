@@ -125,7 +125,7 @@ null => ""
                         </div>
                         <div class="row">
                             <div class="col">
-                               
+
                                 <div class="form-group">
                                     <select id="has_product" class="form-control select2" multiple onchange="return selectProduct();">
                                         @if(isset($has_the_product[0]))
@@ -143,8 +143,8 @@ null => ""
                                         @endforeach
                                     </select>
                                 </div>
-                               
-                               
+
+
                             </div>
                             <div class="col">
                                 <div class="form-group">
@@ -168,7 +168,7 @@ null => ""
                         </div>
                         <div class="row">
                             <div class="col">
-                                
+
                                 <div class="form-group">
                                     <select id="has_the_tag" class="form-control select2" multiple onchange="return selectTag()">
                                         @if(isset($has_the_tags[0]))
@@ -186,10 +186,10 @@ null => ""
                                         @endforeach
                                     </select>
                                 </div>
-                               
-                               
+
+
                             </div>
-                            
+
                         </div>
                         <div class="row">
                             <div class="col">
@@ -607,6 +607,7 @@ null => ""
 <script src="../../plugins/datatables/jquery.dataTables.js"></script>
 <script src="../../plugins/datatables-bs4/js/dataTables.bootstrap4.js"></script>
 <script type="text/javascript">
+
     var studentMergeData = ``;
     var first = ``;
     var second = ``;
@@ -917,7 +918,7 @@ null => ""
             row.child(test).show();
         }
     }
-    
+
     let theMain = null;
     let theAuxilary = null;
     let theSecondAuxilary = null;
@@ -1586,7 +1587,30 @@ null => ""
         return false;
     }
 
-
+    let levelRoute = "{{ route('change_level_ajax')}}";
+    function changeLevel (studentsIndex, id) {
+    if (students[studentsIndex]) {
+        var students_id = id;
+        $('#loading-' + studentsIndex).show();
+        $.post(levelRoute,
+            {
+                "students_id":students_id,
+                "level":$('#level_'+ studentsIndex).val()
+            },
+            function (result) {
+                $('#loading-' + studentsIndex).hide()
+                if (result && result.error != null) {
+                    alert(result.error)
+                }
+            }
+        ).fail(function () {
+            $('#loading-' + studentsIndex).hide()
+            alert('خطای بروز رسانی')
+            table.ajax.reload()
+        })
+    }
+    return false
+    }
     $(function() {
         $('input').keypress(function(event) {
             var keycode = (event.keyCode ? event.keyCode : event.which);
@@ -1747,7 +1771,7 @@ null => ""
                 ,{
                     data: 'level'
                 }
-                ,  
+                ,
                 {
                     data: 'end'
                 }
