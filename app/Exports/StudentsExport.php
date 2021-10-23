@@ -200,7 +200,7 @@ class StudentsExport implements FromCollection,WithHeadings,WithColumnWidths,Wit
             $y = (int)$pdate[0];
             $m = (int)$pdate[1];
             $d = (int)$pdate[2];
-            //for switch you don't need tmp variable two variable
+            //for switch you don't need tmp variable two variable is enogh
             if ($d > $y) {
                 $tmp = $d;
                 $d = $y;
