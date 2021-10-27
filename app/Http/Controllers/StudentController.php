@@ -184,7 +184,9 @@ class StudentController extends Controller
             }
             if (request()->input('phone') != null) {
                 $phone = (int)request()->input('phone');
-                $students = $students->where('phone', $phone);
+                $students = $students->where('phone', $phone)
+                ->orWhere('phone', $father_phone)
+                ->orWhere('phone', $mother_phon);
             }
             if (request()->input('cities_id') != null) {
                 $cities_id = (int)request()->input('cities_id');
