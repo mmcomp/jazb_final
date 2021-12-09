@@ -415,7 +415,7 @@
 <script src="../../plugins/datatables-bs4/js/dataTables.bootstrap4.js"></script>
 <!-- page script -->
 <script type="text/javascript">
-    let students = @JSON($students);
+    let students = @JSON($theStudents);
     let parentOnes = @JSON($parentOnes);
     let parentTwos = @JSON($parentTwos);
     let parentThrees = @JSON($parentThrees);
