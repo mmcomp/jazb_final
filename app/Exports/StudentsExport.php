@@ -200,6 +200,7 @@ class StudentsExport implements FromCollection,WithHeadings,WithColumnWidths,Wit
             $y = (int)$pdate[0];
             $m = (int)$pdate[1];
             $d = (int)$pdate[2];
+            //for switch you don't need tmp variable two variable is enogh
             if ($d > $y) {
                 $tmp = $d;
                 $d = $y;
@@ -210,7 +211,7 @@ class StudentsExport implements FromCollection,WithHeadings,WithColumnWidths,Wit
             $gregorian = $gregorian[0] . "-" . $gregorian[1] . "-" . $gregorian[2];
         }
         return $gregorian;
-    }
+    }    
     public static function gregorianToJalali($Edate){
         $Edate = explode('-', $Edate);
         $date = "";

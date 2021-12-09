@@ -143,8 +143,7 @@ class StudentController extends Controller
         return redirect()->route('student_class', ["id" => $student_id]);
     }
     public function showStudents(Request $request, $level, $view, $route)
-    {
-
+    {       
         $searchStudent = new SearchStudent;
         $students = Student::where('students.is_deleted', false)->where('students.banned', false)->where('students.archived', false);
         if ($level != "all") {
@@ -164,8 +163,9 @@ class StudentController extends Controller
         $egucation_level = null;
         $school = null;
         $major = null;
+        
         if (request()->getMethod() == 'POST') {
-            // dump(request()->all());
+            // dump(request()->all());           
             if (request()->input('supporters_id') != null) {
                 $supporters_id = (int)request()->input('supporters_id');
                 $students = $students->where('supporters_id', $supporters_id);
@@ -202,7 +202,7 @@ class StudentController extends Controller
                 $school = request()->input('school');
                 $students = $students->where('school', 'like',  '%' . $school . '%');
             }
-        }
+        }        
         $moralTags = Tag::where('is_deleted', false)
             ->where('type', 'moral')
             ->get();
@@ -233,44 +233,85 @@ class StudentController extends Controller
             ->with('consultant')
             ->with('supporter')
             ->get();
+           
         foreach ($theStudents as $index => $student) {
             $theStudents[$index]->pcreated_at = jdate(strtotime($student->created_at))->format("Y/m/d");
+            
         }
-
-        if (request()->getMethod() == 'GET') {
-            return view($view, [
-                'route' => $route,
-                'students' => $theStudents,
-                'supports' => $supports,
-                'sources' => $sources,
-                'supporters_id' => $supporters_id,
-                'name' => $name,
-                'sources_id' => $sources_id,
-                'phone' => $phone,
-                'moralTags' => $moralTags,
-                'needTags' => $needTags,
-                'hotTemperatures' => $hotTemperatures,
-                'coldTemperatures' => $coldTemperatures,
-                "parentOnes" => $parentOnes,
-                "parentTwos" => $parentTwos,
-                "parentThrees" => $parentThrees,
-                "parentFours" => $parentFours,
-                "firstCollections" => $firstCollections,
-                "secondCollections" => $secondCollections,
-                "thirdCollections" => $thirdCollections,
-                // "fourthCollections"=>$fourthCollections,
-                "cities" => $cities,
-                "cities_id" => $cities_id,
-                "egucation_level" => $egucation_level,
-                "major" => $major,
-                "needTagParentOnes" => $needTagParentOnes,
-                "needTagParentTwos" => $needTagParentTwos,
-                "needTagParentThrees" => $needTagParentThrees,
-                "needTagParentFours" => $needTagParentFours,
+       
+        if (request()->getMethod() == 'GET') {            
+         ///dd($view);
+          return view($view,compact([
+              'route',
+              'theStudents' ,
+              'supports',
+              'sources',
+              'supporters_id',
+              'name',
+              'sources_id',
+              'phone',
+              'moralTags',
+              'needTags',
+              'hotTemperatures',
+              'coldTemperatures',
+              'parentOnes',
+              'parentTwos',
+              'parentThrees',
+              'parentFours',
+              'firstCollections',
+              'secondCollections',
+              'thirdCollections',
+              'cities',
+              'cities_id',
+              'egucation_level',
+              'major',
+              'needTagParentOnes',
+              'needTagParentTwos',
+              'needTagParentThrees',
+              'needTagParentFours'               
+          ]),
+            [
                 'msg_success' => request()->session()->get('msg_success'),
                 'msg_error' => request()->session()->get('msg_error')
-            ]);
-        } else {
+            ]
+        );
+            // return view($view, [
+            //     'route' => $route,
+            //     'theStudents' => $theStudents,
+            //     'supports' => $supports,
+            //     'sources' => $sources,
+            //     'supporters_id' => $supporters_id,
+            //     'name' => $name,
+            //     'sources_id' => $sources_id,
+            //     'phone' => $phone,
+            //     'moralTags' => $moralTags,
+            //     'needTags' => $needTags,
+            //     'hotTemperatures' => $hotTemperatures,
+            //     'coldTemperatures' => $coldTemperatures,
+            //     "parentOnes" => $parentOnes,
+            //     "parentTwos" => $parentTwos,
+            //     "parentThrees" => $parentThrees,
+            //     "parentFours" => $parentFours,
+            //     "firstCollections" => $firstCollections,
+            //     "secondCollections" => $secondCollections,
+            //     "thirdCollections" => $thirdCollections,
+            //     // "fourthCollections"=>$fourthCollections,
+            //     "cities" => $cities,
+            //     "cities_id" => $cities_id,
+            //     "egucation_level" => $egucation_level,
+            //     "major" => $major,
+            //     "needTagParentOnes" => $needTagParentOnes,
+            //     "needTagParentTwos" => $needTagParentTwos,
+            //     "needTagParentThrees" => $needTagParentThrees,
+            //     "needTagParentFours" => $needTagParentFours,
+            //     'msg_success' => request()->session()->get('msg_success'),
+            //     'msg_error' => request()->session()->get('msg_error')
+            // ]);
+          
+        }
+        else 
+        {
+           
             $allStudents = $students->get();
             $req =  request()->all();
             if (!isset($req['start'])) {
@@ -302,7 +343,8 @@ class StudentController extends Controller
                     ->with('consultant')
                     ->with('supporter')
                     ->get();
-            } else if ($columnName == "tags") {
+            } 
+            else if ($columnName == "tags") {
                 $sw = "tags";
                 $students = $students
                     ->withCount('studenttags')
@@ -317,7 +359,8 @@ class StudentController extends Controller
                     ->with('supporter')
                     ->orderBy('studenttags_count', $columnSortOrder)
                     ->get();
-            } else {
+            } 
+            else {
                 $students = $students->select('students.*')
                     ->skip($req['start'])
                     ->take($req['length'])
@@ -330,7 +373,7 @@ class StudentController extends Controller
                     ->with('supporter')
                     ->get();
             }
-
+            
             $data = [];
             foreach ($students as $index => $item) {
                 $tags = "";
@@ -438,8 +481,7 @@ class StudentController extends Controller
                     ];
                 }
             }
-
-
+           
             $result = [
                 "draw" => $req['draw'],
                 "data" => $data,
