@@ -746,7 +746,11 @@ $(function () {
             url: route,
             dataType: 'json',
             contentType: 'application/json; charset=utf-8',
-
+            dataSrc: ( json ) => {
+                console.log({json});
+                students = json.theStudents;
+                return json.data;
+            },
             data: function (data) {
                 data['supporters_id'] = $('#supporters_id').val()
                 data['sources_id'] = $('#sources_id').val()

@@ -164,45 +164,7 @@ class StudentController extends Controller
         $school = null;
         $major = null;
         
-        if (request()->getMethod() == 'POST') {
-            // dump(request()->all());           
-            if (request()->input('supporters_id') != null) {
-                $supporters_id = (int)request()->input('supporters_id');
-                $students = $students->where('supporters_id', $supporters_id);
-            }
-            if (request()->input('name') != null) {
-                $name = trim(request()->input('name'));
-                $students = $searchStudent->search($students, $name);
-            }
-            if (request()->input('level') != null) {
-                $theLevel = request()->input('level');
-                $students = $students->where('level', $theLevel);
-            }
-            if (request()->input('sources_id') != null) {
-                $sources_id = (int)request()->input('sources_id');
-                $students = $students->where('sources_id', $sources_id);
-            }
-            if (request()->input('phone') != null) {
-                $phone = (int)request()->input('phone');
-                $students = $students->where('phone', $phone);
-            }
-            if (request()->input('cities_id') != null) {
-                $cities_id = (int)request()->input('cities_id');
-                $students = $students->where('cities_id', $cities_id);
-            }
-            if (request()->input('egucation_level') != null) {
-                $egucation_level = request()->input('egucation_level');
-                $students = $students->where('egucation_level', $egucation_level);
-            }
-            if (request()->input('major') != null) {
-                $major = request()->input('major');
-                $students = $students->where('major', $major);
-            }
-            if (request()->input('school') != null) {
-                $school = request()->input('school');
-                $students = $students->where('school', 'like',  '%' . $school . '%');
-            }
-        }        
+       
         $moralTags = Tag::where('is_deleted', false)
             ->where('type', 'moral')
             ->get();
@@ -224,6 +186,12 @@ class StudentController extends Controller
         $hotTemperatures = Temperature::where('is_deleted', false)->where('status', 'hot')->get();
         $coldTemperatures = Temperature::where('is_deleted', false)->where('status', 'cold')->get();
         $cities = City::where('is_deleted', false)->get();
+        $req =  request()->all();
+        if (!isset($req['start'])) {
+            $req['start'] = 0;
+            $req['length'] = 10;
+            $req['draw'] = 1;
+        }
         $theStudents = $students
             ->with('user')
             ->with('studenttags.tag.parent_four')
@@ -232,6 +200,8 @@ class StudentController extends Controller
             ->with('source')
             ->with('consultant')
             ->with('supporter')
+            ->offset($req['start'])
+            ->limit($req['length'])
             ->get();
            
         foreach ($theStudents as $index => $student) {
@@ -269,56 +239,59 @@ class StudentController extends Controller
               'needTagParentTwos',
               'needTagParentThrees',
               'needTagParentFours'               
-          ]),
+            ]),
             [
                 'msg_success' => request()->session()->get('msg_success'),
                 'msg_error' => request()->session()->get('msg_error')
             ]
-        );
-            // return view($view, [
-            //     'route' => $route,
-            //     'theStudents' => $theStudents,
-            //     'supports' => $supports,
-            //     'sources' => $sources,
-            //     'supporters_id' => $supporters_id,
-            //     'name' => $name,
-            //     'sources_id' => $sources_id,
-            //     'phone' => $phone,
-            //     'moralTags' => $moralTags,
-            //     'needTags' => $needTags,
-            //     'hotTemperatures' => $hotTemperatures,
-            //     'coldTemperatures' => $coldTemperatures,
-            //     "parentOnes" => $parentOnes,
-            //     "parentTwos" => $parentTwos,
-            //     "parentThrees" => $parentThrees,
-            //     "parentFours" => $parentFours,
-            //     "firstCollections" => $firstCollections,
-            //     "secondCollections" => $secondCollections,
-            //     "thirdCollections" => $thirdCollections,
-            //     // "fourthCollections"=>$fourthCollections,
-            //     "cities" => $cities,
-            //     "cities_id" => $cities_id,
-            //     "egucation_level" => $egucation_level,
-            //     "major" => $major,
-            //     "needTagParentOnes" => $needTagParentOnes,
-            //     "needTagParentTwos" => $needTagParentTwos,
-            //     "needTagParentThrees" => $needTagParentThrees,
-            //     "needTagParentFours" => $needTagParentFours,
-            //     'msg_success' => request()->session()->get('msg_success'),
-            //     'msg_error' => request()->session()->get('msg_error')
-            // ]);
-          
+          );
         }
         else 
         {
-           
-            $allStudents = $students->get();
-            $req =  request()->all();
-            if (!isset($req['start'])) {
-                $req['start'] = 0;
-                $req['length'] = 10;
-                $req['draw'] = 1;
+            $students = Student::where('students.is_deleted', false)->where('students.banned', false)->where('students.archived', false);
+            if ($level != "all") {
+                $students = $students->where('level', $level);
             }
+            if (request()->getMethod() == 'POST') {
+                // dump(request()->all());           
+                if (request()->input('supporters_id') != null) {
+                    $supporters_id = (int)request()->input('supporters_id');
+                    $students = $students->where('supporters_id', $supporters_id);
+                }
+                if (request()->input('name') != null) {
+                    $name = trim(request()->input('name'));
+                    $students = $searchStudent->search($students, $name);
+                }
+                if (request()->input('level') != null) {
+                    $theLevel = request()->input('level');
+                    $students = $students->where('level', $theLevel);
+                }
+                if (request()->input('sources_id') != null) {
+                    $sources_id = (int)request()->input('sources_id');
+                    $students = $students->where('sources_id', $sources_id);
+                }
+                if (request()->input('phone') != null) {
+                    $phone = (int)request()->input('phone');
+                    $students = $students->where('phone', $phone);
+                }
+                if (request()->input('cities_id') != null) {
+                    $cities_id = (int)request()->input('cities_id');
+                    $students = $students->where('cities_id', $cities_id);
+                }
+                if (request()->input('egucation_level') != null) {
+                    $egucation_level = request()->input('egucation_level');
+                    $students = $students->where('egucation_level', $egucation_level);
+                }
+                if (request()->input('major') != null) {
+                    $major = request()->input('major');
+                    $students = $students->where('major', $major);
+                }
+                if (request()->input('school') != null) {
+                    $school = request()->input('school');
+                    $students = $students->where('school', 'like',  '%' . $school . '%');
+                }
+            } 
+            $allStudents = $students->get();
             $x = 0;
             $columnIndex_arr = $request->get('order');
             $columnName_arr = $request->get('columns');
@@ -485,6 +458,7 @@ class StudentController extends Controller
             $result = [
                 "draw" => $req['draw'],
                 "data" => $data,
+                "theStudents" => $theStudents,
                 "recordsTotal" => count($allStudents),
                 "recordsFiltered" => count($allStudents),
             ];
