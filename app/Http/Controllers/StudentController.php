@@ -143,7 +143,7 @@ class StudentController extends Controller
         return redirect()->route('student_class', ["id" => $student_id]);
     }
     public function showStudents(Request $request, $level, $view, $route)
-    {       
+    {    //dd("rr"); 
         $searchStudent = new SearchStudent;
         $students = Student::where('students.is_deleted', false)->where('students.banned', false)->where('students.archived', false);
         if ($level != "all") {
@@ -192,7 +192,7 @@ class StudentController extends Controller
             $req['length'] = 10;
             $req['draw'] = 1;
         }
-        $theStudents = $students
+        $Students = $students
             ->with('user')
             ->with('studenttags.tag.parent_four')
             ->with('studentcollections.collection.parent')
@@ -204,16 +204,16 @@ class StudentController extends Controller
             ->limit($req['length'])
             ->get();
            
-        foreach ($theStudents as $index => $student) {
-            $theStudents[$index]->pcreated_at = jdate(strtotime($student->created_at))->format("Y/m/d");
+        foreach ($Students as $index => $student) {
+            $Students[$index]->pcreated_at = jdate(strtotime($student->created_at))->format("Y/m/d");
             
         }
        
         if (request()->getMethod() == 'GET') {            
-         ///dd($view);
+         //dd($view);
           return view($view,compact([
               'route',
-              'theStudents' ,
+              'Students' ,
               'supports',
               'sources',
               'supporters_id',
@@ -248,12 +248,13 @@ class StudentController extends Controller
         }
         else 
         {
+           
             $students = Student::where('students.is_deleted', false)->where('students.banned', false)->where('students.archived', false);
             if ($level != "all") {
                 $students = $students->where('level', $level);
             }
             if (request()->getMethod() == 'POST') {
-                // dump(request()->all());           
+                 //dump(request()->all());           
                 if (request()->input('supporters_id') != null) {
                     $supporters_id = (int)request()->input('supporters_id');
                     $students = $students->where('supporters_id', $supporters_id);
@@ -458,7 +459,7 @@ class StudentController extends Controller
             $result = [
                 "draw" => $req['draw'],
                 "data" => $data,
-                "theStudents" => $theStudents,
+                "theStudents" => $students,
                 "recordsTotal" => count($allStudents),
                 "recordsFiltered" => count($allStudents),
             ];
@@ -1742,7 +1743,7 @@ class StudentController extends Controller
     }
 
     public function apiFilterStudents()
-    {
+    {        
         $req =  request()->all();
         $students = Student::where('is_deleted', false)->where('banned', false);
         $supportGroupId = Group::getSupport();
