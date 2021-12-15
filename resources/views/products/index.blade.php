@@ -105,6 +105,7 @@
         return false;
     }
     function theSearch(){
+      alert("student is run");
         $('#loading').css('display','inline');
         table.ajax.reload();
         return false;
