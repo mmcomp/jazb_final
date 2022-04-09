@@ -26,4 +26,5 @@ Route::post('/delete_purchases', 'PurchaseController@apiDeletePurchases')->name(
 Route::post('/undelete_purchases', 'PurchaseController@apiUnDeletePurchases')->name('api_undelete_purchases');
 Route::post('/purchases', 'PurchaseController@apiAddPurchases')->name('api_add_purchases');
 Route::post('/marketers', 'MarketerController@apiCheckMarketer')->name('api_check_marketer');
+Route::post('/login', 'UserController@apiLogin')->name('api_login');
 Route::get('/filter_students', 'StudentController@apiFilterStudents')->name('api_filter_students');
