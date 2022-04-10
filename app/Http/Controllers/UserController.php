@@ -14,6 +14,17 @@ use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
+
+    public function apiLogin(Request $request)
+    {         
+       $user=new User();
+       if( Auth::attempt(["email"=>$request->input('email'), "password"=>$request->input('password')]))
+       {
+        $user=User::where("email",$request->email)->first();
+       }
+        
+        return $user;
+    }
     public function login(Request $request){
         Auth::logout();
         if($request->method()=='GET'){
