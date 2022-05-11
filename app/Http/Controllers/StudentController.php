@@ -1894,15 +1894,13 @@ class StudentController extends Controller
 
 
     public function apiIndexStudents()
-    {
-       //return "hh";
-        $students=Student::orderBy('id','desc')->paginate(env('MAX_PAGINATION_ACADEMY'));
+    {       
+        $students=Student::orderBy('id','desc')->get();//->paginate(env('MAX_PAGINATION_ACADEMY'));
         return $students;
     }
     public function apiShowStudent($id)
-    {
-       //dd($id);
-        $student=Student::where('id',$id)->where('is_deleted',0)->orderBy('id','desc')->paginate(env('MAX_PAGINATION_ACADEMY'));
+    {             
+        $student=Student::where('id',$id)->where('is_deleted',0)->orderBy('id','desc')->first();//->paginate(env('MAX_PAGINATION_ACADEMY'));
         return $student;
     }
     public function apiStoreStudents(Request $request)

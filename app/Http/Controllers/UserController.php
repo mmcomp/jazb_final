@@ -16,7 +16,12 @@ class UserController extends Controller
 {
 
     public function apiLogin(Request $request)
-    {         
+    { 
+        $credential=[
+            "email"=>$request['email'],
+            "password"=>$request['password']
+        ];
+       // return (Auth::attempt($credential));        
        $user=new User();
        if( Auth::attempt(["email"=>$request->input('email'), "password"=>$request->input('password')]))
        {
