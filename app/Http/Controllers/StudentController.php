@@ -1895,7 +1895,7 @@ class StudentController extends Controller
 
     public function apiIndexStudents()
     {       
-        $students=Student::orderBy('id','desc')->get();//->paginate(env('MAX_PAGINATION_ACADEMY'));
+        $students=Student::where('is_deleted',0)->orderBy('id','desc')->get();//->paginate(env('MAX_PAGINATION_ACADEMY'));
         return $students;
     }
     public function apiShowStudent($id)
@@ -1904,43 +1904,72 @@ class StudentController extends Controller
         return $student;
     }
     public function apiStoreStudents(Request $request)
-    {        
+    {      
+        //return($request->all());
         $student=new Student;
+        $student->phone = $request->phone;    
         $student->first_name = $request->first_name;
         $student->last_name = $request->last_name;
-        $student->phone = $request->phone;        
-        $student->major = $request->major;
-        $student->egucation_level = $request->egucation_level;        
-        //$student=Student::create([$request]);
-        if($student_result=$student->save())
-        {
-            return $student;
-        }
-        return  false;       
+        $student->level = $request->level;
+        $student->egucation_level = $request->egucation_level;    
+        $student->parents_job_title = $request->parents_job_title;    
+        $student->home_phone = $request->home_phone;    
+        $student->father_phone = $request->father_phone;    
+        $student->mother_phone = $request->mother_phone;    
+        $student->school = $request->school;    
+        $student->average = $request->average;    
+        $student->introducing = $request->introducing;
+        $student->student_phone = $request->student_phone;
+        $student->cities_id = $request->cities_id;
+        $student->sources_id = $request->sources_id;
+        $student->supporters_id = $request->supporters_id;
+        $student->archived = $request->archived;
+       
+        return Student::create($request->all());
+        // if($student)
+        // {
+        //     return $student;
+        // }
+        // return  $student;       
       
     }
     public function apiUpdateAcademyStudents(Request $request,int $id)
     { 
         $selection=Student::where('id',$id)->where('is_deleted',0)->first(); 
-        //return $selection;
+        
         if(!$selection)  
         {
             return $selection;
         }  
         
-        $student=new Student();
+        $student=new Student;
+        $student->phone = $request->phone;    
         $student->first_name = $request->first_name;
         $student->last_name = $request->last_name;
-        $student->phone = $request->phone;        
-        $student->major = $request->major;
-        $student->egucation_level = $request->egucation_level; 
-        //return $student;         
+        $student->level = $request->level;
+        $student->egucation_level = $request->egucation_level;    
+        $student->parents_job_title = $request->parents_job_title;    
+        $student->home_phone = $request->home_phone;    
+        $student->father_phone = $request->father_phone;    
+        $student->mother_phone = $request->mother_phone;    
+        $student->school = $request->school;    
+        $student->average = $request->average;    
+        $student->introducing = $request->introducing;
+        $student->student_phone = $request->student_phone;
+        $student->cities_id = $request->cities_id;
+        $student->sources_id = $request->sources_id;
+        $student->supporters_id = $request->supporters_id;
+        $student->archived = $request->archived;
+       
+        $student_result= $selection->fill($request->all());
+        $selection->save();
+        return  $student_result;      
         //$student=Student::create([$request]);
-        if($student_result=$selection->update($request->all()))
-        {
-            return $student;
-        }
-        return  false;       
+        // if($student_result=$student->update())
+        // {
+        //     return $student;
+        // }
+        // return   $student;       
       
     }
     public function apiDestroyStudent(int $id)
@@ -1956,6 +1985,8 @@ class StudentController extends Controller
         $selection->is_deleted=1;
         //return $student;         
         //$student=Student::create([$request]);
+        $selection->save();
+        return $selection;
         if($student_result=$selection->save())
         {
             return true;
