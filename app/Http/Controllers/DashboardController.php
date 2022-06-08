@@ -153,7 +153,7 @@ class DashboardController extends Controller
             // $sum = $out[0];
             $sum = 0;
             for ($indx = 0; $indx < count($supporterSanads); $indx++) {
-                $sum += ceil($supporterSanads[$indx]->total * $supporterSanads[$indx]->supporter_percent / 100);
+                $sum += ceil($supporterSanads[$indx]->total * $supporterSanads[$indx]->supporter_percent / 100) * $supporterSanads[$indx]->type;
             }
             $sum = $this->toPersianNum(number_format($sum));
             return view('dashboard.support', [
