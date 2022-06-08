@@ -41,7 +41,7 @@
                     <th>قیمت کل</th>
                     <th>سهم پشتیبان(درصد)</th>
                     <th>شماره</th>
-                    <th>#</th>
+                    <th>نوع</th>
                   </tr>
                   </thead>
                   <tbody>
@@ -53,7 +53,7 @@
                         <td>{{ $item->total }}</td>
                         <td>{{ ceil($item->total * $item->supporter_percent / 100) }}</td>
                         <td>{{ $item->number }}</td>
-                        <td></td>
+                        <td>{{ $item->type && $item->type < 0 ? 'بدهکار' : 'بستانکار' }}</td>
                         <!-- <td>{{ $item->name }}</td>
                         <td></td>
                         <td>

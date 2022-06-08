@@ -86,6 +86,14 @@
                             <input type="text" class="form-control" id="number" name="number" placeholder="سند"  />
                             @endif
                         </div>
+                        <div class="form-group">
+                            <label for="number">بستانکار</label>
+                            @if (isset($sanad) && isset($sanad->id) && isset($sanad->type) && $sanad->type < 0)
+                            <input type="checkbox" class="form-control" id="type" name="type" />
+                            @else
+                            <input type="checkbox" class="form-control" id="type" name="type" checked />
+                            @endif
+                        </div>
                     </div>
                 </div>
                 <div class="row">

@@ -51,6 +51,7 @@ class SanadController extends Controller
         $sanad->description = $request->input('description');
         $sanad->total = (int)$request->input('total', 0);
         $sanad->supporter_percent = (int)$request->input('supporter_percent', 0);
+        $sanad->type = $request->type && $request->type === "on" ? 1 : -1;
         $sanad->user_id = Auth::user()->id;
         $sanad->save();
 
