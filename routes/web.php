@@ -332,5 +332,11 @@ Route::group(['middleware' => ['auth', 'message','changeCharactersAllToBePersian
         Route::any('/edit/{id}/{supporters_id}','CommissionController@edit')->name('commission_edit');
         Route::any('/delete/{id}','CommissionController@destroy')->name('commission_delete');
     });
+
+    Route::group(['prefix' => '/sanads','middleware' => 'limit-access'], function () {
+        Route::get('/', 'SanadController@index')->name('sanads');
+        Route::any('/create', 'SanadController@create')->name('sanad_create');
+        Route::any('/edit/{id}', 'SanadController@edit')->name('sanad_edit');
+    });
 });
 

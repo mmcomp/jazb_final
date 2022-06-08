@@ -14,11 +14,12 @@ use Maatwebsite\Excel\Concerns\WithMapping;
 use Morilog\Jalali\CalendarUtils;
 use Illuminate\Support\Facades\DB;
 
-class StudentsExport implements FromCollection,WithHeadings,WithColumnWidths,WithMapping
+class StudentsExport implements FromCollection, WithHeadings, WithColumnWidths, WithMapping
 {
-    protected $students_select,$from_date,$to_date,$education_level,$major,$supporters_id;
+    protected $students_select, $from_date, $to_date, $education_level, $major, $supporters_id;
 
-    function __construct($students_select,$supporters_id,$major,$education_level,$from_date=null,$to_date=null) {
+    function __construct($students_select, $supporters_id, $major, $education_level, $from_date = null, $to_date = null)
+    {
         $this->students_select = $students_select;
         $this->from_date = $from_date;
         $this->to_date = $to_date;
@@ -26,18 +27,18 @@ class StudentsExport implements FromCollection,WithHeadings,WithColumnWidths,Wit
         $this->major = $major;
         $this->supporters_id = $supporters_id;
     }
-     /**
-    * @var Student $student
-    */
+    /**
+     * @var Student $student
+     */
     public function map($student): array
     {
-        $consultant = User::where('id',$student->consultants_id)->first();
-        $source = Source::where('id',$student->sources_id)->first();
-        $supporter = User::where('id',$student->supporters_id)->first();
-        $user = User::where('id',$student->users_id)->first();
-        $marketer = User::where('id',$student->marketers_id)->first();
-        $province = Province::where('id',$student->provinces_id)->first();
-        $city = City::where('id',$student->cities_id)->first();
+        $consultant = User::where('id', $student->consultants_id)->first();
+        $source = Source::where('id', $student->sources_id)->first();
+        $supporter = User::where('id', $student->supporters_id)->first();
+        $user = User::where('id', $student->users_id)->first();
+        $marketer = User::where('id', $student->marketers_id)->first();
+        $province = Province::where('id', $student->provinces_id)->first();
+        $city = City::where('id', $student->cities_id)->first();
         switch ($student->major) {
             case 'experimental':
                 $student->major = 'تجربی';
@@ -55,9 +56,9 @@ class StudentsExport implements FromCollection,WithHeadings,WithColumnWidths,Wit
                 $student->major = 'هنر';
                 break;
         }
-        if($student->egucation_level == 13){
+        if ($student->egucation_level == 13) {
             $student->egucation_level = 'فارغ التحصیل';
-        }else if($student->egucation_level == 14){
+        } else if ($student->egucation_level == 14) {
             $student->egucation_level = 'دانشجو';
         }
         return [
@@ -65,7 +66,7 @@ class StudentsExport implements FromCollection,WithHeadings,WithColumnWidths,Wit
             $student->first_name,
             $student->last_name,
             $student->last_year_grade,
-            $student->consultants_id = $consultant ? $consultant->first_name.' '.$consultant->last_name:'',
+            $student->consultants_id = $consultant ? $consultant->first_name . ' ' . $consultant->last_name : '',
             $student->parents_job_title,
             $student->home_phone,
             $student->father_phone,
@@ -76,23 +77,23 @@ class StudentsExport implements FromCollection,WithHeadings,WithColumnWidths,Wit
             $student->introducing,
             $student->student_phone,
             $student->sources_id = $source ? $source->name : '',
-            $student->supporters_id = $supporter ? $supporter->first_name.' '.$supporter->last_name: '',
-            $student->users_id = $user ? $user->first_name.' '.$user->last_name: '',
-            $student->marketers_id = $marketer ? $marketer->first_name.' '.$marketer->last_name:'',
+            $student->supporters_id = $supporter ? $supporter->first_name . ' ' . $supporter->last_name : '',
+            $student->users_id = $user ? $user->first_name . ' ' . $user->last_name : '',
+            $student->marketers_id = $marketer ? $marketer->first_name . ' ' . $marketer->last_name : '',
             $student->average,
             $student->password,
-            $student->viewed = $student->viewed == 1 ? 'بله':'خیر',
+            $student->viewed = $student->viewed == 1 ? 'بله' : 'خیر',
             $student->major,
             $student->egucation_level,
             $student->provinces_id = $province ? $province->name : '',
-            $student->is_from_site = $student->is_from_site == 1 ? 'بله':'خیر',
+            $student->is_from_site = $student->is_from_site == 1 ? 'بله' : 'خیر',
             $student->description,
             $student->supporter_seen = $student->supporter_seen == 1 ? 'بله' : 'خیر',
             $student->saloon,
             $student->supporter_start_date ? $this->gregorianToJalali($student->supporter_start_date) : '',
-            $student->banned = $student->banned == 1 ? 'بله':'خیر',
+            $student->banned = $student->banned == 1 ? 'بله' : 'خیر',
             $student->cities_id = $city ? $city->name : '',
-            $student->archived = $student->archived == 1 ? 'بله':'خیر',
+            $student->archived = $student->archived == 1 ? 'بله' : 'خیر',
             $student->outside_consultants,
             strval($student->own_purchases),
             strval($student->other_purchases),
@@ -136,47 +137,47 @@ class StudentsExport implements FromCollection,WithHeadings,WithColumnWidths,Wit
             'AJ' => 25,
         ];
     }
-    public function headings():array
+    public function headings(): array
     {
-       $array = [
-           'کد',
-           'نام',
-           'نام خانوادگی',
-           'رتبه',
-           'مشاور',
-           'عنوان شغل والدین',
-           'تلفن خانه',
-           'تلفن پدر',
-           'تلفن مادر',
-           'تلفن',
-           'مدرسه',
-           'تاریخ ایجاد',
-           'معرفی شده توسط',
-           'تلفن دانش آموز',
-           'منبع',
-           'پشتیبان',
-           'ایجادکننده',
-           'بازاریاب',
-           'معدل',
-           'رمز عبور',
-           'مشاهده شده',
-           'رشته',
-           'مقطع تحصیلی',
-           'استان',
-           'از طریق سایت',
-           'توصیف',
-           'مشاهده شده توسط پشتیبان',
-           'سالن',
-           'تاریخ شروع پشتیبان',
-           'لغو شده',
-           'شهر',
-           'آرشیو شده',
-           'مشاورهای بیرونی',
-           'تعداد خریدها بعد از تخصیص به پشتیبان',
-           'تعداد خریدها قبل از تخصیص به پشتیبان',
-           'تعداد خریدهای امروز'
-       ];
-       return $array;
+        $array = [
+            'کد',
+            'نام',
+            'نام خانوادگی',
+            'رتبه',
+            'مشاور',
+            'عنوان شغل والدین',
+            'تلفن خانه',
+            'تلفن پدر',
+            'تلفن مادر',
+            'تلفن',
+            'مدرسه',
+            'تاریخ ایجاد',
+            'معرفی شده توسط',
+            'تلفن دانش آموز',
+            'منبع',
+            'پشتیبان',
+            'ایجادکننده',
+            'بازاریاب',
+            'معدل',
+            'رمز عبور',
+            'مشاهده شده',
+            'رشته',
+            'مقطع تحصیلی',
+            'استان',
+            'از طریق سایت',
+            'توصیف',
+            'مشاهده شده توسط پشتیبان',
+            'سالن',
+            'تاریخ شروع پشتیبان',
+            'لغو شده',
+            'شهر',
+            'آرشیو شده',
+            'مشاورهای بیرونی',
+            'تعداد خریدها بعد از تخصیص به پشتیبان',
+            'تعداد خریدها قبل از تخصیص به پشتیبان',
+            'تعداد خریدهای امروز'
+        ];
+        return $array;
     }
     public static function persianToEnglishDigits($pnumber)
     {
@@ -211,8 +212,9 @@ class StudentsExport implements FromCollection,WithHeadings,WithColumnWidths,Wit
             $gregorian = $gregorian[0] . "-" . $gregorian[1] . "-" . $gregorian[2];
         }
         return $gregorian;
-    }    
-    public static function gregorianToJalali($Edate){
+    }
+    public static function gregorianToJalali($Edate)
+    {
         $Edate = explode('-', $Edate);
         $date = "";
         if (count($Edate) == 3) {
@@ -229,22 +231,21 @@ class StudentsExport implements FromCollection,WithHeadings,WithColumnWidths,Wit
             $jalali = $jalali[0] . "/" . $jalali[1] . "/" . $jalali[2];
         }
         return $jalali;
-
     }
     /**
-    * @return \Illuminate\Support\Collection
-    */
+     * @return \Illuminate\Support\Collection
+     */
     public function collection()
     {
-        $students = Student::where('is_deleted',false)->exclude(['updated_at','is_deleted']);
-        if($this->students_select != null){
+        $students = Student::where('is_deleted', false)->exclude(['updated_at', 'is_deleted']);
+        if ($this->students_select != null) {
             if ($this->students_select == 'archive_students') {
                 $students = $students->where('archived', true);
             } elseif ($this->students_select == 'black_students') {
                 $students = $students->where('banned', true);
             }
         }
-        if($this->students_select == "all") {
+        if ($this->students_select == "all") {
             $this->from_date = null;
             $this->to_date = null;
         }
@@ -252,10 +253,10 @@ class StudentsExport implements FromCollection,WithHeadings,WithColumnWidths,Wit
             $supporters_id = (int)$this->supporters_id;
             $students = $students->where('supporters_id', $supporters_id);
         }
-        if ($this->education_level != null) {
-            $egucation_level = strval($this->education_level);
-            $students = $students->where('egucation_level', $egucation_level);
-        }
+
+        $egucation_level = $this->education_level;
+        $students = $students->where('egucation_level', $egucation_level);
+
         if ($this->major != null) {
             $major = $this->major;
             $students = $students->where('major', $major);
@@ -269,7 +270,7 @@ class StudentsExport implements FromCollection,WithHeadings,WithColumnWidths,Wit
             if ($to_date != '') $students = $students->where('created_at', '<=', $to_date);
         }
         $students = $students->get();
-        if(!empty($students)){
+        if (!empty($students)) {
             return $students;
         }
         return [];

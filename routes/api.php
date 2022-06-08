@@ -26,4 +26,20 @@ Route::post('/delete_purchases', 'PurchaseController@apiDeletePurchases')->name(
 Route::post('/undelete_purchases', 'PurchaseController@apiUnDeletePurchases')->name('api_undelete_purchases');
 Route::post('/purchases', 'PurchaseController@apiAddPurchases')->name('api_add_purchases');
 Route::post('/marketers', 'MarketerController@apiCheckMarketer')->name('api_check_marketer');
+Route::post('/login', 'UserController@apiLogin')->name('api_login');
 Route::get('/filter_students', 'StudentController@apiFilterStudents')->name('api_filter_students');
+
+/////////////////                 student academy API                 /////////////////////////////////////////
+
+Route::get('/student_show/{id}', 'StudentController@apiShowStudent')->name('api_show_student');
+
+Route::get('/student_index', 'StudentController@apiIndexStudents')->name('api_index_student');
+
+Route::post('/student_store', 'StudentController@apiStoreStudents')->name('api_store_student');
+
+Route::put('/student_update/{id}', 'StudentController@apiUpdateAcademyStudents')->name('api_update_academy_student');
+
+Route::delete('/student_destroy/{id}', 'StudentController@apiDestroyStudent')->name('api_destroy_student');
+
+
+
