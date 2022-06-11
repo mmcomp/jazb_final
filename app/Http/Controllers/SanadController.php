@@ -50,6 +50,7 @@ class SanadController extends Controller
         $sanad->number = $request->input('number');
         $sanad->description = $request->input('description');
         $sanad->total = (int)$request->input('total', 0);
+        $sanad->total_cost = (int)$request->input('total_cost', 0);
         $sanad->supporter_percent = (int)$request->input('supporter_percent', 0);
         $sanad->type = $request->type && $request->type === "on" ? 1 : -1;
         $sanad->user_id = Auth::user()->id;
@@ -87,9 +88,19 @@ class SanadController extends Controller
      * @param  \App\Sanad  $sanad
      * @return \Illuminate\Http\Response
      */
-    public function edit(Sanad $sanad)
-    {
-        //
+    public function edit(int $id)
+    {   
+
+        $sanad=Sanad::find($id);
+        $supportGroupId = Group::getSupport();
+        if ($supportGroupId)
+            $supportGroupId = $supportGroupId->id;
+        $supports = User::where('is_deleted', false)->where('groups_id', $supportGroupId)->get();
+        return view('sanads.edit', [
+            "sanad"=>$sanad,
+            "supports"=>$supports,
+        ]);
+       
     }
 
     /**
@@ -99,9 +110,23 @@ class SanadController extends Controller
      * @param  \App\Sanad  $sanad
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Sanad $sanad)
+   // public function update(Request $request, int $sanad)
+    public function update(Request $request , string $sanad_json )
     {
-        //
+             //dd($sanad_decode->id);
+            //dd($request->all());
+        $sanad_decode=json_decode($sanad_json);
+        $sanad_id=$sanad_decode->id;
+        $sanad= Sanad::find($sanad_id);
+        if($sanad)
+        {
+            $sanad->fill($request->all());
+            $sanad->type= $request->type && $request->type === "on" ? 1 : -1;
+            $sanad->save();
+        }
+        $request->session()->flash("msg_success", "سند با موفقیت افزوده شد.");
+        return redirect()->route('sanads');
+    
     }
 
     /**

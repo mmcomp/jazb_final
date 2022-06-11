@@ -36,24 +36,37 @@
                   <thead>
                   <tr>
                     <th>ردیف</th>
-                    <th>کد</th>
+                    <th>شماره سند </th>
+                    <th> تاریخ  سند </th>
+                    <th>شرح</th>
+                    <th>بدهکار</th>
+                    <th>بستانکار</th>
+                   <!-- <th>مانده</th> -->
+                    <!-- <th>کد</th> -->
                     <th>پشتیبان</th>
                     <th>قیمت کل</th>
                     <th>سهم پشتیبان(درصد)</th>
-                    <th>شماره</th>
-                    <th>نوع</th>
+                   
+                   <!-- <th>نوع</th> -->
+                    <th>ویرایش</th>
                   </tr>
                   </thead>
                   <tbody>
                       @foreach ($sanads as $index => $item)
                       <tr>
                         <td>{{ $index + 1 }}</td>
-                        <td>{{ $item->id }}</td>
+                        <td>{{ $item->number}} </td>
+                        <td>{{ Carbon\Carbon::parse($item->updated_at)->format('Y-m-d')  }}</td>
+                        <td>{{ $item->description }}</td>
+                        <!-- <td>{{ $item->id }}</td> -->
+                         <td>{{ $item->type > 0 ? $item->total_cost : ''}}</td> 
+                        <td>{{ $item->type < 0 ? $item->total_cost : '' }}</td> 
                         <td>{{ $item->supporter->first_name. ' ' . $item->supporter->last_name }}</td>
                         <td>{{ $item->total }}</td>
                         <td>{{ ceil($item->total * $item->supporter_percent / 100) }}</td>
-                        <td>{{ $item->number }}</td>
-                        <td>{{ $item->type && $item->type < 0 ? 'بدهکار' : 'بستانکار' }}</td>
+                       
+                        <!-- <td>{{ $item->type && $item->type < 0 ? 'بدهکار' : 'بستانکار' }}</td> -->
+                        <td> <a class="btn btn-info" href="{{ route('sanad_edit',$item->id) }}"> ویرایش  </a> </td>
                         <!-- <td>{{ $item->name }}</td>
                         <td></td>
                         <td>
