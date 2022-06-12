@@ -48,9 +48,9 @@
                 <div class="form-group">
                   <label for="total">قیمت دریافتی(ریال)</label>
                   @if (isset($sanad) && isset($sanad->id))
-                  <input type="number" class="form-control" id="total" name="total" placeholder="کل" value="{{ $sanad->total }}" />
+                  <input type="number" class="form-control" id="total" name="total" placeholder="قیمت دریافتی " value="{{ $sanad->total }}" />
                   @else
-                  <input type="number" class="form-control" id="total" name="total" placeholder="کل" />
+                  <input type="number" class="form-control" id="total" name="total" placeholder="قیمت دریافتی" />
                   @endif
                 </div>
 

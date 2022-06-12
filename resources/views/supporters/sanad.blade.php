@@ -27,7 +27,7 @@
             <div class="card">
               <div class="card-header">
                 <h3 class="card-title">
-                    <a class="btn btn-success" href="{{ route('sanad_create') }}">سند جدید</a>
+                    <!-- <a class="btn btn-success" href="{{ route('sanad_create') }}">سند جدید</a> -->
                 </h3>
               </div>
               <!-- /.card-header -->
@@ -43,13 +43,13 @@
                     <th>بستانکار</th>
                    <!-- <th>مانده</th> -->
                     <!-- <th>کد</th> -->
-                    <th>پشتیبان</th>
-                    <th>قیمت کل</th>
+                    <!-- <th>پشتیبان</th> -->
+                    <!-- <th>قیمت کل</th> -->
                     <th>قیمت دریافتی</th>
                     <th>سهم پشتیبان(درصد)</th>
                    
                    <!-- <th>نوع</th> -->
-                    <th>ویرایش</th>
+                    <!-- <th>ویرایش</th> -->
                   </tr>
                   </thead>
                   <tbody>
@@ -62,13 +62,13 @@
                         <!-- <td>{{ $item->id }}</td> -->
                          <td>{{ $item->type > 0 ? $item->total_cost : ''}}</td> 
                         <td>{{ $item->type < 0 ? $item->total_cost : '' }}</td> 
-                        <td>{{ $item->supporter->first_name. ' ' . $item->supporter->last_name }}</td>
-                        <td>{{ $item->total }}</td>
+                        <!-- <td>{{ $item->supporter->first_name. ' ' . $item->supporter->last_name }}</td> -->
+                        <!-- <td>{{ $item->total }}</td> -->
                         <td>{{ $item->total_cost }}</td>
                         <td>{{ ceil($item->total * $item->supporter_percent / 100) }}</td>
                        
                         <!-- <td>{{ $item->type && $item->type < 0 ? 'بدهکار' : 'بستانکار' }}</td> -->
-                        <td> <a class="btn btn-info" href="{{ route('sanad_edit',$item->id) }}"> ویرایش  </a> </td>
+                        <!-- <td> <a class="btn btn-info" href="{{ route('sanad_edit',$item->id) }}"> ویرایش  </a> </td> -->
                         <!-- <td>{{ $item->name }}</td>
                         <td></td>
                         <td>
@@ -89,9 +89,9 @@
                                 جمع کل:
                         </td>
                         <td> {{$sanads->sum('total_debtor')}} </td>
-                        <td colspan='2'> {{$sanads->sum('total_creditor')}} </td>
-                        <td colspan='1'> {{$sanads->sum('total_price')}} </td>
-                        <td colspan='2'> {{$sanads->sum('total_total_cost')}} </td>
+                        <td colspan='1'> {{$sanads->sum('total_creditor')}} </td>
+                        <!-- <td colspan='1'> {{$sanads->sum('total_price')}} </td> -->
+                        <td colspan='1'> {{$sanads->sum('total_total_cost')}} </td>
                         
                       </tr>
                 </table>

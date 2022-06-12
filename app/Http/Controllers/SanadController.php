@@ -17,10 +17,23 @@ class SanadController extends Controller
      */
     public function index()
     {
+        $total_debtor=0;
+        $total_creditor=0;
         $sanads = Sanad::all();
-
+        // foreach($sanads as $sanad){
+        //     if($sanad->type > 0){
+        //         $total_debtor+=$sanad->total_cost;
+        //     }
+        //     else
+        //     {
+        //         $total_creditor+=$sanad->total_cost;
+        //     }
+        // }
+       
         return view('sanads.index',[
             'sanads' => $sanads,
+            // 'total_creditor' => $total_creditor,
+            // 'total_debtor' => $total_debtor,
             'msg_success' => request()->session()->get('msg_success'),
             'msg_error' => request()->session()->get('msg_error')
         ]);

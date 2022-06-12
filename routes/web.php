@@ -204,6 +204,7 @@ Route::group(['middleware' => ['auth', 'message','changeCharactersAllToBePersian
     });
 
     Route::group(['prefix' => '/user_supporters'], function () {
+        Route::get('/', 'SanadController@index')->name('sanads');
         Route::get('/', 'SupporterController@index')->name('user_supporters')->middleware('admin-or-supervisor');
         Route::get('/calls-get', 'SupporterController@callIndex')->name('user_supporter_calls')->middleware('admin-or-supervisor');
         Route::any('/supporter_calls', 'SupporterController@supporterCallIndex')->name('user_a_supporter_calls');
@@ -247,6 +248,7 @@ Route::group(['middleware' => ['auth', 'message','changeCharactersAllToBePersian
 
     Route::group(['prefix' => '/supporter_students'], function () {
         Route::any('/', 'SupporterController@student')->name('supporter_students');
+        Route::any('/sanad/{id}', 'SupporterController@sanad')->name('supporter_sanads');
         Route::post('/changeLevel', 'SupporterController@changeLevelAjax')->name('change_level_ajax');
         Route::any('/l1', 'SupporterController@levelOneStudents')->name('student_level_1');
         Route::any('/l2', 'SupporterController@levelTwoStudents')->name('student_level_2');
