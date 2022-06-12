@@ -60,11 +60,11 @@
                         <td>{{ jdate($item->updated_at)->format("Y/m/d") }}</td>
                         <td>{{ $item->description }}</td>
                         <!-- <td>{{ $item->id }}</td> -->
-                         <td>{{ $item->type > 0 ? $item->total_cost : ''}}</td> 
-                        <td>{{ $item->type < 0 ? $item->total_cost : '' }}</td> 
+                         <td>{{ $item->type > 0 ? number_format($item->total_cost) : ''}}</td> 
+                        <td>{{ $item->type < 0 ? number_format($item->total_cost) : '' }}</td> 
                         <td>{{ $item->supporter->first_name. ' ' . $item->supporter->last_name }}</td>
-                        <td>{{ $item->total }}</td>
-                        <td>{{ $item->total_cost }}</td>
+                        <td>{{ number_format($item->total) }}</td>
+                        <td>{{ number_format($item->total_cost) }}</td>
                         <td>{{ ceil($item->total * $item->supporter_percent / 100) }}</td>
                        
                         <!-- <td>{{ $item->type && $item->type < 0 ? 'بدهکار' : 'بستانکار' }}</td> -->
@@ -88,10 +88,10 @@
                         <td colspan='4'>
                                 جمع کل:
                         </td>
-                        <td> {{$sanads->sum('total_debtor')}} </td>
-                        <td colspan='2'> {{$sanads->sum('total_creditor')}} </td>
-                        <td colspan='1'> {{$sanads->sum('total_price')}} </td>
-                        <td colspan='2'> {{$sanads->sum('total_total_cost')}} </td>
+                        <td> {{number_format($sanads->sum('total_debtor'))}} </td>
+                        <td colspan='2'> {{number_format($sanads->sum('total_creditor'))}} </td>
+                        <td colspan='1'> {{number_format($sanads->sum('total_price'))}} </td>
+                        <td colspan='2'> {{number_format($sanads->sum('total_total_cost'))}} </td>
                         
                       </tr>
                 </table>
