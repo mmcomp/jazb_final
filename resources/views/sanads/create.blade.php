@@ -48,13 +48,13 @@
                 <div class="form-group">
                   <label for="total">قیمت دریافتی(ریال)</label>
                   @if (isset($sanad) && isset($sanad->id))
-                  <input type="number" class="form-control" id="total" name="total" placeholder="قیمت دریافتی " value="{{ $sanad->total }}" />
+                  <input type="number" class="form-control" id="total" name="total" placeholder="قیمت دریافتی " value="{{number_format($sanad->total) }}" />
                   @else
                   <input type="number" class="form-control" id="total" name="total" placeholder="قیمت دریافتی" />
                   @endif
                 </div>
 
-                <div class="form-group">
+                <div class="form-group" id="block_supporter">
                   <label for="supporter_percent">سهم پشتیبان(درصد)</label>
                   @if (isset($sanad) && isset($sanad->id))
                   <input type="number" class="form-control" id="supporter_percent" name="supporter_percent" placeholder="سهم" value="{{ $sanad->supporter_percent }}" />
@@ -136,9 +136,15 @@
 
   function checkType(dobj) {
     if ($(dobj).prop('checked')) {
+      var x = document.getElementById("block_supporter");
+      x.style.display = "block";
 
     } else {
-
+      var x = document.getElementById("block_supporter");
+     // document.getElementById("supporter_percent").innerHTML = "100";
+     document.getElementById("supporter_percent").setAttribute('value','100');
+      x.style.display = "none";
+      
     }
   }
 
