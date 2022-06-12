@@ -33,14 +33,15 @@
         </div>
         <!-- /.card-header -->
         <div class="card-body">
-          <form method="POST" enctype="multipart/form-data" id="frm">
+          <form method="post" enctype="multipart/form-data" action="{{ url('/sanads/update/'.$sanad.'/'.$sanad->id) }}" >
             @csrf
-            <div class="row">
+            
+            <div class="row">            
               <div class="col">
                 <div class="form-group">
                   <label for="supporter_percent"> مبلغ کل </label>
                   @if (isset($sanad) && isset($sanad->id))
-                  <input type="number" class="form-control" id="total_cost" name="total_cost" placeholder="مبلغ کل" value="" />
+                  <input type="number" class="form-control" id="total_cost" name="total_cost" placeholder="مبلغ کل" value="{{ $sanad->total_cost }}" />
                   @else
                   <input type="number" class="form-control" id="total_cost" name="total_cost" placeholder="مبلغ کل" />
                   @endif
@@ -48,13 +49,13 @@
                 <div class="form-group">
                   <label for="total">قیمت دریافتی(ریال)</label>
                   @if (isset($sanad) && isset($sanad->id))
-                  <input type="number" class="form-control" id="total" name="total" placeholder="قیمت دریافتی " value="{{ $sanad->total }}" />
+                  <input type="number" class="form-control" id="total" name="total" placeholder="کل" value="{{ $sanad->total }}" />
                   @else
-                  <input type="number" class="form-control" id="total" name="total" placeholder="قیمت دریافتی" />
+                  <input type="number" class="form-control" id="total" name="total" placeholder="کل" />
                   @endif
                 </div>
 
-                <div class="form-group">
+                <div class="form-group" id="block_supporter">
                   <label for="supporter_percent">سهم پشتیبان(درصد)</label>
                   @if (isset($sanad) && isset($sanad->id))
                   <input type="number" class="form-control" id="supporter_percent" name="supporter_percent" placeholder="سهم" value="{{ $sanad->supporter_percent }}" />
@@ -107,7 +108,7 @@
             </div>
             <div class="row">
               <div class="col">
-                <button class="btn btn-primary" type="button" onclick="submitForm()">
+                <button class="btn btn-primary">
                   ذخیره
                 </button>
               </div>
@@ -127,54 +128,24 @@
 
 @section('js')
 <!-- Select2 -->
-<!-- <script src="/plugins/select2/js/select2.full.min.js"></script> -->
+<script src="/plugins/select2/js/select2.full.min.js"></script>
 <script>
   $(document).ready(function() {
-
     $('select.select2').select2();
   });
 
   function checkType(dobj) {
     if ($(dobj).prop('checked')) {
+      var x = document.getElementById("block_supporter");
+      x.style.display = "block";
 
     } else {
-
+      var x = document.getElementById("block_supporter");
+     // document.getElementById("supporter_percent").innerHTML = "100";
+     document.getElementById("supporter_percent").setAttribute('value','100');
+      x.style.display = "none";
+      
     }
-  }
-
-  function submitForm() {
-    if (!validateForm()) {
-      return false;
-    }
-    $('#frm').submit();
-  }
-
- function validateForm() {
-    if ($('#total_cost').val() === "") {
-      alert("مقدار مبلغ کل را وارد نمایید.");
-      return false;
-    }
-    if ($('#total').val() === "") {
-      alert("مقدار مبلغ دریافتی  را وارد نمایید.");
-      return false;
-    }
-    if ($('#supporter_percent').val() === "") {
-      alert(" سهم پشتیبان  را وارد نمایید.");
-      return false;
-    }
-    if ($('#number').val() === "") {
-      alert("  شماره سند  را وارد نمایید.");
-      return false;
-    }
-    if ($('#supporter_id').val() == 0) {
-      alert("   پشتیبان  را وارد نمایید.");
-      return false;
-    }
-    if ($('#description').val() === "") {
-      alert(" توضیحات را وارد نمایید.");
-      return false;
-    }
-    return true;
   }
 </script>
 @endsection
