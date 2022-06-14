@@ -65,7 +65,7 @@
                         <!-- <td>{{ $item->id }}</td> -->
                          <td>{{ $item->type < 0 ? number_format($item->total) : ''}}</td> 
                         <td>{{ $item->type > 0 ? number_format($item->total) : '' }}</td> 
-                        <td>{{ $item->supporter->first_name. ' ' . $item->supporter->last_name }}</td>
+                        <!-- <td>{{ $item->supporter->first_name. ' ' . $item->supporter->last_name }}</td> -->
                         <td>{{ number_format($item->total) }}</td>
                         <td>{{ number_format($item->total_cost) }}</td>
                         <td>{{ number_format(ceil($item->total * $item->supporter_percent / 100)) }}</td>
@@ -88,7 +88,7 @@
                      
                   </tbody>
                   <tr>
-                        <td colspan='4'>
+                        <td colspan='5'>
                                 جمع کل:
                         </td>
                         <td> {{number_format($sanads->sum('total_debtor'))}} </td>
