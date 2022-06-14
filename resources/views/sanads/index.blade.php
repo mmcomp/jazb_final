@@ -36,6 +36,7 @@
                   <thead>
                   <tr>
                     <th>ردیف</th>
+                    <th>پشتیبان</th>
                     <th>شماره سند </th>
                     <th> تاریخ  سند </th>
                     <th>شرح</th>
@@ -43,9 +44,10 @@
                     <th>بستانکار</th>
                    <!-- <th>مانده</th> -->
                     <!-- <th>کد</th> -->
-                    <th>پشتیبان</th>
-                    <th>قیمت کل</th>
+                   
                     <th>قیمت دریافتی</th>
+                    <th>قیمت کل</th>
+                   
                     <th>سهم پشتیبان(درصد)</th>
                    
                    <!-- <th>نوع</th> -->
@@ -56,16 +58,17 @@
                       @foreach ($sanads as $index => $item)                      
                       <tr>
                         <td>{{ $index + 1 }}</td>
+                        <td>{{ $item->supporter->first_name. ' ' . $item->supporter->last_name }}</td>
                         <td>{{ $item->number}} </td>
                         <td>{{ jdate($item->updated_at)->format("Y/m/d") }}</td>
                         <td>{{ $item->description }}</td>
                         <!-- <td>{{ $item->id }}</td> -->
-                         <td>{{ $item->type > 0 ? number_format($item->total_cost) : ''}}</td> 
-                        <td>{{ $item->type < 0 ? number_format($item->total_cost) : '' }}</td> 
+                         <td>{{ $item->type < 0 ? number_format($item->total) : ''}}</td> 
+                        <td>{{ $item->type > 0 ? number_format($item->total) : '' }}</td> 
                         <td>{{ $item->supporter->first_name. ' ' . $item->supporter->last_name }}</td>
                         <td>{{ number_format($item->total) }}</td>
                         <td>{{ number_format($item->total_cost) }}</td>
-                        <td>{{ ceil($item->total * $item->supporter_percent / 100) }}</td>
+                        <td>{{ number_format(ceil($item->total * $item->supporter_percent / 100)) }}</td>
                        
                         <!-- <td>{{ $item->type && $item->type < 0 ? 'بدهکار' : 'بستانکار' }}</td> -->
                         <td> <a class="btn btn-info" href="{{ route('sanad_edit',$item->id) }}"> ویرایش  </a> </td>
