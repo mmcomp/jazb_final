@@ -11,7 +11,8 @@ class Sanad extends Model
         'total_price',
         'total_debtor',
         'total_creditor',
-        'total_total_cost'
+        'total_total_cost',
+        'total_supporter'
     ];
     
     protected $fillable=[
@@ -27,7 +28,10 @@ class Sanad extends Model
     ];
     public function getTotalPriceAttribute()
     {
-        return $this->total;
+        if($this->type>0)
+            return $this->total;
+        return 0;    
+       // return $this->total;
     }
     public function getTotalTotalCostAttribute()
     {
@@ -35,8 +39,14 @@ class Sanad extends Model
     }
     public function getTotalDebtorAttribute()
     {
-        if($this->type>0)
+        if($this->type<0)
             return $this->total;
+        return 0;    
+    }
+    public function getTotalSupporterAttribute()
+    {
+        if($this->type>0)
+            return ($this->supporter_percent/100 * $this->total);
         return 0;    
     }
     public function getTotalCreditorAttribute()

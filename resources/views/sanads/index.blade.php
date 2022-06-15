@@ -40,16 +40,16 @@
                     <th>شماره سند </th>
                     <th> تاریخ  سند </th>
                     <th>شرح</th>
-                    <th>بدهکار</th>
-                    <th>بستانکار</th>
+                   
+                    <!-- <th>بستانکار</th> -->
                    <!-- <th>مانده</th> -->
                     <!-- <th>کد</th> -->
-                   
-                    <th>قیمت دریافتی</th>
                     <th>قیمت کل</th>
+                    <th>قیمت دریافتی</th>
+                    
                    
                     <th>سهم پشتیبان(درصد)</th>
-                   
+                    <th>پرداختی موسسه</th>
                    <!-- <th>نوع</th> -->
                     <th>ویرایش</th>
                   </tr>
@@ -63,13 +63,14 @@
                         <td>{{ jdate($item->updated_at)->format("Y/m/d") }}</td>
                         <td>{{ $item->description }}</td>
                         <!-- <td>{{ $item->id }}</td> -->
-                         <td>{{ $item->type < 0 ? number_format($item->total) : ''}}</td> 
-                        <td>{{ $item->type > 0 ? number_format($item->total) : '' }}</td> 
-                        <!-- <td>{{ $item->supporter->first_name. ' ' . $item->supporter->last_name }}</td> -->
-                        <td>{{ number_format($item->total) }}</td>
-                        <td>{{ number_format($item->total_cost) }}</td>
-                        <td>{{ number_format(ceil($item->total * $item->supporter_percent / 100)) }}</td>
                        
+                        <!-- <td>{{ $item->type > 0 ? number_format($item->total) : '' }}</td>  -->
+                        <!-- <td>{{ $item->supporter->first_name. ' ' . $item->supporter->last_name }}</td> -->
+                        <td>{{ number_format($item->total_cost) }}</td>
+                        <td>{{ $item->type > 0 ?   number_format($item->total) : 0 }}</td>
+                      
+                        <td>{{ $item->type > 0 ?  number_format(ceil($item->total * $item->supporter_percent / 100)) : ""}}</td>
+                        <td>{{ $item->type < 0 ? number_format($item->total) : ''}}</td> 
                         <!-- <td>{{ $item->type && $item->type < 0 ? 'بدهکار' : 'بستانکار' }}</td> -->
                         <td> <a class="btn btn-info" href="{{ route('sanad_edit',$item->id) }}"> ویرایش  </a> </td>
                         <!-- <td>{{ $item->name }}</td>
@@ -88,14 +89,18 @@
                      
                   </tbody>
                   <tr>
-                        <td colspan='5'>
+                        <td colspan='6'>
                                 جمع کل:
                         </td>
-                        <td colspan='1'> {{number_format($sanads->sum('total_creditor'))}} </td>
-                        <td> {{number_format($sanads->sum('total_debtor'))}} </td>
-                        
+                        <!-- <td colspan='1'> {{number_format($sanads->sum('total_creditor'))}} </td> -->
                         <td colspan='1'> {{number_format($sanads->sum('total_price'))}} </td>
-                        <td colspan='2'> {{number_format($sanads->sum('total_total_cost'))}} </td>
+                       
+                        <td colspan='1'> {{number_format($sanads->sum('total_supporter'))}} </td>
+                        <td colspan='1'> {{number_format($sanads->sum('total_debtor'))}} </td>
+                        <td colspan='1'> {{number_format($sanads->sum('total_supporter')-$sanads->sum('total_debtor'))}} </td>
+                        
+                        
+                        <!--<td colspan='2'> {{number_format($sanads->sum('total_total_cost'))}} </td> -->
                         
                       </tr>
                 </table>
