@@ -13,7 +13,7 @@
                    <div class="inner p-0">
                      <p class="text-center">
                        <a href="{{route('supporter_sanads', Auth::user()->id)}}"> <span class="text-light btn" >
-                            درآمد {{ jdate()->format('F') }} ماه من
+                            فروش {{ jdate()->format('F') }} ماه من
                         <span class="badge badge-light right">{{ $sum }} تومان</span>
                         </a>
                         </span>
