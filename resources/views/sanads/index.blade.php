@@ -91,8 +91,9 @@
                         <td colspan='5'>
                                 جمع کل:
                         </td>
+                        <td colspan='1'> {{number_format($sanads->sum('total_creditor'))}} </td>
                         <td> {{number_format($sanads->sum('total_debtor'))}} </td>
-                        <td colspan='2'> {{number_format($sanads->sum('total_creditor'))}} </td>
+                        
                         <td colspan='1'> {{number_format($sanads->sum('total_price'))}} </td>
                         <td colspan='2'> {{number_format($sanads->sum('total_total_cost'))}} </td>
                         

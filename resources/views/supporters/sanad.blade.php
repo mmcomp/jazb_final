@@ -60,8 +60,8 @@
                         <td>{{ jdate($item->updated_at)->format("Y/m/d") }}</td>
                         <td>{{ $item->description }}</td>
                         <!-- <td>{{ $item->id }}</td> -->
-                         <td>{{ $item->type > 0 ? $item->total_cost : ''}}</td> 
-                        <td>{{ $item->type < 0 ? $item->total_cost : '' }}</td> 
+                         <td>{{ $item->type > 0 ? $item->total : ''}}</td> 
+                        <td>{{ $item->type < 0 ? $item->total : '' }}</td> 
                         <!-- <td>{{ $item->supporter->first_name. ' ' . $item->supporter->last_name }}</td> -->
                         <!-- <td>{{ $item->total }}</td> -->
                         <td>{{ $item->total_cost }}</td>

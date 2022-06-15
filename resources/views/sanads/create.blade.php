@@ -142,7 +142,7 @@
     } else {
       var x = document.getElementById("block_supporter");
      // document.getElementById("supporter_percent").innerHTML = "100";
-     document.getElementById("supporter_percent").setAttribute('value','100');
+     $("#supporter_percent").val('100');
       x.style.display = "none";
       
     }
