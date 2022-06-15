@@ -36,13 +36,13 @@ class Sanad extends Model
     public function getTotalDebtorAttribute()
     {
         if($this->type>0)
-            return $this->total_cost;
+            return $this->total;
         return 0;    
     }
     public function getTotalCreditorAttribute()
     {
         if($this->type<0)
-            return $this->total_cost;
+            return $this->total;
         return 0;   
        // return $this->total;
     }
