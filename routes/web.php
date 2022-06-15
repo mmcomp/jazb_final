@@ -339,7 +339,7 @@ Route::group(['middleware' => ['auth', 'message','changeCharactersAllToBePersian
         Route::get('/', 'SanadController@index')->name('sanads');
         Route::any('/create', 'SanadController@create')->name('sanad_create');
         Route::any('/edit/{id}', 'SanadController@edit')->name('sanad_edit');
-        Route::any('/update/{sanad}/{id}', 'SanadController@update')->name('sanad_update');
+        Route::any('/update/{id}', 'SanadController@update')->name('sanad_update');
     });
 });
 

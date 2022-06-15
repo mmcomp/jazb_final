@@ -124,12 +124,12 @@ class SanadController extends Controller
      * @return \Illuminate\Http\Response
      */
    // public function update(Request $request, int $sanad)
-    public function update(Request $request , string $sanad_json )
+    public function update(Request $request , int $sanad_id )
     {
              //dd($sanad_decode->id);
-            //dd($request->all());
-        $sanad_decode=json_decode($sanad_json);
-        $sanad_id=$sanad_decode->id;
+           // dd($request->all());
+        //$sanad_decode=json_decode($sanad_json);
+        //$sanad_id=$sanad_decode->id;
         $sanad= Sanad::find($sanad_id);
         if($sanad)
         {

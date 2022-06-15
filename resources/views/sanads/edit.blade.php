@@ -31,14 +31,15 @@
       <div class="card">
         <div class="card-header">
         </div>
-        <!-- /.card-header -->
+        <!-- /.card-header {{ url('/sanads/update/'.$sanad.'/'.$sanad->id) }}" -->
         <div class="card-body">
-          <form method="post" enctype="multipart/form-data" action="{{ url('/sanads/update/'.$sanad.'/'.$sanad->id) }}" >
+          <form method="Post" enctype="multipart/form-data" action="{{ url('/sanads/update/'.$sanad->id) }}" >
             @csrf
             
             <div class="row">            
               <div class="col">
                 <div class="form-group">
+                <input type="hidden" class="form-control" id="sanad_id" name="sanad_id" value="{{$sanad->id}}" />
                   <label for="supporter_percent"> مبلغ کل </label>
                   @if (isset($sanad) && isset($sanad->id))
                   <input type="number" class="form-control" id="total_cost" name="total_cost" placeholder="مبلغ کل" value="{{ $sanad->total_cost }}" />
