@@ -46,7 +46,7 @@
                   @endif
                 </div>
                 <div class="form-group">
-                  <label for="total">قیمت دریافتی(ریال)</label>
+                  <label for="total">قیمت دریافتی(تومان)</label>
                   @if (isset($sanad) && isset($sanad->id))
                   <input type="number" class="form-control" id="total" name="total" placeholder="قیمت دریافتی " value="{{number_format($sanad->total) }}" />
                   @else
