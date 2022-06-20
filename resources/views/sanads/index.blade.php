@@ -6,7 +6,7 @@
         <div class="container-fluid">
           <div class="row mb-2">
             <div class="col-sm-6">
-              <h1>سند</h1>
+              <h1>سند </h1> 
             </div>
             <div class="col-sm-6">
               <!--
@@ -22,17 +22,81 @@
 
       <!-- Main content -->
       <section class="content">
+      <head>
+            <meta name="csrf-token" content="{{ csrf_token() }}">
+      </head>
+     
+      <form method="post">
+       @csrf
+                <div class="row">
+                              <div class="col-3">
+                                 <label for="supporter_id">پشتیبان</label>
+                                  <select  id="supporter_id" name="supporter_id" class="form-control select2" onchange="theChange()">
+                                      <option value="0">همه</option>
+                                      @foreach ($supporters as $item)
+                                          @if(isset($supporter_id) && $supporter_id==$item->id)
+                                          <option value="{{ $item->id }}" selected >
+                                          @else
+                                          <option value="{{ $item->id }}" >
+                                          @endif
+                                          {{ $item->first_name }} {{ $item->last_name }}
+                                          </option>
+                                      @endforeach
+                                  </select>
+                                
+                              </div>
+                             <div class="col-1">
+                                <label for="month">ماه</label>
+                                  <select  id="month" name="month" class="form-control select2" onchange="theChange()">
+                                  <option value="0">همه</option>
+                                       @foreach ($sanad_month as $item)
+                                          @if(isset($sanad_month) && $sanad_month==$item)
+                                          <option value="{{ $item }}" selected >
+                                          @else
+                                          <option value="{{ $item }}" >
+                                          @endif
+                                          {{ $item  }}
+                                          </option>
+                                      @endforeach 
+                                  </select> 
+                                </div>
+                              <div class="col-1">
+                              <label for="year">سال</label>
+                                  <select  id="year" name="year" class="form-control select2" onchange="theChange()">
+                                  <option value="0">همه</option>
+                                      @foreach ($sanad_year as $item)
+                                          @if(isset($sanad_year) && $sanad_year==$item)
+                                          <option value="{{ $item }}" selected >
+                                          @else
+                                          <option value="{{ $item }}" >
+                                          @endif
+                                          {{ $item }} 
+                                          </option>
+                                      @endforeach 
+                                  </select> 
+                              </div>
+                              <div class="col-3">
+                                  <div class="form-group">
+                                      <label for="to_date">&nbsp;</label>
+                                      <a href="#" class="btn btn-success form-control" onclick="theSearch()" >جستجو</a>
+                                      <img id="loading" src="/dist/img/loading.gif" style="height: 20px;display: none;" />
+                                  </div>
+                               </div> 
+                
+              </div>                   
+          </form>
         <div class="row">
           <div class="col-12">
             <div class="card">
               <div class="card-header">
+
                 <h3 class="card-title">
                     <a class="btn btn-success" href="{{ route('sanad_create') }}">سند جدید</a>
                 </h3>
               </div>
               <!-- /.card-header -->
               <div class="card-body">
-                <table id="example2" class="table table-bordered table-hover">
+                <table id="sanadtbl" class="table table-bordered table-hover">
                   <thead>
                   <tr>
                     <th>ردیف</th>
@@ -122,9 +186,32 @@
 <script src="../../plugins/datatables-bs4/js/dataTables.bootstrap4.js"></script>
 <!-- page script -->
 <script>
+ let table = "";
+ 
+    function theSearch(){
+     
+      // $.post("{{ route('searchIndex') }}",{flag:1,year:$("#year").val(),month:$("#month").val()},function(res){
+      //   console.log("the res is:"+ res);
+      // });
+     // alert($("#name").val());
+        //$(myself).prop('disabled',true);
+         $('#loading').css('display','inline');
+         table.ajax.reload();
+        return false;
+    }
+    function theChange(){     
+        // $(myself).prop('disabled',true);
+         $('#loading').css('display','inline');        
+         table.ajax.reload();
+        return false;
+    }
     $(function () {
-    //   $("#example1").DataTable();
-      $('#example2').DataTable({
+      $.ajaxSetup({
+          headers: {
+              'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+          }
+      });
+      table = $('#sanadtbl').DataTable({
         "paging": true,
         "lengthChange": false,
         "searching": false,
@@ -140,17 +227,60 @@
             "info":           "نمایش _START_ تا _END_ از _TOTAL_ داده",
             "infoEmpty":      "نمایش 0 تا 0 از 0 داده",
         },
-        "columnDefs": [   ////define column 1 and 3
+        "columnDefs": [   ////define column 1 and 5
         {
             "searchable": false,
             "orderable": false,
-            "targets": [0,3]
+            "targets": [0,9]
         },
-        { "type": "pstring", "targets": 2 }
-
+        //{ "type": "pstring", "targets": [2,3,4] }
         ],
-        "order":[1,'asc']
+
+        "order": [[1, 'asc']], /// sort columns 2
+        serverSide: true,
+            processing: true,
+            ajax: {
+                "type": "POST",
+                "url": "{{ route('searchIndex') }}",
+                "dataType": "json",
+                "contentType": 'application/json; charset=utf-8',
+
+                "data": function (data) {
+                   // data['name'] = "fFF";//$("#name").val();
+                    data['supporter_id'] = $("#supporter_id").val();
+                    data['month'] = $("#month").val();
+                    data['year'] = $("#year").val();
+                    //data['sanad_year'] = $('#sanad_year').val();
+                    return JSON.stringify(data);
+                },
+                "complete": function(response) {
+                    $('#loading').css('display','none');
+                    //$('#theBtn').prop('disabled',false);
+                    //console.log("res" + data['name']);
+                }
+            },
+            columns: [                
+                { data: 'row'},
+                { data: 'supporter' },                   
+                { data: 'number' },
+                { data: 'updated_at' },
+                { data: 'description' },               
+                { data: 'total_cost' },
+                { data: 'total_get' },
+                { data: 'supporter_percent' },
+                { data: 'total_give' },                
+                { data: 'end' },
+               // { data: 'supporter_id' }
+                // { data: 'number' },
+                // { data: 'description' },
+                // { data: 'updated_at' },
+                // { data : 'total_cost'},
+                // { data : 'total'},
+                // { data : 'supporter_percent'},
+            ],
       });
+
+     
 
       $(".btn-danger").click(function(e){
           if(!confirm('آیا مطمئنید؟')){
@@ -158,5 +288,6 @@
           }
       });
     });
+    
   </script>
 @endsection
